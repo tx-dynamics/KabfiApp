@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,SafeAreaView, } from 'react-native'
 import { AntDesign, FontAwesome , FontAwesome5, Ionicons, MaterialIcons, Entypo     } from '@expo/vector-icons'; 
-
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const Signin = (props) => {
     return (
-        <View style={styles.root}>
+        <SafeAreaView style={styles.root}>
             <StatusBar style="dark" />             
             <View style={styles.contentArea}>
                 
@@ -64,7 +65,7 @@ const Signin = (props) => {
                     
                 </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -73,7 +74,8 @@ const styles = StyleSheet.create({
         width:Dimensions.get('window').width,
         height:Dimensions.get('window').height,
         alignItems:"center",
-        backgroundColor:'white'
+        backgroundColor:'white',
+        flex: 1,
     },
     contentArea:{
         width:'100%',

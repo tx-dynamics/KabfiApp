@@ -1,10 +1,13 @@
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity,ScrollView } from 'react-native'
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const Landing = (props) => {
     return (
         <View style={styles.root}>
+           {/* <ScrollView> */}
             <View style={styles.coontentArea}>
-                
+               
                 <View style={styles.imageContainer}>
                     <Image source={require('../../assets/ProjectImages/logo.png')} style={styles.image} />
                 </View>
@@ -25,12 +28,16 @@ const Landing = (props) => {
                         <View style={styles.dot}></View>
                     </View>
 
-                    <TouchableOpacity style={styles.next} onPress={() => props.navigation.navigate('Signup')}>
+                    <TouchableOpacity style={styles.next} onPress={
+                        () => 
+                        props.navigation.navigate('Signup')
+                        }>
                         <Text>NEXT</Text>
                     </TouchableOpacity>
                 </View>
-
+               
             </View>
+            {/* </ScrollView> */}
         </View>
     );
 }
@@ -39,31 +46,40 @@ const styles= StyleSheet.create({
     root:{
         width:Dimensions.get('window').width,
         height:Dimensions.get('window').height,
-        backgroundColor:'white'
+        backgroundColor:'white',
+        flex: 1,
     },
     coontentArea:{
         alignItems:'center',
+        alignSelf:'center',
         height:'100%',
-        width:'100%'
+        width:'100%',
+        justifyContent:'center',
+        alignContent:'center',
+        
     },
     imageContainer:{
-        marginTop:'80%'
+        //marginTop:'80%'
     },
     image:{
         width:120,
         height:120
     },
     textContainer:{
-        marginTop:'40%',
-        width:'70%'
+       // marginTop:'40%',
+        width:'70%',
+        position:'absolute',
+        bottom:70,
     },
     text:{
         textAlign:'center',
         lineHeight:20
     },
     carouselContainer:{
-        marginTop:'20%',
+       // marginTop:'20%',
         flexDirection:'row',
+        position:'absolute',
+        bottom:20,
         
     },
     skip:{

@@ -30,7 +30,8 @@ const styles = StyleSheet.create({
         width:Dimensions.get('window').width,
         height:Dimensions.get('window').height,
         // alignItems:"center",
-        backgroundColor:'white'
+        backgroundColor:'white',
+        flex: 1,
     },
     contentArea:{
         width:'100%',
