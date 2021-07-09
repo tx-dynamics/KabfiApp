@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
     root:{
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
-        backgroundColor:'white',        
+        backgroundColor:'white',   
+        flex: 1,     
     },
     contentArea:{
         alignItems:'center',        

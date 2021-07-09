@@ -5,8 +5,9 @@ import { FontAwesome } from '@expo/vector-icons';
 const Main = (props) => {
     return (
         <View style={styles.root}>            
-            <ScrollView style={styles.scroll}>
+           
                 <View style={styles.contentArea}>
+                <ScrollView style={styles.scroll}>
                 <View style={styles.smallLine}></View>
                 
                 <View style={styles.userInfoContainer}>
@@ -67,9 +68,10 @@ const Main = (props) => {
                         <Text style={styles.listText}>Legal</Text>                    
                     </TouchableOpacity>  
                     
-                </View>      
+                </View>  
+                </ScrollView>    
                 </View>
-            </ScrollView>
+           
         </View>
     );
 }
@@ -78,22 +80,27 @@ const styles = StyleSheet.create({
     root:{
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
-        backgroundColor:'#777777'
+        backgroundColor:'#777777',  
+        flex:1, 
     },
     scroll:{
-        height:Dimensions.get('screen').height,
-        width:Dimensions.get('screen').width,
+        // height:Dimensions.get('screen').height,
+        // width:Dimensions.get('screen').width,
+        marginBottom:10,
+     
     },
     contentArea:{
-        marginTop:'45%',
+       
         borderTopLeftRadius:50,
         borderTopRightRadius:50,
-        alignItems:'center',
+       alignItems:'center',
         backgroundColor:'#FBFBFB',
         width:'100%',
-        // height:Dimensions.get('screen').height,
-        paddingHorizontal:25,
-        paddingVertical:20
+        elevation:10,
+        paddingLeft:25,
+        position:'absolute',
+        bottom:0,
+        
     },
     smallLine:{        
         height:2,
