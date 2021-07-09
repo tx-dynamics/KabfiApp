@@ -11,7 +11,7 @@ const Main = (props) => {
                 
                 <View style={styles.userInfoContainer}>
                     <View style={styles.userInfo1}>
-                        <Image source={require('../../../assets/ProjectImages/users/user-small.png')} style={styles.smallImage} /> 
+                        <Image source={require('../../../assets/ProjectImages/users/user.png')} style={styles.smallImage} /> 
                     </View>   
                     <View style={styles.userInfo2}>
                         <Text style={styles.userName}>JohnThompson</Text>
@@ -27,7 +27,7 @@ const Main = (props) => {
 
 
                 <View style={styles.listContainer}>
-                    <TouchableOpacity style={styles.listItem}>
+                    <TouchableOpacity style={styles.listItem} onPress={ () => props.navigation.navigate('EditProfile')} >
                         <Image source={require('../../../assets/ProjectImages/users/profile/edit-profile.png')} style={styles.listIconImage} />
                         <Text style={styles.listText}>Edit Profile</Text>                    
                     </TouchableOpacity>  

@@ -20,17 +20,20 @@ const Signin = (props) => {
 
                 <View style={styles.loginForm}>
                     <View style={styles.textFieldContainer}>
-                        <FontAwesome5 name="user-alt" style={styles.fieldIcon} />
+                        {/* <FontAwesome5 name="user-alt" style={styles.fieldIcon} /> */}
+                        <Image source={require('../../../assets/ProjectImages/authentication/user-icon.png')} style={styles.fieldIcon} />                   
                         <TextInput style={styles.textField} value="John Doe" />
                     </View>
 
                     <View style={[styles.textFieldContainer,{marginTop:20}]}>                        
-                        <Ionicons name="md-mail" style={styles.fieldIcon} />
+                        {/* <Ionicons name="md-mail" style={styles.fieldIcon} /> */}
+                        <Image source={require('../../../assets/ProjectImages/authentication/mail-icon.png')} style={styles.fieldIcon} />                   
                         <TextInput style={styles.textField} value="johndoe@mail.com" />
                     </View>
 
                     <View style={[styles.textFieldContainer,{marginTop:20}]}>                        
-                        <MaterialIcons name="lock" style={styles.fieldIcon} />
+                        {/* <MaterialIcons name="lock" style={styles.fieldIcon} /> */}
+                        <Image source={require('../../../assets/ProjectImages/authentication/password-icon.png')} style={styles.fieldIcon} />                   
                         <TextInput style={styles.textField} value="1234567" secureTextEntry={true} />
                     </View>
 
@@ -74,6 +77,7 @@ const styles = StyleSheet.create({
     },
     contentArea:{
         width:'100%',
+        height:'100%',
         marginTop:'10%',
         paddingHorizontal:20,
         paddingVertical:10    
@@ -100,10 +104,12 @@ const styles = StyleSheet.create({
         
     },
     fieldIcon:{
-        fontSize:18,
-        color:'#FAB040',
+        // fontSize:18,
+        // color:'#FAB040',
+        width:15,
+        height:13,
         position:'absolute',
-        top:13
+        top:18
     },
     loginBtn:{
         marginTop:40,

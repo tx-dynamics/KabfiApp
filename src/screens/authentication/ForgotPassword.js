@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     },
     contentArea:{
         width:'100%',
+        height:'100%',
         marginTop:'30%',
         paddingHorizontal:20,
         paddingVertical:10,    

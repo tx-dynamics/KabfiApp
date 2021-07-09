@@ -66,14 +66,15 @@ const Signup = (props) => {
                         <View style={styles.textFieldHalfContainer}>
                             <View style={styles.uploadImageFieldsContainer}>
                                 <Text style={styles.uploadImageFieldLabel}>Badge Number image</Text>  
-                                <Ionicons name="image-outline" style={styles.uploadIMageIcon} />                      
+                                <Image source={require('../../../assets/ProjectImages/authentication/PhotoIcon.png')} style={styles.uploadIMageIcon} />                   
                                 <TouchableOpacity onPress={pickImage}>
                                     <TextInput style={styles.uploadImageFields} placeholder="Upload Image"  editable={false} />
                                 </TouchableOpacity>                                
                             </View>
                             <View style={styles.uploadImageFieldsContainer}>
-                                <Text style={styles.uploadImageFieldLabel}>Taxi License image</Text>  
-                                <Ionicons name="image-outline" style={styles.uploadIMageIcon} />                      
+                                <Text style={styles.uploadImageFieldLabel}>Taxi License image</Text> 
+
+                                <Image source={require('../../../assets/ProjectImages/authentication/PhotoIcon.png')} style={styles.uploadIMageIcon} />                   
                                 <TouchableOpacity onPress={pickImage}>
                                     <TextInput style={styles.uploadImageFields} placeholder="Upload Image"  editable={false} />
                                 </TouchableOpacity>                                
@@ -120,6 +121,7 @@ const styles = StyleSheet.create({
     },
     contentArea:{
         width:'100%',
+        height:'100%',
         marginTop:'15%',
         paddingHorizontal:20,
         paddingVertical:10    
@@ -194,11 +196,13 @@ const styles = StyleSheet.create({
         marginLeft:5
     },
     uploadIMageIcon:{
-        fontSize:18,
-        color:'#E6E6E6',
+        // fontSize:18,
+        // color:'#E6E6E6',
+        width:15,
+        height:15,
         position:'absolute',
-        top:40,
-        right:10
+        top:42,
+        right:13
     },
     submitText:{
         color:'#FCD291'

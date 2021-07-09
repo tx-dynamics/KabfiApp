@@ -42,7 +42,9 @@ const styles= StyleSheet.create({
         backgroundColor:'white'
     },
     coontentArea:{
-        alignItems:'center'
+        alignItems:'center',
+        height:'100%',
+        width:'100%'
     },
     imageContainer:{
         marginTop:'80%'
