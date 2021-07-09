@@ -63,7 +63,7 @@ const StackNavigator = (props) => {
   }
 
   return (
-    <Stack.Navigator initialRouteName="Landing">
+    <Stack.Navigator initialRouteName="EditProfile">
         <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />        
 
         <Stack.Screen name="Signin" component={Signin} options={{ headerShown: false }} />
