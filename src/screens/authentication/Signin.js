@@ -1,16 +1,21 @@
+import { StatusBar } from 'expo-status-bar';
 import React from 'react'
-import { View, Text, StatusBar, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity } from 'react-native'
 import { AntDesign, FontAwesome , FontAwesome5, Ionicons, MaterialIcons, Entypo     } from '@expo/vector-icons'; 
 
 
 const Signin = (props) => {
     return (
         <View style={styles.root}>
+            <StatusBar style="dark" />             
             <View style={styles.contentArea}>
+                
                 <View style={styles.logoContainer}>
                     <Image source={require('../../../assets/ProjectImages/logo.png')} style={styles.logoImage} />
                 </View>
-                <Text><AntDesign name="arrowleft" size={24} color="black" /></Text>
+                <TouchableOpacity onPress={() => props.navigation.navigate('Signup')}>
+                    <AntDesign name="arrowleft" size={24} color="black" />
+                </TouchableOpacity>
 
 
                 <View style={styles.loginForm}>
@@ -30,7 +35,7 @@ const Signin = (props) => {
                     </View>
 
                     <View>
-                        <TouchableOpacity style={styles.loginBtn}>
+                        <TouchableOpacity style={styles.loginBtn} onPress={() => props.navigation.navigate('Main')}>
                             <Text>Login</Text>
                         </TouchableOpacity>
                     </View>
@@ -50,7 +55,7 @@ const Signin = (props) => {
                         </View>                        
                     </View>
 
-                    <TouchableOpacity style={styles.forgotPasswordContainer}>
+                    <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => props.navigation.navigate('ForgotPassword')} >
                         <Text style={styles.forgotPasswordText}>Forogt Password ?</Text>
                     </TouchableOpacity>
                     

@@ -1,3 +1,4 @@
+import { StatusBar } from 'expo-status-bar';
 import React,{useState} from 'react'
 import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import { AntDesign, Ionicons  } from '@expo/vector-icons'; 
@@ -25,8 +26,13 @@ const Signup = (props) => {
     return (
         <ScrollView style={styles.root}>
             <View style={styles.contentArea}>
+                {/* <StatusBar style="dark" />              */}
+
                 <View style={styles.logoContainer}>
-                    <AntDesign name="arrowleft" style={styles.topLeftArrow} />
+                    {/* <TouchableOpacity onPress={() => props.navigation.navigate('Landing')}> */}
+                        <AntDesign name="arrowleft" style={styles.topLeftArrow} onPress={() => props.navigation.navigate('Landing')} />
+                    {/* </TouchableOpacity> */}
+                    
                     <Image source={require('../../../assets/ProjectImages/logo-name.png')} style={styles.logoImage} />
                     <Text style={styles.createAccountText}>CREATE AN ACCOUNT</Text>
                 </View>
@@ -84,15 +90,15 @@ const Signup = (props) => {
 
                     <View style={{paddingHorizontal:20, marginTop:40 }}>
                         <Text style={{textAlign:'center', fontSize:12}}>
-                            By clicking submit below you are agreeing to the Kabfi {'\n'}
-                            <Text style={styles.submitText}>Terms and consitions </Text>
+                            By clicking submit below you are agreeing to the Kabfi 
+                            <Text style={styles.submitText}> Terms and consitions </Text>
                              and 
                             <Text style={styles.submitText}> Privacy Policy</Text>    
                         </Text>
                     </View>
 
                     <View>
-                        <TouchableOpacity style={styles.loginBtn}>
+                        <TouchableOpacity style={styles.loginBtn} onPress={() => props.navigation.navigate('Signin')}>
                             <Text style={{color:'white'}}>SIGN UP</Text>
                         </TouchableOpacity>
                     </View>
@@ -101,7 +107,7 @@ const Signup = (props) => {
 
                 </View>
             </View>
-        </ScrollView>
+        </ScrollView>        
     );
 }
 
@@ -201,7 +207,9 @@ const styles = StyleSheet.create({
         marginTop:40,
         backgroundColor:'#FAB040',
         alignItems:'center',
-        padding:12
+        padding:12,
+        width:'95%',
+        alignSelf:'center'
     },
 });
 
