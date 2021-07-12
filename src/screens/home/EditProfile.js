@@ -9,7 +9,7 @@ const EditProfile = (props) => {
                 </View>
                 
                 <View style={styles.fieldContainer}>
-                    
+                    <Image source={require('../../../assets/ProjectImages/users/profile/pencil-icon.png')} style={styles.icon} />
                     <Text style={styles.label}>First Name</Text>
                     <TextInput value="John" style={styles.textField}/>
                 </View>    
@@ -53,7 +53,7 @@ const EditProfile = (props) => {
 const styles = StyleSheet.create({
     root:{
         width:Dimensions.get('window').width,
-        height:Dimensions.get('window').height,
+        height:Dimensions.get('window').height,        
         backgroundColor:'white',
         flex: 1,
     },
@@ -88,6 +88,13 @@ const styles = StyleSheet.create({
         borderBottomColor:'#D7D7D7',
         paddingHorizontal:10,
         paddingVertical:5
+    },
+    icon:{
+        width:20,
+        height:20,
+        position:'absolute',
+        right:10,
+        top:35
     }
 });
 
