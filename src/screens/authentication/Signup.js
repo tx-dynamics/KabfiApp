@@ -4,14 +4,16 @@ import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,
 import { AntDesign, Ionicons  } from '@expo/vector-icons'; 
 import * as ImagePicker from 'expo-image-picker';
 
+
 const Signup = (props) => {
 
     const [image, setImage] = useState(null);
-    
+    const [passwordHidden, setPasswordHidden] = useState(true);    
+
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
+        let result = await ImagePicker.launchCameraAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
-          allowsEditing: true,
+        //   allowsEditing: true,
           aspect: [4, 3],
           quality: 1,
         });
@@ -21,20 +23,22 @@ const Signup = (props) => {
         if (!result.cancelled) {
           setImage(result.uri);
         }
-      };
+      }
 
-    return (
-        <ScrollView style={styles.root}>
+
+      function passwordVisibility(){
+            (passwordHidden === true) ? setPasswordHidden(false) : setPasswordHidden(true);        
+      }
+
+    return (        
+        <ScrollView style={styles.root}>            
             <View style={styles.contentArea}>
-                {/* <StatusBar style="dark" />              */}
-
+                
                 <View style={styles.logoContainer}>
-                    {/* <TouchableOpacity onPress={() => props.navigation.navigate('Landing')}> */}
-                        <AntDesign name="arrowleft" style={styles.topLeftArrow} onPress={() => props.navigation.navigate('Landing')} />
-                    {/* </TouchableOpacity> */}
-                    
+                
                     <Image source={require('../../../assets/ProjectImages/logo-name.png')} style={styles.logoImage} />
                     <Text style={styles.createAccountText}>CREATE AN ACCOUNT</Text>
+                
                 </View>
 
                 <View style={styles.form}>
@@ -65,14 +69,14 @@ const Signup = (props) => {
                     <View style={styles.formField}>
                         <View style={styles.textFieldHalfContainer}>
                             <View style={styles.uploadImageFieldsContainer}>
-                                <Text style={styles.uploadImageFieldLabel}>Badge Number image</Text>  
+                                <Text style={styles.uploadImageFieldLabel}>Badge Number</Text>  
                                 <Image source={require('../../../assets/ProjectImages/authentication/PhotoIcon.png')} style={styles.uploadIMageIcon} />                   
                                 <TouchableOpacity onPress={pickImage}>
                                     <TextInput style={styles.uploadImageFields} placeholder="Upload Image"  editable={false} />
                                 </TouchableOpacity>                                
                             </View>
                             <View style={styles.uploadImageFieldsContainer}>
-                                <Text style={styles.uploadImageFieldLabel}>Taxi License image</Text> 
+                                <Text style={styles.uploadImageFieldLabel}>Taxi License</Text> 
 
                                 <Image source={require('../../../assets/ProjectImages/authentication/PhotoIcon.png')} style={styles.uploadIMageIcon} />                   
                                 <TouchableOpacity onPress={pickImage}>
@@ -85,16 +89,27 @@ const Signup = (props) => {
                     <View style={styles.formField}>
                         <Text style={styles.label}>Password</Text>
                         <View style={styles.textFieldFullContainer}>
-                            <TextInput style={styles.textFieldFull} secureTextEntry={true} />                            
+                            
+                           {/* start */}
+
+                                
+                            <TouchableOpacity style={styles.eyeIconContainer} onPress={ passwordVisibility } >
+                                <Ionicons name="eye" style={styles.eyeIcon}  />
+                            </TouchableOpacity>
+                            
+                            <TextInput style={styles.textFieldFull} secureTextEntry={passwordHidden} />                            
+
+                           
+                            {/* end */}                            
                         </View>
                     </View>
 
                     <View style={{paddingHorizontal:20, marginTop:40 }}>
                         <Text style={{textAlign:'center', fontSize:12}}>
                             By clicking submit below you are agreeing to the Kabfi 
-                            <Text style={styles.submitText}> Terms and consitions </Text>
+                            <Text style={styles.submitText} onPress={() => props.navigation.navigate('TermsAndConditions')}> Terms and conditions </Text>
                              and 
-                            <Text style={styles.submitText}> Privacy Policy</Text>    
+                            <Text style={styles.submitText} onPress={() => props.navigation.navigate('PrivacyPolicy')}> Privacy Policy</Text>                               
                         </Text>
                     </View>
 
@@ -215,7 +230,20 @@ const styles = StyleSheet.create({
         padding:12,
         width:'95%',
         alignSelf:'center'
+    },   
+    eyeIcon:{
+        fontSize:24,
+        color:'#E6E6E6',        
     },
+    eyeIconContainer:{
+        position:'absolute',
+        top:13,
+        right:13,
+        width:35,
+        height:25,
+        alignItems:'center',
+        zIndex:1
+    }
 });
 
 

@@ -13,6 +13,8 @@ import Main from '../screens/home/Main';
 import Settings from '../screens/home/Settings';
 import EditProfile from '../screens/home/EditProfile';
 
+import TermsAndConditions from '../screens/extra/TermsAndConditions';
+import PrivacyPolicy from '../screens/extra/PrivacyPolicy';
 
 const Stack = createStackNavigator();
 
@@ -30,7 +32,7 @@ const StackNavigator = (props) => {
     else if ( screenName === "editProfile"){
       title = 'Edit Profile',
       headerLeft = () => (
-        <TouchableOpacity style={{padding:20}} >
+        <TouchableOpacity style={{padding:20}} onPress={()=> navigation.navigate('Main')} >
           <Text style={{color:'#197AFF'}}>Back</Text>
         </TouchableOpacity>        
       ),
@@ -63,17 +65,21 @@ const StackNavigator = (props) => {
   }
 
   return (
-    <Stack.Navigator initialRouteName="EditProfile">
-        <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />        
+    <Stack.Navigator initialRouteName="Signin">
+        {/* <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />         */}
 
         <Stack.Screen name="Signin" component={Signin} options={{ headerShown: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />        
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />        
         <Stack.Screen name="SendEmail" component={SendEmail} options={{ headerShown: false }} />        
-
+        
         <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />        
         <Stack.Screen name="Settings" component={Settings} options={getOptions('settings')} />        
-        <Stack.Screen name="EditProfile" component={EditProfile} options={getOptions('editProfile')} />        
+        <Stack.Screen name="EditProfile" component={EditProfile} options={({ navigation }) => getOptions('editProfile', navigation)} />          
+
+        <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} options={{ headerShown: true, title:'' }} />        
+        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} options={{ headerShown: true, title:'' }} />        
+
     </Stack.Navigator>    
   );
 };

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,SafeAreaView, } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,SafeAreaView, Linking } from 'react-native'
 import { AntDesign, FontAwesome , FontAwesome5, Ionicons, MaterialIcons, Entypo     } from '@expo/vector-icons'; 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -45,22 +45,24 @@ const Signin = (props) => {
                     </View>
 
                     <View style={styles.socialIconsContainer}>
-                        <View style={styles.socialIconsContainerSingle}>
-                            <FontAwesome name="facebook-f" style={styles.socialIcon} />    
-                        </View>
-                        <View style={styles.socialIconsContainerSingle}>
+                        <TouchableOpacity style={styles.socialIconsContainerSingle} onPress={ () =>  Linking.openURL('fb://quraancoaching/1') } >
+                            <FontAwesome name="facebook" style={styles.socialIcon}  />    
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.socialIconsContainerSingle} onPress={ () =>  Linking.openURL('http://twitter.com') }>
                             <Entypo name="twitter" style={styles.socialIcon} />
-                        </View>
-                        <View style={styles.socialIconsContainerSingle}>
+                        </TouchableOpacity>
+                      
+                       <TouchableOpacity style={styles.socialIconsContainerSingle}  onPress={ () =>  Linking.openURL('http://instagram.com') }>
                             <AntDesign name="instagram" style={styles.socialIcon} />
-                        </View>
-                        <View style={styles.socialIconsContainerSingle}>
+                        </TouchableOpacity>
+                        {/* <View style={styles.socialIconsContainerSingle}>
                             <AntDesign name="google" style={styles.socialIcon} />
-                        </View>                        
+                        </View>                         */}
                     </View>
 
                     <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => props.navigation.navigate('ForgotPassword')} >
-                        <Text style={styles.forgotPasswordText}>Forogt Password ?</Text>
+                        <Text style={styles.forgotPasswordText}>Forgot Password ?</Text>
                     </TouchableOpacity>
                     
                 </View>
@@ -121,13 +123,17 @@ const styles = StyleSheet.create({
     },
     socialIconsContainer:{
         flexDirection:'row',
-        width:'65%',        
+        width:'65%',      
+        // flex:1,  
         alignSelf:'center',                
-        marginTop:70
+        marginTop:70,
+        // backgroundColor:'red',
+        // height:300
     },  
     socialIconsContainerSingle:{
-        width:'25%',        
-        alignItems:'center'      
+        // width:'30%',
+        flex:1,        
+        alignItems:'center',        
     },
     socialIcon:{
         fontSize:14,
