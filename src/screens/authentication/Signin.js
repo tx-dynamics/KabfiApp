@@ -1,11 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react'
+import React,{useState, useRef, useEffect} from 'react'
 import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,SafeAreaView, Linking } from 'react-native'
 import { AntDesign, FontAwesome , FontAwesome5, Ionicons, MaterialIcons, Entypo     } from '@expo/vector-icons'; 
+
+import * as firebase from 'firebase'
+
+import kabfiApp from '../../database/config';
+const table_todo = kabfiApp.database().ref('/ToDo');
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const Signin = (props) => {
+
     return (
         <SafeAreaView style={styles.root}>
             <StatusBar style="dark" />             
@@ -21,19 +28,16 @@ const Signin = (props) => {
 
                 <View style={styles.loginForm}>
                     <View style={styles.textFieldContainer}>
-                        {/* <FontAwesome5 name="user-alt" style={styles.fieldIcon} /> */}
                         <Image source={require('../../../assets/ProjectImages/authentication/user-icon.png')} style={styles.fieldIcon} />                   
                         <TextInput style={styles.textField} value="John Doe" />
                     </View>
 
                     <View style={[styles.textFieldContainer,{marginTop:20}]}>                        
-                        {/* <Ionicons name="md-mail" style={styles.fieldIcon} /> */}
                         <Image source={require('../../../assets/ProjectImages/authentication/mail-icon.png')} style={styles.fieldIcon} />                   
                         <TextInput style={styles.textField} value="johndoe@mail.com" />
                     </View>
 
                     <View style={[styles.textFieldContainer,{marginTop:20}]}>                        
-                        {/* <MaterialIcons name="lock" style={styles.fieldIcon} /> */}
                         <Image source={require('../../../assets/ProjectImages/authentication/password-icon.png')} style={styles.fieldIcon} />                   
                         <TextInput style={styles.textField} value="1234567" secureTextEntry={true} />
                     </View>
@@ -56,9 +60,6 @@ const Signin = (props) => {
                        <TouchableOpacity style={styles.socialIconsContainerSingle}  onPress={ () =>  Linking.openURL('http://instagram.com') }>
                             <AntDesign name="instagram" style={styles.socialIcon} />
                         </TouchableOpacity>
-                        {/* <View style={styles.socialIconsContainerSingle}>
-                            <AntDesign name="google" style={styles.socialIcon} />
-                        </View>                         */}
                     </View>
 
                     <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => props.navigation.navigate('ForgotPassword')} >
