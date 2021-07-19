@@ -2,20 +2,37 @@ import React,{useState} from 'react'
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
 import { kabfiApp, firebase } from '../../database/config';
 
-const ForgotPassword = (props) => {
-    const[email, setEmail] = useState('');
+const ResetPassword = (props) => {
+    const[oldPassword, setOldPassword] = useState('');
+    const[newPassword, setNewPassword] = useState('');
     const [loader, setLoader] = useState(false);    
 
-    function userResetPassword(){
-        firebase.auth().sendPasswordResetEmail(email)
-        .then(function (user) {
-            // alert('Please check your email...')
-            props.navigation.navigate('SendEmail');
-        }).catch((error)=>{
-            alert(error.message)
-            // setLoader(false);
-        })
+    function reauthenticate(oldPassword) {
+        var user = firebase.auth().currentUser;
+        var cred = firebase.auth.EmailAuthProvider.credential(
+            user.email, oldPassword);
+        return user.reauthenticateWithCredential(cred);
     }
+
+    function userResetPassword(){
+        if(oldPassword !== '' && newPassword !== ''){
+            reauthenticate(oldPassword).then(() => {
+                var user = firebase.auth().currentUser;
+                user.updatePassword(newPassword).then(() => {
+                alert('Password Updated Successfully');
+                }).catch((error) => { 
+                    alert(error.message);
+                });
+            }).catch((error)=>{
+                alert(error.message)
+                // setLoader(false);
+            })
+        }
+        else{
+            alert("All Fields Are Required");
+        }
+    }
+
     return (
         <ScrollView style={styles.root}>
             <View style={styles.contentArea}>
@@ -25,20 +42,18 @@ const ForgotPassword = (props) => {
                 </View>
 
                 <View style={styles.textContainer}>
-                    <Text style={styles.textHeading}>Reset Password</Text>
-                    <Text style={[styles.textSimple,{width:'80%'}]}>Enter the email associated with your account and</Text>
-                    <Text style={styles.textSimple}> we'll send an email with instructions to reset your password.</Text>
+                    <Text style={styles.textHeading}>Change Password</Text>                    
                 </View>
 
                 <View style={styles.buttonsContainer}>
-                    <TextInput style={styles.emailInput} placeholder="Email" value={email} onChangeText={(e)=>setEmail(e)}  />
-
+                    <TextInput style={styles.emailInput} placeholder="Old Password" value={oldPassword} onChangeText={(e)=>setOldPassword(e)}  />
+                    <TextInput style={[styles.emailInput,{marginTop:10}]} placeholder="New Password" value={newPassword} onChangeText={(e)=>setNewPassword(e)}  />
                     <TouchableOpacity style={styles.btn2} onPress={() => userResetPassword()}>
                         { 
                             loader ? 
                             <ActivityIndicator color={"red"} size={'small'} />
                             :                            
-                            <Text style={styles.btn2Text}>Send Password</Text>
+                            <Text style={styles.btn2Text}>Reset</Text>
                         }                                          
                     </TouchableOpacity>  
                 </View>
@@ -91,7 +106,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#FBFBFB',
         borderRadius:20,
         padding:13,
-        textAlign:'center'        
+        // textAlign:'center'        
     },
     
     btn2:{
@@ -107,4 +122,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default ForgotPassword;
+export default ResetPassword;

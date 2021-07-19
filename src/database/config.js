@@ -12,6 +12,7 @@ export const firebaseConfig = {
 
 const kabfiApp = firebase.initializeApp(firebaseConfig);
 
-
-
-export default kabfiApp;
+export {
+    kabfiApp,
+    firebase,
+}

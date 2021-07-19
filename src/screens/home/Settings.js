@@ -1,14 +1,22 @@
 import React from 'react'
 import { View, Text, StyleSheet, Dimensions, ScrollView, Image, TouchableOpacity } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'; 
+import { useLogin } from '../../context/LoginProvider';
+
 
 const Settings = (props) => {
+    const {setIsLoggedIn} = useLogin();        
+        
+    function userLogout(){
+        setIsLoggedIn(false);
+    }
+
     return (
         <View style={styles.root}>            
             <View style={styles.contentArea}>
 
                 <View style={styles.listContainer}>
-                    <TouchableOpacity style={styles.listItem}>
+                    <TouchableOpacity style={styles.listItem} onPress={()=> props.navigation.navigate('ResetPassword') }>
                         <Image source={require('../../../assets/ProjectImages/userSettings/change-password.png')} style={styles.listIconImage} />
                         <Text style={styles.listText}>Change Password</Text>                    
                     </TouchableOpacity>  
@@ -23,7 +31,7 @@ const Settings = (props) => {
                         <Text style={styles.listText}>About</Text>                    
                     </TouchableOpacity>  
 
-                    <TouchableOpacity style={styles.listItem}>
+                    <TouchableOpacity style={styles.listItem} onPress={userLogout}>
                         <Image source={require('../../../assets/ProjectImages/userSettings/logout.png')} style={styles.listIconImage} />
                         <Text style={styles.listText}>Log Out</Text>                    
                     </TouchableOpacity>  

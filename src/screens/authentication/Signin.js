@@ -1,17 +1,39 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{useState, useRef, useEffect} from 'react'
-import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,SafeAreaView, Linking } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,SafeAreaView, Linking, ActivityIndicator } from 'react-native'
 import { AntDesign, FontAwesome , FontAwesome5, Ionicons, MaterialIcons, Entypo     } from '@expo/vector-icons'; 
+import { useLogin } from '../../context/LoginProvider';
+import { kabfiApp, firebase } from '../../database/config';
 
-import * as firebase from 'firebase'
+// import * as firebase from 'firebase'
 
-import kabfiApp from '../../database/config';
-const table_todo = kabfiApp.database().ref('/ToDo');
+// import kabfiApp from '../../database/config';
+// const table_todo = kabfiApp.database().ref('/ToDo');
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+
 const Signin = (props) => {
+    const[firstName, setFirstName] = useState('');
+    const[email, setEmail] = useState('');
+    const[password, setPassword] = useState('');
+    const [loader, setLoader] = useState(false);    
+
+    const {setIsLoggedIn} = useLogin();
+
+    function userSignin(){
+        setLoader(true);
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then( ()=>{
+            setIsLoggedIn(true);
+            setLoader(false);
+        })
+        .catch((error)=>{
+            alert(error.message)
+            setLoader(false);
+        })
+    }
 
     return (
         <SafeAreaView style={styles.root}>
@@ -29,22 +51,27 @@ const Signin = (props) => {
                 <View style={styles.loginForm}>
                     <View style={styles.textFieldContainer}>
                         <Image source={require('../../../assets/ProjectImages/authentication/user-icon.png')} style={styles.fieldIcon} />                   
-                        <TextInput style={styles.textField} value="John Doe" />
+                        <TextInput style={styles.textField} placeholder="Name" value={firstName} onChangeText={(e)=>setFirstName(e)} />
                     </View>
 
                     <View style={[styles.textFieldContainer,{marginTop:20}]}>                        
                         <Image source={require('../../../assets/ProjectImages/authentication/mail-icon.png')} style={styles.fieldIcon} />                   
-                        <TextInput style={styles.textField} value="johndoe@mail.com" />
+                        <TextInput style={styles.textField} value={email} placeholder="Email" onChangeText={(e)=>setEmail(e)} />
                     </View>
 
                     <View style={[styles.textFieldContainer,{marginTop:20}]}>                        
                         <Image source={require('../../../assets/ProjectImages/authentication/password-icon.png')} style={styles.fieldIcon} />                   
-                        <TextInput style={styles.textField} value="1234567" secureTextEntry={true} />
+                        <TextInput style={styles.textField} placeholder="Password" value={password} onChangeText={(e)=>setPassword(e)} secureTextEntry={true} />
                     </View>
 
                     <View>
-                        <TouchableOpacity style={styles.loginBtn} onPress={() => props.navigation.navigate('Main')}>
-                            <Text>Login</Text>
+                        <TouchableOpacity style={styles.loginBtn} onPress={() => userSignin() }>
+                            { 
+                                loader ? 
+                                <ActivityIndicator color={"red"} size={'small'} />
+                                :                            
+                                <Text>Login</Text>
+                            }                            
                         </TouchableOpacity>
                     </View>
 

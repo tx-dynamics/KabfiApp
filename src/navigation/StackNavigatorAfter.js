@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Main from '../screens/home/Main';
 import Settings from '../screens/home/Settings';
 import EditProfile from '../screens/home/EditProfile';
-
+import ResetPassword from '../screens/home/ResetPassword';
 
 const Stack = createStackNavigator();
 
@@ -61,7 +61,7 @@ const StackNavigatorAfter = (props) => {
         <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />        
         <Stack.Screen name="Settings" component={Settings} options={getOptions('settings')} />        
         <Stack.Screen name="EditProfile" component={EditProfile} options={({ navigation }) => getOptions('editProfile', navigation)} />          
-
+        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false }} />        
     </Stack.Navigator>    
   );
 };
