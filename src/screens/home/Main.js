@@ -1,18 +1,32 @@
-import React from 'react'
+import firebase from 'firebase';
+import React,{useState, useEffect} from 'react'
+import { StatusBar } from 'expo-status-bar';
 import { View, Text, StyleSheet, Dimensions, ScrollView, Image, TouchableOpacity } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'; 
+import {user2} from '../../../assets'
 
 const Main = (props) => {
+    const [Dp,setDp]=useState('')
+
+    useEffect(()=>{
+        const user = firebase.auth().currentUser?.uid;
+        const data = firebase.database().ref('users/'+user);
+        data.on('value',userdata=>{       
+        setDp(userdata.val().Dp)
+        })
+    },[])
+
     return (
         <View style={styles.root}>            
-           
+            <StatusBar style="light" />
                 <View style={styles.contentArea}>
                 <ScrollView style={styles.scroll}>
                     <View style={styles.smallLine}></View>
                     
                     <View style={styles.userInfoContainer}>
                         <View style={styles.userInfo1}>
-                            <Image source={require('../../../assets/ProjectImages/users/user.png')} style={styles.smallImage} /> 
+                            <Image source={Dp?{uri:Dp}:user2} style={styles.smallImage} /> 
+                            {/* <Image source={Dp?{uri:Dp}:user} style={styles.image} /> */}
                         </View>   
                         <View style={styles.userInfo2}>
                             <Text style={styles.userName}>JohnThompson</Text>
@@ -81,7 +95,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
         backgroundColor:'#777777',  
-        flex:1, 
+        flex:1,         
     },
     scroll:{
         // height:Dimensions.get('screen').height,
@@ -117,7 +131,8 @@ const styles = StyleSheet.create({
     },
     smallImage:{
         width:50,
-        height:50
+        height:50,
+        borderRadius:50
     },
     userInfo2:{
         width:'35%',

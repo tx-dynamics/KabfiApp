@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
-import { kabfiApp, firebase } from '../../database/config';
-
+// import { kabfiApp, firebase } from '../../database/config';
+import firebase from 'firebase';
 const ResetPassword = (props) => {
     const[oldPassword, setOldPassword] = useState('');
     const[newPassword, setNewPassword] = useState('');
@@ -14,9 +14,9 @@ const ResetPassword = (props) => {
         return user.reauthenticateWithCredential(cred);
     }
 
-    function userResetPassword(){
+    async function userResetPassword(){
         if(oldPassword !== '' && newPassword !== ''){
-            reauthenticate(oldPassword).then(() => {
+            await reauthenticate(oldPassword).then(() => {
                 var user = firebase.auth().currentUser;
                 user.updatePassword(newPassword).then(() => {
                 alert('Password Updated Successfully');

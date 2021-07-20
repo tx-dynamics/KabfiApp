@@ -1,3 +1,18 @@
+import * as firebase from "firebase";
+
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyASonZ6DlS2cqTonbPSiq8RboZFv4bYKDE",
+    authDomain: "kabfiapp.firebaseapp.com",
+    databaseURL: "https://kabfiapp-default-rtdb.firebaseio.com",
+    projectId: "kabfiapp",
+    storageBucket: "kabfiapp.appspot.com",
+    messagingSenderId: "676638158064",
+    appId: "1:676638158064:web:e01ff8bc3a12a378eee635",
+  });
+}
+// firebase.storage().ref();
+// import firebase from "firebase";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -12,7 +27,7 @@ import {
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
-import firebase from "firebase";
+
 
 const Signup = (props) => {
   const [firstName, setFirstName] = useState("");
@@ -80,9 +95,9 @@ const Signup = (props) => {
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(async (user) => {
+          setLoader(true);
           const badgeImage = await uploadImage(badgeNumberImage.uri);
           const taxiLicense = await uploadImage(taxiLicenseImage.uri);
-
           let Details = {
             id: user.user.uid,
             firstName: firstName,
@@ -92,8 +107,11 @@ const Signup = (props) => {
             badgeNumberImage: badgeImage,
             taxiLicenseImage: taxiLicense,
             rating: 0,
+            Dp:'',
+            city:'',
+            country:''
           };
-          console.log(Details);
+          // console.log(Details);
           await saveData("users", user.user.uid, Details);
           alert(
             "Thank you for your registration! Your account is now ready to use."
@@ -105,6 +123,7 @@ const Signup = (props) => {
           setPassword("");
           setTaxiLicenseImage("");
           setBadgeNumberImage("");
+          setLoader(false);
           props.navigation.navigate("Signin");
         })
         .catch(function (error) {
@@ -120,7 +139,7 @@ const Signup = (props) => {
 
   const uploadImage = async (uri) => {
     try {
-      setLoader(true);
+      // setLoader(true);
       const response = await fetch(uri);
       const blob = await response.blob();
       var timestamp = new Date().getTime();
@@ -137,7 +156,7 @@ const Signup = (props) => {
           async () => {
             const url = await task.snapshot.ref.getDownloadURL();
             resolve(url);
-            setLoader(false);
+            // setLoader(false);
           }
         );
       });

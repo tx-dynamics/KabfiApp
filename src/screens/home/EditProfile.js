@@ -1,62 +1,107 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import { View, Text, StyleSheet, Dimensions, Image, TextInput, ScrollView, TouchableOpacity, AsyncStorage } from 'react-native'
-import { kabfiApp, firebase } from '../../database/config';
-import 'firebase/firestore';
+// import { kabfiApp, firebase } from '../../database/config';
+import firebase from 'firebase';
+import { Header } from "react-native-elements";
+import {user2} from '../../../assets'
+import HeaderCenterComponent from '../../components/HeaderCenterComponent';
+import * as ImagePicker from "expo-image-picker";
 
 const EditProfile = (props) => {
     const[firstName, setFirstName] = useState('');
     const[lastName, setLastName] = useState('');
-    const[phoneNumber, setPhoneNumber] = useState('');
+    const[mobileNo, setMobileNo] = useState('');
     const[email, setEmail] = useState('');
     const[city, setCity] = useState('');
     const[country, setCountry] = useState('');
+    const [Dp,setDp]=useState('')
+    useEffect(()=>{
+        const user = firebase.auth().currentUser?.uid;
+        const data = firebase.database().ref('users/'+user);
+        data.on('value',userdata=>{
+        setFirstName(userdata.val().firstName)
+        setLastName(userdata.val().lastName)
+        setMobileNo(userdata.val().mobileNo)
+        setCity(userdata.val().city)
+        setCountry(userdata.val().country)
+        setEmail(userdata.val().email)
+        setDp(userdata.val().Dp)
+        })
+    },[])
 
     async function editProfileHandler(){
         try {
             let Details = {
                 firstName: firstName,
                 lastName: lastName,
-                phoneNumber: phoneNumber,
+                mobileNo: mobileNo,
                 city: city,
-                country: country,                
+                country: country,  
+                Dp:Dp              
             };
-            const loggedInUser = await AsyncStorage.getItem('@user');
             
-            if (loggedInUser !== null) {
-                await updateData('users', loggedInUser, Details)
-            }
+            const user = await firebase.auth().currentUser.uid;
+            const data = await firebase.database().ref('users/'+user).update(Details);            
+            alert("Data Updated Succsessfully");
+            
           } catch (error) {
             alert(error.message);
           }
     }
 
-    async function updateData(collection, doc, jsonObject) {
-        const dbh = firebase.firestore();
-        await 
-        dbh
-          .collection(collection)
-          .doc(doc)
-          .update(jsonObject)
-          .then(async () => {
-            console.log('Document successfully written!');
-            return true;
-          })
-          .catch(function(error) {
-            console.error('Error writing document: ', error);
-          });
-      }
+    const pickDpImage = async () => {
+        let result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          aspect: [4, 3],
+          quality: 1,
+        });
+    
+        if (!result.cancelled) {
+          setDp(result.uri);
+        //   alert("Profile Image Selected");
+        }
+      };
 
     return (
         <ScrollView style={styles.root}>
+             <Header
+        backgroundColor="white"
+        containerStyle={{ marginTop: 15, paddingHorizontal:20 }}
+        leftComponent={
+            <TouchableOpacity onPress={()=> props.navigation.goBack()}>
+              <Text style={{color:'blue'}}>Back</Text>
+            </TouchableOpacity>
+        }
+        centerComponent={
+            <Text>Edit Profile</Text>            
+        }
+        rightComponent={
+            <TouchableOpacity onPress={ ()=> editProfileHandler()} >
+              <Text>Save</Text>
+            </TouchableOpacity>
+        }
+      />
             <View style={styles.contentArea}>
-                <View style={styles.imageContainer} >
-                    <Image source={require('../../../assets/ProjectImages/users/user-large.png')} style={styles.image} />
-                </View>
+
+                <TouchableOpacity style={styles.imageContainer} onPress={pickDpImage} >
+                    <Image source={Dp?{uri:Dp}:user2} style={styles.image} />
+                </TouchableOpacity>
+
+                {/* <TouchableOpacity onPress={pickDpImage}>
+                  <TextInput
+                    style={styles.uploadImageFields}
+                    placeholder="Upload Image"
+                    editable={false}
+                  />
+                </TouchableOpacity>     */}
+
+
+
                 
                 <View style={styles.fieldContainer}>
-                    <TouchableOpacity style={styles.iconContainer} onPress={ ()=> editProfileHandler()} >
+                    {/* <View style={styles.iconContainer}  >
                         <Image source={require('../../../assets/ProjectImages/users/profile/pencil-icon.png')} style={styles.icon}  />
-                    </TouchableOpacity>
+                    </View> */}
                     
                     <Text style={styles.label}>First Name</Text>
                     <TextInput value={firstName} onChangeText={(e)=>setFirstName(e)} style={styles.textField}/>
@@ -74,7 +119,7 @@ const EditProfile = (props) => {
 
                 <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Phone Number</Text>
-                    <TextInput value={phoneNumber} onChangeText={(e)=>setPhoneNumber(e)} style={styles.textField}/>
+                    <TextInput value={mobileNo} onChangeText={(e)=>setMobileNo(e)} style={styles.textField}/>
                 </View> 
 
                 <View style={styles.fieldContainer}>
@@ -118,7 +163,8 @@ const styles = StyleSheet.create({
     },
     image:{
         width:110,
-        height:100
+        height:100,
+        borderRadius:50
     },
     fieldContainer:{
         marginTop:30,
