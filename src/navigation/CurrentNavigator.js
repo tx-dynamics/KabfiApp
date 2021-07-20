@@ -6,6 +6,7 @@ import { useLogin } from '../context/LoginProvider';
 const CurrentNavigator = () => {
     const {isLoggedIn} = useLogin();
     return isLoggedIn ? <StackNavigatorAfter /> : <StackNavigator />
+    // return <StackNavigatorAfter />
 }
 
 export default CurrentNavigator;

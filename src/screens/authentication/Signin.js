@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{useState, useRef, useEffect} from 'react'
-import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,SafeAreaView, Linking, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,SafeAreaView, Linking, ActivityIndicator, AsyncStorage  } from 'react-native'
 import { AntDesign, FontAwesome , FontAwesome5, Ionicons, MaterialIcons, Entypo     } from '@expo/vector-icons'; 
 import { useLogin } from '../../context/LoginProvider';
 import { kabfiApp, firebase } from '../../database/config';
@@ -22,10 +22,20 @@ const Signin = (props) => {
 
     const {setIsLoggedIn} = useLogin();
 
-    function userSignin(){
+    async function userSignin(){
         setLoader(true);
         firebase.auth().signInWithEmailAndPassword(email, password)
-        .then( ()=>{
+        .then( async (user)=>{
+            // Async storage starts
+            storeData = async () => {
+                try {
+                  await AsyncStorage.setItem('@user', user.user.uid)
+                } catch (e) {
+                  // saving error
+                }
+              }
+            storeData(); 
+            // Async storage ends
             setIsLoggedIn(true);
             setLoader(false);
         })

@@ -58,7 +58,7 @@ const StackNavigatorAfter = (props) => {
   }
 
   return (
-    <Stack.Navigator initialRouteName="NewsFeed">
+    <Stack.Navigator initialRouteName="EditProfile">
         <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />        
         <Stack.Screen name="Settings" component={Settings} options={getOptions('settings')} />        
         <Stack.Screen name="EditProfile" component={EditProfile} options={({ navigation }) => getOptions('editProfile', navigation)} />          

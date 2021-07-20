@@ -1,47 +1,95 @@
-import React from 'react'
-import { View, Text, StyleSheet, Dimensions, Image, TextInput, ScrollView } from 'react-native'
+import React,{useState} from 'react'
+import { View, Text, StyleSheet, Dimensions, Image, TextInput, ScrollView, TouchableOpacity, AsyncStorage } from 'react-native'
+import { kabfiApp, firebase } from '../../database/config';
+import 'firebase/firestore';
+
 const EditProfile = (props) => {
+    const[firstName, setFirstName] = useState('');
+    const[lastName, setLastName] = useState('');
+    const[phoneNumber, setPhoneNumber] = useState('');
+    const[email, setEmail] = useState('');
+    const[city, setCity] = useState('');
+    const[country, setCountry] = useState('');
+
+    async function editProfileHandler(){
+        try {
+            let Details = {
+                firstName: firstName,
+                lastName: lastName,
+                phoneNumber: phoneNumber,
+                city: city,
+                country: country,                
+            };
+            const loggedInUser = await AsyncStorage.getItem('@user');
+            
+            if (loggedInUser !== null) {
+                await updateData('users', loggedInUser, Details)
+            }
+          } catch (error) {
+            alert(error.message);
+          }
+    }
+
+    async function updateData(collection, doc, jsonObject) {
+        const dbh = firebase.firestore();
+        await 
+        dbh
+          .collection(collection)
+          .doc(doc)
+          .update(jsonObject)
+          .then(async () => {
+            console.log('Document successfully written!');
+            return true;
+          })
+          .catch(function(error) {
+            console.error('Error writing document: ', error);
+          });
+      }
+
     return (
         <ScrollView style={styles.root}>
             <View style={styles.contentArea}>
-                <View style={styles.imageContainer}>
+                <View style={styles.imageContainer} >
                     <Image source={require('../../../assets/ProjectImages/users/user-large.png')} style={styles.image} />
                 </View>
                 
                 <View style={styles.fieldContainer}>
-                    <Image source={require('../../../assets/ProjectImages/users/profile/pencil-icon.png')} style={styles.icon} />
+                    <TouchableOpacity style={styles.iconContainer} onPress={ ()=> editProfileHandler()} >
+                        <Image source={require('../../../assets/ProjectImages/users/profile/pencil-icon.png')} style={styles.icon}  />
+                    </TouchableOpacity>
+                    
                     <Text style={styles.label}>First Name</Text>
-                    <TextInput value="John" style={styles.textField}/>
+                    <TextInput value={firstName} onChangeText={(e)=>setFirstName(e)} style={styles.textField}/>
                 </View>    
 
                 <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Last Name</Text>
-                    <TextInput value="Thompson" style={styles.textField}/>
+                    <TextInput value={lastName} onChangeText={(e)=>setLastName(e)} style={styles.textField}/>
                 </View> 
 
-                <View style={styles.fieldContainer}>
+                {/* <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Password</Text>
                     <TextInput value="12345678" style={styles.textField} secureTextEntry={true}/>
-                </View> 
+                </View>  */}
 
                 <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Phone Number</Text>
-                    <TextInput value="+44 77 000 00 00 000" style={styles.textField}/>
+                    <TextInput value={phoneNumber} onChangeText={(e)=>setPhoneNumber(e)} style={styles.textField}/>
                 </View> 
 
                 <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Email</Text>
-                    <TextInput value="user@gmail.com" style={styles.textField}/>
+                    <TextInput value={email} style={styles.textField} editable={false}/>
                 </View> 
 
                 <View style={styles.fieldContainer}>
                     <Text style={styles.label}>City, State</Text>
-                    <TextInput value="London" style={styles.textField}/>
+                    <TextInput value={city} onChangeText={(e)=>setCity(e)} style={styles.textField}/>
                 </View> 
 
                 <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Country</Text>
-                    <TextInput value="United Kingdom" style={styles.textField}/>
+                    <TextInput value={country} onChangeText={(e)=>setCountry(e)} style={styles.textField}/>
                 </View>    
 
             </View>
@@ -89,12 +137,26 @@ const styles = StyleSheet.create({
         paddingHorizontal:10,
         paddingVertical:5
     },
-    icon:{
-        width:20,
-        height:20,
+    iconContainer:{
+        width:50,
+        height:30,
         position:'absolute',
         right:10,
-        top:35
+        top:30,
+        // backgroundColor:'red',
+        alignItems:'center',
+        justifyContent:'center',
+        zIndex:1
+    },
+    icon:{
+        height:20,
+        width:20
+        // width:20,
+        // height:20,
+        // position:'absolute',
+        // right:0,
+        // top:35,
+        // backgroundColor:'red'
     }
 });
 
