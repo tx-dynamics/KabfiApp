@@ -20,6 +20,9 @@ const ResetPassword = (props) => {
                 var user = firebase.auth().currentUser;
                 user.updatePassword(newPassword).then(() => {
                 alert('Password Updated Successfully');
+                setOldPassword('');
+                setNewPassword('');
+                props.navigation.navigate('Main');
                 }).catch((error) => { 
                     alert(error.message);
                 });
@@ -46,8 +49,8 @@ const ResetPassword = (props) => {
                 </View>
 
                 <View style={styles.buttonsContainer}>
-                    <TextInput style={styles.emailInput} placeholder="Old Password" value={oldPassword} onChangeText={(e)=>setOldPassword(e)}  />
-                    <TextInput style={[styles.emailInput,{marginTop:10}]} placeholder="New Password" value={newPassword} onChangeText={(e)=>setNewPassword(e)}  />
+                    <TextInput style={styles.emailInput} placeholder="Old Password" value={oldPassword} onChangeText={(e)=>setOldPassword(e)} secureTextEntry={true}  />
+                    <TextInput style={[styles.emailInput,{marginTop:10}]} placeholder="New Password" value={newPassword} onChangeText={(e)=>setNewPassword(e)} secureTextEntry={true}  />
                     <TouchableOpacity style={styles.btn2} onPress={() => userResetPassword()}>
                         { 
                             loader ? 

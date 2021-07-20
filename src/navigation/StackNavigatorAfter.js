@@ -7,6 +7,7 @@ import Main from '../screens/home/Main';
 import Settings from '../screens/home/Settings';
 import EditProfile from '../screens/home/EditProfile';
 import ResetPassword from '../screens/home/ResetPassword';
+import NewsFeed from '../screens/NewsFeed';
 
 const Stack = createStackNavigator();
 
@@ -57,11 +58,12 @@ const StackNavigatorAfter = (props) => {
   }
 
   return (
-    <Stack.Navigator initialRouteName="Main">
+    <Stack.Navigator initialRouteName="NewsFeed">
         <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />        
         <Stack.Screen name="Settings" component={Settings} options={getOptions('settings')} />        
         <Stack.Screen name="EditProfile" component={EditProfile} options={({ navigation }) => getOptions('editProfile', navigation)} />          
         <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false }} />        
+        <Stack.Screen name="NewsFeed" component={NewsFeed} options={{ headerShown: false }} />        
     </Stack.Navigator>    
   );
 };

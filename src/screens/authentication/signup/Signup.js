@@ -5,6 +5,7 @@ import { AntDesign, Ionicons  } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { kabfiApp, firebase } from '../../../database/config';
 import styles from './styles';
+
 import 'firebase/firestore';
 
 
