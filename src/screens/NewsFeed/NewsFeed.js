@@ -12,10 +12,21 @@ import {
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
 import { Header } from "react-native-elements";
-import { user, more, postImage } from "../../../assets";
+import {
+  user,
+  more,
+  postImage,
+  reload,
+  comments,
+  favourite,
+} from "../../../assets";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import HeaderCenterComponent from "../../components/HeaderCenterComponent";
+import HeaderRight from "../../components/HeaderRight";
+import HeaderLeftComponent from "../../components/HeaderLeftComponent";
+import Main from "../home/Main";
 const NewsFeed = (props) => {
   const userPost = [
     {
@@ -70,12 +81,11 @@ const NewsFeed = (props) => {
   const [posts, setPosts] = useState(userPost);
   const renderPosts = ({ item, index }) => {
     return (
-      <TouchableOpacity
+      <View
         key={index}
-        activeOpacity={0.9}
+        // activeOpacity={0.9}
         style={styles.cardStyle}
       >
-          
         <View
           style={[
             {
@@ -137,9 +147,11 @@ const NewsFeed = (props) => {
         <View
           style={{
             flexDirection: "row",
-            width: "95%",
+            width: "90%",
             alignSelf: "center",
             justifyContent: "space-between",
+            marginTop: 15,
+            marginBottom: 15,
           }}
         >
           <View
@@ -147,6 +159,7 @@ const NewsFeed = (props) => {
               flexDirection: "row",
               width: "60%",
               justifyContent: "space-between",
+              alignItems: "center",
               //   backgroundColor: "tomato",
             }}
           >
@@ -158,18 +171,17 @@ const NewsFeed = (props) => {
             <Text style={styles.mediumText}>{item.text}</Text>
           </View>
           <View style={{ alignSelf: "center" }}>
-            <EvilIcons name="location" size={60} />
-            <Text>Location</Text>
+            <EvilIcons name="location" size={40} />
+            <Text style={{ fontSize: 14 }}>Location</Text>
           </View>
         </View>
 
         <View
           style={[
             {
-              //   justifyContent: "space-between",
               flexDirection: "row",
-              width: "95%",
-              alignSelf: "center",
+              width: "80%",
+              justifyContent: "space-between",
             },
           ]}
         >
@@ -177,26 +189,38 @@ const NewsFeed = (props) => {
             <TouchableOpacity>
               <Ionicons name="ios-heart" size={22} color="red" />
             </TouchableOpacity>
+            <Text style={styles.smallText}>{`${item.comments}  `}</Text>
           </View>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("CommentScreen")}
+            style={[styles.bottomContainer]}
+            onPress={() => props.navigation.navigate("CommentScreen")}
           >
-            <View style={[styles.bottomContainer]}>
-              <FontAwesome name="comments-o" size={22} color="gray" />
-            </View>
+            <Image
+              source={comments}
+              resizeMode="contain"
+              style={{ height: 17, width: 17 }}
+            />
+            <Text style={styles.smallText}>{` ${item.likes} `}</Text>
           </TouchableOpacity>
-          <View
-            style={[
-              styles.bottomContainer,
-              { flexDirection: "row", paddingHorizontal: 10 },
-            ]}
-          >
-            <Text style={styles.mediumText}>{`${item.comments}  `}</Text>
+          <TouchableOpacity style={[styles.bottomContainer]}>
+            <Image
+              source={reload}
+              resizeMode="contain"
+              style={{ height: 17, width: 17 }}
+            />
 
-            <Text style={styles.mediumText}>{` ${item.likes} `}</Text>
+            <Text style={styles.smallText}>{` ${item.likes} `}</Text>
+          </TouchableOpacity>
+          <View style={[styles.bottomContainer]}>
+            <Image
+              source={favourite}
+              resizeMode="contain"
+              style={{ height: 17, width: 17 }}
+            />
+            <Text style={styles.smallText}>{` ${item.likes} `}</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
 
@@ -204,13 +228,10 @@ const NewsFeed = (props) => {
     <View style={styles.main}>
       <Header
         backgroundColor="white"
-        leftComponent={{
-          icon: "menu",
-          color: "black",
-          iconStyle: { color: "black" },
-        }}
-        centerComponent={{ text: "News Feed", style: { color: "black" } }}
-        rightComponent={{ icon: "home", color: "black" }}
+        containerStyle={{ marginTop: 15 }}
+        leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
+        rightComponent={<HeaderRight />}
+        centerComponent={<HeaderCenterComponent name="News Feed" />}
       />
       <FlatList
         data={posts}

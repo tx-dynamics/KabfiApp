@@ -1,21 +1,26 @@
-import React from 'react';
-import {View, StyleSheet, Image, TouchableWithoutFeedback} from 'react-native';
-import {drawer, back} from '../assets';
-import theme from '../theme';
-import {Button} from 'react-native-elements';
+import React from "react";
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableWithoutFeedback,
+} from "react-native";
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Button } from "react-native-elements";
+import { menu } from "../../assets";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const HeaderLeftComponent = ({navigation, icon}) => {
+const HeaderLeftComponent = ({ navigation, icon }) => {
   return (
     <View>
-      {icon === 'back' ? (
+      {icon === "back" ? (
         <TouchableWithoutFeedback
           activeOpacity={0}
           style={styles.drawerIcon}
           onPress={() => {
             navigation.goBack();
-          }}>
+          }}
+        >
           {/* <Image
             source={back}
             // resizeMode={'contain'}
@@ -28,11 +33,12 @@ const HeaderLeftComponent = ({navigation, icon}) => {
           activeOpacity={0}
           style={styles.drawerIcon}
           onPress={() => {
-            navigation.openDrawer();
-          }}>
+            navigation.navigate("Main");
+          }}
+        >
           <Image
-            source={drawer}
-            resizeMode={'contain'}
+            source={menu}
+            resizeMode={"contain"}
             style={styles.drawerIcon}
           />
         </TouchableWithoutFeedback>
@@ -47,8 +53,8 @@ const styles = StyleSheet.create({
   drawerIcon: {
     height: 20,
     width: 20,
-    tintColor: 'black',
-    alignItems: 'center',
+    tintColor: "black",
+    alignItems: "center",
     // left: 3,
   },
 });
