@@ -27,6 +27,8 @@ import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import Main from "../home/Main";
+import openMap from 'react-native-open-maps';
+
 const NewsFeed = (props) => {
   const userPost = [
     {
@@ -40,6 +42,9 @@ const NewsFeed = (props) => {
       comments: "200",
       likes: "200",
       text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry.  `,
+      longitude: 74.30667283498094,
+      latitude: 31.454358342135126
+    
     },
     {
       id: 2,
@@ -64,6 +69,8 @@ const NewsFeed = (props) => {
       comments: "200",
       likes: "200",
       text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry.  `,
+      longitude: -119.538330,
+      latitude: 37.865101
     },
     {
       id: 4,
@@ -81,11 +88,7 @@ const NewsFeed = (props) => {
   const [posts, setPosts] = useState(userPost);
   const renderPosts = ({ item, index }) => {
     return (
-      <View
-        key={index}
-        // activeOpacity={0.9}
-        style={styles.cardStyle}
-      >
+      <View key={index} style={styles.cardStyle}>
         <View
           style={[
             {
@@ -154,10 +157,18 @@ const NewsFeed = (props) => {
             <Text style={{textAlign:'justify'}}>{item.text}</Text>
           </View>
           
-          <View style={{flex:2, alignSelf:'flex-end', alignItems:'center' }}>
-            <EvilIcons name="location" size={40} />
-            <Text style={{ fontSize: 14 }}>Location</Text>
-          </View>  
+            {
+            item.longitude ? 
+            <TouchableOpacity style={{flex:2, alignSelf:'flex-end', alignItems:'center' }} onPress={()=> openMap({ latitude: item.latitude, longitude: item.longitude }) }>          
+              <EvilIcons name="location" size={40} />
+              <Text style={{ fontSize: 14 }}>Location</Text>
+            </TouchableOpacity>
+            :
+            <View style={{flex:2, alignSelf:'flex-end', alignItems:'center' }}>          
+            </View>
+              
+            }
+          
         </View>
         
         
