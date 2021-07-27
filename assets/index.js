@@ -7,3 +7,7 @@ export const comments = require("./ProjectImages/users/comments.png");
 export const favourite = require("./ProjectImages/users/favourite.png");
 export const reload = require("./ProjectImages/users/reload.png");
 export const menu = require("./ProjectImages/users/menu.png");
+
+export const galleryImage = require("./ProjectImages/authentication/PhotoIcon.png");
+export const tickImage = require("./ProjectImages/authentication/tick.png");
+

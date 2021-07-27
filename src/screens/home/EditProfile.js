@@ -119,7 +119,14 @@ const EditProfile = (props) => {
 
                 <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Phone Number</Text>
-                    <TextInput value={mobileNo} onChangeText={(e)=>setMobileNo(e)} style={styles.textField}/>
+                    <TextInput 
+                        value={mobileNo} 
+                        style={styles.textField} 
+                        onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ''))}
+                        keyboardType="number-pad"
+                        placeholder="7711111111"
+                        maxLength={10}
+                    />
                 </View> 
 
                 <View style={styles.fieldContainer}>

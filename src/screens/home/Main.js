@@ -30,10 +30,10 @@ const Main = (props) => {
                         </View>   
                         <View style={styles.userInfo2}>
                             <Text style={styles.userName}>JohnThompson</Text>
-                            <View style={styles.userInfo2SubContainer}>
+                            {/* <View style={styles.userInfo2SubContainer}>
                                 <Text style={styles.info2Text}>4.92</Text>
                                 <FontAwesome name="star" style={styles.star} />
-                            </View>
+                            </View> */}
                         </View>   
                         <View style={styles.userInfo3}>
                             <Text style={styles.info3Text}>Member since 2021</Text>
@@ -77,11 +77,11 @@ const Main = (props) => {
                             <Text style={styles.listText}>Help</Text>                    
                         </TouchableOpacity>  
 
-                        <TouchableOpacity style={styles.listItem}>
+                        <TouchableOpacity style={styles.listItem} onPress={ () => props.navigation.navigate('Legal') }>
                             <Image source={require('../../../assets/ProjectImages/users/profile/legal.png')} style={styles.listIconImage} />
                             <Text style={styles.listText}>Legal</Text>                    
                         </TouchableOpacity>  
-                        
+                        <Text></Text>
                     </View>  
                 </ScrollView>    
                 </View>
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     },
     userInfo2:{
         width:'35%',
-        paddingVertical:2,
+        paddingVertical:12,
         paddingHorizontal:5
     },
     userName:{
@@ -159,14 +159,16 @@ const styles = StyleSheet.create({
     },  
     userInfo3:{
         width:'45%',
-        padding:4
+        paddingHorizontal:4,
+        paddingVertical:14
     },
     info3Text:{
         color:'#464646',
         fontSize:12
     },
     listContainer:{
-        marginTop:40,
+        marginTop:20,
+        // backgroundColor:'red',
         width:'100%'
     },  
     listItem:{        

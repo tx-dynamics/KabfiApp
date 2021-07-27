@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: theme.colors.lightGray,
     borderRadius: 10,
+    backgroundColor:'#FBFBFB'
   },
 });
 export default styles;

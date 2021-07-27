@@ -62,12 +62,12 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderColor:'#E6E6E6',
         paddingHorizontal:20,
-        paddingVertical:10,
+        paddingVertical:9,
         fontSize:13
     },
     countryCode:{
         position:'absolute', 
-        top:39, left:10
+        top:38.5, left:10
     },
     uploadImageFieldsContainer:{
         width:'48.5%'        
@@ -93,7 +93,8 @@ const styles = StyleSheet.create({
         right:13
     },
     submitText:{
-        color:'#FCD291'
+        // color:'#FCD291'
+        color:'#FCB040'
     },
     loginBtn:{
         marginTop:40,
@@ -101,7 +102,8 @@ const styles = StyleSheet.create({
         alignItems:'center',
         padding:12,
         width:'95%',
-        alignSelf:'center'
+        alignSelf:'center',
+        borderRadius:5
     },   
     eyeIcon:{
         fontSize:24,

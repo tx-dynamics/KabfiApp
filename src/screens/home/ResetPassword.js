@@ -1,11 +1,27 @@
 import React,{useState} from 'react'
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
 // import { kabfiApp, firebase } from '../../database/config';
+import { Ionicons } from "@expo/vector-icons";
 import firebase from 'firebase';
 const ResetPassword = (props) => {
     const[oldPassword, setOldPassword] = useState('');
     const[newPassword, setNewPassword] = useState('');
-    const [loader, setLoader] = useState(false);    
+    const [loader, setLoader] = useState(false);
+    
+    const [oldpasswordHidden, setOldPasswordHidden] = useState(true);
+    const [newpasswordHidden, setNewPasswordHidden] = useState(true);
+
+    function oldPasswordVisibility() {
+        oldpasswordHidden === true
+          ? setOldPasswordHidden(false)
+          : setOldPasswordHidden(true);
+      }
+
+      function newPasswordVisibility() {
+        newpasswordHidden === true
+          ? setNewPasswordHidden(false)
+          : setNewPasswordHidden(true);
+      }
 
     function reauthenticate(oldPassword) {
         var user = firebase.auth().currentUser;
@@ -49,8 +65,22 @@ const ResetPassword = (props) => {
                 </View>
 
                 <View style={styles.buttonsContainer}>
-                    <TextInput style={styles.emailInput} placeholder="Old Password" value={oldPassword} onChangeText={(e)=>setOldPassword(e)} secureTextEntry={true}  />
-                    <TextInput style={[styles.emailInput,{marginTop:10}]} placeholder="New Password" value={newPassword} onChangeText={(e)=>setNewPassword(e)} secureTextEntry={true}  />
+                    
+                    <View>
+                        <TouchableOpacity style={styles.eyeIconContainer} onPress={ oldPasswordVisibility } >
+                            <Ionicons name={oldpasswordHidden ? 'eye' : 'eye-off' } style={styles.eyeIcon}  />
+                        </TouchableOpacity>
+                        <TextInput style={styles.emailInput} placeholder="Old Password" value={oldPassword} onChangeText={(e)=>setOldPassword(e)} secureTextEntry={oldpasswordHidden}  />
+                    </View>
+                    
+                    
+                    <View>
+                        <TouchableOpacity style={styles.eyeIconContainer} onPress={ newPasswordVisibility } >
+                            <Ionicons name={newpasswordHidden ? 'eye' : 'eye-off' } style={styles.eyeIcon}  />
+                        </TouchableOpacity>
+                        <TextInput style={[styles.emailInput,{marginTop:10}]} placeholder="New Password" value={newPassword} onChangeText={(e)=>setNewPassword(e)} secureTextEntry={newpasswordHidden}  />
+                    </View>
+                    
                     <TouchableOpacity style={styles.btn2} onPress={() => userResetPassword()}>
                         { 
                             loader ? 
@@ -121,6 +151,20 @@ const styles = StyleSheet.create({
     },
     btn2Text:{
         color:'white'
+    },
+    eyeIcon:{
+        fontSize:24,
+        color:'#E6E6E6',        
+    },
+    
+    eyeIconContainer:{
+        position:'absolute',
+        top:13,
+        right:13,
+        width:35,
+        height:25,
+        alignItems:'center',
+        zIndex:1
     }
 });
 

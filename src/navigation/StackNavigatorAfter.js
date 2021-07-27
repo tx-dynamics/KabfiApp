@@ -6,8 +6,11 @@ import Main from "../screens/home/Main";
 import Settings from "../screens/home/Settings";
 import EditProfile from "../screens/home/EditProfile";
 import ResetPassword from "../screens/home/ResetPassword";
+import Legal from "../screens/home/Legal";
 import NewsFeed from "../screens/NewsFeed";
 import CommentScreen from "../screens/CommentScreen/CommentScreen";
+import PrivacyPolicy from "../screens/extra/PrivacyPolicy";
+import TermsAndConditions from "../screens/extra/TermsAndConditions";
 
 const Stack = createStackNavigator();
 
@@ -89,6 +92,15 @@ const StackNavigatorAfter = (props) => {
         component={CommentScreen}
         options={{ headerShown: false }}
       />
+       <Stack.Screen
+        name="Legal"
+        component={Legal}
+        options={({ headerShown: false })}
+      />
+      
+      <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} options={{ headerShown: true, title:'Terms & Conditions', headerTitleStyle:{alignSelf:'center' } }} />        
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} options={{ headerShown: true, title:'Privacy Policy', headerTitleStyle:{alignSelf:'center' } }} />        
+
     </Stack.Navigator>
   );
 };

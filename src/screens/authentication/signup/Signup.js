@@ -23,10 +23,13 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Alert
 } from "react-native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
+import {galleryImage, tickImage} from "../../../../assets";
+
 
 
 const Signup = (props) => {
@@ -37,35 +40,94 @@ const Signup = (props) => {
   const [password, setPassword] = useState("");
 
   const [badgeNumberImage, setBadgeNumberImage] = useState(null);
-  const [taxiLicenseImage, setTaxiLicenseImage] = useState(true);
+  const [taxiLicenseImage, setTaxiLicenseImage] = useState(null);
   const [passwordHidden, setPasswordHidden] = useState(true);
 
   const [loader, setLoader] = useState(false);
 
-  const pickBadgeNumberImage = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  function AlertBadgeNumberImage(){
+    Alert.alert(
+      'Choose from the options',
+      '',
+      [
+        {
+          text: 'Open Camera',
+          onPress: () => pickBadgeNumberImage(1)
+        },
+        {
+          text: 'Open Gallery',
+          onPress: () => pickBadgeNumberImage(2),
+          style: 'cancel'
+        }
+      ],
+      { cancelable: true }
+    );
+  }
+
+  function AlertTaxiLicenseImage(){
+    Alert.alert(
+      'Choose from the options',
+      '',
+      [
+        {
+          text: 'Open Camera',
+          onPress: () => pickTaxiLicenseImage(1)
+        },
+        {
+          text: 'Open Gallery',
+          onPress: () => pickTaxiLicenseImage(2),
+          style: 'cancel'
+        }
+      ],
+      { cancelable: true }
+    );
+  }
+
+  const pickBadgeNumberImage = async (val) => {
+    let result = "";
+    if(val === 1){
+      result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      }); 
+    }
+    else if(val === 2){
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      }); 
+    }
+    
 
     if (!result.cancelled) {
-      console.log(result);
+      // console.log(result);
       setBadgeNumberImage(result);
-      alert("Badge Number Selected");
+      // alert("Badge Number Selected");
     }
   };
 
-  const pickTaxiLicenseImage = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  const pickTaxiLicenseImage = async (val) => {
+    let result = "";
+    if(val === 1){
+      result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      }); 
+    }
+    else if(val === 2){
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      }); 
+    }
 
     if (!result.cancelled) {
       setTaxiLicenseImage(result);
-      alert("Taxi License Selected");
+      // alert("Taxi License Selected");
     }
   };
 
@@ -182,11 +244,7 @@ const Signup = (props) => {
   return (
     <ScrollView style={styles.root}>
       <View style={styles.contentArea}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require("../../../../assets/ProjectImages/logo-name.png")}
-            style={styles.logoImage}
-          />
+        <View style={styles.logoContainer}>          
           <Text style={styles.createAccountText}>CREATE AN ACCOUNT</Text>
         </View>
 
@@ -210,14 +268,17 @@ const Signup = (props) => {
           </View>
 
           <View style={styles.formField}>
-            <Text style={styles.label}>Mobile Country</Text>
+            <Text style={styles.label}>Mobile</Text>
             <Text style={styles.countryCode}>+44</Text>
             <View style={styles.textFieldFullContainer}>
               <TextInput
                 style={[styles.textFieldFull, { paddingHorizontal: 55 }]}
                 value={mobileNo}
-                onChangeText={(e) => setMobileNo(e)}
-                placeholder="777 777-777"
+                onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ''))}
+                keyboardType="number-pad"
+                placeholder="7711111111"
+                maxLength={10}
+                
               />
             </View>
           </View>
@@ -239,10 +300,11 @@ const Signup = (props) => {
               <View style={styles.uploadImageFieldsContainer}>
                 <Text style={styles.uploadImageFieldLabel}>Badge Number</Text>
                 <Image
-                  source={require("../../../../assets/ProjectImages/authentication/PhotoIcon.png")}
+                  source={!badgeNumberImage ? galleryImage : tickImage}
                   style={styles.uploadIMageIcon}
                 />
-                <TouchableOpacity onPress={pickBadgeNumberImage}>
+                
+                <TouchableOpacity onPress={AlertBadgeNumberImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
@@ -254,10 +316,10 @@ const Signup = (props) => {
                 <Text style={styles.uploadImageFieldLabel}>Taxi License</Text>
 
                 <Image
-                  source={require("../../../../assets/ProjectImages/authentication/PhotoIcon.png")}
+                  source={!taxiLicenseImage ? galleryImage : tickImage}
                   style={styles.uploadIMageIcon}
                 />
-                <TouchableOpacity onPress={pickTaxiLicenseImage}>
+                <TouchableOpacity onPress={AlertTaxiLicenseImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
@@ -277,7 +339,7 @@ const Signup = (props) => {
                 style={styles.eyeIconContainer}
                 onPress={passwordVisibility}
               >
-                <Ionicons name="eye" style={styles.eyeIcon} />
+                <Ionicons name={passwordHidden? 'eye' : 'eye-off' } style={styles.eyeIcon} />
               </TouchableOpacity>
 
               <TextInput
@@ -325,7 +387,13 @@ const Signup = (props) => {
             </TouchableOpacity>
           </View>
 
-          <Text></Text>
+          <TouchableOpacity
+            style={{alignItems:'center', marginTop:10}}
+            onPress={() => props.navigation.navigate("Signin")}
+          >
+            <Text style={{fontSize:12, marginBottom:20}}>Already have an account?</Text>
+          </TouchableOpacity>
+
         </View>
       </View>
     </ScrollView>

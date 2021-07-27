@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "KabfiApp",
-    "slug": "KabfiApp",
+    "name": "Kabfi",
+    "slug": "Kabfi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/custom-app.png",
     "splash": {
-      "image": "./assets/my-splash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

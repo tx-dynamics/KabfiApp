@@ -144,38 +144,23 @@ const NewsFeed = (props) => {
             ]}
           />
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            width: "90%",
-            alignSelf: "center",
-            justifyContent: "space-between",
-            marginTop: 15,
-            marginBottom: 15,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              width: "60%",
-              justifyContent: "space-between",
-              alignItems: "center",
-              //   backgroundColor: "tomato",
-            }}
-          >
-            <Image
-              style={styles.questionImage}
-              resizeMode={"contain"}
-              source={item.postImg}
-            />
-            <Text style={styles.mediumText}>{item.text}</Text>
+          
+        <View style={{flexDirection:'row',paddingLeft:10, paddingVertical:20}}>
+          <View style={{flex:3}}>
+            <Image style={{width:80, height:80, alignSelf:'flex-end'}} source={item.postImg} />
           </View>
-          <View style={{ alignSelf: "center" }}>
+          
+          <View style={{flex:5, paddingHorizontal:10}}>
+            <Text style={{textAlign:'justify'}}>{item.text}</Text>
+          </View>
+          
+          <View style={{flex:2, alignSelf:'flex-end', alignItems:'center' }}>
             <EvilIcons name="location" size={40} />
             <Text style={{ fontSize: 14 }}>Location</Text>
-          </View>
+          </View>  
         </View>
-
+        
+        
         <View
           style={[
             {
@@ -202,15 +187,7 @@ const NewsFeed = (props) => {
             />
             <Text style={styles.smallText}>{` ${item.likes} `}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.bottomContainer]}>
-            <Image
-              source={reload}
-              resizeMode="contain"
-              style={{ height: 17, width: 17 }}
-            />
-
-            <Text style={styles.smallText}>{` ${item.likes} `}</Text>
-          </TouchableOpacity>
+         
           <View style={[styles.bottomContainer]}>
             <Image
               source={favourite}
