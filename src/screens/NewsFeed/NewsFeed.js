@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import firebase from "firebase";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -19,6 +20,8 @@ import {
   reload,
   comments,
   favourite,
+  heartImage,
+  locationImage
 } from "../../../assets";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
@@ -28,64 +31,43 @@ import HeaderRight from "../../components/HeaderRight";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import Main from "../home/Main";
 import openMap from 'react-native-open-maps';
-
+// if (!firebase.apps.length) {
+//   firebase.initializeApp({
+//     apiKey: "AIzaSyASonZ6DlS2cqTonbPSiq8RboZFv4bYKDE",
+//     authDomain: "kabfiapp.firebaseapp.com",
+//     databaseURL: "https://kabfiapp-default-rtdb.firebaseio.com",
+//     projectId: "kabfiapp",
+//     storageBucket: "kabfiapp.appspot.com",
+//     messagingSenderId: "676638158064",
+//     appId: "1:676638158064:web:e01ff8bc3a12a378eee635",
+//   });
+// }
+require("firebase/database");
 const NewsFeed = (props) => {
-  const userPost = [
-    {
-      id: 0,
-      image: user,
-      name: "Zaid",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "49s",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry.  `,
-      longitude: 74.30667283498094,
-      latitude: 31.454358342135126
+  
+  const [posts, setPosts] = useState(null);
+  
+  useEffect( () => {
     
-    },
-    {
-      id: 2,
-      image: user,
-      name: "Zaid",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "49s",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry.  `,
-    },
-    {
-      id: 3,
-      image: user,
-      name: "Zaid",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "49s",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry.  `,
-      longitude: -119.538330,
-      latitude: 37.865101
-    },
-    {
-      id: 4,
-      image: user,
-      name: "Zaid",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "49s",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry.  `,
-    },
-  ];
-  const [posts, setPosts] = useState(userPost);
+    async function fetchAllPosts(){
+      let arr = [];   
+      const userPost = await firebase.database().ref("posts/");
+      userPost.on("value", async (allPosts) => {
+        if (allPosts.val()) {
+          let posts = await allPosts.val();
+          
+          for (let x in posts) {
+            arr.push(posts[x]);
+          }
+          setPosts(arr);
+        }
+      });
+    }
+
+    fetchAllPosts();
+      
+  }, []);
+
   const renderPosts = ({ item, index }) => {
     return (
       <View key={index} style={styles.cardStyle}>
@@ -100,7 +82,7 @@ const NewsFeed = (props) => {
           ]}
         >
           <View style={[{ flexDirection: "row" }]}>
-            <Image source={item.image} style={styles.userImgStyle} />
+            <Image source={{uri:item.image}} style={styles.userImgStyle} />
             <Text
               numberOfLines={3}
               style={[
@@ -112,7 +94,7 @@ const NewsFeed = (props) => {
               ]}
             >
               <Text style={[styles.largeText, { color: "black" }]}>
-                {"JohnThompson"}
+                {item.name}
               </Text>
               <Text
                 style={[
@@ -123,7 +105,7 @@ const NewsFeed = (props) => {
                     color: "black",
                   },
                 ]}
-              >{`\n@JohnThompson.${item.postedtime}`}</Text>
+              >{`\n@${item.name}.${item.postedtime}`}</Text>
             </Text>
           </View>
           <OptionsMenu
@@ -150,7 +132,7 @@ const NewsFeed = (props) => {
           
         <View style={{flexDirection:'row',paddingLeft:10, paddingVertical:20}}>
           <View style={{flex:3}}>
-            <Image style={{width:80, height:80, alignSelf:'flex-end'}} source={item.postImg} />
+            <Image style={{width:80, height:80, alignSelf:'flex-end'}} source={{uri:item.postImg}} />
           </View>
           
           <View style={{flex:5, paddingHorizontal:10}}>
@@ -159,8 +141,10 @@ const NewsFeed = (props) => {
           
             {
             item.longitude ? 
-            <TouchableOpacity style={{flex:2, alignSelf:'flex-end', alignItems:'center' }} onPress={()=> openMap({ latitude: item.latitude, longitude: item.longitude }) }>          
-              <EvilIcons name="location" size={40} />
+            <TouchableOpacity style={{flex:2, alignSelf:'flex-end', alignItems:'center', zIndex:1 }} onPress={()=> props.navigation.push('Map',{ latitude: item.latitude, longitude: item.longitude, markers: item.markers }) }>          
+            
+              {/* <EvilIcons name="location" size={40} /> */}
+              <Image source={locationImage} style={{width:20,height:28}} />
               <Text style={{ fontSize: 14 }}>Location</Text>
             </TouchableOpacity>
             :
@@ -183,7 +167,11 @@ const NewsFeed = (props) => {
         >
           <View style={[styles.bottomContainer]}>
             <TouchableOpacity>
-              <Ionicons name="ios-heart" size={22} color="red" />
+              <Image
+                source={heartImage}
+                resizeMode="contain"
+                style={{ height: 17, width: 17 }}
+              />
             </TouchableOpacity>
             <Text style={styles.smallText}>{`${item.comments}  `}</Text>
           </View>
@@ -214,6 +202,8 @@ const NewsFeed = (props) => {
 
   return (
     <View style={styles.main}>
+      {console.log(posts)}
+    
       <Header
         backgroundColor="white"
         containerStyle={{ marginTop: 15 }}
@@ -223,24 +213,9 @@ const NewsFeed = (props) => {
       />
       <FlatList
         data={posts}
-        // extraData={po}
         renderItem={renderPosts}
-        // refreshing={this.state.isRefreshing}
-        // onRefresh={this.onRefresh}
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
-        // ListFooterComponent={this.renderFooter}
-        // onEndReachedThreshold={0.01}
-        // bounces={Platform.OS === 'ios' ? true : false}
-        // onMomentumScrollBegin={() => {
-        //   this.onEndReachedCalledDuringMomentum = false;
-        // }}
-        // onEndReached={({distanceFromEnd}) => {
-        //   if (!this.onEndReachedCalledDuringMomentum) {
-        //     // this.onLoadMore();
-        //     this.onEndReachedCalledDuringMomentum = true;
-        //   }
-        // }}
       />
     </View>
   );

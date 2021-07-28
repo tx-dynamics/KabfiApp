@@ -11,6 +11,7 @@ import NewsFeed from "../screens/NewsFeed";
 import CommentScreen from "../screens/CommentScreen/CommentScreen";
 import PrivacyPolicy from "../screens/extra/PrivacyPolicy";
 import TermsAndConditions from "../screens/extra/TermsAndConditions";
+import Map from "../screens/home/Map";
 
 const Stack = createStackNavigator();
 
@@ -95,6 +96,12 @@ const StackNavigatorAfter = (props) => {
        <Stack.Screen
         name="Legal"
         component={Legal}
+        options={({ headerShown: false })}
+      />
+
+      <Stack.Screen
+        name="Map"
+        component={Map}
         options={({ headerShown: false })}
       />
       

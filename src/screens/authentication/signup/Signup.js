@@ -139,6 +139,7 @@ const Signup = (props) => {
 
   async function userSignup() {
     let success = true;
+    
     if (
       firstName !== "" &&
       lastName !== "" &&
@@ -150,6 +151,10 @@ const Signup = (props) => {
     ) {
       if (!/^[0-9]+$/.test(mobileNo)) {
         alert("Phone number should be numeric only.");
+        return false;
+      }
+      if(password.length < 8){
+        alert('Password Must be atleast 8 characters')
         return false;
       }
 

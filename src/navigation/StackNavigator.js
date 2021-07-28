@@ -10,6 +10,7 @@ import SendEmail from '../screens/authentication/SendEmail';
 import TermsAndConditions from '../screens/extra/TermsAndConditions';
 import PrivacyPolicy from '../screens/extra/PrivacyPolicy';
 
+import Verify from '../screens/authentication/Verify';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ const StackNavigator = (props) => {
         <Stack.Screen name="TermsAndConditions" component={TermsAndConditions} options={{ headerShown: true, title:'Terms & Conditions', headerTitleStyle:{alignSelf:'center' } }} />        
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} options={{ headerShown: true, title:'Privacy Policy', headerTitleStyle:{alignSelf:'center' } }} />        
 
+        <Stack.Screen name="Verify" component={Verify} options={{ headerShown: false }} />        
     </Stack.Navigator>    
   );
 };
