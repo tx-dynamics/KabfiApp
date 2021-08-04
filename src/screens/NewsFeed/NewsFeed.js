@@ -46,18 +46,22 @@ require("firebase/database");
 const NewsFeed = (props) => {
   
   const [posts, setPosts] = useState(null);
+  const [dataUpdated, setDataUpdated] = useState(false);
+
   
   useEffect( () => {
-    
+    // setDataUpdated(!dataUpdated);    
     async function fetchAllPosts(){
       let arr = [];   
-      const userPost = await firebase.database().ref("posts/");
+      const userPost = await firebase.database().ref("user_posts");
+      
       userPost.on("value", async (allPosts) => {
         if (allPosts.val()) {
           let posts = await allPosts.val();
           
           for (let x in posts) {
             arr.push(posts[x]);
+            
           }
           setPosts(arr);
         }
@@ -67,6 +71,23 @@ const NewsFeed = (props) => {
     fetchAllPosts();
       
   }, []);
+
+  async function likeHandler(post_id){
+    var likes_count = 0;
+    const data = await firebase.database().ref('user_posts/'+post_id);
+    await data.on('value',async userdata=>{
+      likes_count = await userdata.val().likes_count;
+    });
+    console.log('like 1 = ' + likes_count);
+    let Details = {
+      likes_count: parseInt(likes_count) + 1,        
+    };
+    console.log('like 2 = ' + (parseInt(likes_count) + 1));
+    await firebase.database().ref('user_posts/'+post_id).update(Details); 
+    setDataUpdated(!dataUpdated);    
+    // alert('done = ' + dataUpdated);
+    // fetchAllPosts();
+  }
 
   const renderPosts = ({ item, index }) => {
     return (
@@ -82,7 +103,7 @@ const NewsFeed = (props) => {
           ]}
         >
           <View style={[{ flexDirection: "row" }]}>
-            <Image source={{uri:item.image}} style={styles.userImgStyle} />
+            <Image source={{uri:item.user_image}} style={styles.userImgStyle} />
             <Text
               numberOfLines={3}
               style={[
@@ -94,7 +115,7 @@ const NewsFeed = (props) => {
               ]}
             >
               <Text style={[styles.largeText, { color: "black" }]}>
-                {item.name}
+                {item.userName}
               </Text>
               <Text
                 style={[
@@ -105,7 +126,7 @@ const NewsFeed = (props) => {
                     color: "black",
                   },
                 ]}
-              >{`\n@${item.name}.${item.postedtime}`}</Text>
+              >{`\n@${item.userName} .23s`}</Text>
             </Text>
           </View>
           <OptionsMenu
@@ -132,11 +153,11 @@ const NewsFeed = (props) => {
           
         <View style={{flexDirection:'row',paddingLeft:10, paddingVertical:20}}>
           <View style={{flex:3}}>
-            <Image style={{width:80, height:80, alignSelf:'flex-end'}} source={{uri:item.postImg}} />
+            <Image style={{width:80, height:80, alignSelf:'flex-end'}} source={{uri:item.post_image}} />
           </View>
           
           <View style={{flex:5, paddingHorizontal:10}}>
-            <Text style={{textAlign:'justify'}}>{item.text}</Text>
+            <Text style={{textAlign:'justify'}}>{item.post_text}</Text>
           </View>
           
             {
@@ -166,14 +187,18 @@ const NewsFeed = (props) => {
           ]}
         >
           <View style={[styles.bottomContainer]}>
-            <TouchableOpacity>
+            
+            <TouchableOpacity style={{flexDirection:'row'}} onPress={()=>likeHandler(item.post_id)} >
               <Image
                 source={heartImage}
                 resizeMode="contain"
                 style={{ height: 17, width: 17 }}
-              />
+              />              
+              <Text style={styles.smallText}>{` ${item.likes_count} `}</Text>
+              {/* <Text style={styles.smallText}>{` 200 `}</Text> */}
+
             </TouchableOpacity>
-            <Text style={styles.smallText}>{`${item.comments}  `}</Text>
+            
           </View>
           <TouchableOpacity
             style={[styles.bottomContainer]}
@@ -184,7 +209,8 @@ const NewsFeed = (props) => {
               resizeMode="contain"
               style={{ height: 17, width: 17 }}
             />
-            <Text style={styles.smallText}>{` ${item.likes} `}</Text>
+            {/* <Text style={styles.smallText}>{` ${item.likes_count} `}</Text> */}
+            <Text style={styles.smallText}>{` 300 `}</Text>
           </TouchableOpacity>
          
           <View style={[styles.bottomContainer]}>
@@ -193,7 +219,7 @@ const NewsFeed = (props) => {
               resizeMode="contain"
               style={{ height: 17, width: 17 }}
             />
-            <Text style={styles.smallText}>{` ${item.likes} `}</Text>
+            <Text style={styles.smallText}>{` 300 `}</Text>
           </View>
         </View>
       </View>
@@ -202,21 +228,26 @@ const NewsFeed = (props) => {
 
   return (
     <View style={styles.main}>
-      {console.log(posts)}
-    
+
       <Header
         backgroundColor="white"
         containerStyle={{ marginTop: 15 }}
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
-        rightComponent={<HeaderRight />}
+        rightComponent={<HeaderRight navigation={props.navigation} />}
         centerComponent={<HeaderCenterComponent name="News Feed" />}
       />
-      <FlatList
-        data={posts}
-        renderItem={renderPosts}
-        keyExtractor={(item, index) => item + index.toString()}
-        showsVerticalScrollIndicator={false}
-      />
+      <View>
+        <FlatList
+          data={posts}
+          renderItem={renderPosts}
+
+          // keyExtractor={(item) => item.post_id}
+          keyExtractor={(item, index) => item + index.toString()}
+          // keyExtractor={({post_text}) => post_text }
+          showsVerticalScrollIndicator={false}
+          // extraData={posts}
+        />
+      </View>
     </View>
   );
 };

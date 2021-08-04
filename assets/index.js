@@ -16,4 +16,8 @@ export const bigKeyImage = require("./ProjectImages/big-key.png");
 export const returnImage = require("./ProjectImages/return.png");
 export const locationImage = require("./ProjectImages/locationImage.png");
 export const heartImage = require("./ProjectImages/heartImage.png");
+export const voiceImage = require("./ProjectImages/voice.png");
+export const smallLocation = require("./ProjectImages/smallLocation.png");
+export const smallGallery = require("./ProjectImages/smallGallery.png");
+
 

@@ -12,6 +12,7 @@ import CommentScreen from "../screens/CommentScreen/CommentScreen";
 import PrivacyPolicy from "../screens/extra/PrivacyPolicy";
 import TermsAndConditions from "../screens/extra/TermsAndConditions";
 import Map from "../screens/home/Map";
+import CreatePost from "../screens/home/CreatePost";
 
 const Stack = createStackNavigator();
 
@@ -62,7 +63,7 @@ const StackNavigatorAfter = (props) => {
   // }
 
   return (
-    <Stack.Navigator initialRouteName="NewsFeed">
+    <Stack.Navigator initialRouteName="CreatePost">
       <Stack.Screen
         name="Main"
         component={Main}
@@ -102,6 +103,12 @@ const StackNavigatorAfter = (props) => {
       <Stack.Screen
         name="Map"
         component={Map}
+        options={({ headerShown: false })}
+      />
+
+      <Stack.Screen
+        name="CreatePost"
+        component={CreatePost}
         options={({ headerShown: false })}
       />
       
