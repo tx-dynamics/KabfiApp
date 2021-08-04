@@ -39,12 +39,17 @@ const Signin = (props) => {
   const [loader, setLoader] = useState(false);
 
   const { setIsLoggedIn } = useLogin();
+  // useEffect(() => {
+  //   // setDataUpdated(!dataUpdated);
+  //   if (firebase.auth().currentUser) {
+  //     setIsLoggedIn(true);
+  //   }
+  // }, []);
 
-  
   function passwordVisibility() {
-      passwordHidden === true
-        ? setPasswordHidden(false)
-        : setPasswordHidden(true);
+    passwordHidden === true
+      ? setPasswordHidden(false)
+      : setPasswordHidden(true);
   }
 
   function userSignin() {
@@ -72,9 +77,8 @@ const Signin = (props) => {
             style={styles.logoImage}
           />
         </View>
-       
+
         <View style={styles.loginForm}>
-         
           <View style={[styles.textFieldContainer, { marginTop: 20 }]}>
             <Image
               source={require("../../../assets/ProjectImages/authentication/mail-icon.png")}
@@ -94,8 +98,14 @@ const Signin = (props) => {
               style={styles.fieldIcon}
             />
 
-            <TouchableOpacity style={styles.eyeIconContainer} onPress={ passwordVisibility } >
-                <Ionicons name={passwordHidden? 'eye' : 'eye-off' } style={styles.eyeIcon}  />
+            <TouchableOpacity
+              style={styles.eyeIconContainer}
+              onPress={passwordVisibility}
+            >
+              <Ionicons
+                name={passwordHidden ? "eye" : "eye-off"}
+                style={styles.eyeIcon}
+              />
             </TouchableOpacity>
 
             <TextInput
@@ -147,16 +157,15 @@ const Signin = (props) => {
             style={styles.forgotPasswordContainer}
             onPress={() => props.navigation.navigate("ForgotPassword")}
           >
-            <Text style={styles.forgotPasswordText}>Forgot Password ?</Text>            
+            <Text style={styles.forgotPasswordText}>Forgot Password ?</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={{alignItems:'center', marginTop:10}}
+            style={{ alignItems: "center", marginTop: 10 }}
             onPress={() => props.navigation.navigate("Signup")}
           >
             <Text style={styles.forgotPasswordText}>Dont have an account?</Text>
           </TouchableOpacity>
-
         </View>
       </View>
     </SafeAreaView>
@@ -209,7 +218,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 12,
-    borderRadius:5
+    borderRadius: 5,
   },
   socialIconsContainer: {
     flexDirection: "row",
@@ -236,19 +245,19 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     fontSize: 12,
   },
-  eyeIcon:{
-    fontSize:24,
-    color:'#E6E6E6',        
+  eyeIcon: {
+    fontSize: 24,
+    color: "#E6E6E6",
   },
-  eyeIconContainer:{
-    position:'absolute',
-    top:13,
-    right:13,
-    width:35,
-    height:25,
-    alignItems:'center',
-    zIndex:1
-  }
+  eyeIconContainer: {
+    position: "absolute",
+    top: 13,
+    right: 13,
+    width: 35,
+    height: 25,
+    alignItems: "center",
+    zIndex: 1,
+  },
 });
 
 export default Signin;

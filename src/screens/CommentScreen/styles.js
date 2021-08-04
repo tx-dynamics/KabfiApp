@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   mediumText: {
     // fontFamily: Fonts.RobotoRegular,
     fontSize: 12,
-    alignSelf: "center",
+    // alignSelf: "center",
   },
   largeText: {
     // fontFamily: Fonts.RobotoMedium,

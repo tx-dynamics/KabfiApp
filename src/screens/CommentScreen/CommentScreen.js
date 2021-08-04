@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,77 +16,46 @@ import {
   comments,
   favourite,
 } from "../../../assets";
+import { useIsFocused } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./styles";
 import { Header } from "react-native-elements";
 import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
-const CommentScreen = (props) => {
-  const data = [
-    {
-      id: 0,
-      image: user,
-      name: "Mati",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "6 mins ago",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, `,
-    },
-    {
-      id: 2,
-      image: user,
-      name: "Mati",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "6 mins ago",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, `,
-    },
-    {
-      id: 3,
-      image: user,
-      name: "Mati",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "6 mins ago",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, `,
-    },
-    {
-      id: 4,
-      image: user,
-      name: "Mati",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "6 mins ago",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, `,
-    },
-    {
-      id: 5,
-      image: user,
-      name: "Mati",
-      from: "Murree",
-      to: "Kashmir",
-      postedtime: "6 mins ago",
-      postImg: postImage,
-      comments: "200",
-      likes: "200",
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, `,
-    },
-  ];
+import firebase from "firebase";
+const CommentScreen = ({ route, navigation }) => {
+  const isFocused = useIsFocused();
+  const [id, setId] = useState("");
   const [cmnt, setCmnt] = useState("");
-  const [posts, setPosts] = useState(data);
+  const [posts, setPosts] = useState(null);
+  const [name, setName] = useState("");
+  const [img, setImg] = useState("");
+  useEffect(() => {
+    // setDataUpdated(!dataUpdated);
+    const id = route.params.id;
+    if (id) {
+      setId(id);
+    }
+    getData();
+    console.log("id==", id);
+  }, [isFocused]);
+  async function getData() {
+    var myRef = firebase.database().ref("comments/" + id);
+    var li = [];
+    myRef.on("value", (data) => {
+      data.forEach((child) => {
+        li.push({
+          id: child.key,
+          image: child.val().image,
+          name: child.val().name,
+          text: child.val().comments,
+        });
+      });
+      console.log("LI==>", li);
+      setPosts(li);
+    });
+  }
   const renderPosts = ({ item, index }) => {
     return (
       <TouchableOpacity
@@ -94,34 +63,11 @@ const CommentScreen = (props) => {
         activeOpacity={0.9}
         style={styles.cardStyle}
       >
-        {/* <View style={[{ alignSelf: 'flex-end' }]}>
-                    <OptionsMenu
-                        button={more}
-                        buttonStyle={{
-                            width: 30,
-                            height: 15,
-                            resizeMode: 'contain',
-                            marginTop: 10,
-                        }}
-                        destructiveIndex={0}
-                        options={['Report', 'Delete']}
-                        actions={[
-                            () => {
-                                alert('Reported');
-                            },
-                            () => {
-                                alert('Deleted');
-                            },
-                        ]}
-                    />
-                </View> */}
-        <View
-          style={[
-            styles.horizontalContainer,
-            // { justifyContent: 'space-between' },
-          ]}
-        >
-          <Image source={item.image} style={styles.userImgStyle} />
+        <View style={[styles.horizontalContainer]}>
+          <Image
+            source={item.image ? { uri: item.image } : user}
+            style={styles.userImgStyle}
+          />
           <Text
             numberOfLines={3}
             style={[
@@ -137,34 +83,48 @@ const CommentScreen = (props) => {
           </Text>
         </View>
         <View>
-          <Text style={styles.mediumText}>{item.text}</Text>
-        </View>
-        <View style={styles.horizontalContainer}>
           <Text
+            numberOfLines={2}
             style={[
               styles.mediumText,
               {
-                // alignSelf: 'flex-start',
-                // marginLeft: '15.5%',
-                color: "gray",
+                width: "95%",
+                alignSelf: "center",
+                marginTop: 10,
+                marginBottom: 10,
               },
             ]}
           >
-            {item.postedtime}
+            {item.text}
           </Text>
-
-          <Text style={[styles.mediumText, { marginLeft: 10 }]}>Like</Text>
         </View>
       </TouchableOpacity>
     );
   };
+  async function postComments() {
+    var user = firebase.auth()?.currentUser;
+    var userData = firebase.database().ref("users/" + user?.uid);
+    userData.on("value", (data) => {
+      console.log("Data==>", data.val().firstName + "" + data.val().lastName);
+      setImg(data.val().Dp);
+      setName(data.val().firstName + "" + data.val().lastName);
+    });
+    console.log(user);
+    var myRef = firebase.database().ref("comments/" + id);
+    var data = { comments: cmnt, name, image: img };
+    myRef.push(data);
+    setCmnt("");
+    setPosts([]);
+    getData();
+    console.log("here");
+  }
 
   return (
     <View style={styles.mainContainer}>
       <Header
         backgroundColor="white"
         leftComponent={
-          <HeaderLeftComponent icon="back" navigation={props.navigation} />
+          <HeaderLeftComponent icon="back" navigation={navigation} />
         }
       />
       <FlatList data={posts} renderItem={renderPosts} />
@@ -177,7 +137,7 @@ const CommentScreen = (props) => {
         <TextInput
           style={styles.input}
           placeholder="Comments"
-          autoCorrect={props.autoCorrect}
+          // autoCorrect={props.autoCorrect}
           autoCapitalize={"none"}
           returnKeyType={"done"}
           keyboardType={"default"}
@@ -189,7 +149,11 @@ const CommentScreen = (props) => {
             setCmnt(text);
           }}
         />
-        <TouchableOpacity style={{ justifyContent: "center", marginLeft: 15 }}>
+        <TouchableOpacity
+          disabled={cmnt === "" ? true : false}
+          onPress={postComments}
+          style={{ justifyContent: "center", marginLeft: 15 }}
+        >
           <MaterialCommunityIcons name="send" size={32} color={"black"} />
         </TouchableOpacity>
       </View>

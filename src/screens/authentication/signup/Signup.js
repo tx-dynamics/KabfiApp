@@ -23,14 +23,12 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Alert
+  Alert,
 } from "react-native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
-import {galleryImage, tickImage} from "../../../../assets";
-
-
+import { galleryImage, tickImage } from "../../../../assets";
 
 const Signup = (props) => {
   const [firstName, setFirstName] = useState("");
@@ -45,39 +43,39 @@ const Signup = (props) => {
 
   const [loader, setLoader] = useState(false);
 
-  function AlertBadgeNumberImage(){
+  function AlertBadgeNumberImage() {
     Alert.alert(
-      'Choose from the options',
-      '',
+      "Choose from the options",
+      "",
       [
         {
-          text: 'Open Camera',
-          onPress: () => pickBadgeNumberImage(1)
+          text: "Open Camera",
+          onPress: () => pickBadgeNumberImage(1),
         },
         {
-          text: 'Open Gallery',
+          text: "Open Gallery",
           onPress: () => pickBadgeNumberImage(2),
-          style: 'cancel'
-        }
+          style: "cancel",
+        },
       ],
       { cancelable: true }
     );
   }
 
-  function AlertTaxiLicenseImage(){
+  function AlertTaxiLicenseImage() {
     Alert.alert(
-      'Choose from the options',
-      '',
+      "Choose from the options",
+      "",
       [
         {
-          text: 'Open Camera',
-          onPress: () => pickTaxiLicenseImage(1)
+          text: "Open Camera",
+          onPress: () => pickTaxiLicenseImage(1),
         },
         {
-          text: 'Open Gallery',
+          text: "Open Gallery",
           onPress: () => pickTaxiLicenseImage(2),
-          style: 'cancel'
-        }
+          style: "cancel",
+        },
       ],
       { cancelable: true }
     );
@@ -85,21 +83,19 @@ const Signup = (props) => {
 
   const pickBadgeNumberImage = async (val) => {
     let result = "";
-    if(val === 1){
+    if (val === 1) {
       result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
         quality: 1,
-      }); 
-    }
-    else if(val === 2){
+      });
+    } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
         quality: 1,
-      }); 
+      });
     }
-    
 
     if (!result.cancelled) {
       // console.log(result);
@@ -110,19 +106,18 @@ const Signup = (props) => {
 
   const pickTaxiLicenseImage = async (val) => {
     let result = "";
-    if(val === 1){
+    if (val === 1) {
       result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
         quality: 1,
-      }); 
-    }
-    else if(val === 2){
+      });
+    } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
         quality: 1,
-      }); 
+      });
     }
 
     if (!result.cancelled) {
@@ -139,7 +134,7 @@ const Signup = (props) => {
 
   async function userSignup() {
     let success = true;
-    
+
     if (
       firstName !== "" &&
       lastName !== "" &&
@@ -153,8 +148,8 @@ const Signup = (props) => {
         alert("Phone number should be numeric only.");
         return false;
       }
-      if(password.length < 8){
-        alert('Password Must be atleast 8 characters')
+      if (password.length < 8) {
+        alert("Password Must be atleast 8 characters");
         return false;
       }
 
@@ -174,9 +169,9 @@ const Signup = (props) => {
             badgeNumberImage: badgeImage,
             taxiLicenseImage: taxiLicense,
             rating: 0,
-            Dp:'',
-            city:'',
-            country:''
+            Dp: "",
+            city: "",
+            country: "",
           };
           // console.log(Details);
           await saveData("users", user.user.uid, Details);
@@ -249,7 +244,7 @@ const Signup = (props) => {
   return (
     <ScrollView style={styles.root}>
       <View style={styles.contentArea}>
-        <View style={styles.logoContainer}>          
+        <View style={styles.logoContainer}>
           <Text style={styles.createAccountText}>CREATE AN ACCOUNT</Text>
         </View>
 
@@ -279,11 +274,10 @@ const Signup = (props) => {
               <TextInput
                 style={[styles.textFieldFull, { paddingHorizontal: 55 }]}
                 value={mobileNo}
-                onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ''))}
+                onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
                 keyboardType="number-pad"
                 placeholder="7711111111"
                 maxLength={10}
-                
               />
             </View>
           </View>
@@ -308,7 +302,7 @@ const Signup = (props) => {
                   source={!badgeNumberImage ? galleryImage : tickImage}
                   style={styles.uploadIMageIcon}
                 />
-                
+
                 <TouchableOpacity onPress={AlertBadgeNumberImage}>
                   <TextInput
                     style={styles.uploadImageFields}
@@ -344,7 +338,10 @@ const Signup = (props) => {
                 style={styles.eyeIconContainer}
                 onPress={passwordVisibility}
               >
-                <Ionicons name={passwordHidden? 'eye' : 'eye-off' } style={styles.eyeIcon} />
+                <Ionicons
+                  name={passwordHidden ? "eye" : "eye-off"}
+                  style={styles.eyeIcon}
+                />
               </TouchableOpacity>
 
               <TextInput
@@ -393,12 +390,13 @@ const Signup = (props) => {
           </View>
 
           <TouchableOpacity
-            style={{alignItems:'center', marginTop:10}}
+            style={{ alignItems: "center", marginTop: 10 }}
             onPress={() => props.navigation.navigate("Signin")}
           >
-            <Text style={{fontSize:12, marginBottom:20}}>Already have an account?</Text>
+            <Text style={{ fontSize: 12, marginBottom: 20 }}>
+              Already have an account?
+            </Text>
           </TouchableOpacity>
-
         </View>
       </View>
     </ScrollView>
