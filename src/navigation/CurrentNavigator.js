@@ -13,7 +13,7 @@ const CurrentNavigator = () => {
     if (firebase.auth().currentUser) {
       setIsLoggedIn(true);
     }
-  }, []);
+  }, [firebase.auth().currentUser]);
 
   return isLoggedIn ? <StackNavigatorAfter /> : <StackNavigator />;
   // return <StackNavigatorAfter />;

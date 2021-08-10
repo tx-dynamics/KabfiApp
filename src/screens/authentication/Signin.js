@@ -22,6 +22,7 @@ import {
 } from "@expo/vector-icons";
 import { useLogin } from "../../context/LoginProvider";
 import firebase from "firebase";
+import { useIsFocused } from "@react-navigation/native";
 
 // import * as firebase from 'firebase'
 
@@ -32,6 +33,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const Signin = (props) => {
+  const isFocused = useIsFocused();
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,12 +41,12 @@ const Signin = (props) => {
   const [loader, setLoader] = useState(false);
 
   const { setIsLoggedIn } = useLogin();
-  // useEffect(() => {
-  //   // setDataUpdated(!dataUpdated);
-  //   if (firebase.auth().currentUser) {
-  //     setIsLoggedIn(true);
-  //   }
-  // }, []);
+  useEffect(() => {
+    // setDataUpdated(!dataUpdated);
+    if (firebase.auth().currentUser) {
+      setIsLoggedIn(true);
+    }
+  }, [isFocused]);
 
   function passwordVisibility() {
     passwordHidden === true

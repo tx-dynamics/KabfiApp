@@ -32,18 +32,19 @@ const CommentScreen = ({ route, navigation }) => {
   const [name, setName] = useState("");
   const [img, setImg] = useState("");
   useEffect(() => {
-    // setDataUpdated(!dataUpdated);
+    console.log("posts", posts);
     const id = route.params.id;
     if (id) {
       setId(id);
+      getData(id);
     }
-    getData();
-    console.log("id==", id);
+    console.log("id", id);
   }, [isFocused]);
-  async function getData() {
+  async function getData(id) {
     var myRef = firebase.database().ref("comments/" + id);
     var li = [];
     myRef.on("value", (data) => {
+      console.log("data", data);
       data.forEach((child) => {
         li.push({
           id: child.key,
@@ -108,14 +109,18 @@ const CommentScreen = ({ route, navigation }) => {
       console.log("Data==>", data.val().firstName + "" + data.val().lastName);
       setImg(data.val().Dp);
       setName(data.val().firstName + "" + data.val().lastName);
+      var myRef = firebase.database().ref("comments/" + id);
+      var data = {
+        comments: cmnt,
+        name: data.val().firstName + "" + data.val().lastName,
+        image: data.val().Dp,
+      };
+      myRef.push(data);
     });
-    console.log(user);
-    var myRef = firebase.database().ref("comments/" + id);
-    var data = { comments: cmnt, name, image: img };
-    myRef.push(data);
+
     setCmnt("");
     setPosts([]);
-    getData();
+    getData(id);
     console.log("here");
   }
 

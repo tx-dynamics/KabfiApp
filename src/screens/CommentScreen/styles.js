@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     borderRadius: 30,
     width: "90%",
-    fontFamily: "geometriaBold",
+    // fontFamily: "geometriaBold",
     // alignSelf: 'center',
     // textAlign: 'center',
     borderColor: "lightgray",

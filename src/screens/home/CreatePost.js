@@ -6,6 +6,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import {
   user,
@@ -23,24 +25,28 @@ const CreatePost = (props) => {
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [Dp, setDp] = useState("");
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
     data.on("value", (userdata) => {
-      setDp(userdata.val().Dp);
+      {
+        userdata.val()?.Dp ? setDp(userdata.val().Dp) : null;
+      }
       setUserId(user);
-      setUserName(userdata.val().firstName + " " + userdata.val().lastName);
+      console.log(userdata.val());
+      setUserName(userdata.val()?.firstName + " " + userdata.val()?.lastName);
     });
   }, []);
 
   async function savePost() {
+    setloading(true);
     try {
-      const post_Image = await uploadImage(postImage.uri);
+      const post_Image = await uploadImage(postImage);
 
       var myRef = firebase.database().ref("user_posts").push();
       var key = myRef.getKey();
-
+      var mylike = firebase.database().ref("likes/" + key + "/" + userId);
       let Details = {
         post_id: key,
         user: userId,
@@ -51,15 +57,18 @@ const CreatePost = (props) => {
         likes_count: 0,
         likes_user: [],
       };
-
+      let like = { like: 0 };
+      mylike.set(like);
       myRef.set(Details);
       alert("Post Added Succsessfully");
+      setloading(false);
       setPostText("");
       setPostImage("");
       setUserId(""), setUserName("");
       setDp("");
       props.navigation.navigate("NewsFeed");
     } catch (error) {
+      setloading(false);
       alert(error.message);
     }
   }
@@ -79,10 +88,11 @@ const CreatePost = (props) => {
       aspect: [4, 3],
       quality: 1,
     });
+    console.log("result", result.uri);
     // }
 
     if (!result.cancelled) {
-      setPostImage(result);
+      setPostImage(result.uri);
     }
   };
 
@@ -120,6 +130,7 @@ const CreatePost = (props) => {
         <TouchableOpacity onPress={() => props.navigation.navigate("NewsFeed")}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
+
         <View style={styles.postTextContainer}>
           <Image style={styles.userImage} source={Dp ? { uri: Dp } : user2} />
           <TextInput
@@ -131,7 +142,11 @@ const CreatePost = (props) => {
             placeholder="What's happening ?"
           />
           <TouchableOpacity style={styles.publish} onPress={savePost}>
-            <Text>Publish</Text>
+            {loading ? (
+              <ActivityIndicator color={"red"} size={"small"} />
+            ) : (
+              <Text>Publish</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -143,7 +158,10 @@ const CreatePost = (props) => {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={pickPostImage}>
-            <Image source={smallGallery} style={styles.media} />
+            <Image
+              source={postImage ? { uri: postImage } : smallGallery}
+              style={styles.media}
+            />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>

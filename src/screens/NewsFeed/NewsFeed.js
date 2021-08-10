@@ -26,30 +26,34 @@ import {
   menu,
 } from "../../../assets";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import Main from "../home/Main";
 import openMap from "react-native-open-maps";
-
+import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
 const NewsFeed = (props) => {
+  const isFocused = useIsFocused();
   const [posts, setPosts] = useState(null);
   const [dataUpdated, setDataUpdated] = useState(false);
   const [show, setShow] = useState(false);
+  const [uid, setUid] = useState("");
+  const [likes, setLikes] = useState(null);
+  const [like, setlike] = useState(1);
   useEffect(() => {
     // setDataUpdated(!dataUpdated);
 
     fetchAllPosts();
-  }, []);
+  }, [isFocused]);
   async function fetchAllPosts() {
     let arr = [];
     const userPost = await firebase.database().ref("user_posts");
-
+    const uid = firebase.auth().currentUser?.uid;
+    setUid(uid);
     userPost.on("value", async (allPosts) => {
       allPosts.forEach((child) => {
+        fetchLikes(child.key);
         arr.push({
           id: child.key,
           likes_count: child.val().likes_count,
@@ -60,15 +64,50 @@ const NewsFeed = (props) => {
           post_image: child.val().post_image,
         });
       });
-      console.log(arr);
-      setPosts(arr);
+      var rev = arr.reverse();
+      setPosts(rev);
     });
+    console.log("Likes\n", likes);
   }
+  let arr = [];
+  async function fetchLikes(id) {
+    const userLikes = await firebase.database().ref("likes/" + id);
+    userLikes.on("value", async (allPosts) => {
+      allPosts.forEach((child) => {
+        if (uid === child.key) {
+          arr.push({
+            id: id,
+            like: child.val().like,
+          });
+        }
+      });
 
+      setLikes(arr);
+    });
+    return;
+  }
   async function likeHandler(post_id, likes_count) {
-    console.log("LIKES_count", post_id);
+    // console.log("LIKES_count", post_id);
 
+    const uid = firebase.auth().currentUser?.uid;
     const data = await firebase.database().ref("user_posts/" + post_id);
+    const userlikes = await firebase
+      .database()
+      .ref("likes/" + post_id + "/" + uid);
+
+    if (userlikes) {
+      userlikes.on("value", (child) => {
+        if (child.val().like === 1) {
+          setlike(0);
+        } else {
+          setlike(1);
+        }
+      });
+    }
+    const dat = { like: like };
+    console.log("dat", dat);
+    const likes = await firebase.database().ref("likes/" + post_id + "/" + uid);
+    likes.update(dat);
 
     let Details = {
       likes_count: parseInt(likes_count) + 1,
@@ -76,10 +115,6 @@ const NewsFeed = (props) => {
     console.log("like 2 = " + (parseInt(likes_count) + 1));
     data.update(Details);
     fetchAllPosts();
-
-    // setDataUpdated(!dataUpdated);
-    // alert('done = ' + dataUpdated);
-    // fetchAllPosts();
   }
 
   const renderPosts = ({ item, index }) => {
@@ -202,16 +237,17 @@ const NewsFeed = (props) => {
               style={{ flexDirection: "row" }}
               onPress={() => likeHandler(item.id, item.likes_count)}
             >
-              <Image
+              {/* <Image
                 source={heartImage}
                 resizeMode="contain"
                 style={{ height: 17, width: 17 }}
-              />
+              /> */}
+
+              <Ionicons name="heart" size={17} color={"black"} />
               <Text style={styles.smallText}>{` ${item.likes_count} `}</Text>
               {/* <Text style={styles.smallText}>{` 200 `}</Text> */}
             </TouchableOpacity>
           </View>
-          
           <TouchableOpacity
             style={[styles.bottomContainer]}
             onPress={() =>
@@ -253,7 +289,6 @@ const NewsFeed = (props) => {
               width: 40,
               tintColor: "black",
               alignItems: "center",
-             
             }}
             onPress={() => {
               props.navigation.navigate("Main");
@@ -262,21 +297,20 @@ const NewsFeed = (props) => {
             <Image
               source={menu}
               resizeMode={"contain"}
-              style={{marginTop:15}}
+              style={{ marginTop: 15 }}
             />
           </TouchableWithoutFeedback>
         }
         rightComponent={<HeaderRight navigation={props.navigation} />}
         centerComponent={<HeaderCenterComponent name="News Feed" />}
       />
-      
-        <FlatList
-          data={posts}
-          renderItem={renderPosts}
-          keyExtractor={(item, index) => item + index.toString()}
-          showsVerticalScrollIndicator={false}
-        />
-      
+
+      <FlatList
+        data={posts}
+        renderItem={renderPosts}
+        keyExtractor={(item, index) => item + index.toString()}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
