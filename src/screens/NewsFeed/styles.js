@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: "white",
+    //height:Dimensions.get("window").height-100
   },
   userImgStyle: {
     height: 50,

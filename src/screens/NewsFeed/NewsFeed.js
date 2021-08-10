@@ -211,6 +211,7 @@ const NewsFeed = (props) => {
               {/* <Text style={styles.smallText}>{` 200 `}</Text> */}
             </TouchableOpacity>
           </View>
+          
           <TouchableOpacity
             style={[styles.bottomContainer]}
             onPress={() =>
@@ -243,15 +244,16 @@ const NewsFeed = (props) => {
     <View style={styles.main}>
       <Header
         backgroundColor="white"
-        containerStyle={{ marginTop: 15 }}
+        containerStyle={{ marginTop: 0 }}
         leftComponent={
           <TouchableWithoutFeedback
             activeOpacity={0}
             style={{
-              height: 20,
-              width: 20,
+              height: 40,
+              width: 40,
               tintColor: "black",
               alignItems: "center",
+             
             }}
             onPress={() => {
               props.navigation.navigate("Main");
@@ -260,24 +262,21 @@ const NewsFeed = (props) => {
             <Image
               source={menu}
               resizeMode={"contain"}
-              style={styles.drawerIcon}
+              style={{marginTop:15}}
             />
           </TouchableWithoutFeedback>
         }
         rightComponent={<HeaderRight navigation={props.navigation} />}
         centerComponent={<HeaderCenterComponent name="News Feed" />}
       />
-      <View>
+      
         <FlatList
           data={posts}
           renderItem={renderPosts}
-          // keyExtractor={(item) => item.post_id}
           keyExtractor={(item, index) => item + index.toString()}
-          // keyExtractor={({post_text}) => post_text }
           showsVerticalScrollIndicator={false}
-          // extraData={posts}
         />
-      </View>
+      
     </View>
   );
 };

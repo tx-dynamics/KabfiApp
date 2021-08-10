@@ -17,8 +17,8 @@ const HeaderRight = ({ navigation }) => {
         source={bar}
         resizeMode={"contain"}
         style={{
-          height: 40,
-          width: 40,
+          height: 46,
+          width: 46,
           alignItems: "flex-end",
           alignSelf: "center",
           // backgroundColor: 'tomato',

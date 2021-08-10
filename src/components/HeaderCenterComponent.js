@@ -12,10 +12,9 @@ export default HeaderCenterComponent;
 export const styles = StyleSheet.create({
   textStyle: {
     fontSize: 19,
-    // fontFamily: Fonts.SFPRO,
     color: "black",
     fontWeight: "700",
     alignSelf: "center",
-    bottom: 18,
+    bottom: 10,
   },
 });
