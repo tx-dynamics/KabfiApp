@@ -46,7 +46,9 @@ const CreatePost = (props) => {
 
       var myRef = firebase.database().ref("user_posts").push();
       var key = myRef.getKey();
-      var mylike = firebase.database().ref("likes/" + key + "/" + userId);
+      var mylike = firebase
+        .database()
+        .ref("user_posts/" + key + "/Like/" + userId);
       let Details = {
         post_id: key,
         user: userId,
@@ -57,9 +59,10 @@ const CreatePost = (props) => {
         likes_count: 0,
         likes_user: [],
       };
-      let like = { like: 0 };
-      mylike.set(like);
+      let like = { userId };
+
       myRef.set(Details);
+      mylike.set(userId);
       alert("Post Added Succsessfully");
       setloading(false);
       setPostText("");

@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -39,80 +39,85 @@ const NewsFeed = (props) => {
   const [dataUpdated, setDataUpdated] = useState(false);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
-  const [likes, setLikes] = useState(null);
-  const [like, setlike] = useState(1);
   useEffect(() => {
     // setDataUpdated(!dataUpdated);
 
     fetchAllPosts();
   }, [isFocused]);
   async function fetchAllPosts() {
-    let arr = [];
-    const userPost = await firebase.database().ref("user_posts");
     const uid = firebase.auth().currentUser?.uid;
     setUid(uid);
-    userPost.on("value", async (allPosts) => {
-      allPosts.forEach((child) => {
-        fetchLikes(child.key);
-        arr.push({
-          id: child.key,
-          likes_count: child.val().likes_count,
-          post_text: child.val().post_text,
-          user: child.val().user,
-          userName: child.val().userName,
-          user_image: child.val().user_image,
-          post_image: child.val().post_image,
-        });
-      });
-      var rev = arr.reverse();
-      setPosts(rev);
-    });
-    console.log("Likes\n", likes);
-  }
-  let arr = [];
-  async function fetchLikes(id) {
-    const userLikes = await firebase.database().ref("likes/" + id);
-    userLikes.on("value", async (allPosts) => {
-      allPosts.forEach((child) => {
-        if (uid === child.key) {
-          arr.push({
-            id: id,
-            like: child.val().like,
-          });
-        }
-      });
-
-      setLikes(arr);
-    });
-    return;
-  }
-  async function likeHandler(post_id, likes_count) {
-    // console.log("LIKES_count", post_id);
-
-    const uid = firebase.auth().currentUser?.uid;
-    const data = await firebase.database().ref("user_posts/" + post_id);
-    const userlikes = await firebase
+    await firebase
       .database()
-      .ref("likes/" + post_id + "/" + uid);
-
-    if (userlikes) {
-      userlikes.on("value", (child) => {
-        if (child.val().like === 1) {
-          setlike(0);
-        } else {
-          setlike(1);
+      .ref("user_posts")
+      .once("value")
+      .then(async function (snapshot) {
+        const exists = snapshot.val() !== null;
+        if (exists) {
+          let arr = [];
+          snapshot.forEach((child) => {
+            const userlike = firebase
+              .database()
+              .ref("user_posts/" + child.key + "/Like/" + uid);
+            userlike.on("value", (chil) => {
+              var myRef = firebase
+                .database()
+                .ref("comments/" + child.key)
+                .on("value", function (snapshot) {
+                  if (chil.exists()) {
+                    arr.push({
+                      id: child.key,
+                      likes_count: child.val().likes_count,
+                      post_text: child.val().post_text,
+                      user: child.val().user,
+                      userName: child.val().userName,
+                      user_image: child.val().user_image,
+                      post_image: child.val().post_image,
+                      like: true,
+                      comm: snapshot.numChildren(),
+                    });
+                  } else {
+                    arr.push({
+                      id: child.key,
+                      likes_count: child.val().likes_count,
+                      post_text: child.val().post_text,
+                      user: child.val().user,
+                      userName: child.val().userName,
+                      user_image: child.val().user_image,
+                      post_image: child.val().post_image,
+                      like: false,
+                      comm: snapshot.numChildren(),
+                    });
+                  }
+                });
+            });
+          });
+          console.log("data", arr);
+          const ik = arr.reverse();
+          setPosts(ik);
         }
       });
-    }
-    const dat = { like: like };
-    console.log("dat", dat);
-    const likes = await firebase.database().ref("likes/" + post_id + "/" + uid);
-    likes.update(dat);
+  }
 
-    let Details = {
-      likes_count: parseInt(likes_count) + 1,
+  async function likeHandler(post_id, likes_count, islike) {
+    const Details = {
+      likes_count: islike ? likes_count - 1 : likes_count + 1,
     };
-    console.log("like 2 = " + (parseInt(likes_count) + 1));
+    const delUser = firebase
+      .database()
+      .ref("user_posts/" + post_id + "/Like/")
+      .child(uid);
+    var mylike = firebase
+      .database()
+      .ref("user_posts/" + post_id + "/Like/" + uid);
+    {
+      islike
+        ? delUser.remove(() => {
+            console.log("Operation Complete");
+          })
+        : mylike.set(uid);
+    }
+    const data = await firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
     fetchAllPosts();
   }
@@ -235,7 +240,7 @@ const NewsFeed = (props) => {
           <View style={[styles.bottomContainer]}>
             <TouchableOpacity
               style={{ flexDirection: "row" }}
-              onPress={() => likeHandler(item.id, item.likes_count)}
+              onPress={() => likeHandler(item.id, item.likes_count, item.like)}
             >
               {/* <Image
                 source={heartImage}
@@ -243,7 +248,11 @@ const NewsFeed = (props) => {
                 style={{ height: 17, width: 17 }}
               /> */}
 
-              <Ionicons name="heart" size={17} color={"black"} />
+              <Ionicons
+                name="heart"
+                size={17}
+                color={item.like ? "red" : "black"}
+              />
               <Text style={styles.smallText}>{` ${item.likes_count} `}</Text>
               {/* <Text style={styles.smallText}>{` 200 `}</Text> */}
             </TouchableOpacity>
@@ -260,7 +269,7 @@ const NewsFeed = (props) => {
               style={{ height: 17, width: 17 }}
             />
             {/* <Text style={styles.smallText}>{` ${item.likes_count} `}</Text> */}
-            <Text style={styles.smallText}>{` 300 `}</Text>
+            <Text style={styles.smallText}>{item.comm}</Text>
           </TouchableOpacity>
 
           <View style={[styles.bottomContainer]}>
