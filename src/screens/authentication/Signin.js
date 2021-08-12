@@ -24,11 +24,6 @@ import { useLogin } from "../../context/LoginProvider";
 import firebase from "firebase";
 import { useIsFocused } from "@react-navigation/native";
 
-// import * as firebase from 'firebase'
-
-// import kabfiApp from '../../database/config';
-// const table_todo = kabfiApp.database().ref('/ToDo');
-
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -45,6 +40,8 @@ const Signin = (props) => {
     // setDataUpdated(!dataUpdated);
     if (firebase.auth().currentUser) {
       setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
     }
   }, [isFocused]);
 

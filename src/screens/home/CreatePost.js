@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Dimensions,
+  AsyncStorage,
+  ToastAndroid,
 } from "react-native";
 import {
   user,
@@ -18,14 +20,22 @@ import {
 } from "../../../assets";
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
-
+import { Audio } from "expo-av";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { useIsFocused } from "@react-navigation/native";
 const CreatePost = (props) => {
+  const [Sound, setSound] = useState("");
+  const [recording, setRecording] = useState();
   const [postText, setPostText] = useState("");
   const [postImage, setPostImage] = useState(null);
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [Dp, setDp] = useState("");
   const [loading, setloading] = useState(false);
+  const [sound] = useState();
+  const [loc, setLoc] = useState("");
+  const isFocused = useIsFocused();
   useEffect(() => {
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
@@ -37,7 +47,16 @@ const CreatePost = (props) => {
       console.log(userdata.val());
       setUserName(userdata.val()?.firstName + " " + userdata.val()?.lastName);
     });
-  }, []);
+    getLocation();
+  }, [isFocused]);
+  async function getLocation() {
+    const location = await AsyncStorage.getItem("location");
+    if (location !== null) {
+      console.log("location", JSON.parse(location));
+      setLoc(JSON.parse(location));
+      ToastAndroid.show("Location Added..", ToastAndroid.SHORT);
+    }
+  }
 
   async function savePost() {
     setloading(true);
@@ -58,12 +77,15 @@ const CreatePost = (props) => {
         user_image: Dp,
         likes_count: 0,
         likes_user: [],
+        recoding: Sound,
+        location: loc,
       };
       let like = { userId };
 
       myRef.set(Details);
       mylike.set(userId);
       alert("Post Added Succsessfully");
+      await AsyncStorage.clear();
       setloading(false);
       setPostText("");
       setPostImage("");
@@ -78,21 +100,13 @@ const CreatePost = (props) => {
 
   const pickPostImage = async (val) => {
     let result = "";
-    // if(val === 1){
-    //   result = await ImagePicker.launchCameraAsync({
-    //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-    //     aspect: [4, 3],
-    //     quality: 1,
-    //   });
-    // }
-    // else if(val === 2){
+
     result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       aspect: [4, 3],
       quality: 1,
     });
     console.log("result", result.uri);
-    // }
 
     if (!result.cancelled) {
       setPostImage(result.uri);
@@ -126,16 +140,56 @@ const CreatePost = (props) => {
       console.log("uploadImage error: " + err.message);
     }
   };
+  async function startRecording() {
+    try {
+      console.log("Requesting permissions..");
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+      console.log("Starting recording..");
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      );
+      setRecording(recording);
+      console.log("Recording started");
+    } catch (err) {
+      console.error("Failed to start recording", err);
+    }
+  }
+  async function playSound() {
+    console.log("Loading Sound");
+    const { sound: playbackObject } = await Audio.Sound.createAsync(
+      { uri: Sound },
+      { shouldPlay: true }
+    );
+    // setSound(sound);
 
+    console.log("Playing Sound", sound);
+    await playbackObject.playAsync();
+  }
+  async function stopRecording() {
+    console.log("Stopping recording..");
+    setRecording(undefined);
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI();
+    console.log("Recording stopped and stored at", recording._uri);
+    setSound(recording._uri);
+    // playSound(recording._uri);
+  }
+  async function oncancel() {
+    await AsyncStorage.clear();
+    props.navigation.navigate("NewsFeed");
+  }
   return (
     <View style={styles.container}>
       <View style={styles.contentArea}>
-        <TouchableOpacity onPress={() => props.navigation.navigate("NewsFeed")}>
+        <TouchableOpacity onPress={oncancel}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
 
         <View style={styles.postTextContainer}>
-          
           <Image style={styles.userImage} source={Dp ? { uri: Dp } : user} />
           <TextInput
             multiline={true}
@@ -144,7 +198,7 @@ const CreatePost = (props) => {
             value={postText}
             style={styles.textArea}
             placeholder="What's happening ?"
-            placeholderTextColor={'black'}
+            placeholderTextColor={"black"}
           />
           <TouchableOpacity style={styles.publish} onPress={savePost}>
             {loading ? (
@@ -158,9 +212,21 @@ const CreatePost = (props) => {
 
       <View style={styles.mediaContainerOuter}>
         <View style={styles.mediaContainerInner}>
-          <TouchableOpacity>
-            <Image source={voiceImage} style={styles.media} />
-          </TouchableOpacity>
+          {!Sound ? (
+            <TouchableOpacity
+              onPress={recording ? stopRecording : startRecording}
+            >
+              <MaterialIcons
+                name="multitrack-audio"
+                size={18}
+                color={"black"}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={playSound}>
+              <MaterialIcons name="multitrack-audio" size={18} color={"blue"} />
+            </TouchableOpacity>
+          )}
 
           <TouchableOpacity onPress={pickPostImage}>
             <Image
@@ -170,9 +236,10 @@ const CreatePost = (props) => {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
-            <Image
-              source={smallLocation}
-              style={[styles.media, { height: 24 }]}
+            <SimpleLineIcons
+              name="location-pin"
+              size={24}
+              color={loc ? "blue" : "black"}
             />
           </TouchableOpacity>
         </View>
@@ -195,7 +262,7 @@ const styles = StyleSheet.create({
   cancelText: {
     color: "#FCB040",
     fontSize: 16,
-    fontWeight:'600',
+    fontWeight: "600",
   },
   postTextContainer: {
     marginTop: 80,

@@ -1,46 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  AsyncStorage,
+} from "react-native";
+import MapView, { Marker, MarkerAnimated } from "react-native-maps";
 import { useIsFocused } from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import { user } from "../../../assets";
-const Map = ({ route }) => {
-  // var data = route.params;
-  // var markers = [{
-  //   title: 'hello',
-  //   coordinates: {
-  //     latitude: 31.456801732578736,
-  //     longitude: 74.31160880386359
-  //   },
-  // },
-  // {
-  //   title: 'hello',
-  //   coordinates: {
-  //     latitude: 31.460807644045822,
-  //     longitude: 74.31386530053891
-  //   },
-  // }]
-  const [region, setRegion] = useState([
-    {
-      // latitude: data.latitude,
-      // longitude: data.longitude,
-      // latitude: 31.461094192311403,
-      // longitude: 74.31311014215765,
-      // latitudeDelta: 0.015,
-      // longitudeDelta: 0.0121,
-    },
-  ]);
-  const [loc, setLoc] = useState([]);
-  const [coords, setCoords] = useState([
-    {  
-   
-    }
-  ]);
+import { Header } from "react-native-elements";
+import HeaderLeftComponent from "../../components/HeaderLeftComponent";
+const Map = ({ route, navigation }) => {
+  const [region, setRegion] = useState({
+    latitude: 31.461094192311403,
+    longitude: 74.31311014215765,
+    latitudeDelta: 0.015,
+    longitudeDelta: 0.0121,
+  });
+  const [loc, setLoc] = useState({
+    latitude: 31.461094192311403,
+    longitude: 74.31311014215765,
+    latitudeDelta: 0.015,
+    longitudeDelta: 0.0121,
+  });
+  const [coords, setCoords] = useState([{}]);
   const isFocused = useIsFocused();
-  useEffect(() => {
-    // setDataUpdated(!dataUpdated);
 
+  useEffect(() => {
     fetchLocation();
   }, [isFocused]);
   async function fetchLocation() {
@@ -60,36 +50,46 @@ const Map = ({ route }) => {
       latitudeDelta: 0.015,
       longitudeDelta: 0.0121,
     });
-    setLoc(location);
+    setLoc({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.0121,
+    });
     console.log("Location", region);
   }
-  const onRegionChange = (region) => {
-  //   const location = {
-  //     latitude: region.latitude,
-  //     longitude: region.longitude,
-  // };
-    console.log(region)
-    //setRegion(region);
-    //setCoords(location)
+  const onRegionChange = async (region) => {
+    console.log(region);
+    setRegion(region);
+    setLoc(region);
+    AsyncStorage.setItem("location", JSON.stringify(region));
   };
   return (
     <View style={styles.container}>
-      {/* <Text>Ali</Text> */}
+      <Header
+        backgroundColor="white"
+        leftComponent={
+          <HeaderLeftComponent icon="back" navigation={navigation} />
+        }
+      />
       <MapView
         style={styles.map}
         showsUserLocation={true}
         followUserLocation={true}
         zoomEnabled={true}
-        region={region}
+        // region={region}
         Marker
+        trackViewChanges={false}
+        initialRegion={region}
         onRegionChange={onRegionChange}
       >
-        {/* <Marker
-          coordinate={coords}
-          title="this is a marker"
-          description="this is a marker example"
-        /> */}
-
+        <TouchableOpacity>
+          <Marker.Animated
+            draggable
+            coordinate={loc}
+            onDragEnd={(e) => setLoc(e.nativeEvent.coordinate)}
+          />
+        </TouchableOpacity>
       </MapView>
     </View>
   );
@@ -103,8 +103,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    width: Dimensions.get("screen").width,
+    height: Dimensions.get("window").height / 1.04,
   },
 });
 

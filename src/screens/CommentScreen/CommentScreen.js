@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  ToastAndroid,
 } from "react-native";
 import {
   user,
@@ -24,13 +25,18 @@ import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import firebase from "firebase";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { Audio } from "expo-av";
 const CommentScreen = ({ route, navigation }) => {
+  const [Sound, setSound] = useState("");
   const isFocused = useIsFocused();
   const [id, setId] = useState("");
   const [cmnt, setCmnt] = useState("");
   const [posts, setPosts] = useState(null);
   const [name, setName] = useState("");
   const [img, setImg] = useState("");
+  const [sound] = useState();
+  const [recording, setRecording] = useState();
   useEffect(() => {
     console.log("posts", posts);
     const id = route.params.id;
@@ -51,6 +57,7 @@ const CommentScreen = ({ route, navigation }) => {
           image: child.val().image,
           name: child.val().name,
           text: child.val().comments,
+          recording: child.val().recording,
         });
       });
       console.log("LI==>", li);
@@ -83,22 +90,28 @@ const CommentScreen = ({ route, navigation }) => {
             {item.name}
           </Text>
         </View>
-        <View>
-          <Text
-            numberOfLines={2}
-            style={[
-              styles.mediumText,
-              {
-                width: "95%",
-                alignSelf: "center",
-                marginTop: 10,
-                marginBottom: 10,
-              },
-            ]}
+        <Text
+          numberOfLines={2}
+          style={[
+            styles.mediumText,
+            {
+              width: "95%",
+              alignSelf: "center",
+              marginTop: 10,
+              marginBottom: 10,
+            },
+          ]}
+        >
+          {item.text}
+        </Text>
+        {item.recording ? (
+          <TouchableOpacity
+            style={{ marginTop: 10 }}
+            onPress={() => playSound(item.recording)}
           >
-            {item.text}
-          </Text>
-        </View>
+            <MaterialIcons name="multitrack-audio" size={18} color={"blue"} />
+          </TouchableOpacity>
+        ) : null}
       </TouchableOpacity>
     );
   };
@@ -109,11 +122,12 @@ const CommentScreen = ({ route, navigation }) => {
       console.log("Data==>", data.val().firstName + "" + data.val().lastName);
       setImg(data.val().Dp);
       setName(data.val().firstName + "" + data.val().lastName);
-      var myRef = firebase.database().ref("comments/" + id);
+      var myRef = firebase.database().ref("comments/" + id + "/");
       var data = {
         comments: cmnt,
         name: data.val().firstName + "" + data.val().lastName,
         image: data.val().Dp,
+        recording: Sound,
       };
       myRef.push(data);
     });
@@ -123,7 +137,48 @@ const CommentScreen = ({ route, navigation }) => {
     getData(id);
     console.log("here");
   }
+  async function startRecording() {
+    try {
+      console.log("Requesting permissions..");
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+      ToastAndroid.show("Starting recording..", ToastAndroid.SHORT);
+      console.log("Starting recording..");
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      );
+      setRecording(recording);
+      console.log("Recording started");
+    } catch (err) {
+      console.error("Failed to start recording", err);
+    }
+  }
+  async function playSound(uri) {
+    console.log("Loading Sound");
+    ToastAndroid.show("Loading Sound..", ToastAndroid.SHORT);
+    const { sound: playbackObject } = await Audio.Sound.createAsync(
+      { uri: uri },
+      { shouldPlay: true }
+    );
+    // setSound(sound);
 
+    console.log("Playing Sound", sound);
+    ToastAndroid.show("Playing Sound..", ToastAndroid.SHORT);
+    await playbackObject.playAsync();
+  }
+  async function stopRecording() {
+    console.log("Stopping recording..");
+    setRecording(undefined);
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI();
+    console.log("Recording stopped and stored at", recording._uri);
+    setSound(recording._uri);
+    ToastAndroid.show("Recording Saved..", ToastAndroid.SHORT);
+    // playSound(recording._uri);
+  }
   return (
     <View style={styles.mainContainer}>
       <Header
@@ -136,9 +191,20 @@ const CommentScreen = ({ route, navigation }) => {
       <View
         style={[
           styles.horizontalContainer,
-          { marginBottom: 10, justifyContent: "space-between", width: "90%" },
+          {
+            marginBottom: 10,
+            justifyContent: "space-between",
+            width: "95%",
+            alignSelf: "center",
+          },
         ]}
       >
+        <TouchableOpacity
+          style={{ alignSelf: "center", marginTop: 7 }}
+          onPress={recording ? stopRecording : startRecording}
+        >
+          <MaterialIcons name="multitrack-audio" size={20} color={"black"} />
+        </TouchableOpacity>
         <TextInput
           style={styles.input}
           placeholder="Comments"
@@ -157,9 +223,14 @@ const CommentScreen = ({ route, navigation }) => {
         <TouchableOpacity
           disabled={cmnt === "" ? true : false}
           onPress={postComments}
-          style={{ justifyContent: "center", marginLeft: 15 }}
+          style={{
+            justifyContent: "center",
+
+            alignSelf: "center",
+            marginTop: 7,
+          }}
         >
-          <MaterialCommunityIcons name="send" size={32} color={"black"} />
+          <MaterialCommunityIcons name="send" size={20} color={"black"} />
         </TouchableOpacity>
       </View>
     </View>
