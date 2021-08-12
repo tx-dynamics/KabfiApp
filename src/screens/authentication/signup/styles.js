@@ -1,122 +1,137 @@
 import { StyleSheet, Dimensions, } from "react-native";
 
 const styles = StyleSheet.create({
-    root:{
-        width:Dimensions.get('window').width,
-        height:Dimensions.get('window').height,        
-        backgroundColor:'white',
+    root: {
+        // width:Dimensions.get('window').width,
+        // height:Dimensions.get('window').height,        
+        backgroundColor: 'white',
         flex: 1,
     },
-    contentArea:{
-        width:'100%',
-        height:'100%',
-        marginTop:'15%',
-        paddingHorizontal:20,
-        paddingVertical:10    
+    contentArea: {
+        width: '100%',
+        height: '100%',
+        marginTop: '5%',
+        paddingHorizontal: 20,
+        paddingVertical: 10
     },
-    logoContainer:{
-        alignItems:'center'
+    logoContainer: {
+        alignItems: 'center'
     },
-    logoImage:{
-        width:140, 
-        height:30
+    logoImage: {
+        width: 140,
+        height: 30
     },
-    topLeftArrow:{
-        fontSize:24,
-        color:'black',
-        position:'absolute',
-        left:0,
-        top:5        
+    topLeftArrow: {
+        fontSize: 24,
+        color: 'black',
+        position: 'absolute',
+        left: 0,
+        top: 5
     },
-    createAccountText:{
-        marginTop:25,
-        fontSize:17,
-        fontWeight:'bold'
+    createAccountText: {
+        marginTop: 25,
+        fontSize: 17,
+        fontWeight: 'bold'
     },
-    form:{
-        marginTop:20
+    form: {
+        marginTop: 20
     },
-    formField:{
-        marginTop:20
-    },  
-    label:{
-        
+    formField: {
+        marginTop: 20,
+
     },
-    textFieldHalfContainer:{
-        flexDirection:'row', 
-        justifyContent:'space-between',
-        marginTop:5
-    },  
-    textFieldFullContainer:{
-        marginTop:5
+    label: {
+
     },
-    textFieldHalf:{
-        borderWidth:1,
-        borderColor:'#E6E6E6',
-        paddingHorizontal:20,
-        paddingVertical:10,
-        width:'48.5%',
-        fontSize:13
+    textFieldHalfContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 5
     },
-    textFieldFull:{
-        borderWidth:1,
-        borderColor:'#E6E6E6',
-        paddingHorizontal:20,
-        paddingVertical:9,
-        fontSize:13
+    textFieldFullContainer: {
+        marginTop: 5,
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderColor: '#E6E6E6',
+        justifyContent: 'space-between',
     },
-    countryCode:{
-        position:'absolute', 
-        top:38.5, left:10
+    textFieldHalf: {
+        borderWidth: 1,
+        borderColor: '#E6E6E6',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        width: '48.5%',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
     },
-    uploadImageFieldsContainer:{
-        width:'48.5%'        
+    textFieldHalf1: {
+        fontSize: 13
     },
-    uploadImageFields:{
-        borderWidth:1,
-        borderColor:'#E6E6E6',
-        paddingHorizontal:20,
-        paddingVertical:10,  
-        fontSize:13      
-    },  
-    uploadImageFieldLabel:{
-        marginBottom:5,
-        marginLeft:5
+    textFieldFull: {
+        paddingHorizontal: 20,
+        paddingVertical: 9,
+        fontSize: 13,
+        //width: '80%',
     },
-    uploadIMageIcon:{
+    countryCode: {
+        position: 'absolute',
+        top: 38.5, left: 10
+    },
+    uploadImageFieldsContainer: {
+        width: '48.5%'
+    },
+    uploadImageFields: {
+        borderWidth: 1,
+        borderColor: '#E6E6E6',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        fontSize: 13
+    },
+    uploadImageFieldLabel: {
+        marginBottom: 5,
+        marginLeft: 5
+    },
+    uploadIMageIcon: {
         // fontSize:18,
         // color:'#E6E6E6',
-        width:15,
-        height:15,
-        position:'absolute',
-        top:42,
-        right:13
+        //alignSelf:'center',
+        //justifyContent:'center',
+        width: 15,
+        height: 15,
+        position: 'absolute',
+        top: 42,
+        right: 13
     },
-    submitText:{
+    checkImageIcon: {
+        alignSelf: 'center',
+        width: 15,
+        height: 15,
+    },
+    submitText: {
         // color:'#FCD291'
-        color:'#FCB040'
+        color: '#FCB040'
     },
-    loginBtn:{
-        marginTop:40,
-        backgroundColor:'#FAB040',
-        alignItems:'center',
-        padding:12,
-        width:'95%',
-        alignSelf:'center',
-        borderRadius:5
-    },   
-    eyeIcon:{
-        fontSize:24,
-        color:'#E6E6E6',        
+    loginBtn: {
+        marginTop: 40,
+        backgroundColor: '#FAB040',
+        alignItems: 'center',
+        padding: 12,
+        width: '95%',
+        alignSelf: 'center',
+        borderRadius: 10
     },
-    eyeIconContainer:{
-        position:'absolute',
-        top:13,
-        right:13,
-        width:35,
-        height:25,
-        alignItems:'center',
-        zIndex:1
+    eyeIcon: {
+        fontSize: 24,
+        color: '#E6E6E6',
+    },
+    eyeIconContainer: {
+        position: 'absolute',
+        top: 13,
+        right: 13,
+        width: 35,
+        height: 25,
+        alignItems: 'center',
+        zIndex: 1
     }
 });
 

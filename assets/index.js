@@ -19,5 +19,7 @@ export const heartImage = require("./ProjectImages/heartImage.png");
 export const voiceImage = require("./ProjectImages/voice.png");
 export const smallLocation = require("./ProjectImages/smallLocation.png");
 export const smallGallery = require("./ProjectImages/smallGallery.png");
+export const checkImage = require("./ProjectImages/authentication/check.png");
+export const  exclamation_mark= require("./ProjectImages/authentication/exclamation-mark.png");
 
 

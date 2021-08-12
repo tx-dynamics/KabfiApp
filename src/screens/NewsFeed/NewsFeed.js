@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo,useCallback } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   FlatList,
   TouchableWithoutFeedback,
+  RefreshControl,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -33,76 +34,114 @@ import Main from "../home/Main";
 import openMap from "react-native-open-maps";
 import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
+
+
+
+
+
 const NewsFeed = (props) => {
-  const isFocused = useIsFocused();
+  const isFocused = useIsFocused(true);
   const [posts, setPosts] = useState(null);
+  const [data, setData] = useState([]);
+  const [refreshing, setRefreshing] = React.useState(true);
+  
   const [dataUpdated, setDataUpdated] = useState(false);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
   useEffect(() => {
-    // setDataUpdated(!dataUpdated);
-
-    fetchAllPosts();
-  }, [isFocused]);
+   
+    fetchAllPosts()
+    
+ },[]);
+ 
   async function fetchAllPosts() {
+    setRefreshing(true);
+    let arr = [];
     const uid = firebase.auth().currentUser?.uid;
-    setUid(uid);
-    await firebase
-      .database()
-      .ref("user_posts")
-      .once("value")
-      .then(async function (snapshot) {
-        const exists = snapshot.val() !== null;
-        if (exists) {
-          let arr = [];
-          snapshot.forEach((child) => {
-            const userlike = firebase
-              .database()
-              .ref("user_posts/" + child.key + "/Like/" + uid);
-            userlike.on("value", (chil) => {
-              var myRef = firebase
+      setUid(uid);
+      await firebase
+        .database()
+        .ref("user_posts")
+        .once("value")
+        .then(async function (snapshot) {
+          const exists = snapshot.val() !== null;
+          if (exists) {   
+            snapshot.forEach((child) => {
+             
+              const userlike = firebase
                 .database()
-                .ref("comments/" + child.key)
-                .on("value", function (snapshot) {
-                  if (chil.exists()) {
-                    arr.push({
-                      id: child.key,
-                      likes_count: child.val().likes_count,
-                      post_text: child.val().post_text,
-                      user: child.val().user,
-                      userName: child.val().userName,
-                      user_image: child.val().user_image,
-                      post_image: child.val().post_image,
-                      like: true,
-                      comm: snapshot.numChildren(),
-                    });
-                  } else {
-                    arr.push({
-                      id: child.key,
-                      likes_count: child.val().likes_count,
-                      post_text: child.val().post_text,
-                      user: child.val().user,
-                      userName: child.val().userName,
-                      user_image: child.val().user_image,
-                      post_image: child.val().post_image,
-                      like: false,
-                      comm: snapshot.numChildren(),
-                    });
-                  }
-                });
+                .ref("user_posts/" + child.key + "/Like/" + uid);
+                const userSave = firebase
+                .database()
+                .ref("user_posts/" + child.key + "/Save/" + uid);
+                userlike.on("value", (chil) => {
+                
+                  var myRef = firebase
+                  .database()
+                  .ref("comments/" + child.key)
+                  .on("value", function (snapshot) {
+                    
+                    if (chil.exists()) {
+                      console.log("if")
+                      setData({...data,
+                        
+                      })
+                      arr.push({
+                        id: child.key,
+                        likes_count: child.val().likes_count,
+                        save_count: child.val().save_count?child.val().save_count:0,
+                        post_text: child.val().post_text,
+                        user: child.val().user,
+                        userName: child.val().userName,
+                        user_image: child.val().user_image,
+                        post_image: child.val().post_image,
+                        like: true,
+                        save:child.val().save_count?true:false,
+                        comm: snapshot.numChildren(),
+                      });
+                    } else {
+                      console.log("else",child)
+                      setData({...data,
+                     })
+                      arr.push({
+                        id: child.key,
+                        likes_count: child.val().likes_count,
+                        save_count: child.val().save_count?child.val().save_count:0,
+                        post_text: child.val().post_text,
+                        user: child.val().user,
+                        userName: child.val().userName,
+                        user_image: child.val().user_image,
+                        post_image: child.val().post_image,
+                        like: false,
+                        save:child.val().save_count?true:false,
+                        comm: snapshot.numChildren(),
+                      });
+                    }
+                   
+                  });
+                  
+              });
+              
             });
-          });
-          console.log("data", arr);
-          const ik = arr.reverse();
-          setPosts(ik);
-        }
-      });
-  }
+            
+              const ik = arr.reverse();
+            setPosts(ik);
+          
+          }
+          else{
+            console.log("Pakkkmkmkm ",arr);
+          }
+        });
+        
+        setRefreshing(false);
+ };
+  
 
   async function likeHandler(post_id, likes_count, islike) {
     const Details = {
       likes_count: islike ? likes_count - 1 : likes_count + 1,
     };
+    console.log("Like handler",islike)
     const delUser = firebase
       .database()
       .ref("user_posts/" + post_id + "/Like/")
@@ -116,6 +155,30 @@ const NewsFeed = (props) => {
             console.log("Operation Complete");
           })
         : mylike.set(uid);
+    }
+    const data = await firebase.database().ref("user_posts/" + post_id);
+    data.update(Details);
+    fetchAllPosts();
+  }
+
+  async function saveHandler(post_id, save_count, isSave) {
+    const Details = {
+      save_count: isSave ? save_count - 1 : save_count + 1,
+    };
+    console.log("Like handler",isSave)
+    const delUser = firebase
+      .database()
+      .ref("user_posts/" + post_id + "/SavePost/")
+      .child(uid);
+    var mysave = firebase
+      .database()
+      .ref("user_posts/" + post_id + "/SavePost/" + uid);
+    {
+      isSave
+        ? delUser.remove(() => {
+            console.log("Operation Complete");
+          })
+        : mysave.set(uid);
     }
     const data = await firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
@@ -272,14 +335,16 @@ const NewsFeed = (props) => {
             <Text style={styles.smallText}>{item.comm}</Text>
           </TouchableOpacity>
 
-          <View style={[styles.bottomContainer]}>
+          <TouchableOpacity 
+          onPress={() => saveHandler(item.id, item.save_count, item.save)}
+          style={[styles.bottomContainer]}>
             <Image
               source={favourite}
               resizeMode="contain"
               style={{ height: 17, width: 17 }}
             />
-            <Text style={styles.smallText}>{` 300 `}</Text>
-          </View>
+            <Text style={styles.smallText}>{` ${item.save_count} `}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -315,6 +380,7 @@ const NewsFeed = (props) => {
       />
 
       <FlatList
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />}
         data={posts}
         renderItem={renderPosts}
         keyExtractor={(item, index) => item + index.toString()}

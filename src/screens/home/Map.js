@@ -25,13 +25,18 @@ const Map = ({ route }) => {
     {
       // latitude: data.latitude,
       // longitude: data.longitude,
-      latitude: 31.461094192311403,
-      longitude: 74.31311014215765,
-      latitudeDelta: 0.015,
-      longitudeDelta: 0.0121,
+      // latitude: 31.461094192311403,
+      // longitude: 74.31311014215765,
+      // latitudeDelta: 0.015,
+      // longitudeDelta: 0.0121,
     },
   ]);
   const [loc, setLoc] = useState([]);
+  const [coords, setCoords] = useState([
+    {  
+   
+    }
+  ]);
   const isFocused = useIsFocused();
   useEffect(() => {
     // setDataUpdated(!dataUpdated);
@@ -59,7 +64,13 @@ const Map = ({ route }) => {
     console.log("Location", region);
   }
   const onRegionChange = (region) => {
-    setRegion(region);
+  //   const location = {
+  //     latitude: region.latitude,
+  //     longitude: region.longitude,
+  // };
+    console.log(region)
+    //setRegion(region);
+    //setCoords(location)
   };
   return (
     <View style={styles.container}>
@@ -70,7 +81,16 @@ const Map = ({ route }) => {
         followUserLocation={true}
         zoomEnabled={true}
         region={region}
-      ></MapView>
+        Marker
+        onRegionChange={onRegionChange}
+      >
+        {/* <Marker
+          coordinate={coords}
+          title="this is a marker"
+          description="this is a marker example"
+        /> */}
+
+      </MapView>
     </View>
   );
 };

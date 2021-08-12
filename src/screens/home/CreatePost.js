@@ -135,7 +135,8 @@ const CreatePost = (props) => {
         </TouchableOpacity>
 
         <View style={styles.postTextContainer}>
-          <Image style={styles.userImage} source={Dp ? { uri: Dp } : user2} />
+          
+          <Image style={styles.userImage} source={Dp ? { uri: Dp } : user} />
           <TextInput
             multiline={true}
             numberOfLines={14}
@@ -143,6 +144,7 @@ const CreatePost = (props) => {
             value={postText}
             style={styles.textArea}
             placeholder="What's happening ?"
+            placeholderTextColor={'black'}
           />
           <TouchableOpacity style={styles.publish} onPress={savePost}>
             {loading ? (
@@ -192,7 +194,8 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: "#FCB040",
-    fontSize: 13,
+    fontSize: 16,
+    fontWeight:'600',
   },
   postTextContainer: {
     marginTop: 80,

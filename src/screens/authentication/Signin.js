@@ -135,7 +135,7 @@ const Signin = (props) => {
           <View style={styles.socialIconsContainer}>
             <TouchableOpacity
               style={styles.socialIconsContainerSingle}
-              onPress={() => Linking.openURL("fb://quraancoaching/1")}
+              onPress={() => Linking.openURL("https://web.facebook.com/")}
             >
               <FontAwesome name="facebook" style={styles.socialIcon} />
             </TouchableOpacity>
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 12,
-    borderRadius: 5,
+    borderRadius: 10,
   },
   socialIconsContainer: {
     flexDirection: "row",
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   socialIcon: {
-    fontSize: 17,
+    fontSize: 20,
     color: "#464646",
   },
   forgotPasswordContainer: {

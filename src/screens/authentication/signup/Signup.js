@@ -28,7 +28,12 @@ import {
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
-import { galleryImage, tickImage } from "../../../../assets";
+import {
+  galleryImage,
+  tickImage,
+  checkImage,
+  exclamation_mark,
+} from "../../../../assets";
 
 const Signup = (props) => {
   const [firstName, setFirstName] = useState("");
@@ -38,6 +43,7 @@ const Signup = (props) => {
   const [password, setPassword] = useState("");
 
   const [badgeNumberImage, setBadgeNumberImage] = useState(null);
+  const [authcheck, setAuthCheck] = useState(false);
   const [taxiLicenseImage, setTaxiLicenseImage] = useState(null);
   const [passwordHidden, setPasswordHidden] = useState(true);
 
@@ -211,7 +217,7 @@ const Signup = (props) => {
       return new Promise((resolve, reject) => {
         task.on(
           "state_changed",
-          () => {},
+          () => { },
           (err) => {
             reject(err);
           },
@@ -252,34 +258,54 @@ const Signup = (props) => {
           <View style={styles.formField}>
             <Text style={styles.label}>Name</Text>
             <View style={styles.textFieldHalfContainer}>
-              <TextInput
-                style={styles.textFieldHalf}
-                value={firstName}
-                onChangeText={(e) => setFirstName(e)}
-                placeholder="First Name"
-              />
-              <TextInput
-                style={styles.textFieldHalf}
-                value={lastName}
-                onChangeText={(e) => setLastName(e)}
-                placeholder="Last Name"
-              />
+              <View style={styles.textFieldHalf}>
+                <TextInput
+                  style={styles.textFieldHalf1}
+                  value={firstName}
+                  onChangeText={(e) => setFirstName(e)}
+                  placeholder="First Name"
+                  
+                />
+                <Image
+                  source={firstName.length>2 ? checkImage:null}
+                  style={styles.checkImageIcon}
+                />
+              </View>
+              <View style={styles.textFieldHalf}>
+                <TextInput
+                  style={styles.textFieldHalf1}
+                  value={lastName}
+                  onChangeText={(e) => setLastName(e)}
+                  placeholder="Last Name"
+                />
+                <Image
+                  source={lastName.length>2 ? checkImage:null}
+                  style={styles.checkImageIcon}
+                />
+              </View>
             </View>
           </View>
 
-          <View style={styles.formField}>
+          <View style={[styles.formField,{
+            
+          }]}>
             <Text style={styles.label}>Mobile</Text>
-            <Text style={styles.countryCode}>+44</Text>
+            <Text style={styles.countryCode}>+77</Text>
             <View style={styles.textFieldFullContainer}>
               <TextInput
                 style={[styles.textFieldFull, { paddingHorizontal: 55 }]}
                 value={mobileNo}
                 onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
                 keyboardType="number-pad"
-                placeholder="7711111111"
+                placeholder="11111111"
                 maxLength={10}
               />
+             <Image
+                source={mobileNo.length>9 ? checkImage:null}
+                style={[styles.checkImageIcon,{marginRight:15}]}
+              />
             </View>
+            
           </View>
 
           <View style={styles.formField}>
@@ -290,6 +316,12 @@ const Signup = (props) => {
                 value={email}
                 onChangeText={(e) => setEmail(e)}
                 placeholder="name@example.com"
+              />
+                <Image
+                source={
+                  /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)?
+                   checkImage:null}
+                style={[styles.checkImageIcon,{marginRight:15}]}
               />
             </View>
           </View>
