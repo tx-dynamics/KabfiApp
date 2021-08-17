@@ -10,6 +10,7 @@ import {
   Dimensions,
   AsyncStorage,
   ToastAndroid,
+  
 } from "react-native";
 import {
   user,
@@ -18,12 +19,19 @@ import {
   smallLocation,
   voiceImage,
 } from "../../../assets";
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
 import { Audio } from "expo-av";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useIsFocused } from "@react-navigation/native";
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const CreatePost = (props) => {
   const [Sound, setSound] = useState("");
   const [recording, setRecording] = useState();
@@ -61,8 +69,12 @@ const CreatePost = (props) => {
   async function savePost() {
     setloading(true);
     try {
-      const post_Image = await uploadImage(postImage);
-
+      if(postImage || postText || loc || Sound ){  
+      let post_Image = await uploadImage(postImage);
+      if(!post_Image){
+          post_Image=""
+      }
+      console.log("postImage",post_Image)
       var myRef = firebase.database().ref("user_posts").push();
       var key = myRef.getKey();
       var mylike = firebase
@@ -83,7 +95,7 @@ const CreatePost = (props) => {
       let like = { userId };
 
       myRef.set(Details);
-      mylike.set(userId);
+     // mylike.set(userId);
       alert("Post Added Succsessfully");
       await AsyncStorage.clear();
       setloading(false);
@@ -92,12 +104,16 @@ const CreatePost = (props) => {
       setUserId(""), setUserName("");
       setDp("");
       props.navigation.navigate("NewsFeed");
+    }
+    else{
+     setloading(false)
+     alert("please upload some data to post");
+    }
     } catch (error) {
       setloading(false);
       alert(error.message);
     }
   }
-
   const pickPostImage = async (val) => {
     let result = "";
 
@@ -191,6 +207,15 @@ const CreatePost = (props) => {
 
         <View style={styles.postTextContainer}>
           <Image style={styles.userImage} source={Dp ? { uri: Dp } : user} />
+          {postImage?
+          <Image style={{alignSelf:'center',
+          marginLeft:responsiveHeight(1),
+          width:'70%',
+          height:'40%',
+          borderRadius:responsiveHeight(2)
+        }} 
+          source={{ uri: postImage }}  />
+          :null}
           <TextInput
             multiline={true}
             numberOfLines={14}
@@ -198,7 +223,8 @@ const CreatePost = (props) => {
             value={postText}
             style={styles.textArea}
             placeholder="What's happening ?"
-            placeholderTextColor={"black"}
+            placeholderTextColor={"grey"}
+            
           />
           <TouchableOpacity style={styles.publish} onPress={savePost}>
             {loading ? (
@@ -235,13 +261,13 @@ const CreatePost = (props) => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
+          {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
             <SimpleLineIcons
               name="location-pin"
               size={24}
               color={loc ? "blue" : "black"}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </View>
@@ -266,22 +292,25 @@ const styles = StyleSheet.create({
   },
   postTextContainer: {
     marginTop: 80,
+    backgroundColor: "#FBFBFB",
+    height:windowHeight/2.5,
+    borderTopRightRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
   },
   userImage: {
     width: 60,
     height: 60,
     position: "absolute",
-    top: -40,
+    top: responsiveHeight(-6),
     zIndex: 1,
     borderRadius: 50,
+    
   },
   textArea: {
     backgroundColor: "#FBFBFB",
-    borderTopRightRadius: 50,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    padding: 30,
-    textAlignVertical: "top",
+     textAlignVertical: "top",
+    padding:responsiveHeight(6),
   },
   publish: {
     alignSelf: "center",

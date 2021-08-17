@@ -70,7 +70,7 @@ const NewsFeed = (props) => {
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
                   if (chil.exists()) {
-                    console.log("if");
+                    //console.log("if");
                     setData({ ...data });
                     arr.push({
                       id: child.key,
@@ -86,9 +86,11 @@ const NewsFeed = (props) => {
                       like: true,
                       save: child.val().save_count ? true : false,
                       comm: snapshot.numChildren(),
+                      region:child.val().location!=""?child.val().location:null
+
                     });
                   } else {
-                    console.log("else", child);
+                   // console.log("else", child);
                     setData({ ...data });
                     arr.push({
                       id: child.key,
@@ -104,16 +106,17 @@ const NewsFeed = (props) => {
                       like: false,
                       save: child.val().save_count ? true : false,
                       comm: snapshot.numChildren(),
+                      region:child.val().location!=""?child.val().location:null
                     });
                   }
                 });
             });
           });
-
+          console.log("Pakkkmkmkm ", arr);
           const ik = arr.reverse();
           setPosts(ik);
         } else {
-          console.log("Pakkkmkmkm ", arr);
+         
         }
       });
 
@@ -247,7 +250,7 @@ const NewsFeed = (props) => {
             <Text style={{ textAlign: "justify" }}>{item.post_text}</Text>
           </View>
 
-          {item.longitude ? (
+          {item.region ? (
             <TouchableOpacity
               style={{
                 flex: 2,
@@ -257,9 +260,9 @@ const NewsFeed = (props) => {
               }}
               onPress={() =>
                 props.navigation.push("Map", {
-                  latitude: item.latitude,
-                  longitude: item.longitude,
-                  markers: item.markers,
+                  latitude: item.region.latitude,
+                  longitude: item.region.longitude,
+                  //markers: item.markers,
                 })
               }
             >
@@ -270,7 +273,8 @@ const NewsFeed = (props) => {
           ) : (
             <View
               style={{ flex: 2, alignSelf: "flex-end", alignItems: "center" }}
-            ></View>
+            >
+            </View>
           )}
         </View>
 
