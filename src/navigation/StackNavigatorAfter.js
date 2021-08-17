@@ -13,7 +13,7 @@ import PrivacyPolicy from "../screens/extra/PrivacyPolicy";
 import TermsAndConditions from "../screens/extra/TermsAndConditions";
 import Map from "../screens/home/Map";
 import CreatePost from "../screens/home/CreatePost";
-
+import savedPost from "../screens/home/savedPost";
 const Stack = createStackNavigator();
 
 const StackNavigatorAfter = (props) => {
@@ -23,6 +23,11 @@ const StackNavigatorAfter = (props) => {
       <Stack.Screen
         name="Main"
         component={Main}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="savedPost"
+        component={savedPost}
         options={{ headerShown: false }}
       />
       <Stack.Screen

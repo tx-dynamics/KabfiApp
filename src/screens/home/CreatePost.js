@@ -10,7 +10,6 @@ import {
   Dimensions,
   AsyncStorage,
   ToastAndroid,
-  
 } from "react-native";
 import {
   user,
@@ -23,15 +22,16 @@ import {
   responsiveWidth,
   responsiveHeight,
   responsiveFontSize,
-} from 'react-native-responsive-dimensions';
+} from "react-native-responsive-dimensions";
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
 import { Audio } from "expo-av";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useIsFocused } from "@react-navigation/native";
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+import { Stopwatch, Timer } from "react-native-stopwatch-timer";
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 const CreatePost = (props) => {
   const [Sound, setSound] = useState("");
   const [recording, setRecording] = useState();
@@ -44,6 +44,9 @@ const CreatePost = (props) => {
   const [sound] = useState();
   const [loc, setLoc] = useState("");
   const isFocused = useIsFocused();
+  const [timer, settimer] = useState(0);
+  const [show, setshow] = useState(false);
+  const [stopwatchReset, setstopwatchReset] = useState(false);
   useEffect(() => {
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
@@ -69,46 +72,49 @@ const CreatePost = (props) => {
   async function savePost() {
     setloading(true);
     try {
-      if(postImage || postText || loc || Sound ){  
-      let post_Image = await uploadImage(postImage);
-      if(!post_Image){
-          post_Image=""
-      }
-      console.log("postImage",post_Image)
-      var myRef = firebase.database().ref("user_posts").push();
-      var key = myRef.getKey();
-      var mylike = firebase
-        .database()
-        .ref("user_posts/" + key + "/Like/" + userId);
-      let Details = {
-        post_id: key,
-        user: userId,
-        userName: userName,
-        post_image: post_Image,
-        post_text: postText,
-        user_image: Dp,
-        likes_count: 0,
-        likes_user: [],
-        recoding: Sound,
-        location: loc,
-      };
-      let like = { userId };
+      if (postImage || postText || loc || Sound) {
+        let post_Image = await uploadImage(postImage);
+        let sound = await uploadImage(Sound);
+        if (!post_Image) {
+          post_Image = "";
+        }
+        if (!sound) {
+          sound = "";
+        }
+        console.log("postImage", post_Image);
+        var myRef = firebase.database().ref("user_posts").push();
+        var key = myRef.getKey();
+        var mylike = firebase
+          .database()
+          .ref("user_posts/" + key + "/Like/" + userId);
+        let Details = {
+          post_id: key,
+          user: userId,
+          userName: userName,
+          post_image: post_Image,
+          post_text: postText,
+          user_image: Dp,
+          likes_count: 0,
+          likes_user: [],
+          recoding: sound,
+          location: loc,
+        };
+        let like = { userId };
 
-      myRef.set(Details);
-     // mylike.set(userId);
-      alert("Post Added Succsessfully");
-      await AsyncStorage.clear();
-      setloading(false);
-      setPostText("");
-      setPostImage("");
-      setUserId(""), setUserName("");
-      setDp("");
-      props.navigation.navigate("NewsFeed");
-    }
-    else{
-     setloading(false)
-     alert("please upload some data to post");
-    }
+        myRef.set(Details);
+        // mylike.set(userId);
+        alert("Post Added Succsessfully");
+        await AsyncStorage.clear();
+        setloading(false);
+        setPostText("");
+        setPostImage("");
+        setUserId(""), setUserName("");
+        setDp("");
+        props.navigation.navigate("NewsFeed");
+      } else {
+        setloading(false);
+        alert("please upload some data to post");
+      }
     } catch (error) {
       setloading(false);
       alert(error.message);
@@ -158,26 +164,36 @@ const CreatePost = (props) => {
   };
   async function startRecording() {
     try {
+      setshow(true);
       console.log("Requesting permissions..");
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
+        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
         playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+        interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+        playThroughEarpieceAndroid: true,
       });
       console.log("Starting recording..");
       const { recording } = await Audio.Recording.createAsync(
         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
       );
-      setRecording(recording);
       console.log("Recording started");
+      setRecording(recording);
     } catch (err) {
+      setshow(false);
+      setstopwatchReset(true);
+      alert(err.message);
       console.error("Failed to start recording", err);
     }
   }
   async function playSound() {
     console.log("Loading Sound");
     const { sound: playbackObject } = await Audio.Sound.createAsync(
-      { uri: Sound },
+      {
+        uri: Sound,
+      },
       { shouldPlay: true }
     );
     // setSound(sound);
@@ -189,9 +205,13 @@ const CreatePost = (props) => {
     console.log("Stopping recording..");
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
+    setshow(false);
+    setstopwatchReset(true);
     const uri = recording.getURI();
     console.log("Recording stopped and stored at", recording._uri);
+    // let post_Image = await uploadImage(recording._uri);
     setSound(recording._uri);
+    console.log("post_Image", recording._finalDurationMillis / 1000);
     // playSound(recording._uri);
   }
   async function oncancel() {
@@ -207,15 +227,18 @@ const CreatePost = (props) => {
 
         <View style={styles.postTextContainer}>
           <Image style={styles.userImage} source={Dp ? { uri: Dp } : user} />
-          {postImage?
-          <Image style={{alignSelf:'center',
-          marginLeft:responsiveHeight(1),
-          width:'70%',
-          height:'40%',
-          borderRadius:responsiveHeight(2)
-        }} 
-          source={{ uri: postImage }}  />
-          :null}
+          {postImage ? (
+            <Image
+              style={{
+                alignSelf: "center",
+                marginLeft: responsiveHeight(1),
+                width: "70%",
+                height: "40%",
+                borderRadius: responsiveHeight(2),
+              }}
+              source={{ uri: postImage }}
+            />
+          ) : null}
           <TextInput
             multiline={true}
             numberOfLines={14}
@@ -224,7 +247,6 @@ const CreatePost = (props) => {
             style={styles.textArea}
             placeholder="What's happening ?"
             placeholderTextColor={"grey"}
-            
           />
           <TouchableOpacity style={styles.publish} onPress={savePost}>
             {loading ? (
@@ -270,6 +292,33 @@ const CreatePost = (props) => {
           </TouchableOpacity> */}
         </View>
       </View>
+      {show ? (
+        <Stopwatch
+          laps
+          start={show}
+          reset={stopwatchReset}
+          //To start
+          options={{
+            container: {
+              backgroundColor: "#FBFBFB",
+              padding: 5,
+              borderRadius: 5,
+              width: 220,
+              alignSelf: "center",
+              marginTop: 5,
+            },
+            text: {
+              fontSize: 20,
+              color: "black",
+              alignSelf: "center",
+            },
+          }}
+          //options for the styling
+          getTime={(time) => {
+            console.log(time);
+          }}
+        />
+      ) : null}
     </View>
   );
 };
@@ -293,7 +342,7 @@ const styles = StyleSheet.create({
   postTextContainer: {
     marginTop: 80,
     backgroundColor: "#FBFBFB",
-    height:windowHeight/2.5,
+    height: windowHeight / 2.5,
     borderTopRightRadius: 50,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
@@ -305,12 +354,11 @@ const styles = StyleSheet.create({
     top: responsiveHeight(-6),
     zIndex: 1,
     borderRadius: 50,
-    
   },
   textArea: {
     backgroundColor: "#FBFBFB",
-     textAlignVertical: "top",
-    padding:responsiveHeight(6),
+    textAlignVertical: "top",
+    padding: responsiveHeight(6),
   },
   publish: {
     alignSelf: "center",

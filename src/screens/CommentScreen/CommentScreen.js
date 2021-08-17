@@ -8,6 +8,9 @@ import {
   Image,
   ScrollView,
   ToastAndroid,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
 } from "react-native";
 import {
   user,
@@ -37,6 +40,7 @@ const CommentScreen = ({ route, navigation }) => {
   const [img, setImg] = useState("");
   const [sound] = useState();
   const [recording, setRecording] = useState();
+  const [isloading, setisloading] = useState(false);
   useEffect(() => {
     console.log("posts", posts);
     const id = route.params.id;
@@ -116,8 +120,13 @@ const CommentScreen = ({ route, navigation }) => {
     );
   };
   async function postComments() {
+    setisloading(true);
     var user = firebase.auth()?.currentUser;
     var userData = firebase.database().ref("users/" + user?.uid);
+    let sound = await uploadImage(Sound);
+    if (!sound) {
+      sound = "";
+    }
     userData.on("value", (data) => {
       console.log("Data==>", data.val().firstName + "" + data.val().lastName);
       setImg(data.val().Dp);
@@ -127,11 +136,11 @@ const CommentScreen = ({ route, navigation }) => {
         comments: cmnt,
         name: data.val().firstName + "" + data.val().lastName,
         image: data.val().Dp,
-        recording: Sound,
+        recording: sound,
       };
       myRef.push(data);
     });
-
+    setisloading(false);
     setCmnt("");
     setPosts([]);
     getData(id);
@@ -179,8 +188,38 @@ const CommentScreen = ({ route, navigation }) => {
     ToastAndroid.show("Recording Saved..", ToastAndroid.SHORT);
     // playSound(recording._uri);
   }
+  const uploadImage = async (uri) => {
+    try {
+      // setLoader(true);
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      var timestamp = new Date().getTime();
+      var ref = firebase.storage().ref().child(`images/${timestamp}`);
+      const task = ref.put(blob);
+
+      return new Promise((resolve, reject) => {
+        task.on(
+          "state_changed",
+          () => {},
+          (err) => {
+            reject(err);
+          },
+          async () => {
+            const url = await task.snapshot.ref.getDownloadURL();
+            resolve(url);
+            // setLoader(false);
+          }
+        );
+      });
+    } catch (err) {
+      console.log("uploadImage error: " + err.message);
+    }
+  };
   return (
-    <View style={styles.mainContainer}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      style={{ flex: 1, backgroundColor: "white" }}
+    >
       <Header
         backgroundColor="white"
         leftComponent={
@@ -225,15 +264,18 @@ const CommentScreen = ({ route, navigation }) => {
           onPress={postComments}
           style={{
             justifyContent: "center",
-
             alignSelf: "center",
             marginTop: 7,
           }}
         >
-          <MaterialCommunityIcons name="send" size={20} color={"black"} />
+          {isloading ? (
+            <ActivityIndicator color={"black"} size={"small"} />
+          ) : (
+            <MaterialCommunityIcons name="send" size={20} color={"black"} />
+          )}
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 export default CommentScreen;

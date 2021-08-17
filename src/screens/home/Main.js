@@ -9,10 +9,11 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { user2 } from "../../../assets";
-
+import { Header } from "react-native-elements";
 const Main = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -28,6 +29,26 @@ const Main = (props) => {
   return (
     <View style={styles.root}>
       <StatusBar style="light" />
+      <Header
+        backgroundColor="white"
+        containerStyle={{ marginTop: 0 }}
+        leftComponent={
+          <TouchableWithoutFeedback
+            activeOpacity={0}
+            style={{
+              height: 40,
+              width: 40,
+              tintColor: "black",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              props.navigation.navigate("NewsFeed");
+            }}
+          >
+            <Ionicons name="arrow-back" color="black" size={30} />
+          </TouchableWithoutFeedback>
+        }
+      />
       <View style={styles.contentArea}>
         <ScrollView style={styles.scroll}>
           <View style={styles.smallLine}></View>
@@ -80,7 +101,10 @@ const Main = (props) => {
               <Text style={styles.listText}>Hot spots</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.listItem}>
+            <TouchableOpacity
+              style={styles.listItem}
+              onPress={() => props.navigation.navigate("savedPost")}
+            >
               <Image
                 source={require("../../../assets/ProjectImages/users/profile/saved-post.png")}
                 style={styles.listIconImage}

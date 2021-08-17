@@ -18,7 +18,7 @@ const HeaderLeftComponent = ({ navigation, icon }) => {
           activeOpacity={0}
           style={styles.drawerIcon}
           onPress={() => {
-            navigation.goBack();
+            navigation.navigate("NewsFeed");
           }}
         >
           {/* <Image

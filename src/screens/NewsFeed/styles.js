@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions } from "react-native";
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "lightgray",
+    backgroundColor: "white",
     //height:Dimensions.get("window").height-100
   },
   userImgStyle: {
@@ -41,9 +41,9 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     padding: 10,
-    backgroundColor: "lightgray",
+    backgroundColor: "#FBFBFB",
     // elevation: 2,
-    shadowColor: "#BDBDBD",
+    shadowColor: "#fdfdfd",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: theme.colors.lightGray,
     borderRadius: 10,
-    backgroundColor: "lightgray",
   },
 });
 export default styles;

@@ -38,12 +38,13 @@ const Signin = (props) => {
   const { setIsLoggedIn } = useLogin();
   useEffect(() => {
     // setDataUpdated(!dataUpdated);
-    if (firebase.auth().currentUser) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
+    if (isFocused) {
+      if (firebase.auth().currentUser) setIsLoggedIn(true);
+      else {
+        setIsLoggedIn(false);
+      }
     }
-  }, [isFocused]);
+  }, [props, isFocused]);
 
   function passwordVisibility() {
     passwordHidden === true
