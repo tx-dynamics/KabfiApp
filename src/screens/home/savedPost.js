@@ -11,10 +11,9 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   RefreshControl,
-  KeyboardAvoidingView,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
-import styles from "./styles";
+import styles from "../NewsFeed/styles";
 import { Header } from "react-native-elements";
 import {
   user,
@@ -34,49 +33,22 @@ import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
-import * as Permissions from "expo-permissions";
-import * as Location from "expo-location";
-const NewsFeed = (props) => {
+
+const savedPost = (props) => {
   const isFocused = useIsFocused();
   const [posts, setPosts] = useState(null);
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = React.useState(true);
-  const [region, setRegion] = useState({});
+
   const [dataUpdated, setDataUpdated] = useState(false);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
   useEffect(() => {
     fetchAllPosts();
-
-    fetchLocation();
   }, [isFocused]);
-  async function fetchLocation() {
-    setRefreshing(true);
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== "granted") {
-      alert("Permission to access location was denied");
-      this.setState({
-        errorMessage: "Permission to access location was denied",
-      });
-      return;
-    }
-    let location = await Location.getCurrentPositionAsync({});
-    var dat = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.015,
-      longitudeDelta: 0.0121,
-    };
-    if (location) {
-      const id = firebase.auth().currentUser?.uid;
-      var myRef = firebase.database().ref("locations/" + id);
-      myRef.set(dat).catch((err) => console.log(err.message));
-    }
-    setRefreshing(false);
-  }
+
   async function fetchAllPosts() {
     setRefreshing(true);
-    fetchLocation();
     let arr = [];
     const uid = firebase.auth().currentUser?.uid;
     setUid(uid);
@@ -95,59 +67,37 @@ const NewsFeed = (props) => {
               .database()
               .ref("user_posts/" + child.key + "/Save/" + uid);
             userlike.on("value", (chil) => {
-              var myRef = firebase
-                .database()
-                .ref("comments/" + child.key)
-                .on("value", function (snapshot) {
-                  if (chil.exists()) {
-                    //console.log("if");
-                    setData({ ...data });
-                    arr.push({
-                      id: child.key,
-                      likes_count: child.val().likes_count,
-                      save_count: child.val().save_count
-                        ? child.val().save_count
-                        : 0,
-                      post_text: child.val().post_text,
-                      user: child.val().user,
-                      userName: child.val().userName,
-                      user_image: child.val().user_image,
-                      post_image: child.val().post_image,
-                      like: true,
-                      save: child.val().save_count ? true : false,
-                      comm: snapshot.numChildren(),
-                      rec: child.val().recoding,
-                      region:
-                        child.val().location != ""
-                          ? child.val().location
-                          : null,
-                    });
-                  } else {
-                    // console.log("else", child);
-                    setData({ ...data });
-                    arr.push({
-                      id: child.key,
-                      likes_count: child.val().likes_count,
-                      save_count: child.val().save_count
-                        ? child.val().save_count
-                        : 0,
-                      post_text: child.val().post_text,
-                      user: child.val().user,
-                      userName: child.val().userName,
-                      user_image: child.val().user_image,
-                      post_image: child.val().post_image,
-                      like: false,
-                      save: child.val().save_count ? true : false,
-                      comm: snapshot.numChildren(),
-                      rec: child.val().recoding,
-                      region:
-                        child.val().location != ""
-                          ? child.val().location
-                          : null,
-                      isShow: false,
-                    });
-                  }
-                });
+              userSave.on("value", (lik) => {
+                var myRef = firebase
+                  .database()
+                  .ref("comments/" + child.key)
+                  .on("value", function (snapshot) {
+                    if (chil.exists() && lik.key === uid) {
+                      console.log("if", lik.key);
+                      setData({ ...data });
+                      arr.push({
+                        id: child.key,
+                        likes_count: child.val().likes_count,
+                        save_count: child.val().save_count
+                          ? child.val().save_count
+                          : 0,
+                        post_text: child.val().post_text,
+                        user: child.val().user,
+                        userName: child.val().userName,
+                        user_image: child.val().user_image,
+                        post_image: child.val().post_image,
+                        like: true,
+                        save: child.val().save_count ? true : false,
+                        comm: snapshot.numChildren(),
+                        rec: child.val().recoding,
+                        region:
+                          child.val().location != ""
+                            ? child.val().location
+                            : null,
+                      });
+                    }
+                  });
+              });
             });
           });
           console.log("Pakkkmkmkm ", arr);
@@ -207,21 +157,18 @@ const NewsFeed = (props) => {
     data.update(Details);
     fetchAllPosts();
   }
-  async function playSound(id, soundUri) {
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+  async function playSound(id, Sound) {
     toogleLike(id);
-
-    console.log("Loading Sound", soundUri);
-
+    console.log("Loading Sound");
     const { sound: playbackObject } = await Audio.Sound.createAsync(
       {
-        uri: soundUri,
+        uri: Sound,
       },
       { shouldPlay: true }
     );
     // setSound(sound);
 
-    console.log("Playing Sound", soundUri);
+    console.log("Playing Sound", Sound);
     await playbackObject.playAsync();
     const res = posts.map((item) => {
       if (item.id === id) {
@@ -304,16 +251,15 @@ const NewsFeed = (props) => {
               marginTop: 10,
             }}
             destructiveIndex={0}
-            options={["Report", "Hide", "Cancel"]}
+            options={["Report", "Delete"]}
             actions={[
               () => {
                 alert("Reported");
               },
 
               () => {
-                alert("Hide");
+                alert("Deleted");
               },
-              () => console.log("cancel"),
             ]}
           />
         </View>
@@ -472,7 +418,7 @@ const NewsFeed = (props) => {
           </TouchableWithoutFeedback>
         }
         rightComponent={<HeaderRight navigation={props.navigation} />}
-        centerComponent={<HeaderCenterComponent name="News Feed" />}
+        centerComponent={<HeaderCenterComponent name="Saved Post" />}
       />
 
       <FlatList
@@ -487,4 +433,4 @@ const NewsFeed = (props) => {
     </View>
   );
 };
-export default NewsFeed;
+export default savedPost;

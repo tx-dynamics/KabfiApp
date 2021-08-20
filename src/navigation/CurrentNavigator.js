@@ -1,11 +1,22 @@
-import React, { useEffect } from "react";
+import firebase from "firebase";
+import React, { useEffect, useState } from "react";
 import StackNavigator from "./StackNavigator";
 import StackNavigatorAfter from "./StackNavigatorAfter";
 import { useLogin } from "../context/LoginProvider";
-import firebase from "firebase";
+
+// import { useIsFocused, NavigationContainer } from "@react-navigation/native";
 const CurrentNavigator = () => {
-  const { isLoggedIn } = useLogin();
+  // const isFocused = useIsFocused();
+  const { isLoggedIn, setIsLoggedIn } = useLogin();
+  useEffect(() => {
+    // setDataUpdated(!dataUpdated);
+    if (firebase.auth().currentUser) {
+      setIsLoggedIn(true);
+    }
+  }, [firebase.auth().currentUser]);
+
   return isLoggedIn ? <StackNavigatorAfter /> : <StackNavigator />;
+  // return <StackNavigatorAfter />;
 };
 
 export default CurrentNavigator;

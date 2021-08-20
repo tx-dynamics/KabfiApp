@@ -10,15 +10,15 @@ import { bar } from "../../assets";
 const HeaderRight = ({ navigation }) => {
   return (
     <TouchableOpacity
-      // onPress={() => navigation.navigate("Notification")}
+      onPress={() => navigation.navigate("CreatePost")}
       style={{ alignItems: "center" }}
     >
       <ImageBackground
         source={bar}
         resizeMode={"contain"}
         style={{
-          height: 40,
-          width: 40,
+          height: 46,
+          width: 46,
           alignItems: "flex-end",
           alignSelf: "center",
           // backgroundColor: 'tomato',

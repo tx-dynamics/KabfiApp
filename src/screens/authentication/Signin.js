@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   Linking,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from "react-native";
 import {
   AntDesign,
@@ -22,22 +23,41 @@ import {
 } from "@expo/vector-icons";
 import { useLogin } from "../../context/LoginProvider";
 import firebase from "firebase";
-
-// import * as firebase from 'firebase'
-
-// import kabfiApp from '../../database/config';
-// const table_todo = kabfiApp.database().ref('/ToDo');
+import { useIsFocused } from "@react-navigation/native";
+import { ScrollView } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const Signin = (props) => {
+  const isFocused = useIsFocused();
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordHidden, setPasswordHidden] = useState(true);
   const [loader, setLoader] = useState(false);
 
   const { setIsLoggedIn } = useLogin();
+  useEffect(() => {
+    
+    // setDataUpdated(!dataUpdated);
+    if (isFocused) {
+      console.log("TETS",firebase.auth().currentUser)
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          setIsLoggedIn(true)
+        } else {
+          setIsLoggedIn(false)
+        }
+      });
+    }
+  }, [props, isFocused]);
+
+  function passwordVisibility() {
+    passwordHidden === true
+      ? setPasswordHidden(false)
+      : setPasswordHidden(true);
+  }
 
   function userSignin() {
     setLoader(true);
@@ -55,8 +75,14 @@ const Signin = (props) => {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={styles.root}
+  >
+    
+   {/* <SafeAreaView style={styles.root}> */}
       <StatusBar style="dark" />
+      
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
           <Image
@@ -64,24 +90,8 @@ const Signin = (props) => {
             style={styles.logoImage}
           />
         </View>
-        <TouchableOpacity onPress={() => props.navigation.navigate("Signup")}>
-          <AntDesign name="arrowleft" size={24} color="black" />
-        </TouchableOpacity>
 
         <View style={styles.loginForm}>
-          <View style={styles.textFieldContainer}>
-            <Image
-              source={require("../../../assets/ProjectImages/authentication/user-icon.png")}
-              style={styles.fieldIcon}
-            />
-            <TextInput
-              style={styles.textField}
-              placeholder="Name"
-              value={firstName}
-              onChangeText={(e) => setFirstName(e)}
-            />
-          </View>
-
           <View style={[styles.textFieldContainer, { marginTop: 20 }]}>
             <Image
               source={require("../../../assets/ProjectImages/authentication/mail-icon.png")}
@@ -100,12 +110,23 @@ const Signin = (props) => {
               source={require("../../../assets/ProjectImages/authentication/password-icon.png")}
               style={styles.fieldIcon}
             />
+
+            <TouchableOpacity
+              style={styles.eyeIconContainer}
+              onPress={passwordVisibility}
+            >
+              <Ionicons
+                name={passwordHidden ? "eye" : "eye-off"}
+                style={styles.eyeIcon}
+              />
+            </TouchableOpacity>
+
             <TextInput
               style={styles.textField}
               placeholder="Password"
               value={password}
               onChangeText={(e) => setPassword(e)}
-              secureTextEntry={true}
+              secureTextEntry={passwordHidden}
             />
           </View>
 
@@ -125,7 +146,7 @@ const Signin = (props) => {
           <View style={styles.socialIconsContainer}>
             <TouchableOpacity
               style={styles.socialIconsContainerSingle}
-              onPress={() => Linking.openURL("fb://quraancoaching/1")}
+              onPress={() => Linking.openURL("https://web.facebook.com/")}
             >
               <FontAwesome name="facebook" style={styles.socialIcon} />
             </TouchableOpacity>
@@ -151,9 +172,18 @@ const Signin = (props) => {
           >
             <Text style={styles.forgotPasswordText}>Forgot Password ?</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{ alignItems: "center", marginTop: 10 }}
+            onPress={() => props.navigation.navigate("Signup")}
+          >
+            <Text style={styles.forgotPasswordText}>Dont have an account?</Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+      
+    {/* </SafeAreaView> */}
+    </KeyboardAvoidingView>
   );
 };
 
@@ -199,17 +229,18 @@ const styles = StyleSheet.create({
     top: 18,
   },
   loginBtn: {
-    marginTop: 40,
+    marginTop: 50,
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 12,
+    borderRadius: 10,
   },
   socialIconsContainer: {
     flexDirection: "row",
     width: "65%",
     // flex:1,
     alignSelf: "center",
-    marginTop: 70,
+    marginTop: 80,
     // backgroundColor:'red',
     // height:300
   },
@@ -219,15 +250,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   socialIcon: {
-    fontSize: 14,
+    fontSize: 20,
     color: "#464646",
   },
   forgotPasswordContainer: {
     alignItems: "center",
-    marginTop: 40,
+    marginTop: 60,
   },
   forgotPasswordText: {
     fontSize: 12,
+  },
+  eyeIcon: {
+    fontSize: 24,
+    color: "#E6E6E6",
+  },
+  eyeIconContainer: {
+    position: "absolute",
+    top: 13,
+    right: 13,
+    width: 35,
+    height: 25,
+    alignItems: "center",
+    zIndex: 1,
   },
 });
 

@@ -1,3 +1,18 @@
+import * as firebase from "firebase";
+
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyASonZ6DlS2cqTonbPSiq8RboZFv4bYKDE",
+    authDomain: "kabfiapp.firebaseapp.com",
+    databaseURL: "https://kabfiapp-default-rtdb.firebaseio.com",
+    projectId: "kabfiapp",
+    storageBucket: "kabfiapp.appspot.com",
+    messagingSenderId: "676638158064",
+    appId: "1:676638158064:web:e01ff8bc3a12a378eee635",
+  });
+}
+// firebase.storage().ref();
+// import firebase from "firebase";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -8,11 +23,17 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
-import firebase from "firebase";
+import {
+  galleryImage,
+  tickImage,
+  checkImage,
+  exclamation_mark,
+} from "../../../../assets";
 
 const Signup = (props) => {
   const [firstName, setFirstName] = useState("");
@@ -22,35 +43,92 @@ const Signup = (props) => {
   const [password, setPassword] = useState("");
 
   const [badgeNumberImage, setBadgeNumberImage] = useState(null);
-  const [taxiLicenseImage, setTaxiLicenseImage] = useState(true);
+  const [authcheck, setAuthCheck] = useState(false);
+  const [taxiLicenseImage, setTaxiLicenseImage] = useState(null);
   const [passwordHidden, setPasswordHidden] = useState(true);
 
   const [loader, setLoader] = useState(false);
 
-  const pickBadgeNumberImage = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  function AlertBadgeNumberImage() {
+    Alert.alert(
+      "Choose from the options",
+      "",
+      [
+        {
+          text: "Open Camera",
+          onPress: () => pickBadgeNumberImage(1),
+        },
+        {
+          text: "Open Gallery",
+          onPress: () => pickBadgeNumberImage(2),
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
+  function AlertTaxiLicenseImage() {
+    Alert.alert(
+      "Choose from the options",
+      "",
+      [
+        {
+          text: "Open Camera",
+          onPress: () => pickTaxiLicenseImage(1),
+        },
+        {
+          text: "Open Gallery",
+          onPress: () => pickTaxiLicenseImage(2),
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
+  const pickBadgeNumberImage = async (val) => {
+    let result = "";
+    if (val === 1) {
+      result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    } else if (val === 2) {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    }
 
     if (!result.cancelled) {
-      console.log(result);
+      // console.log(result);
       setBadgeNumberImage(result);
-      alert("Badge Number Selected");
+      // alert("Badge Number Selected");
     }
   };
 
-  const pickTaxiLicenseImage = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  const pickTaxiLicenseImage = async (val) => {
+    let result = "";
+    if (val === 1) {
+      result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    } else if (val === 2) {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    }
 
     if (!result.cancelled) {
       setTaxiLicenseImage(result);
-      alert("Taxi License Selected");
+      // alert("Taxi License Selected");
     }
   };
 
@@ -62,6 +140,7 @@ const Signup = (props) => {
 
   async function userSignup() {
     let success = true;
+
     if (
       firstName !== "" &&
       lastName !== "" &&
@@ -75,14 +154,18 @@ const Signup = (props) => {
         alert("Phone number should be numeric only.");
         return false;
       }
+      if (password.length < 8) {
+        alert("Password Must be atleast 8 characters");
+        return false;
+      }
 
       await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(async (user) => {
+          setLoader(true);
           const badgeImage = await uploadImage(badgeNumberImage.uri);
           const taxiLicense = await uploadImage(taxiLicenseImage.uri);
-
           let Details = {
             id: user.user.uid,
             firstName: firstName,
@@ -92,8 +175,11 @@ const Signup = (props) => {
             badgeNumberImage: badgeImage,
             taxiLicenseImage: taxiLicense,
             rating: 0,
+            Dp: "",
+            city: "",
+            country: "",
           };
-          console.log(Details);
+          // console.log(Details);
           await saveData("users", user.user.uid, Details);
           alert(
             "Thank you for your registration! Your account is now ready to use."
@@ -105,6 +191,7 @@ const Signup = (props) => {
           setPassword("");
           setTaxiLicenseImage("");
           setBadgeNumberImage("");
+          setLoader(false);
           props.navigation.navigate("Signin");
         })
         .catch(function (error) {
@@ -120,7 +207,7 @@ const Signup = (props) => {
 
   const uploadImage = async (uri) => {
     try {
-      setLoader(true);
+      // setLoader(true);
       const response = await fetch(uri);
       const blob = await response.blob();
       var timestamp = new Date().getTime();
@@ -137,7 +224,7 @@ const Signup = (props) => {
           async () => {
             const url = await task.snapshot.ref.getDownloadURL();
             resolve(url);
-            setLoader(false);
+            // setLoader(false);
           }
         );
       });
@@ -164,10 +251,6 @@ const Signup = (props) => {
     <ScrollView style={styles.root}>
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
-          <Image
-            source={require("../../../../assets/ProjectImages/logo-name.png")}
-            style={styles.logoImage}
-          />
           <Text style={styles.createAccountText}>CREATE AN ACCOUNT</Text>
         </View>
 
@@ -175,30 +258,49 @@ const Signup = (props) => {
           <View style={styles.formField}>
             <Text style={styles.label}>Name</Text>
             <View style={styles.textFieldHalfContainer}>
-              <TextInput
-                style={styles.textFieldHalf}
-                value={firstName}
-                onChangeText={(e) => setFirstName(e)}
-                placeholder="First Name"
-              />
-              <TextInput
-                style={styles.textFieldHalf}
-                value={lastName}
-                onChangeText={(e) => setLastName(e)}
-                placeholder="Last Name"
-              />
+              <View style={styles.textFieldHalf}>
+                <TextInput
+                  style={styles.textFieldHalf1}
+                  value={firstName}
+                  onChangeText={(e) => setFirstName(e)}
+                  placeholder="First Name"
+                />
+                <Image
+                  source={firstName.length > 2 ? checkImage : null}
+                  style={styles.checkImageIcon}
+                />
+              </View>
+              <View style={styles.textFieldHalf}>
+                <TextInput
+                  style={styles.textFieldHalf1}
+                  value={lastName}
+                  onChangeText={(e) => setLastName(e)}
+                  placeholder="Last Name"
+                />
+                <Image
+                  source={lastName.length > 2 ? checkImage : null}
+                  style={styles.checkImageIcon}
+                />
+              </View>
             </View>
           </View>
 
-          <View style={styles.formField}>
-            <Text style={styles.label}>Mobile Country</Text>
-            <Text style={styles.countryCode}>+44</Text>
+          <View style={[styles.formField, {}]}>
+            <Text style={styles.label}>Mobile</Text>
+          
             <View style={styles.textFieldFullContainer}>
+            <Text style={styles.countryCode}>+77</Text>
               <TextInput
-                style={[styles.textFieldFull, { paddingHorizontal: 55 }]}
+                style={[styles.textFieldFull, { paddingHorizontal: 20 }]}
                 value={mobileNo}
-                onChangeText={(e) => setMobileNo(e)}
-                placeholder="777 777-777"
+                onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
+                keyboardType="number-pad"
+                placeholder="7711111111"
+                maxLength={10}
+              />
+              <Image
+                source={mobileNo.length > 9 ? checkImage : null}
+                style={[styles.checkImageIcon, { marginRight: 15 }]}
               />
             </View>
           </View>
@@ -212,6 +314,14 @@ const Signup = (props) => {
                 onChangeText={(e) => setEmail(e)}
                 placeholder="name@example.com"
               />
+              <Image
+                source={
+                  /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
+                    ? checkImage
+                    : null
+                }
+                style={[styles.checkImageIcon, { marginRight: 15 }]}
+              />
             </View>
           </View>
 
@@ -219,31 +329,44 @@ const Signup = (props) => {
             <View style={styles.textFieldHalfContainer}>
               <View style={styles.uploadImageFieldsContainer}>
                 <Text style={styles.uploadImageFieldLabel}>Badge Number</Text>
-                <Image
-                  source={require("../../../../assets/ProjectImages/authentication/PhotoIcon.png")}
-                  style={styles.uploadIMageIcon}
-                />
-                <TouchableOpacity onPress={pickBadgeNumberImage}>
+               
+                <TouchableOpacity 
+               style={{flexDirection:'row',
+               justifyContent:'space-between',
+               borderWidth: 1,
+               borderColor: '#E6E6E6',}}
+                onPress={AlertBadgeNumberImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
                     editable={false}
                   />
+                  <Image
+                  source={!badgeNumberImage ? galleryImage : tickImage}
+                  style={styles.uploadIMageIcon}
+                />
                 </TouchableOpacity>
               </View>
               <View style={styles.uploadImageFieldsContainer}>
                 <Text style={styles.uploadImageFieldLabel}>Taxi License</Text>
 
-                <Image
-                  source={require("../../../../assets/ProjectImages/authentication/PhotoIcon.png")}
-                  style={styles.uploadIMageIcon}
-                />
-                <TouchableOpacity onPress={pickTaxiLicenseImage}>
+               
+                <TouchableOpacity 
+                style={{
+                  flexDirection:'row',
+                  justifyContent:'space-between',
+                borderWidth: 1,
+                borderColor: '#E6E6E6',}}
+                onPress={AlertTaxiLicenseImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
                     editable={false}
                   />
+                   <Image
+                  source={!taxiLicenseImage ? galleryImage : tickImage}
+                  style={styles.uploadIMageIcon}
+                />
                 </TouchableOpacity>
               </View>
             </View>
@@ -254,12 +377,7 @@ const Signup = (props) => {
             <View style={styles.textFieldFullContainer}>
               {/* start */}
 
-              <TouchableOpacity
-                style={styles.eyeIconContainer}
-                onPress={passwordVisibility}
-              >
-                <Ionicons name="eye" style={styles.eyeIcon} />
-              </TouchableOpacity>
+             
 
               <TextInput
                 style={styles.textFieldFull}
@@ -267,6 +385,15 @@ const Signup = (props) => {
                 onChangeText={(e) => setPassword(e)}
                 secureTextEntry={passwordHidden}
               />
+               <TouchableOpacity
+                style={styles.eyeIconContainer}
+                onPress={passwordVisibility}
+              >
+                <Ionicons
+                  name={passwordHidden ? "eye" : "eye-off"}
+                  style={styles.eyeIcon}
+                />
+              </TouchableOpacity>
 
               {/* end */}
             </View>
@@ -306,7 +433,14 @@ const Signup = (props) => {
             </TouchableOpacity>
           </View>
 
-          <Text></Text>
+          <TouchableOpacity
+            style={{ alignItems: "center", marginTop: 10 }}
+            onPress={() => props.navigation.navigate("Signin")}
+          >
+            <Text style={{ fontSize: 12, marginBottom: 20 }}>
+              Already have an account?
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

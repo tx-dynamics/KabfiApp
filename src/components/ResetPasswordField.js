@@ -1,16 +1,27 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-const c_name = (props) => {
+import React,{useState} from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
+import { Ionicons } from "@expo/vector-icons";
+
+const ResetPasswordField = (props) => {
+    const [password, setPassword] = useState("");
+    const [passwordHidden, setPasswordHidden] = useState(true);
+
+    function passwordVisibility() {
+        passwordHidden === true
+          ? setPasswordHidden(false)
+          : setPasswordHidden(true);
+      }
+
     return (
         <View>
-            <Text style={styles.label}>Password</Text>
+            {/* <Text style={styles.label}>Password</Text> */}
            
             <View style={styles.textFieldFullContainer}>
                 <TouchableOpacity style={styles.eyeIconContainer} onPress={ passwordVisibility } >
                     <Ionicons name="eye" style={styles.eyeIcon}  />
                 </TouchableOpacity>
                 
-                <TextInput style={styles.textFieldFull} value={password} onChangeText={(e)=>setPassword(e)} secureTextEntry={passwordHidden} />                            
+                <TextInput style={props.style} value={password} onChangeText={(e)=>setPassword(e)} secureTextEntry={passwordHidden} />                            
             </View>
         </View>
     );
@@ -42,4 +53,4 @@ const styles = StyleSheet.create({
     
 })
 
-export default c_name;
+export default ResetPasswordField;

@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: "white",
+    //height:Dimensions.get("window").height-100
   },
   userImgStyle: {
     height: 50,
@@ -40,9 +41,9 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     padding: 10,
-    backgroundColor: "white",
+    backgroundColor: "#FBFBFB",
     // elevation: 2,
-    shadowColor: "#BDBDBD",
+    shadowColor: "#fdfdfd",
     shadowOffset: {
       width: 0,
       height: 1,

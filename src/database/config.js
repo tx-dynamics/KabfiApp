@@ -12,3 +12,5 @@ if (!firebase.apps.length) {
   });
 }
 firebase.storage().ref();
+
+// alert('yes');

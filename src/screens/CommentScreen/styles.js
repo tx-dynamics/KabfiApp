@@ -69,13 +69,13 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   input: {
-    marginTop: 10,
-    marginLeft: 10,
+    marginTop: 7,
+    // marginLeft: 10,
     backgroundColor: "white",
     paddingLeft: 15,
     borderRadius: 30,
-    width: "90%",
-    fontFamily: "geometriaBold",
+    width: "85%",
+    // fontFamily: "geometriaBold",
     // alignSelf: 'center',
     // textAlign: 'center',
     borderColor: "lightgray",
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   mediumText: {
     // fontFamily: Fonts.RobotoRegular,
     fontSize: 12,
-    alignSelf: "center",
+    // alignSelf: "center",
   },
   largeText: {
     // fontFamily: Fonts.RobotoMedium,

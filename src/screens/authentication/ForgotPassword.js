@@ -52,7 +52,7 @@ const ForgotPassword = (props) => {
         <View style={styles.buttonsContainer}>
           <TextInput
             style={styles.emailInput}
-            placeholder="Email"
+            placeholder="Email address"
             value={email}
             onChangeText={(e) => setEmail(e)}
           />
