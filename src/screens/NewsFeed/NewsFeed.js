@@ -34,22 +34,49 @@ import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
-
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
 const NewsFeed = (props) => {
   const isFocused = useIsFocused();
   const [posts, setPosts] = useState(null);
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = React.useState(true);
-
+  const [region, setRegion] = useState({});
   const [dataUpdated, setDataUpdated] = useState(false);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
   useEffect(() => {
     fetchAllPosts();
-  }, [isFocused]);
 
+    fetchLocation();
+  }, [isFocused]);
+  async function fetchLocation() {
+    setRefreshing(true);
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== "granted") {
+      alert("Permission to access location was denied");
+      this.setState({
+        errorMessage: "Permission to access location was denied",
+      });
+      return;
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    var dat = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.0121,
+    };
+    if (location) {
+      const id = firebase.auth().currentUser?.uid;
+      var myRef = firebase.database().ref("locations/" + id);
+      myRef.set(dat).catch((err) => console.log(err.message));
+    }
+    setRefreshing(false);
+  }
   async function fetchAllPosts() {
     setRefreshing(true);
+    fetchLocation();
     let arr = [];
     const uid = firebase.auth().currentUser?.uid;
     setUid(uid);
@@ -183,9 +210,9 @@ const NewsFeed = (props) => {
   async function playSound(id, soundUri) {
     await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     toogleLike(id);
-    
-    console.log("Loading Sound",soundUri); 
-    
+
+    console.log("Loading Sound", soundUri);
+
     const { sound: playbackObject } = await Audio.Sound.createAsync(
       {
         uri: soundUri,
@@ -277,15 +304,16 @@ const NewsFeed = (props) => {
               marginTop: 10,
             }}
             destructiveIndex={0}
-            options={["Report", "Delete"]}
+            options={["Report", "Hide", "Cancel"]}
             actions={[
               () => {
                 alert("Reported");
               },
 
               () => {
-                alert("Deleted");
+                alert("Hide");
               },
+              () => console.log("cancel"),
             ]}
           />
         </View>
@@ -308,8 +336,7 @@ const NewsFeed = (props) => {
             </Text>
           </View>
         </View>
-        {
-        item.rec ? (
+        {item.rec ? (
           <TouchableOpacity
             onPress={() => playSound(item.id, item.rec)}
             style={{ width: "99%", alignSelf: "center" }}
@@ -450,8 +477,7 @@ const NewsFeed = (props) => {
 
       <FlatList
         refreshControl={
-          <RefreshControl 
-          refreshing={refreshing} onRefresh={fetchAllPosts} />
+          <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />
         }
         data={posts}
         renderItem={renderPosts}
