@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { user2 } from "../../../assets";
+import { user2,user } from "../../../assets";
 import { Header } from "react-native-elements";
 const Main = (props) => {
   const [Dp, setDp] = useState("");
@@ -56,7 +56,7 @@ const Main = (props) => {
           <View style={styles.userInfoContainer}>
             <View style={styles.userInfo1}>
               <Image
-                source={Dp ? { uri: Dp } : user2}
+                source={Dp ? { uri: Dp } : user}
                 style={styles.smallImage}
               />
               {/* <Image source={Dp?{uri:Dp}:user} style={styles.image} /> */}
@@ -69,7 +69,7 @@ const Main = (props) => {
                             </View> */}
             </View>
             <View style={styles.userInfo3}>
-              <Text style={styles.info3Text}>Member since 2021</Text>
+              {/* <Text style={styles.info3Text}>Member since 2021</Text> */}
             </View>
           </View>
 
@@ -93,8 +93,11 @@ const Main = (props) => {
               <Text style={styles.listText}>Refer a taxicab driver</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.listItem}>
+            <TouchableOpacity
+            onPress={() => props.navigation.navigate("HeatMap")}
+            style={styles.listItem}>
               <Image
+                
                 source={require("../../../assets/ProjectImages/users/profile/hotspot.png")}
                 style={styles.listIconImage}
               />

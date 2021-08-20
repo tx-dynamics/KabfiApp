@@ -287,10 +287,11 @@ const Signup = (props) => {
 
           <View style={[styles.formField, {}]}>
             <Text style={styles.label}>Mobile</Text>
-            <Text style={styles.countryCode}>+77</Text>
+          
             <View style={styles.textFieldFullContainer}>
+            <Text style={styles.countryCode}>+77</Text>
               <TextInput
-                style={[styles.textFieldFull, { paddingHorizontal: 55 }]}
+                style={[styles.textFieldFull, { paddingHorizontal: 20 }]}
                 value={mobileNo}
                 onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
                 keyboardType="number-pad"
@@ -328,32 +329,44 @@ const Signup = (props) => {
             <View style={styles.textFieldHalfContainer}>
               <View style={styles.uploadImageFieldsContainer}>
                 <Text style={styles.uploadImageFieldLabel}>Badge Number</Text>
-                <Image
-                  source={!badgeNumberImage ? galleryImage : tickImage}
-                  style={styles.uploadIMageIcon}
-                />
-
-                <TouchableOpacity onPress={AlertBadgeNumberImage}>
+               
+                <TouchableOpacity 
+               style={{flexDirection:'row',
+               justifyContent:'space-between',
+               borderWidth: 1,
+               borderColor: '#E6E6E6',}}
+                onPress={AlertBadgeNumberImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
                     editable={false}
                   />
+                  <Image
+                  source={!badgeNumberImage ? galleryImage : tickImage}
+                  style={styles.uploadIMageIcon}
+                />
                 </TouchableOpacity>
               </View>
               <View style={styles.uploadImageFieldsContainer}>
                 <Text style={styles.uploadImageFieldLabel}>Taxi License</Text>
 
-                <Image
-                  source={!taxiLicenseImage ? galleryImage : tickImage}
-                  style={styles.uploadIMageIcon}
-                />
-                <TouchableOpacity onPress={AlertTaxiLicenseImage}>
+               
+                <TouchableOpacity 
+                style={{
+                  flexDirection:'row',
+                  justifyContent:'space-between',
+                borderWidth: 1,
+                borderColor: '#E6E6E6',}}
+                onPress={AlertTaxiLicenseImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
                     editable={false}
                   />
+                   <Image
+                  source={!taxiLicenseImage ? galleryImage : tickImage}
+                  style={styles.uploadIMageIcon}
+                />
                 </TouchableOpacity>
               </View>
             </View>
@@ -364,7 +377,15 @@ const Signup = (props) => {
             <View style={styles.textFieldFullContainer}>
               {/* start */}
 
-              <TouchableOpacity
+             
+
+              <TextInput
+                style={styles.textFieldFull}
+                value={password}
+                onChangeText={(e) => setPassword(e)}
+                secureTextEntry={passwordHidden}
+              />
+               <TouchableOpacity
                 style={styles.eyeIconContainer}
                 onPress={passwordVisibility}
               >
@@ -373,13 +394,6 @@ const Signup = (props) => {
                   style={styles.eyeIcon}
                 />
               </TouchableOpacity>
-
-              <TextInput
-                style={styles.textFieldFull}
-                value={password}
-                onChangeText={(e) => setPassword(e)}
-                secureTextEntry={passwordHidden}
-              />
 
               {/* end */}
             </View>

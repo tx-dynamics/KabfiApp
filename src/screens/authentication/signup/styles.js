@@ -68,21 +68,23 @@ const styles = StyleSheet.create({
         fontSize: 13
     },
     textFieldFull: {
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
         paddingVertical: 9,
         fontSize: 13,
+        textAlign:'left',
         //width: '80%',
     },
     countryCode: {
-        position: 'absolute',
-        top: 38.5, left: 10
+        alignSelf:'center',
+        paddingLeft:7,
+        // position: 'absolute',
+        // top: 38.5, left: 10
     },
     uploadImageFieldsContainer: {
         width: '48.5%'
     },
     uploadImageFields: {
-        borderWidth: 1,
-        borderColor: '#E6E6E6',
+        
         paddingHorizontal: 20,
         paddingVertical: 10,
         fontSize: 13
@@ -92,15 +94,11 @@ const styles = StyleSheet.create({
         marginLeft: 5
     },
     uploadIMageIcon: {
-        // fontSize:18,
-        // color:'#E6E6E6',
-        //alignSelf:'center',
-        //justifyContent:'center',
+        alignSelf:'center',
         width: 15,
         height: 15,
-        position: 'absolute',
-        top: 42,
-        right: 13
+        marginRight:10,
+       
     },
     checkImageIcon: {
         alignSelf: 'center',
@@ -123,15 +121,16 @@ const styles = StyleSheet.create({
     eyeIcon: {
         fontSize: 24,
         color: '#E6E6E6',
+        alignSelf:'center',
     },
     eyeIconContainer: {
-        position: 'absolute',
-        top: 13,
-        right: 13,
+        //position: 'absolute',
+        //top: 13,
+        
         width: 35,
         height: 25,
-        alignItems: 'center',
-        zIndex: 1
+       alignSelf:'center',
+        //zIndex: 1
     }
 });
 

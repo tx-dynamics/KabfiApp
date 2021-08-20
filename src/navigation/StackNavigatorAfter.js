@@ -14,6 +14,7 @@ import TermsAndConditions from "../screens/extra/TermsAndConditions";
 import Map from "../screens/home/Map";
 import CreatePost from "../screens/home/CreatePost";
 import savedPost from "../screens/home/savedPost";
+import HeatMap from "../screens/home/HeatMap";
 const Stack = createStackNavigator();
 
 const StackNavigatorAfter = (props) => {
@@ -64,6 +65,11 @@ const StackNavigatorAfter = (props) => {
       <Stack.Screen
         name="Map"
         component={Map}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="HeatMap"
+        component={HeatMap}
         options={{ headerShown: false }}
       />
 

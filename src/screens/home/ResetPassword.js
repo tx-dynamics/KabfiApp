@@ -145,7 +145,7 @@ const ResetPassword = (props) => {
         <View style={styles.textContainer}>
           <Text style={styles.textHeading}>Create New Password</Text>
           <Text style={styles.textsubHeading}>
-            Your new password must be different from previous used passwords.
+            Your new password must be different from previous passwords.
           </Text>
         </View>
 

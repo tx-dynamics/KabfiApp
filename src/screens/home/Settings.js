@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useLogin } from '../../context/LoginProvider';
 import { Header } from "react-native-elements";
 import HeaderCenterComponent from "../../components/Settings/HeaderCenterComponent";
+import firebase from "firebase";
 // import HeaderRight from "../../components/Settings/HeaderRight";
 import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
 
@@ -11,6 +12,7 @@ const Settings = (props) => {
     const {setIsLoggedIn} = useLogin();        
         
     function userLogout(){
+        firebase.auth().signOut();
         setIsLoggedIn(false);
     }
 
@@ -37,10 +39,10 @@ const Settings = (props) => {
                         <Text style={styles.listText}>Notification Settings</Text>                    
                     </TouchableOpacity>  
 
-                    <TouchableOpacity style={styles.listItem}>
+                    {/* <TouchableOpacity style={styles.listItem}>
                         <Image source={require('../../../assets/ProjectImages/userSettings/about.png')} style={styles.listIconImage} />
                         <Text style={styles.listText}>About</Text>                    
-                    </TouchableOpacity>  
+                    </TouchableOpacity>   */}
 
                     <TouchableOpacity style={styles.listItem} onPress={userLogout}>
                         <Image source={require('../../../assets/ProjectImages/userSettings/logout.png')} style={styles.listIconImage} />

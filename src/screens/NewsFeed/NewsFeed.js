@@ -11,6 +11,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   RefreshControl,
+  KeyboardAvoidingView,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -111,6 +112,7 @@ const NewsFeed = (props) => {
                       like: false,
                       save: child.val().save_count ? true : false,
                       comm: snapshot.numChildren(),
+                      rec: child.val().recoding,
                       region:
                         child.val().location != ""
                           ? child.val().location
@@ -178,18 +180,21 @@ const NewsFeed = (props) => {
     data.update(Details);
     fetchAllPosts();
   }
-  async function playSound(id, Sound) {
+  async function playSound(id, soundUri) {
+    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     toogleLike(id);
-    console.log("Loading Sound");
+    
+    console.log("Loading Sound",soundUri); 
+    
     const { sound: playbackObject } = await Audio.Sound.createAsync(
       {
-        uri: Sound,
+        uri: soundUri,
       },
       { shouldPlay: true }
     );
     // setSound(sound);
 
-    console.log("Playing Sound", Sound);
+    console.log("Playing Sound", soundUri);
     await playbackObject.playAsync();
     const res = posts.map((item) => {
       if (item.id === id) {
@@ -303,7 +308,8 @@ const NewsFeed = (props) => {
             </Text>
           </View>
         </View>
-        {item.rec ? (
+        {
+        item.rec ? (
           <TouchableOpacity
             onPress={() => playSound(item.id, item.rec)}
             style={{ width: "99%", alignSelf: "center" }}
@@ -444,7 +450,8 @@ const NewsFeed = (props) => {
 
       <FlatList
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />
+          <RefreshControl 
+          refreshing={refreshing} onRefresh={fetchAllPosts} />
         }
         data={posts}
         renderItem={renderPosts}

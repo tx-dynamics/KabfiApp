@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   Linking,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from "react-native";
 import {
   AntDesign,
@@ -23,6 +24,7 @@ import {
 import { useLogin } from "../../context/LoginProvider";
 import firebase from "firebase";
 import { useIsFocused } from "@react-navigation/native";
+import { ScrollView } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -37,12 +39,17 @@ const Signin = (props) => {
 
   const { setIsLoggedIn } = useLogin();
   useEffect(() => {
+    
     // setDataUpdated(!dataUpdated);
     if (isFocused) {
-      if (firebase.auth().currentUser) setIsLoggedIn(true);
-      else {
-        setIsLoggedIn(false);
-      }
+      console.log("TETS",firebase.auth().currentUser)
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          setIsLoggedIn(true)
+        } else {
+          setIsLoggedIn(false)
+        }
+      });
     }
   }, [props, isFocused]);
 
@@ -68,8 +75,14 @@ const Signin = (props) => {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={styles.root}
+  >
+    
+   {/* <SafeAreaView style={styles.root}> */}
       <StatusBar style="dark" />
+      
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
           <Image
@@ -168,7 +181,9 @@ const Signin = (props) => {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+      
+    {/* </SafeAreaView> */}
+    </KeyboardAvoidingView>
   );
 };
 
