@@ -1,5 +1,4 @@
-import * as firebase from "firebase";
-
+import firebase from "firebase";
 if (!firebase.apps.length) {
   firebase.initializeApp({
     apiKey: "AIzaSyASonZ6DlS2cqTonbPSiq8RboZFv4bYKDE",
@@ -12,7 +11,7 @@ if (!firebase.apps.length) {
   });
 }
 // firebase.storage().ref();
-// import firebase from "firebase";
+
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -33,15 +32,16 @@ import {
   tickImage,
   checkImage,
   exclamation_mark,
+  logoName,
 } from "../../../../assets";
-
+import { useLogin } from "../../../context/LoginProvider";
 const Signup = (props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [password, setPassword] = useState("");
-
+  const { setIsLoggedIn } = useLogin();
   const [badgeNumberImage, setBadgeNumberImage] = useState(null);
   const [authcheck, setAuthCheck] = useState(false);
   const [taxiLicenseImage, setTaxiLicenseImage] = useState(null);
@@ -140,7 +140,7 @@ const Signup = (props) => {
 
   async function userSignup() {
     let success = true;
-
+    setLoader(true);
     if (
       firstName !== "" &&
       lastName !== "" &&
@@ -158,16 +158,19 @@ const Signup = (props) => {
         alert("Password Must be atleast 8 characters");
         return false;
       }
-
+      const badgeImage = await uploadImage(badgeNumberImage.uri);
+      const taxiLicense = await uploadImage(taxiLicenseImage.uri);
       await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(async (user) => {
+          firebase.auth().signOut();
+          props.navigation.navigate("Signin");
           setLoader(true);
-          const badgeImage = await uploadImage(badgeNumberImage.uri);
-          const taxiLicense = await uploadImage(taxiLicenseImage.uri);
+          const uid = user.user.uid;
+          setIsLoggedIn(false);
           let Details = {
-            id: user.user.uid,
+            id: uid,
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -179,26 +182,35 @@ const Signup = (props) => {
             city: "",
             country: "",
           };
-          // console.log(Details);
-          await saveData("users", user.user.uid, Details);
-          alert(
-            "Thank you for your registration! Your account is now ready to use."
-          );
-          setFirstName("");
-          setLastName("");
-          setMobileNo("");
-          setEmail("");
-          setPassword("");
-          setTaxiLicenseImage("");
-          setBadgeNumberImage("");
-          setLoader(false);
-          props.navigation.navigate("Signin");
+          console.log(Details);
+          await firebase
+            .database()
+            .ref("users/" + uid)
+            .set(Details)
+            .then(() => {
+              setIsLoggedIn(false);
+              alert(
+                "Thank you for your registration! Your account is now ready to use."
+              );
+              setFirstName("");
+              setLastName("");
+              setMobileNo("");
+              setEmail("");
+              setPassword("");
+              setTaxiLicenseImage("");
+              setBadgeNumberImage("");
+              setLoader(false);
+            });
+          // firebase.auth().signOut();
+          // await saveData("users", user.user.uid, Details);
         })
         .catch(function (error) {
+          setLoader(false);
           success = false;
           alert(error.code + ":: " + error.message);
         });
     } else {
+      setLoader(false);
       alert("All Fields are required");
     }
 
@@ -234,7 +246,7 @@ const Signup = (props) => {
   };
 
   async function saveData(collection, doc, jsonObject) {
-    const dbh = firebase.database().ref(collection + "/" + doc);
+    const dbh = firebase.database().ref("users" + "/" + doc);
     await dbh
       .set(jsonObject)
       .then(function () {
@@ -249,14 +261,24 @@ const Signup = (props) => {
 
   return (
     <ScrollView style={styles.root}>
+      {/* <Image
+        source={logoName}
+        resizeMode="contain"
+        style={{
+          height: 50,
+          width: 100,
+          backgroundColor: "tomato",
+          alignSelf: "center",
+        }}
+      /> */}
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
-          <Text style={styles.createAccountText}>CREATE AN ACCOUNT</Text>
+          <Text style={[styles.createAccountText]}>CREATE AN ACCOUNT</Text>
         </View>
 
         <View style={styles.form}>
           <View style={styles.formField}>
-            <Text style={styles.label}>Name</Text>
+            <Text style={[styles.label, { fontWeight: "bold" }]}>Name</Text>
             <View style={styles.textFieldHalfContainer}>
               <View style={styles.textFieldHalf}>
                 <TextInput
@@ -286,10 +308,10 @@ const Signup = (props) => {
           </View>
 
           <View style={[styles.formField, {}]}>
-            <Text style={styles.label}>Mobile</Text>
-          
+            <Text style={[styles.label, { fontWeight: "bold" }]}>Mobile</Text>
+
             <View style={styles.textFieldFullContainer}>
-            <Text style={styles.countryCode}>+77</Text>
+              <Text style={styles.countryCode}>+44</Text>
               <TextInput
                 style={[styles.textFieldFull, { paddingHorizontal: 20 }]}
                 value={mobileNo}
@@ -306,7 +328,7 @@ const Signup = (props) => {
           </View>
 
           <View style={styles.formField}>
-            <Text style={styles.label}>E-mail</Text>
+            <Text style={[styles.label, { fontWeight: "bold" }]}>E-mail</Text>
             <View style={styles.textFieldFullContainer}>
               <TextInput
                 style={styles.textFieldFull}
@@ -328,56 +350,70 @@ const Signup = (props) => {
           <View style={styles.formField}>
             <View style={styles.textFieldHalfContainer}>
               <View style={styles.uploadImageFieldsContainer}>
-                <Text style={styles.uploadImageFieldLabel}>Badge Number</Text>
-               
-                <TouchableOpacity 
-               style={{flexDirection:'row',
-               justifyContent:'space-between',
-               borderWidth: 1,
-               borderColor: '#E6E6E6',}}
-                onPress={AlertBadgeNumberImage}>
+                <Text
+                  style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
+                >
+                  Badge Number
+                </Text>
+
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    borderWidth: 1,
+                    borderColor: "#E6E6E6",
+                  }}
+                  onPress={AlertBadgeNumberImage}
+                >
                   <TextInput
                     style={styles.uploadImageFields}
-                    placeholder="Upload Image"
+                    placeholder={
+                      !badgeNumberImage ? "Upload Image" : "Image Uploaded"
+                    }
                     editable={false}
                   />
                   <Image
-                  source={!badgeNumberImage ? galleryImage : tickImage}
-                  style={styles.uploadIMageIcon}
-                />
+                    source={!badgeNumberImage ? galleryImage : tickImage}
+                    style={styles.uploadIMageIcon}
+                  />
                 </TouchableOpacity>
               </View>
               <View style={styles.uploadImageFieldsContainer}>
-                <Text style={styles.uploadImageFieldLabel}>Taxi License</Text>
+                <Text
+                  style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
+                >
+                  Taxi License
+                </Text>
 
-               
-                <TouchableOpacity 
-                style={{
-                  flexDirection:'row',
-                  justifyContent:'space-between',
-                borderWidth: 1,
-                borderColor: '#E6E6E6',}}
-                onPress={AlertTaxiLicenseImage}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    borderWidth: 1,
+                    borderColor: "#E6E6E6",
+                  }}
+                  onPress={AlertTaxiLicenseImage}
+                >
                   <TextInput
                     style={styles.uploadImageFields}
-                    placeholder="Upload Image"
+                    placeholder={
+                      !taxiLicenseImage ? "Upload Image" : "Image Uploaded"
+                    }
                     editable={false}
                   />
-                   <Image
-                  source={!taxiLicenseImage ? galleryImage : tickImage}
-                  style={styles.uploadIMageIcon}
-                />
+                  <Image
+                    source={!taxiLicenseImage ? galleryImage : tickImage}
+                    style={styles.uploadIMageIcon}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
           </View>
 
           <View style={styles.formField}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={[styles.label, { fontWeight: "bold" }]}>Password</Text>
             <View style={styles.textFieldFullContainer}>
               {/* start */}
-
-             
 
               <TextInput
                 style={styles.textFieldFull}
@@ -385,7 +421,7 @@ const Signup = (props) => {
                 onChangeText={(e) => setPassword(e)}
                 secureTextEntry={passwordHidden}
               />
-               <TouchableOpacity
+              <TouchableOpacity
                 style={styles.eyeIconContainer}
                 onPress={passwordVisibility}
               >
@@ -406,8 +442,8 @@ const Signup = (props) => {
                 style={styles.submitText}
                 onPress={() => props.navigation.navigate("TermsAndConditions")}
               >
-                {" "}
-                Terms and conditions{" "}
+                {"\n "}
+                Terms and Conditions{" "}
               </Text>
               and
               <Text

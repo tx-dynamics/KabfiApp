@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { user2,user } from "../../../assets";
+import { user2, user } from "../../../assets";
 import { Header } from "react-native-elements";
 const Main = (props) => {
   const [Dp, setDp] = useState("");
@@ -28,27 +28,6 @@ const Main = (props) => {
 
   return (
     <View style={styles.root}>
-      <StatusBar style="light" />
-      <Header
-        backgroundColor="white"
-        containerStyle={{ marginTop: 0 }}
-        leftComponent={
-          <TouchableWithoutFeedback
-            activeOpacity={0}
-            style={{
-              height: 40,
-              width: 40,
-              tintColor: "black",
-              alignItems: "center",
-            }}
-            onPress={() => {
-              props.navigation.navigate("NewsFeed");
-            }}
-          >
-            <Ionicons name="arrow-back" color="black" size={30} />
-          </TouchableWithoutFeedback>
-        }
-      />
       <View style={styles.contentArea}>
         <ScrollView style={styles.scroll}>
           <View style={styles.smallLine}></View>
@@ -94,10 +73,10 @@ const Main = (props) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-            onPress={() => props.navigation.navigate("HeatMap")}
-            style={styles.listItem}>
+              onPress={() => props.navigation.navigate("HeatMap")}
+              style={styles.listItem}
+            >
               <Image
-                
                 source={require("../../../assets/ProjectImages/users/profile/hotspot.png")}
                 style={styles.listIconImage}
               />
@@ -126,7 +105,10 @@ const Main = (props) => {
               <Text style={styles.listText}>Settings</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.listItem}>
+            <TouchableOpacity
+              style={styles.listItem}
+              onPress={() => props.navigation.navigate("feedback1")}
+            >
               <Image
                 source={require("../../../assets/ProjectImages/users/profile/feedback.png")}
                 style={styles.listIconImage}

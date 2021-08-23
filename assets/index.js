@@ -8,7 +8,14 @@ export const favourite = require("./ProjectImages/users/favourite.png");
 export const reload = require("./ProjectImages/users/reload.png");
 export const menu = require("./ProjectImages/users/menu.png");
 export const back = require("./ProjectImages/users/back.png");
-
+export const smile = require("./ProjectImages/users/smile.png");
+export const smiley = require("./ProjectImages/users/smiley.png");
+export const sad = require("./ProjectImages/users/sad.png");
+export const ok = require("./ProjectImages/users/ok.png");
+export const happy = require("./ProjectImages/users/happy.png");
+export const star = require("./ProjectImages/users/star.png");
+export const logoName = require("./ProjectImages/logo-name.png");
+//others
 export const galleryImage = require("./ProjectImages/authentication/PhotoIcon.png");
 export const tickImage = require("./ProjectImages/authentication/tick.png");
 export const verifyImage = require("./ProjectImages/verify.png");
@@ -20,6 +27,4 @@ export const voiceImage = require("./ProjectImages/voice.png");
 export const smallLocation = require("./ProjectImages/smallLocation.png");
 export const smallGallery = require("./ProjectImages/smallGallery.png");
 export const checkImage = require("./ProjectImages/authentication/check.png");
-export const  exclamation_mark= require("./ProjectImages/authentication/exclamation-mark.png");
-
-
+export const exclamation_mark = require("./ProjectImages/authentication/exclamation-mark.png");
