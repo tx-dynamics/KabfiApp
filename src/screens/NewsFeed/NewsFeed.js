@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import {
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
 import { Header } from "react-native-elements";
+import RBSheet from "react-native-raw-bottom-sheet";
 import {
   user,
   more,
@@ -36,7 +37,10 @@ import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
+import Main from "../home/Main";
 const NewsFeed = (props) => {
+  const [Dp, setDp] = useState("");
+  const [name, setName] = useState("");
   const isFocused = useIsFocused();
   const [posts, setPosts] = useState(null);
   const [data, setData] = useState([]);
@@ -45,40 +49,55 @@ const NewsFeed = (props) => {
   const [dataUpdated, setDataUpdated] = useState(false);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
+  const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
-
     fetchLocation();
   }, [isFocused]);
   async function fetchLocation() {
     setRefreshing(true);
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== "granted") {
-      alert("Permission to access location was denied");
-      this.setState({
-        errorMessage: "Permission to access location was denied",
-      });
-      return;
-    }
-    let location = await Location.getCurrentPositionAsync({});
-    var dat = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.015,
-      longitudeDelta: 0.0121,
-    };
-    if (location) {
-      const id = firebase.auth().currentUser?.uid;
-      var myRef = firebase.database().ref("locations/" + id);
-      myRef.set(dat).catch((err) => console.log(err.message));
+    try {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== "granted") {
+        alert("Permission to access location was denied");
+        return;
+      } else {
+        let location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+        var da = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+        };
+        if (location) {
+          const id = firebase.auth().currentUser?.uid;
+          const mylocation = firebase.database().ref("locations/" + id);
+          // await firebase
+          //   .database()
+          //   .ref("locations/" + id + "/")
+          //   .set(da);
+          mylocation.set(da);
+        }
+      }
+    } catch (err) {
+      setRefreshing(false);
+      // alert(err.message);
     }
     setRefreshing(false);
   }
   async function fetchAllPosts() {
     setRefreshing(true);
+    const uid = firebase.auth().currentUser?.uid;
+    const userdataNAme = firebase.database().ref("users/" + uid);
+    userdataNAme.on("value", (userdata) => {
+      setDp(userdata.val()?.Dp);
+      setName(userdata.val()?.firstName + " " + userdata.val()?.lastName);
+    });
     fetchLocation();
     let arr = [];
-    const uid = firebase.auth().currentUser?.uid;
+
     setUid(uid);
     await firebase
       .database()
@@ -460,9 +479,11 @@ const NewsFeed = (props) => {
               tintColor: "black",
               alignItems: "center",
             }}
-            onPress={() => {
-              props.navigation.navigate("Main");
-            }}
+            onPress={() => refRBSheet.current.open()}
+            // onPress={() => {
+            //   ref.open();
+            //   // props.navigation.navigate("Main");
+            // }}
           >
             <Image
               source={menu}
@@ -484,6 +505,146 @@ const NewsFeed = (props) => {
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        height={Dimensions.get("window").height / 1.45}
+        // openDuration={250}
+        customStyles={{
+          container: {
+            // justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "transparent",
+          },
+        }}
+      >
+        <View style={styles.contentArea}>
+          <ScrollView style={styles.scroll}>
+            <View style={styles.smallLine}></View>
+
+            <View style={styles.userInfoContainer}>
+              <View style={styles.userInfo1}>
+                <Image
+                  source={Dp ? { uri: Dp } : user}
+                  style={styles.smallImage}
+                />
+                {/* <Image source={Dp?{uri:Dp}:user} style={styles.image} /> */}
+              </View>
+              <View style={styles.userInfo2}>
+                <Text style={styles.userName}>{name}</Text>
+                {/* <View style={styles.userInfo2SubContainer}>
+                                <Text style={styles.info2Text}>4.92</Text>
+                                <FontAwesome name="star" style={styles.star} />
+                            </View> */}
+              </View>
+              <View style={styles.userInfo3}>
+                {/* <Text style={styles.info3Text}>Member since 2021</Text> */}
+              </View>
+            </View>
+
+            <View style={styles.listContainer}>
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => {
+                  refRBSheet.current.close(),
+                    props.navigation.navigate("EditProfile");
+                }}
+              >
+                <Image
+                  source={require("../../../assets/ProjectImages/users/profile/edit-profile.png")}
+                  style={styles.listIconImage}
+                />
+                <Text style={styles.listText}>Edit Profile</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.listItem}>
+                <Image
+                  source={require("../../../assets/ProjectImages/users/profile/refer-taxi.png")}
+                  style={styles.listIconImage}
+                />
+                <Text style={styles.listText}>Refer a taxicab driver</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  refRBSheet.current.close(),
+                    props.navigation.navigate("HeatMap");
+                }}
+                style={styles.listItem}
+              >
+                <Image
+                  source={require("../../../assets/ProjectImages/users/profile/hotspot.png")}
+                  style={styles.listIconImage}
+                />
+                <Text style={styles.listText}>Hot spots</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => props.navigation.navigate("savedPost")}
+              >
+                <Image
+                  source={require("../../../assets/ProjectImages/users/profile/saved-post.png")}
+                  style={styles.listIconImage}
+                />
+                <Text style={styles.listText}>Saved Post</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => {
+                  refRBSheet.current.close(),
+                    props.navigation.navigate("Settings");
+                }}
+              >
+                <Image
+                  source={require("../../../assets/ProjectImages/users/profile/settings.png")}
+                  style={styles.listIconImage}
+                />
+                <Text style={styles.listText}>Settings</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => {
+                  refRBSheet.current.close(),
+                    props.navigation.navigate("feedback1");
+                }}
+              >
+                <Image
+                  source={require("../../../assets/ProjectImages/users/profile/feedback.png")}
+                  style={styles.listIconImage}
+                />
+                <Text style={styles.listText}>Feedback</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.listItem}>
+                <Image
+                  source={require("../../../assets/ProjectImages/users/profile/help.png")}
+                  style={styles.listIconImage}
+                />
+                <Text style={styles.listText}>Help</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => {
+                  refRBSheet.current.close(),
+                    props.navigation.navigate("Legal");
+                }}
+              >
+                <Image
+                  source={require("../../../assets/ProjectImages/users/profile/legal.png")}
+                  style={styles.listIconImage}
+                />
+                <Text style={styles.listText}>Legal</Text>
+              </TouchableOpacity>
+              <Text></Text>
+            </View>
+          </ScrollView>
+        </View>
+      </RBSheet>
     </View>
   );
 };

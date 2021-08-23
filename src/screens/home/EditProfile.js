@@ -11,7 +11,7 @@ import {
   AsyncStorage,
   KeyboardAvoidingView,
   Alert,
-  ActivityIndicator, 
+  ActivityIndicator,
 } from "react-native";
 // import { kabfiApp, firebase } from '../../database/config';
 import firebase from "firebase";
@@ -30,9 +30,9 @@ const EditProfile = (props) => {
   const [country, setCountry] = useState("United Kingdom");
   const [Dp, setDp] = useState("");
   const [loader, setLoader] = useState(false);
-  const [ErroMessage, setErroMessage] = useState("")
+  const [ErroMessage, setErroMessage] = useState("");
   useEffect(() => {
-    setLoader(true)
+    setLoader(true);
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
     data.on("value", (userdata) => {
@@ -44,7 +44,7 @@ const EditProfile = (props) => {
       setEmail(userdata.val().email);
       setDp(userdata.val().Dp);
     });
-    setLoader(false)
+    setLoader(false);
   }, []);
 
   const uploadImage = async (uri) => {
@@ -59,7 +59,7 @@ const EditProfile = (props) => {
       return new Promise((resolve, reject) => {
         task.on(
           "state_changed",
-          () => { },
+          () => {},
           (err) => {
             reject(err);
           },
@@ -75,19 +75,16 @@ const EditProfile = (props) => {
     }
   };
 
-
   async function editProfileHandler() {
     try {
-      setLoader(true)
+      setLoader(true);
       let profileIamge;
       if (!firstName == "") {
         if (!lastName == "") {
           if (!mobileNo == "") {
             if (!city == "") {
-             
-              
               if (Dp) {
-                console.log("OKKKK Man") 
+                console.log("OKKKK Man");
                 profileIamge = await uploadImage(Dp);
               }
 
@@ -99,7 +96,6 @@ const EditProfile = (props) => {
                 Dp: profileIamge,
               };
 
-
               const user = await firebase.auth().currentUser.uid;
               const data = await firebase
                 .database()
@@ -107,28 +103,21 @@ const EditProfile = (props) => {
                 .update(Details);
               alert("Data Updated Succsessfully");
               props.navigation.navigate("NewsFeed");
+            } else {
+              setErroMessage("city name cannont be empty");
             }
-            else {
-
-              setErroMessage("city name cannont be empty")
-            }
+          } else {
+            setErroMessage("Phone number cannont be empty");
           }
-          else {
-            setErroMessage("Phone number cannont be empty")
-          }
+        } else {
+          console.log("1!");
+          setErroMessage("Last name cannont be empty");
         }
-        else {
-          console.log("1!")
-          setErroMessage("Last name cannont be empty")
-        }
+      } else {
+        console.log("2!");
+        setErroMessage("First name cannont be empty");
       }
-
-      else {
-        console.log("2!")
-        setErroMessage("First name cannont be empty")
-      }
-      setLoader(false)
-
+      setLoader(false);
     } catch (error) {
       alert(error.message);
     }
@@ -194,38 +183,44 @@ const EditProfile = (props) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.root}
     >
-      <ScrollView >
+      <ScrollView>
         <Header
-          backgroundColor="white"
-          containerStyle={{ marginTop: 15, paddingHorizontal: 20 }}
+          backgroundColor="#FBFBFB"
+          containerStyle={{
+            // marginTop: 15,
+            // paddingHorizontal: 20,
+            backgroundColor: "#FBFBFB",
+          }}
           leftComponent={
             <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Text style={{ color: "blue" }}>Back</Text>
+              <Text style={{ color: "#368AFF", fontSize: 18 }}>Back</Text>
             </TouchableOpacity>
           }
-          centerComponent={<Text>Edit Profile</Text>}
+          centerComponent={<Text style={{ fontSize: 18 }}>Edit Profile</Text>}
           rightComponent={
             <TouchableOpacity onPress={() => editProfileHandler()}>
-              <Text>Save</Text>
+              <Text style={{ fontSize: 18, color: "#A9A9A9" }}>Save</Text>
             </TouchableOpacity>
           }
         />
-        {
-          loader?
+        {loader ? (
           <ActivityIndicator color={"blue"} size={"small"} />
-          : 
-        <View style={styles.contentArea}>
-          <TouchableOpacity style={styles.imageContainer} onPress={AlertTaxiLicenseImage}>
-            {/* {
+        ) : (
+          <View style={styles.contentArea}>
+            <TouchableOpacity
+              style={styles.imageContainer}
+              onPress={AlertTaxiLicenseImage}
+            >
+              {/* {
             Dp1?
             <Image  source={require(Dp)} style={styles.image} />
          
             : */}
-            <Image source={Dp ? { uri: Dp } : user} style={styles.image} />
-            {/* } */}
-          </TouchableOpacity>
+              <Image source={Dp ? { uri: Dp } : user} style={styles.image} />
+              {/* } */}
+            </TouchableOpacity>
 
-          {/* <TouchableOpacity onPress={pickDpImage}>
+            {/* <TouchableOpacity onPress={pickDpImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
@@ -233,75 +228,83 @@ const EditProfile = (props) => {
                   />
                 </TouchableOpacity>     */}
 
-          <View style={styles.fieldContainer}>
-            {/* <View style={styles.iconContainer}  >
+            <View style={styles.fieldContainer}>
+              {/* <View style={styles.iconContainer}  >
                         <Image source={require('../../../assets/ProjectImages/users/profile/pencil-icon.png')} style={styles.icon}  />
                     </View> */}
 
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-              value={firstName}
-              onChangeText={(e) => setFirstName(e)}
-              style={styles.textField}
-            />
-          </View>
+              <Text style={styles.label}>First Name</Text>
+              <TextInput
+                value={firstName}
+                onChangeText={(e) => setFirstName(e)}
+                style={styles.textField}
+              />
+            </View>
 
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Last Name</Text>
-            <TextInput
-              value={lastName}
-              onChangeText={(e) => setLastName(e)}
-              style={styles.textField}
-            />
-          </View>
+            <View style={styles.fieldContainer}>
+              <Text style={styles.label}>Last Name</Text>
+              <TextInput
+                value={lastName}
+                onChangeText={(e) => setLastName(e)}
+                style={styles.textField}
+              />
+            </View>
 
-          {/* <View style={styles.fieldContainer}>
+            {/* <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Password</Text>
                     <TextInput value="12345678" style={styles.textField} secureTextEntry={true}/>
                 </View>  */}
 
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Phone Number</Text>
-            <TextInput
-              value={mobileNo}
-              style={styles.textField}
-              onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
-              keyboardType="number-pad"
-              placeholder="7711111111"
-              maxLength={10}
-            />
-          </View>
+            <View style={styles.fieldContainer}>
+              <Text style={styles.label}>Phone Number</Text>
+              <TextInput
+                value={mobileNo}
+                style={styles.textField}
+                onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
+                keyboardType="number-pad"
+                placeholder="7711111111"
+                maxLength={10}
+              />
+            </View>
 
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput value={email} style={styles.textField} editable={false} />
-          </View>
+            <View style={styles.fieldContainer}>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                value={email}
+                style={styles.textField}
+                editable={false}
+              />
+            </View>
 
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>City, State</Text>
-            <TextInput
-              value={city}
-              onChangeText={(e) => setCity(e)}
-              style={styles.textField}
-            />
-          </View>
+            <View style={styles.fieldContainer}>
+              <Text style={styles.label}>City, State</Text>
+              <TextInput
+                value={city}
+                onChangeText={(e) => setCity(e)}
+                style={styles.textField}
+              />
+            </View>
 
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Country</Text>
-            <TextInput
-              value={"United Kingdom"}
-              // onChangeText={(e) => setCountry(e)}
-              style={styles.textField}
-              editable={false}
-            />
+            <View style={styles.fieldContainer}>
+              <Text style={styles.label}>Country</Text>
+              <TextInput
+                value={"United Kingdom"}
+                // onChangeText={(e) => setCountry(e)}
+                style={styles.textField}
+                editable={false}
+              />
+            </View>
+            <Text
+              style={{
+                color: "red",
+                alignSelf: "center",
+                marginTop: responsiveHeight(2),
+              }}
+            >
+              {ErroMessage}
+            </Text>
           </View>
-          <Text style={{
-            color: 'red', alignSelf: 'center',
-            marginTop: responsiveHeight(2)
-          }}>{ErroMessage}</Text>
-        </View>
-        
-      }
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -326,7 +329,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 110,
+    width: 100,
     height: 100,
     borderRadius: 50,
   },

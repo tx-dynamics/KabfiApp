@@ -25,6 +25,7 @@ import { useLogin } from "../../context/LoginProvider";
 import firebase from "firebase";
 import { useIsFocused } from "@react-navigation/native";
 import { ScrollView } from "react-native";
+import * as Permissions from "expo-permissions";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -39,15 +40,15 @@ const Signin = (props) => {
 
   const { setIsLoggedIn } = useLogin();
   useEffect(() => {
-    
-    // setDataUpdated(!dataUpdated);
     if (isFocused) {
-      console.log("TETS",firebase.auth().currentUser)
-      firebase.auth().onAuthStateChanged(function(user) {
+      console.log("TETS", firebase.auth().currentUser);
+      firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
-          setIsLoggedIn(true)
+          // fetchLocation();
+          setIsLoggedIn(true);
         } else {
-          setIsLoggedIn(false)
+          // fetchLocation();
+          setIsLoggedIn(false);
         }
       });
     }
@@ -61,6 +62,7 @@ const Signin = (props) => {
 
   function userSignin() {
     setLoader(true);
+    // fetchLocation();
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -73,16 +75,21 @@ const Signin = (props) => {
         setLoader(false);
       });
   }
-
+  async function fetchLocation() {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== "granted") {
+      alert("Permission to access location was denied");
+      return;
+    }
+  }
   return (
     <KeyboardAvoidingView
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    style={styles.root}
-  >
-    
-   {/* <SafeAreaView style={styles.root}> */}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.root}
+    >
+      {/* <SafeAreaView style={styles.root}> */}
       <StatusBar style="dark" />
-      
+
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
           <Image
@@ -138,7 +145,7 @@ const Signin = (props) => {
               {loader ? (
                 <ActivityIndicator color={"red"} size={"small"} />
               ) : (
-                <Text>Login</Text>
+                <Text style={{ color: "white" }}>LOGIN</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -146,21 +153,25 @@ const Signin = (props) => {
           <View style={styles.socialIconsContainer}>
             <TouchableOpacity
               style={styles.socialIconsContainerSingle}
-              onPress={() => Linking.openURL("https://web.facebook.com/")}
+              onPress={() =>
+                Linking.openURL("https://www.facebook.com/kabfiglobal")
+              }
             >
               <FontAwesome name="facebook" style={styles.socialIcon} />
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.socialIconsContainerSingle}
-              onPress={() => Linking.openURL("http://twitter.com")}
+              onPress={() => Linking.openURL("https://twitter.com/kabfiglobal")}
             >
               <Entypo name="twitter" style={styles.socialIcon} />
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.socialIconsContainerSingle}
-              onPress={() => Linking.openURL("http://instagram.com")}
+              onPress={() =>
+                Linking.openURL("https://www.instagram.com/kabfiglobal/")
+              }
             >
               <AntDesign name="instagram" style={styles.socialIcon} />
             </TouchableOpacity>
@@ -170,7 +181,7 @@ const Signin = (props) => {
             style={styles.forgotPasswordContainer}
             onPress={() => props.navigation.navigate("ForgotPassword")}
           >
-            <Text style={styles.forgotPasswordText}>Forgot Password ?</Text>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -181,8 +192,8 @@ const Signin = (props) => {
           </TouchableOpacity>
         </View>
       </View>
-      
-    {/* </SafeAreaView> */}
+
+      {/* </SafeAreaView> */}
     </KeyboardAvoidingView>
   );
 };
