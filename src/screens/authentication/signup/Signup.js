@@ -37,14 +37,22 @@ import {
 import { useLogin } from "../../../context/LoginProvider";
 const Signup = (props) => {
   const [firstName, setFirstName] = useState("");
+  const [fNameValidator, setfNameValidator] = useState(false);
   const [lastName, setLastName] = useState("");
+  const [lNameValidator, setlNameValidator] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailValidator, setEmailValidator] = useState(false);
   const [mobileNo, setMobileNo] = useState("");
+  const [mobileNoValidator, setmobileNoValidator] = useState(false);
   const [password, setPassword] = useState("");
+  const [passwordValidator, setpasswordValidator] = useState(false);
   const { setIsLoggedIn } = useLogin();
   const [badgeNumberImage, setBadgeNumberImage] = useState(null);
+  const [badgeNumberImageValidator, setbadgeNumberImageValidator] =
+    useState(false);
   const [authcheck, setAuthCheck] = useState(false);
   const [taxiLicenseImage, setTaxiLicenseImage] = useState(null);
+  const [taxiLicenseValidator, settaxiLicenseValidator] = useState(false);
   const [passwordHidden, setPasswordHidden] = useState(true);
 
   const [loader, setLoader] = useState(false);
@@ -141,14 +149,21 @@ const Signup = (props) => {
   async function userSignup() {
     let success = true;
     setLoader(true);
+    setfNameValidator(false);
+    setlNameValidator(false);
+    setmobileNoValidator(false);
+    setEmailValidator(false);
+    setpasswordValidator(false);
+    setbadgeNumberImageValidator(false);
+    settaxiLicenseValidator(false);
     if (
       firstName !== "" &&
       lastName !== "" &&
       mobileNo !== "" &&
       email !== "" &&
       password !== "" &&
-      badgeNumberImage !== "" &&
-      taxiLicenseImage !== ""
+      badgeNumberImage !== null &&
+      taxiLicenseImage !== null
     ) {
       if (!/^[0-9]+$/.test(mobileNo)) {
         alert("Phone number should be numeric only.");
@@ -164,34 +179,29 @@ const Signup = (props) => {
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(async (user) => {
-          firebase.auth().signOut();
-          props.navigation.navigate("Signin");
-          setLoader(true);
-          const uid = user.user.uid;
-          setIsLoggedIn(false);
+          const uuid = user.user?.uid;
           let Details = {
-            id: uid,
+            id: uuid,
             firstName: firstName,
             lastName: lastName,
             email: email,
             mobileNo: mobileNo,
             badgeNumberImage: badgeImage,
             taxiLicenseImage: taxiLicense,
-            rating: 0,
+            rating: 5,
             Dp: "",
             city: "",
             country: "",
           };
-          console.log(Details);
+          firebase.auth().signOut();
+
           await firebase
             .database()
-            .ref("users/" + uid)
+            .ref("users/")
+            .child(uuid)
             .set(Details)
             .then(() => {
               setIsLoggedIn(false);
-              alert(
-                "Thank you for your registration! Your account is now ready to use."
-              );
               setFirstName("");
               setLastName("");
               setMobileNo("");
@@ -199,8 +209,33 @@ const Signup = (props) => {
               setPassword("");
               setTaxiLicenseImage("");
               setBadgeNumberImage("");
+              setfNameValidator(false);
+              setlNameValidator(false);
+              setmobileNoValidator(false);
+              setEmailValidator(false);
+              setpasswordValidator(false);
+              setbadgeNumberImageValidator(false);
+              settaxiLicenseValidator(false);
               setLoader(false);
+              props.navigation.navigate("Verify");
             });
+
+          // firebase.auth().signOut();
+          // props.navigation.navigate("Verify");
+          // const uid = user.user.uid;
+          // setIsLoggedIn(false);
+
+          // console.log(Details);
+          // firebase
+          //   .database()
+          //   .ref("users/" + uid)
+          //   .set(Details)
+          //   .then(() => {
+          //     setIsLoggedIn(false);
+          //     alert(
+          //       "Thank you for your registration! Your account is now ready to use."
+          //     );
+          //   });
           // firebase.auth().signOut();
           // await saveData("users", user.user.uid, Details);
         })
@@ -211,7 +246,45 @@ const Signup = (props) => {
         });
     } else {
       setLoader(false);
-      alert("All Fields are required");
+      if (
+        firstName === "" &&
+        lastName === "" &&
+        mobileNo === "" &&
+        email === "" &&
+        password === "" &&
+        badgeNumberImage === "" &&
+        taxiLicenseImage === ""
+      ) {
+        setfNameValidator(true);
+        setlNameValidator(true);
+        setmobileNoValidator(true);
+        setEmailValidator(true);
+        setpasswordValidator(true);
+        setbadgeNumberImageValidator(true);
+        settaxiLicenseValidator(true);
+      }
+      if (firstName === "") {
+        setfNameValidator(true);
+      }
+      if (lastName === "") {
+        setlNameValidator(true);
+      }
+      if (mobileNo === "") {
+        setmobileNoValidator(true);
+      }
+      if (email === "") {
+        setEmailValidator(true);
+      }
+      if (badgeNumberImage === null) {
+        setbadgeNumberImageValidator(true);
+      }
+      if (taxiLicenseImage === null) {
+        settaxiLicenseValidator(true);
+      }
+      if (password === "") {
+        setpasswordValidator(true);
+      }
+      // alert("All Fields are required");
     }
 
     return success;
@@ -280,7 +353,12 @@ const Signup = (props) => {
           <View style={styles.formField}>
             <Text style={[styles.label, { fontWeight: "bold" }]}>Name</Text>
             <View style={styles.textFieldHalfContainer}>
-              <View style={styles.textFieldHalf}>
+              <View
+                style={[
+                  styles.textFieldHalf,
+                  { borderColor: fNameValidator ? "red" : "#E6E6E6" },
+                ]}
+              >
                 <TextInput
                   style={styles.textFieldHalf1}
                   value={firstName}
@@ -292,7 +370,12 @@ const Signup = (props) => {
                   style={styles.checkImageIcon}
                 />
               </View>
-              <View style={styles.textFieldHalf}>
+              <View
+                style={[
+                  styles.textFieldHalf,
+                  { borderColor: lNameValidator ? "red" : "#E6E6E6" },
+                ]}
+              >
                 <TextInput
                   style={styles.textFieldHalf1}
                   value={lastName}
@@ -310,7 +393,12 @@ const Signup = (props) => {
           <View style={[styles.formField, {}]}>
             <Text style={[styles.label, { fontWeight: "bold" }]}>Mobile</Text>
 
-            <View style={styles.textFieldFullContainer}>
+            <View
+              style={[
+                styles.textFieldFullContainer,
+                { borderColor: mobileNoValidator ? "red" : "#E6E6E6" },
+              ]}
+            >
               <Text style={styles.countryCode}>+44</Text>
               <TextInput
                 style={[styles.textFieldFull, { paddingHorizontal: 20 }]}
@@ -329,7 +417,12 @@ const Signup = (props) => {
 
           <View style={styles.formField}>
             <Text style={[styles.label, { fontWeight: "bold" }]}>E-mail</Text>
-            <View style={styles.textFieldFullContainer}>
+            <View
+              style={[
+                styles.textFieldFullContainer,
+                { borderColor: emailValidator ? "red" : "#E6E6E6" },
+              ]}
+            >
               <TextInput
                 style={styles.textFieldFull}
                 value={email}
@@ -361,7 +454,7 @@ const Signup = (props) => {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     borderWidth: 1,
-                    borderColor: "#E6E6E6",
+                    borderColor: badgeNumberImageValidator ? "red" : "#E6E6E6",
                   }}
                   onPress={AlertBadgeNumberImage}
                 >
@@ -390,7 +483,7 @@ const Signup = (props) => {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     borderWidth: 1,
-                    borderColor: "#E6E6E6",
+                    borderColor: taxiLicenseValidator ? "red" : "#E6E6E6",
                   }}
                   onPress={AlertTaxiLicenseImage}
                 >
@@ -412,7 +505,12 @@ const Signup = (props) => {
 
           <View style={styles.formField}>
             <Text style={[styles.label, { fontWeight: "bold" }]}>Password</Text>
-            <View style={styles.textFieldFullContainer}>
+            <View
+              style={[
+                styles.textFieldFullContainer,
+                { borderColor: passwordValidator ? "red" : "#E6E6E6" },
+              ]}
+            >
               {/* start */}
 
               <TextInput

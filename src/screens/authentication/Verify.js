@@ -8,47 +8,49 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  BackHandler
+  BackHandler,
 } from "react-native";
 import firebase from "firebase";
-import {verifyImage} from '../../../assets'
-
+import { verifyImage } from "../../../assets";
 
 const Verify = (props) => {
   const [email, setEmail] = useState("");
   const [loader, setLoader] = useState(false);
 
-//   function userResetPassword() {
-//     firebase
-//       .auth()
-//       .sendPasswordResetEmail(email)
-//       .then(function (user) {
-//         // alert('Please check your email...')
-//         props.navigation.navigate("SendEmail");
-//       })
-//       .catch((error) => {
-//         alert(error.message);
-//         // setLoader(false);
-//       });
-//   }
+  //   function userResetPassword() {
+  //     firebase
+  //       .auth()
+  //       .sendPasswordResetEmail(email)
+  //       .then(function (user) {
+  //         // alert('Please check your email...')
+  //         props.navigation.navigate("SendEmail");
+  //       })
+  //       .catch((error) => {
+  //         alert(error.message);
+  //         // setLoader(false);
+  //       });
+  //   }
 
   return (
     <ScrollView style={styles.root}>
       <View style={styles.contentArea}>
         <View style={styles.lockImageContainer}>
-          <Image
-            source={verifyImage}
-            style={styles.lockImage}
-          />
+          <Image source={verifyImage} style={styles.lockImage} />
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.textHeading}>Your account should be approved within 24 hours</Text>
+          <Text style={styles.textHeading}>
+            Your account should be approved within 24 hours
+          </Text>
         </View>
 
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.btn2} onPress={() => BackHandler.exitApp()}>            
-              <Text style={styles.btn2Text}>Close the app</Text>            
+          <TouchableOpacity
+            style={styles.btn2}
+            // onPress={() => BackHandler.exitApp()}
+            onPress={() => props.navigation.navigate("Signin")}
+          >
+            <Text style={styles.btn2Text}>Close the app</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -85,8 +87,8 @@ const styles = StyleSheet.create({
   textHeading: {
     fontSize: 17,
     fontWeight: "bold",
-    width:'58%',
-    textAlign:'justify'
+    width: "58%",
+    textAlign: "justify",
   },
   buttonsContainer: {
     marginTop: 10,
