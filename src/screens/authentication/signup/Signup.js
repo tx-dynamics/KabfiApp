@@ -335,7 +335,9 @@ const Signup = (props) => {
 
   return (
     <ScrollView style={styles.root}>
-      {/* <Image
+      <View style={styles.contentArea}>
+        <View style={styles.logoContainer}>
+          {/* <Image
         source={logoName}
         resizeMode="contain"
         style={{
@@ -345,8 +347,6 @@ const Signup = (props) => {
           alignSelf: "center",
         }}
       /> */}
-      <View style={styles.contentArea}>
-        <View style={styles.logoContainer}>
           <Text style={[styles.createAccountText]}>CREATE AN ACCOUNT</Text>
         </View>
 
