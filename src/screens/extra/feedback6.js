@@ -46,7 +46,7 @@ const feedback6 = (props) => {
       >
         KEEPING KABFI GREAT!
       </Text>
-      <Text style={{ flex: 0.05 }}></Text>
+      <Text style={{ flex: 0.09 }}></Text>
       <Text
         style={[styles.largetxt, { alignSelf: "center", fontWeight: "700" }]}
       >

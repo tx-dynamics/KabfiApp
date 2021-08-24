@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions } from "react-native";
 const styles = StyleSheet.create({
   root: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    height: Dimensions.get("window").height / 1.3,
     backgroundColor: "white",
     flex: 1,
   },
@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
   },
   contentArea: {
     borderTopLeftRadius: 50,
+    height: Dimensions.get("window").height / 1.3,
     borderTopRightRadius: 50,
     alignItems: "center",
     backgroundColor: "#FBFBFB",

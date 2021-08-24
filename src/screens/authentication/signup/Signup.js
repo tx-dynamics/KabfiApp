@@ -192,6 +192,7 @@ const Signup = (props) => {
             Dp: "",
             city: "",
             country: "",
+            createdAt: new Date().toISOString(),
           };
           firebase.auth().signOut();
 

@@ -31,13 +31,14 @@ import {
 import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
-import Main from "../home/Main";
+import moment from "moment";
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -49,6 +50,8 @@ const NewsFeed = (props) => {
   const [dataUpdated, setDataUpdated] = useState(false);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
+  const [rate, setRate] = useState("");
+  const [date, setDate] = useState("");
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
@@ -94,6 +97,8 @@ const NewsFeed = (props) => {
     userdataNAme.on("value", (userdata) => {
       setDp(userdata.val()?.Dp);
       setName(userdata.val()?.firstName + " " + userdata.val()?.lastName);
+      setRate(userdata.val()?.rating);
+      setDate(userdata.val()?.createdAt);
     });
     fetchLocation();
     let arr = [];
@@ -136,6 +141,7 @@ const NewsFeed = (props) => {
                       save: child.val().save_count ? true : false,
                       comm: snapshot.numChildren(),
                       rec: child.val().recoding,
+                      createdAt: child.val().createdAt,
                       region:
                         child.val().location != ""
                           ? child.val().location
@@ -311,7 +317,9 @@ const NewsFeed = (props) => {
                     color: "black",
                   },
                 ]}
-              >{`\n@${item.userName} .23s`}</Text>
+              >{`\n@${item.userName} .${moment(item.createdAt).format(
+                "m:ss"
+              )} s`}</Text>
             </Text>
           </View>
           <OptionsMenu
@@ -509,11 +517,10 @@ const NewsFeed = (props) => {
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
-        height={Dimensions.get("window").height / 1.45}
+        height={Dimensions.get("window").height / 1.3}
         // openDuration={250}
         customStyles={{
           container: {
-            // justifyContent: "center",
             alignItems: "center",
             backgroundColor: "transparent",
           },
@@ -533,13 +540,15 @@ const NewsFeed = (props) => {
               </View>
               <View style={styles.userInfo2}>
                 <Text style={styles.userName}>{name}</Text>
-                {/* <View style={styles.userInfo2SubContainer}>
-                                <Text style={styles.info2Text}>4.92</Text>
-                                <FontAwesome name="star" style={styles.star} />
-                            </View> */}
+                <View style={styles.userInfo2SubContainer}>
+                  <Text style={styles.info2Text}>{rate}</Text>
+                  <FontAwesome name="star" style={styles.star} />
+                </View>
               </View>
               <View style={styles.userInfo3}>
-                {/* <Text style={styles.info3Text}>Member since 2021</Text> */}
+                <Text
+                  style={[styles.info3Text, { fontWeight: "500" }]}
+                >{`Member since ${moment(date).format("YYYY")}`}</Text>
               </View>
             </View>
 

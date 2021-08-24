@@ -59,6 +59,7 @@ const feedback5 = (props) => {
             marginTop: 10,
             fontSize: 16,
             fontWeight: "400",
+            paddingVertical: 8,
           }}
           textAlignVertical="top"
           onChangeText={(text) => settell(text)}
@@ -71,14 +72,15 @@ const feedback5 = (props) => {
           style={{
             width: "80%",
             alignSelf: "center",
-            padding: 10,
+            paddingHorizontal: 7,
             backgroundColor: "white",
             marginTop: 20,
-            fontSize: 16,
-            fontWeight: "400",
-            borderWidth: 1,
+            fontSize: 14,
+            // fontWeight: "400",
+            borderWidth: 2,
             borderRadius: 20,
             borderColor: "#FBFBFB",
+            paddingVertical: 7,
           }}
           textAlignVertical="top"
           onChangeText={(text) => setphone(text)}
@@ -87,6 +89,7 @@ const feedback5 = (props) => {
           placeholderTextColor={"lightgray"}
           underlineColorAndroid="transparent"
         />
+        <Text style={{ marginTop: 10 }}></Text>
         <View
           style={{
             flexDirection: "row",
