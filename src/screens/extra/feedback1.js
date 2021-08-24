@@ -12,7 +12,7 @@ import { StatusBar } from "expo-status-bar";
 import { Header } from "react-native-elements";
 import { star, sad, ok, smile, smiley } from "../../../assets";
 const feedback1 = (props) => {
-  const [isSmile, setisSmile] = useState(false);
+  const [isSmile, setisSmile] = useState(true);
   return (
     <View style={styles.main}>
       <StatusBar style="dark" />
@@ -39,14 +39,24 @@ const feedback1 = (props) => {
           width: "60%",
         }}
       >
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            // setisSmile(!isSmile),
+            props.navigation.navigate("feedback2");
+          }}
+        >
           <Image
             source={sad}
             resizeMode="contain"
             style={{ height: 50, width: 50, alignSelf: "center" }}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            // setisSmile(!isSmile),
+            props.navigation.navigate("feedback2");
+          }}
+        >
           <Image
             source={ok}
             resizeMode="contain"

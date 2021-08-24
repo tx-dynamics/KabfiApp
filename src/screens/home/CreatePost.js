@@ -44,7 +44,7 @@ const CreatePost = (props) => {
   const [sound] = useState();
   const [loc, setLoc] = useState("");
   const isFocused = useIsFocused();
-  const [timer, settimer] = useState(0);
+  const [time, settime] = useState();
   const [show, setshow] = useState(false);
   const [stopwatchReset, setstopwatchReset] = useState(false);
   useEffect(() => {
@@ -98,6 +98,8 @@ const CreatePost = (props) => {
           likes_user: [],
           recoding: sound,
           location: loc,
+          createdAt: new Date().toISOString(),
+          time: time,
         };
         let like = { userId };
 
@@ -211,7 +213,9 @@ const CreatePost = (props) => {
     console.log("Recording stopped and stored at", recording._uri);
     // let post_Image = await uploadImage(recording._uri);
     setSound(recording._uri);
+    settime(recording._finalDurationMillis);
     console.log("post_Image", recording._finalDurationMillis / 1000);
+
     // playSound(recording._uri);
   }
   async function oncancel() {

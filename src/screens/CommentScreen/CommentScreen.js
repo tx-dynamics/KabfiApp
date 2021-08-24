@@ -20,6 +20,7 @@ import {
   comments,
   favourite,
 } from "../../../assets";
+import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./styles";
@@ -62,6 +63,7 @@ const CommentScreen = ({ route, navigation }) => {
           name: child.val().name,
           text: child.val().comments,
           recording: child.val().recording,
+          createdAt: child.val()?.createdAt,
         });
       });
       console.log("LI==>", li);
@@ -80,19 +82,23 @@ const CommentScreen = ({ route, navigation }) => {
             source={item.image ? { uri: item.image } : user}
             style={styles.userImgStyle}
           />
-          <Text
-            numberOfLines={3}
-            style={[
-              styles.largeText,
-              {
-                alignSelf: "center",
-                padding: 5,
-              },
-            ]}
-          >
-            <Text style={[styles.largeText, { color: "black" }]}></Text>
-            {item.name}
-          </Text>
+          <View>
+            <Text
+              numberOfLines={3}
+              style={[
+                styles.largeText,
+                {
+                  // alignSelf: "center",
+                  paddingVertical: 5,
+                },
+              ]}
+            >
+              {item.name}
+            </Text>
+            <Text style={[styles.largeText, { bottom: 3 }]}>
+              {moment(item.createdAt).format("ddd, LT")}
+            </Text>
+          </View>
         </View>
         <Text
           numberOfLines={2}
@@ -137,6 +143,7 @@ const CommentScreen = ({ route, navigation }) => {
         name: data.val().firstName + "" + data.val().lastName,
         image: data.val().Dp,
         recording: sound,
+        createdAt: new Date().toISOString(),
       };
       myRef.push(data);
     });
