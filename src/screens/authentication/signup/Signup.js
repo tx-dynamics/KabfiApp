@@ -35,6 +35,7 @@ import {
   logoName,
 } from "../../../../assets";
 import { useLogin } from "../../../context/LoginProvider";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 const Signup = (props) => {
   const [firstName, setFirstName] = useState("");
   const [fNameValidator, setfNameValidator] = useState(false);
@@ -171,6 +172,7 @@ const Signup = (props) => {
       }
       if (password.length < 8) {
         alert("Password Must be atleast 8 characters");
+        setLoader(false);
         return false;
       }
       const badgeImage = await uploadImage(badgeNumberImage.uri);
@@ -337,17 +339,17 @@ const Signup = (props) => {
     <ScrollView style={styles.root}>
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
-          {/* <Image
+          <Image
         source={logoName}
         resizeMode="contain"
         style={{
           height: 50,
-          width: 100,
-          backgroundColor: "tomato",
+          width: 136,
+          //backgroundColor: "tomato",
           alignSelf: "center",
         }}
-      /> */}
-          <Text style={[styles.createAccountText]}>CREATE AN ACCOUNT</Text>
+      />
+          <Text style={[styles.createAccountText,{marginTop:responsiveHeight(2)}]}>CREATE AN ACCOUNT</Text>
         </View>
 
         <View style={styles.form}>
