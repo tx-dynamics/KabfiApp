@@ -73,7 +73,6 @@ import firebase from "firebase";
 //       }
 //     });
 
-
 //     // this.setState({
 //     //   initialPosition: {
 //     //     latitude: location.coords.latitude,
@@ -172,11 +171,9 @@ const styles = StyleSheet.create({
   },
 });
 
-
 export default class HeatMap extends Component {
-
   static navigationOptions = {
-    title: 'New York',
+    title: "New York",
   };
 
   state = {
@@ -195,75 +192,75 @@ export default class HeatMap extends Component {
   }
 
   async fetchLocation() {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== "granted") {
-      alert("Permission to access location was denied");
-      this.setState({
-        errorMessage: "Permission to access location was denied",
-      });
-      return;
-    }
-    let location = await Location.getCurrentPositionAsync({});
-    //const uid = firebase.auth().currentUser?.uid;
-    var myRef = firebase.database().ref("locations/");
-    var points = [];
-    this.setState({
-      initialPosition:
-      {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.0121,
-      }
-    })
-    myRef.on("value", (child) => {
-      if (child.hasChildren()) {
-        child.forEach((chill) => {
-          points.push({
-            latitude: chill.val().latitude,
-            longitude: chill.val().longitude,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
-          });
+    try {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== "granted") {
+        alert("Permission to access location was denied");
+        this.setState({
+          errorMessage: "Permission to access location was denied",
         });
-
-        if (points[0].latitude) {
-          this.setState({
-            initialPosition: {
-              latitude: points[0].latitude,
-              longitude: points[0].longitude,
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      //const uid = firebase.auth().currentUser?.uid;
+      var myRef = firebase.database().ref("locations/");
+      var points = [];
+      this.setState({
+        initialPosition: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+        },
+      });
+      myRef.on("value", (child) => {
+        if (child.hasChildren()) {
+          child.forEach((chill) => {
+            points.push({
+              latitude: chill.val().latitude,
+              longitude: chill.val().longitude,
               latitudeDelta: 0.015,
               longitudeDelta: 0.0121,
-            },
+            });
           });
+
+          if (points[0].latitude) {
+            this.setState({
+              initialPosition: {
+                latitude: points[0].latitude,
+                longitude: points[0].longitude,
+                latitudeDelta: 0.015,
+                longitudeDelta: 0.0121,
+              },
+            });
+          }
+          this.setState({ points });
+          console.log("myRef", points);
         }
-        this.setState({ points });
-        console.log("myRef", points);
-      }
-    });
+      });
 
-
-    this.setState({
-      initialPosition: {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.0121,
-      },
-      location: {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.0121,
-      },
-    });
-    console.log("Region", this.state.initialPosition);
+      this.setState({
+        initialPosition: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+        },
+        location: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+        },
+      });
+      console.log("Region", this.state.initialPosition);
+    } catch (err) {}
   }
 
   points = [
     { latitude: 40.7828, longitude: -74.0065, weight: 1 },
     { latitude: 41.7121, longitude: -74.0042, weight: 1 },
-    { latitude: 40.7102, longitude: -75.0060, weight: 1 },
+    { latitude: 40.7102, longitude: -75.006, weight: 1 },
     { latitude: 40.7123, longitude: -74.0052, weight: 1 },
     { latitude: 40.7032, longitude: -74.0042, weight: 1 },
     { latitude: 40.7198, longitude: -74.0024, weight: 1 },
@@ -282,7 +279,7 @@ export default class HeatMap extends Component {
     { latitude: 40.7484, longitude: -75.0042, weight: 1 },
     { latitude: 40.7929, longitude: -75.0023, weight: 1 },
     { latitude: 40.7292, longitude: -74.0013, weight: 1 },
-    { latitude: 40.7940, longitude: -74.0048, weight: 1 },
+    { latitude: 40.794, longitude: -74.0048, weight: 1 },
     { latitude: 40.7874, longitude: -74.0052, weight: 1 },
     { latitude: 40.7824, longitude: -74.0024, weight: 1 },
     { latitude: 40.7232, longitude: -74.0094, weight: 1 },
@@ -290,7 +287,7 @@ export default class HeatMap extends Component {
     { latitude: 41.7484, longitude: -74.0012, weight: 1 },
     { latitude: 41.7929, longitude: -74.0073, weight: 1 },
     { latitude: 41.7292, longitude: -74.0013, weight: 1 },
-    { latitude: 41.7940, longitude: -74.0058, weight: 1 },
+    { latitude: 41.794, longitude: -74.0058, weight: 1 },
     { latitude: 41.7874, longitude: -74.0352, weight: 1 },
     { latitude: 41.7824, longitude: -74.0024, weight: 1 },
     { latitude: 41.7232, longitude: -74.0094, weight: 1 },
@@ -298,10 +295,10 @@ export default class HeatMap extends Component {
     { latitude: 41.0484, longitude: -75.0012, weight: 1 },
     { latitude: 41.0929, longitude: -75.0073, weight: 1 },
     { latitude: 41.0292, longitude: -74.0013, weight: 1 },
-    { latitude: 41.0940, longitude: -74.0068, weight: 1 },
+    { latitude: 41.094, longitude: -74.0068, weight: 1 },
     { latitude: 41.0874, longitude: -74.0052, weight: 1 },
     { latitude: 41.0824, longitude: -74.0024, weight: 1 },
-    { latitude: 41.0232, longitude: -74.0014, weight: 1 }
+    { latitude: 41.0232, longitude: -74.0014, weight: 1 },
   ];
 
   render() {
@@ -309,24 +306,25 @@ export default class HeatMap extends Component {
       <View style={styles.container}>
         <MapView
           provider={PROVIDER_GOOGLE}
-          ref={map => this._map = map}
+          ref={(map) => (this._map = map)}
           style={styles.map}
-          initialRegion={this.state.initialPosition}>
+          initialRegion={this.state.initialPosition}
+        >
           <Heatmap
             points={this.state.points}
             radius={40}
             opacity={1}
             gradient={{
               colors: ["black", "purple", "red", "orange", "white"],
-              startPoints: Platform.OS === 'ios' ? [0.01, 0.04, 0.1, 0.45, 0.5] :
-                [0.1, 0.25, 0.5, 0.75, 1],
-              colorMapSize: 2000
+              startPoints:
+                Platform.OS === "ios"
+                  ? [0.01, 0.04, 0.1, 0.45, 0.5]
+                  : [0.1, 0.25, 0.5, 0.75, 1],
+              colorMapSize: 2000,
             }}
-          >
-          </Heatmap>
+          ></Heatmap>
         </MapView>
       </View>
     );
   }
 }
-

@@ -12,13 +12,14 @@ import {
   KeyboardAvoidingView,
   Alert,
   ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 // import { kabfiApp, firebase } from '../../database/config';
 import firebase from "firebase";
 import { Header } from "react-native-elements";
-import { user2, user } from "../../../assets";
-import HeaderCenterComponent from "../../components/HeaderCenterComponent";
+import { user2, user, edit } from "../../../assets";
 import * as ImagePicker from "expo-image-picker";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 
 const EditProfile = (props) => {
@@ -208,16 +209,19 @@ const EditProfile = (props) => {
         ) : (
           <View style={styles.contentArea}>
             <TouchableOpacity
-              style={styles.imageContainer}
+              style={[styles.imageContainer, { alignSelf: "center" }]}
               onPress={AlertTaxiLicenseImage}
             >
-              {/* {
-            Dp1?
-            <Image  source={require(Dp)} style={styles.image} />
-         
-            : */}
-              <Image source={Dp ? { uri: Dp } : user} style={styles.image} />
-              {/* } */}
+              <ImageBackground
+                source={Dp ? { uri: Dp } : user}
+                borderRadius={50}
+                style={[styles.image, { alignItems: "flex-end" }]}
+              >
+                <Image
+                  source={edit}
+                  style={{ height: 20, width: 20, marginTop: 10 }}
+                />
+              </ImageBackground>
             </TouchableOpacity>
 
             {/* <TouchableOpacity onPress={pickDpImage}>
@@ -234,11 +238,32 @@ const EditProfile = (props) => {
                     </View> */}
 
               <Text style={styles.label}>First Name</Text>
-              <TextInput
-                value={firstName}
-                onChangeText={(e) => setFirstName(e)}
-                style={styles.textField}
-              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#D7D7D7",
+                }}
+              >
+                <TextInput
+                  value={firstName}
+                  onChangeText={(e) => setFirstName(e)}
+                  style={{
+                    marginTop: 5,
+                    paddingHorizontal: 10,
+                    paddingVertical: 5,
+                  }}
+                />
+                <AntDesign
+                  name="edit"
+                  color="#D7D7D7"
+                  size={18}
+                  style={{
+                    alignSelf: "center",
+                  }}
+                />
+              </View>
             </View>
 
             <View style={styles.fieldContainer}>
@@ -263,7 +288,7 @@ const EditProfile = (props) => {
                 onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
                 keyboardType="number-pad"
                 placeholder="7711111111"
-                maxLength={10}
+                maxLength={11}
               />
             </View>
 

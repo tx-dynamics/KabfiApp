@@ -32,6 +32,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import { useIsFocused } from "@react-navigation/native";
+import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
 require("firebase/database");
 
 const savedPost = (props) => {
@@ -65,14 +66,14 @@ const savedPost = (props) => {
               .ref("user_posts/" + child.key + "/Like/" + uid);
             const userSave = firebase
               .database()
-              .ref("user_posts/" + child.key + "/Save/" + uid);
+              .ref("user_posts/" + child.key + "/SavePost/" + uid);
             userlike.on("value", (chil) => {
               userSave.on("value", (lik) => {
                 var myRef = firebase
                   .database()
                   .ref("comments/" + child.key)
                   .on("value", function (snapshot) {
-                    if (chil.exists() && lik.key === uid) {
+                    if (lik.exists()) {
                       console.log("if", lik.key);
                       setData({ ...data });
                       arr.push({
@@ -86,7 +87,7 @@ const savedPost = (props) => {
                         userName: child.val().userName,
                         user_image: child.val().user_image,
                         post_image: child.val().post_image,
-                        like: true,
+                        like: false,
                         save: child.val().save_count ? true : false,
                         comm: snapshot.numChildren(),
                         rec: child.val().recoding,
@@ -101,12 +102,10 @@ const savedPost = (props) => {
             });
           });
           console.log("Pakkkmkmkm ", arr);
-          const ik = arr.reverse();
-          setPosts(ik);
         } else {
         }
       });
-
+    setPosts(arr.reverse());
     setRefreshing(false);
   }
 
@@ -397,26 +396,7 @@ const savedPost = (props) => {
       <Header
         backgroundColor="white"
         containerStyle={{ marginTop: 0 }}
-        leftComponent={
-          <TouchableWithoutFeedback
-            activeOpacity={0}
-            style={{
-              height: 40,
-              width: 40,
-              tintColor: "black",
-              alignItems: "center",
-            }}
-            onPress={() => {
-              props.navigation.navigate("Main");
-            }}
-          >
-            <Image
-              source={menu}
-              resizeMode={"contain"}
-              style={{ marginTop: 15 }}
-            />
-          </TouchableWithoutFeedback>
-        }
+        leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
         rightComponent={<HeaderRight navigation={props.navigation} />}
         centerComponent={<HeaderCenterComponent name="Saved Post" />}
       />

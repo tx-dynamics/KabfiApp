@@ -340,16 +340,23 @@ const Signup = (props) => {
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
           <Image
-        source={logoName}
-        resizeMode="contain"
-        style={{
-          height: 50,
-          width: 136,
-          //backgroundColor: "tomato",
-          alignSelf: "center",
-        }}
-      />
-          <Text style={[styles.createAccountText,{marginTop:responsiveHeight(2)}]}>CREATE AN ACCOUNT</Text>
+            source={logoName}
+            resizeMode="contain"
+            style={{
+              height: 50,
+              width: 136,
+              //backgroundColor: "tomato",
+              alignSelf: "center",
+            }}
+          />
+          <Text
+            style={[
+              styles.createAccountText,
+              { marginTop: responsiveHeight(2) },
+            ]}
+          >
+            CREATE AN ACCOUNT
+          </Text>
         </View>
 
         <View style={styles.form}>

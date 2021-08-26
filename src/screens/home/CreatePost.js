@@ -10,6 +10,7 @@ import {
   Dimensions,
   AsyncStorage,
   ToastAndroid,
+  ScrollView,
 } from "react-native";
 import {
   user,
@@ -33,6 +34,7 @@ import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 const CreatePost = (props) => {
+  const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
   const [recording, setRecording] = useState();
   const [postText, setPostText] = useState("");
@@ -48,6 +50,7 @@ const CreatePost = (props) => {
   const [show, setshow] = useState(false);
   const [stopwatchReset, setstopwatchReset] = useState(false);
   useEffect(() => {
+    inputRef.current.focus();
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
     data.on("value", (userdata) => {
@@ -223,7 +226,7 @@ const CreatePost = (props) => {
     props.navigation.navigate("NewsFeed");
   }
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.contentArea}>
         <TouchableOpacity onPress={oncancel}>
           <Text style={styles.cancelText}>Cancel</Text>
@@ -244,6 +247,7 @@ const CreatePost = (props) => {
             />
           ) : null}
           <TextInput
+            ref={inputRef}
             multiline={true}
             numberOfLines={14}
             onChangeText={(e) => setPostText(e)}
@@ -251,6 +255,7 @@ const CreatePost = (props) => {
             style={styles.textArea}
             placeholder="What's happening ?"
             placeholderTextColor={"grey"}
+            autoFocus={true}
           />
           <TouchableOpacity style={styles.publish} onPress={savePost}>
             {loading ? (
@@ -323,7 +328,7 @@ const CreatePost = (props) => {
           }}
         />
       ) : null}
-    </View>
+    </ScrollView>
   );
 };
 

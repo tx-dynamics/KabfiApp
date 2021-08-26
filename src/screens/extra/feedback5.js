@@ -32,8 +32,12 @@ const feedback5 = (props) => {
         <Text style={[styles.happytxt, { alignSelf: "center", width: "80%" }]}>
           Share your feedback
         </Text>
-        <Text style={{ marginTop: 5 }}></Text>
-        <Text style={[styles.largetxt, { alignSelf: "center", width: "80%" }]}>
+        <Text
+          style={[
+            styles.largetxt,
+            { alignSelf: "center", width: "80%", marginTop: 5 },
+          ]}
+        >
           How you satisfied are you with KABFI?
         </Text>
         <Text style={{ marginTop: 20 }}></Text>
@@ -72,7 +76,7 @@ const feedback5 = (props) => {
           style={{
             width: "80%",
             alignSelf: "center",
-            paddingHorizontal: 7,
+            paddingHorizontal: 15,
             backgroundColor: "white",
             marginTop: 20,
             fontSize: 14,
@@ -82,7 +86,6 @@ const feedback5 = (props) => {
             borderColor: "#FBFBFB",
             paddingVertical: 7,
           }}
-          textAlignVertical="top"
           onChangeText={(text) => setphone(text)}
           value={phone}
           keyboardType="phone-pad"
@@ -106,7 +109,7 @@ const feedback5 = (props) => {
               borderRadius: 30,
               borderWidth: 2,
               borderColor: "orange",
-              width: "35%",
+              width: "40%",
               padding: 10,
               justifyContent: "center",
               alignItems: "center",
@@ -136,7 +139,7 @@ const feedback5 = (props) => {
               borderRadius: 30,
               borderWidth: 2,
               borderColor: "orange",
-              width: "35%",
+              width: "40%",
               padding: 10,
               justifyContent: "center",
               alignItems: "center",
