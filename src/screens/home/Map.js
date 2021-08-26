@@ -44,12 +44,12 @@ const Map = ({ route, navigation }) => {
     }
     let location = await Location.getCurrentPositionAsync({});
 
-    setRegion({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.015,
-      longitudeDelta: 0.0121,
-    });
+    // setRegion({
+    //   latitude: location.coords.latitude,
+    //   longitude: location.coords.longitude,
+    //   latitudeDelta: 0.015,
+    //   longitudeDelta: 0.0121,
+    // });
     setLoc({
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
@@ -77,7 +77,7 @@ const Map = ({ route, navigation }) => {
         showsUserLocation={true}
         followUserLocation={true}
         zoomEnabled={true}
-        // region={region}
+        //region={region}
         Marker
         trackViewChanges={false}
         initialRegion={region}

@@ -57,11 +57,11 @@ const StackNavigatorAfter = (props) => {
         component={feedback6}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Main"
         component={Main}
         options={{ headerShown: false }}
-      />
+      /> */}
       <Stack.Screen
         name="savedPost"
         component={savedPost}

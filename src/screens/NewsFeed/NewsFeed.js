@@ -75,13 +75,11 @@ const NewsFeed = (props) => {
           longitudeDelta: 0.0121,
         };
         if (location) {
-          const id = firebase.auth().currentUser?.uid;
-          const mylocation = firebase.database().ref("locations/" + id);
-          // await firebase
-          //   .database()
-          //   .ref("locations/" + id + "/")
-          //   .set(da);
-          mylocation.set(da);
+          try {
+            const id = firebase.auth().currentUser?.uid;
+            const mylocation = firebase.database().ref("locations/" + id);
+            mylocation.set(da);
+          } catch (err) {}
         }
       }
     } catch (err) {
@@ -115,6 +113,10 @@ const NewsFeed = (props) => {
             const userlike = firebase
               .database()
               .ref("user_posts/" + child.key + "/Like/" + uid);
+            const hideuser = firebase
+              .database()
+              .ref("user_posts/" + child.key + "/Hide/" + uid);
+
             const userSave = firebase
               .database()
               .ref("user_posts/" + child.key + "/Save/" + uid);
@@ -124,52 +126,62 @@ const NewsFeed = (props) => {
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
                   if (chil.exists()) {
-                    //console.log("if");
-                    setData({ ...data });
-                    arr.push({
-                      id: child.key,
-                      likes_count: child.val().likes_count,
-                      save_count: child.val().save_count
-                        ? child.val().save_count
-                        : 0,
-                      post_text: child.val().post_text,
-                      user: child.val().user,
-                      userName: child.val().userName,
-                      user_image: child.val().user_image,
-                      post_image: child.val().post_image,
-                      like: true,
-                      save: child.val().save_count ? true : false,
-                      comm: snapshot.numChildren(),
-                      rec: child.val().recoding,
-                      createdAt: child.val().createdAt,
-                      region:
-                        child.val().location != ""
-                          ? child.val().location
-                          : null,
+                    hideuser.on("value", (ishide) => {
+                      console.log("hide==>", !ishide.exists());
+                      if (!ishide.exists()) {
+                        //console.log("if");
+                        setData({ ...data });
+                        arr.push({
+                          id: child.key,
+                          likes_count: child.val().likes_count,
+                          save_count: child.val().save_count
+                            ? child.val().save_count
+                            : 0,
+                          post_text: child.val().post_text,
+                          user: child.val().user,
+                          userName: child.val().userName,
+                          user_image: child.val().user_image,
+                          post_image: child.val().post_image,
+                          like: true,
+                          save: child.val().save_count ? true : false,
+                          comm: snapshot.numChildren(),
+                          rec: child.val().recoding,
+                          createdAt: child.val().createdAt,
+                          region:
+                            child.val().location != ""
+                              ? child.val().location
+                              : null,
+                        });
+                      }
                     });
                   } else {
-                    // console.log("else", child);
-                    setData({ ...data });
-                    arr.push({
-                      id: child.key,
-                      likes_count: child.val().likes_count,
-                      save_count: child.val().save_count
-                        ? child.val().save_count
-                        : 0,
-                      post_text: child.val().post_text,
-                      user: child.val().user,
-                      userName: child.val().userName,
-                      user_image: child.val().user_image,
-                      post_image: child.val().post_image,
-                      like: false,
-                      save: child.val().save_count ? true : false,
-                      comm: snapshot.numChildren(),
-                      rec: child.val().recoding,
-                      region:
-                        child.val().location != ""
-                          ? child.val().location
-                          : null,
-                      isShow: false,
+                    hideuser.on("value", (ishide) => {
+                      console.log("hide==>", !ishide.exists());
+                      if (!ishide.exists()) {
+                        // console.log("else", child);
+                        setData({ ...data });
+                        arr.push({
+                          id: child.key,
+                          likes_count: child.val().likes_count,
+                          save_count: child.val().save_count
+                            ? child.val().save_count
+                            : 0,
+                          post_text: child.val().post_text,
+                          user: child.val().user,
+                          userName: child.val().userName,
+                          user_image: child.val().user_image,
+                          post_image: child.val().post_image,
+                          like: false,
+                          save: child.val().save_count ? true : false,
+                          comm: snapshot.numChildren(),
+                          rec: child.val().recoding,
+                          region:
+                            child.val().location != ""
+                              ? child.val().location
+                              : null,
+                          isShow: false,
+                        });
+                      }
                     });
                   }
                 });
@@ -177,11 +189,10 @@ const NewsFeed = (props) => {
           });
           console.log("Pakkkmkmkm ", arr);
           const ik = arr.reverse();
-          setPosts(ik);
         } else {
         }
       });
-
+    setPosts(arr.reverse());
     setRefreshing(false);
   }
 
@@ -206,9 +217,29 @@ const NewsFeed = (props) => {
     }
     const data = await firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
+    setPosts(null);
     fetchAllPosts();
   }
-
+  async function hideHandler(post_id) {
+    const hiderPost = firebase
+      .database()
+      .ref("user_posts/" + post_id + "/Hide/")
+      .child(uid)
+      .set(uid)
+      .then(() => {
+        alert("Hide");
+      });
+  }
+  async function reportHandler(post_id) {
+    const reportPost = firebase
+      .database()
+      .ref("report/" + post_id)
+      .child(uid)
+      .set(uid)
+      .then(() => {
+        alert("Reported");
+      });
+  }
   async function saveHandler(post_id, save_count, isSave) {
     const Details = {
       save_count: isSave ? save_count - 1 : save_count + 1,
@@ -233,33 +264,34 @@ const NewsFeed = (props) => {
     fetchAllPosts();
   }
   async function playSound(id, soundUri) {
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-    toogleLike(id);
+    try {
+      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+      toogleLike(id);
 
-    console.log("Loading Sound", soundUri);
+      console.log("Loading Sound", soundUri);
 
-    const { sound: playbackObject } = await Audio.Sound.createAsync(
-      {
-        uri: soundUri,
-      },
-      { shouldPlay: true }
-    );
-    // setSound(sound);
+      const { sound: playbackObject } = await Audio.Sound.createAsync(
+        {
+          uri: soundUri,
+        },
+        { shouldPlay: true }
+      );
 
-    console.log("Playing Sound", soundUri);
-    await playbackObject.playAsync();
-    const res = posts.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          isShow: false,
-        };
-      } else {
-        return { ...item };
-      }
-    });
-    // console.log(res);
-    setPosts(res);
+      console.log("Playing Sound", soundUri);
+      await playbackObject.playAsync();
+      const res = posts.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            isShow: false,
+          };
+        } else {
+          return { ...item };
+        }
+      });
+      // console.log(res);
+      setPosts(res);
+    } catch (err) {}
   }
   async function toogleLike(id) {
     console.log(id);
@@ -334,12 +366,9 @@ const NewsFeed = (props) => {
             options={["Report", "Hide", "Cancel"]}
             actions={[
               () => {
-                alert("Reported");
+                reportHandler(item.id);
               },
-
-              () => {
-                alert("Hide");
-              },
+              () => hideHandler(item.id),
               () => console.log("cancel"),
             ]}
           />
@@ -401,10 +430,10 @@ const NewsFeed = (props) => {
                 }
               >
                 {/* <Image
-                source={heartImage}
-                resizeMode="contain"
-                style={{ height: 17, width: 17 }}
-              /> */}
+                  source={heartImage}
+                  resizeMode="contain"
+                  style={{ height: 17, width: 17 ,}}
+                /> */}
 
                 <Ionicons
                   name="heart"
@@ -540,10 +569,10 @@ const NewsFeed = (props) => {
               </View>
               <View style={styles.userInfo2}>
                 <Text style={styles.userName}>{name}</Text>
-                <View style={styles.userInfo2SubContainer}>
+                {/* <View style={styles.userInfo2SubContainer}>
                   <Text style={styles.info2Text}>{rate}</Text>
                   <FontAwesome name="star" style={styles.star} />
-                </View>
+                </View> */}
               </View>
               <View style={styles.userInfo3}>
                 <Text

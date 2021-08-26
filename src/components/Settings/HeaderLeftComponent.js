@@ -5,7 +5,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  ImageBackground
+  ImageBackground,
 } from "react-native";
 
 import { Button } from "react-native-elements";
@@ -15,10 +15,13 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 const HeaderLeftComponent = ({ navigation, icon }) => {
   return (
-      <TouchableOpacity style={styles.container} onPress={()=>navigation.navigate('Main')}>
-        <Image style={styles.image} source={back} />       
-      </TouchableOpacity>
-    );
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => navigation.goBack()}
+    >
+      <Image style={styles.image} source={back} />
+    </TouchableOpacity>
+  );
 };
 
 export default HeaderLeftComponent;
@@ -30,8 +33,8 @@ export const styles = StyleSheet.create({
     //fontFamily: Fonts.GoogleSansBold,
     // color: theme.colors.primaryDark,
   },
-  image:{
-    marginLeft:30, 
+  image: {
+    // marginLeft: 30,
     // backgroundColor:'red'
-  }
+  },
 });

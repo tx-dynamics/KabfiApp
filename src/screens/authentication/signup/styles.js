@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 
 const styles = StyleSheet.create({
   root: {
@@ -12,10 +13,11 @@ const styles = StyleSheet.create({
     height: "100%",
     marginTop: "5%",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 1,
   },
   logoContainer: {
     alignItems: "center",
+    marginTop:responsiveHeight(4)
   },
   logoImage: {
     width: 140,

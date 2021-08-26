@@ -67,8 +67,8 @@ const CommentScreen = ({ route, navigation }) => {
         });
       });
       console.log("LI==>", li);
-      setPosts(li);
     });
+    setPosts(li);
   }
   const renderPosts = ({ item, index }) => {
     return (
@@ -96,7 +96,7 @@ const CommentScreen = ({ route, navigation }) => {
               {item.name}
             </Text>
             <Text style={[styles.largeText, { bottom: 3 }]}>
-              {moment(item.createdAt).format("ddd, LT")}
+              {moment(item.createdAt).format("ddd, HH:mm")}
             </Text>
           </View>
         </View>
@@ -133,7 +133,7 @@ const CommentScreen = ({ route, navigation }) => {
     if (!sound) {
       sound = "";
     }
-    userData.on("value", (data) => {
+    userData.on("value", async (data) => {
       console.log("Data==>", data.val().firstName + "" + data.val().lastName);
       setImg(data.val().Dp);
       setName(data.val().firstName + "" + data.val().lastName);
@@ -146,10 +146,11 @@ const CommentScreen = ({ route, navigation }) => {
         createdAt: new Date().toISOString(),
       };
       myRef.push(data);
+      setPosts(null);
     });
     setisloading(false);
     setCmnt("");
-    setPosts([]);
+    // setPosts([]);
     getData(id);
     console.log("here");
   }

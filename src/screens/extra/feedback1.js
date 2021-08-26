@@ -11,11 +11,19 @@ import styles from "./styles";
 import { StatusBar } from "expo-status-bar";
 import { Header } from "react-native-elements";
 import { star, sad, ok, smile, smiley } from "../../../assets";
+import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 const feedback1 = (props) => {
   const [isSmile, setisSmile] = useState(true);
   return (
     <View style={styles.main}>
       <StatusBar style="dark" />
+      <Header
+        containerStyle={{ borderBottomWidth: 0 }}
+        backgroundColor="white"
+        leftComponent={
+          <HeaderLeftComponent icon="back" navigation={props.navigation} />
+        }
+      />
       <Header
         backgroundColor="white"
         containerStyle={{ marginTop: 0, borderBottomWidth: 0 }}
