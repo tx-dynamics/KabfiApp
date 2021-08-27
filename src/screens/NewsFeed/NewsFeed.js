@@ -14,6 +14,7 @@ import {
   KeyboardAvoidingView,
   Modal,
   Linking,
+  TouchableHighlight,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -34,6 +35,7 @@ import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+
 import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import { useIsFocused } from "@react-navigation/native";
@@ -41,6 +43,7 @@ require("firebase/database");
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import moment from "moment";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -54,7 +57,7 @@ const NewsFeed = (props) => {
   const [uid, setUid] = useState("");
   const [rate, setRate] = useState("");
   const [date, setDate] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
+   const [modalVisible, setModalVisible] = useState(false);
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
@@ -319,10 +322,20 @@ const NewsFeed = (props) => {
         <View
           style={[
             {
+             
+              backgroundColor: "#FBFBFB",
+            },
+          ]}
+        >
+
+        <View
+          style={[
+            {
               flexDirection: "row",
               justifyContent: "space-between",
               width: "95%",
               alignSelf: "center",
+              backgroundColor: "#FBFBFB",
             },
           ]}
         >
@@ -332,12 +345,13 @@ const NewsFeed = (props) => {
               style={styles.userImgStyle}
             />
             <Text
-              numberOfLines={3}
+             // numberOfLines={3}
               style={[
                 styles.largeText,
                 {
-                  alignSelf: "center",
-                  padding: 5,
+                 marginTop:responsiveHeight(1.2),
+                  // alignSelf: "center",
+                  paddingLeft:5,
                 },
               ]}
             >
@@ -350,17 +364,18 @@ const NewsFeed = (props) => {
                   {
                     // alignSelf: 'flex-start',
                     // marginLeft: '15.5%',
-                    color: "black",
+                    color: "#464646",
+                    fontSize:11,
                   },
                 ]}
-              >{`\n@${item.userName} .${moment(item.createdAt).format(
+              >{`\n@${item.userName.replace(/ /g, "")} .${moment(item.createdAt).format(
                 "m:ss"
               )} s`}</Text>
             </Text>
           </View>
           {/* <TouchableOpacity
             onPress={() => {
-              setModalVisible(false), renderModal();
+              setModalVisible(true);
             }}
           >
             <Image
@@ -370,6 +385,7 @@ const NewsFeed = (props) => {
                 height: 15,
                 resizeMode: "contain",
                 marginTop: 10,
+                transform: [{ rotate: '90deg'}]
               }}
             />
           </TouchableOpacity> */}
@@ -396,7 +412,7 @@ const NewsFeed = (props) => {
         <View
           style={{ flexDirection: "row", paddingLeft: 10, paddingVertical: 20 }}
         >
-          <View style={{ flex: 3 }}>
+          <View style={{ flex: 2 }}>
             {item.post_image ? (
               <Image
                 style={{ width: 80, height: 80, alignSelf: "flex-end" }}
@@ -405,8 +421,15 @@ const NewsFeed = (props) => {
             ) : null}
           </View>
 
-          <View style={{ flex: 5, paddingHorizontal: 10 }}>
-            <Text numberOfLines={4} style={{ textAlign: "justify" }}>
+          <View style={   
+              item.post_image?
+              { flex: 5, paddingLeft: responsiveHeight(1.5),
+            marginTop:responsiveHeight(0.2) }
+            :
+            { flex:20, 
+              marginTop:responsiveHeight(0.2) }
+            }>
+            <Text numberOfLines={4} style={{ textAlign: "justify",color:'#464646',fontSize:13 }}>
               {item.post_text}
             </Text>
           </View>
@@ -423,12 +446,15 @@ const NewsFeed = (props) => {
             )}
           </TouchableOpacity>
         ) : null}
+        </View>
         <View
           style={[
             {
               flexDirection: "row",
-              width: "95%",
+              width: "100%",
               justifyContent: "space-between",
+              marginTop:responsiveHeight(1),
+              backgroundColor: "#FBFBFB",
             },
           ]}
         >
@@ -450,7 +476,7 @@ const NewsFeed = (props) => {
               >
                 <Ionicons
                   name="heart"
-                  size={17}
+                  size={20}
                   color={item.like ? "red" : "black"}
                 />
                 <Text style={styles.smallText}>{` ${item.likes_count} `}</Text>
@@ -465,7 +491,7 @@ const NewsFeed = (props) => {
               <Image
                 source={comments}
                 resizeMode="contain"
-                style={{ height: 17, width: 17 }}
+                style={{ height: 18, width: 18 }}
               />
               {/* <Text style={styles.smallText}>{` ${item.likes_count} `}</Text> */}
               <Text style={styles.smallText}>{item.comm}</Text>
@@ -478,7 +504,7 @@ const NewsFeed = (props) => {
               <Image
                 source={favourite}
                 resizeMode="contain"
-                style={{ height: 17, width: 17 }}
+                style={{ height: 18, width: 18 }}
               />
               <Text style={styles.smallText}>{` ${item.save_count} `}</Text>
             </TouchableOpacity>
@@ -577,6 +603,27 @@ const NewsFeed = (props) => {
 
   return (
     <View style={styles.main}>
+       {/* <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Hello World!</Text>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}>
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal> */}
       <Header
         backgroundColor="white"
         containerStyle={{ marginTop: 0 }}

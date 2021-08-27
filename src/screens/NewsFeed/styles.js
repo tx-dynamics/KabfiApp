@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     padding: 10,
-    backgroundColor: "#FBFBFB",
+  //  backgroundColor: "#FBFBFB",
     // elevation: 2,
     shadowColor: "#fdfdfd",
     shadowOffset: {
@@ -150,6 +150,37 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: theme.colors.lightGray,
     borderRadius: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+   // marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
 export default styles;

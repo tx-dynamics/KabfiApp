@@ -55,8 +55,8 @@ const Signup = (props) => {
   const [taxiLicenseImage, setTaxiLicenseImage] = useState(null);
   const [taxiLicenseValidator, settaxiLicenseValidator] = useState(false);
   const [passwordHidden, setPasswordHidden] = useState(true);
-
   const [loader, setLoader] = useState(false);
+
 
   function AlertBadgeNumberImage() {
     Alert.alert(
@@ -452,7 +452,9 @@ const Signup = (props) => {
 
           <View style={[styles.formField, { width: "100%" }]}>
             <View style={[styles.textFieldHalfContainer, { width: "100%" }]}>
-              <View style={styles.uploadImageFieldsContainer}>
+              <TouchableOpacity 
+              onPress={AlertTaxiLicenseImage}
+              style={styles.uploadImageFieldsContainer}>
                 <Text
                   style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
                 >
@@ -469,20 +471,26 @@ const Signup = (props) => {
                   }}
                   onPress={AlertBadgeNumberImage}
                 >
-                  <TextInput
+                  <View
                     style={styles.uploadImageFields}
-                    placeholder={
-                      !badgeNumberImage ? "Upload Image" : "Image Uploaded"
-                    }
-                    editable={false}
-                  />
+                   
+                  >
+                  <Text style={{textAlign:'center',
+                  marginLeft:responsiveHeight(1),
+                opacity:0.3
+                }}> {
+                      !taxiLicenseImage ? "Upload Image" : "Image Uploaded"
+                    } </Text>  
+                  </View> 
                   <Image
                     source={!badgeNumberImage ? galleryImage : tickImage}
                     style={styles.uploadIMageIcon}
                   />
                 </TouchableOpacity>
-              </View>
-              <View style={styles.uploadImageFieldsContainer}>
+              </TouchableOpacity>
+              <TouchableOpacity 
+               onPress={AlertTaxiLicenseImage}
+              style={styles.uploadImageFieldsContainer}>
                 <Text
                   style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
                 >
@@ -498,19 +506,24 @@ const Signup = (props) => {
                   }}
                   onPress={AlertTaxiLicenseImage}
                 >
-                  <TextInput
+                  <View
                     style={styles.uploadImageFields}
-                    placeholder={
+                   
+                  >
+                  <Text style={{textAlign:'center',
+                  marginLeft:responsiveHeight(1),
+                opacity:0.3
+                }}> {
                       !taxiLicenseImage ? "Upload Image" : "Image Uploaded"
-                    }
-                    editable={false}
-                  />
+                    } </Text>  
+                  </View> 
+                  
                   <Image
                     source={!taxiLicenseImage ? galleryImage : tickImage}
                     style={styles.uploadIMageIcon}
                   />
                 </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -573,7 +586,7 @@ const Signup = (props) => {
               {loader ? (
                 <ActivityIndicator color={"red"} size={"small"} />
               ) : (
-                <Text style={{ color: "white" }}>SIGN UP</Text>
+                <Text style={{ color: "white" }}>SUBMIT</Text>
               )}
             </TouchableOpacity>
           </View>

@@ -11,6 +11,8 @@ import {
   AsyncStorage,
   ToastAndroid,
   ScrollView,
+  ImageBackground,
+  KeyboardAvoidingView,
 } from "react-native";
 import {
   user,
@@ -27,6 +29,8 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
 import { Audio } from "expo-av";
+import Entypo from "react-native-vector-icons/Entypo";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useIsFocused } from "@react-navigation/native";
@@ -238,24 +242,39 @@ const CreatePost = (props) => {
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
+<KeyboardAvoidingView>
         <View style={styles.contentArea}>
+          <View style={{justifyContent:'space-between',flexDirection:'row'}}>
           <TouchableOpacity onPress={oncancel}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
-
+          <TouchableOpacity onPress={savePost}>
+          {loading ? (
+                <ActivityIndicator color={"red"} size={"small"} />
+              ) : (
+                <Text style={styles.cancelText}>Publish</Text>
+              )}
+           
+          </TouchableOpacity>
+          </View>
           <View style={styles.postTextContainer}>
-            <Image style={styles.userImage} source={Dp ? { uri: Dp } : user} />
-            {postImage ? (
-              <Image
-                style={{
-                  alignSelf: "center",
-                  marginLeft: responsiveHeight(1),
-                  width: "70%",
-                  height: "40%",
-                  borderRadius: responsiveHeight(2),
-                }}
-                source={{ uri: postImage }}
-              />
+            {postImage ? ( 
+              <ImageBackground  
+              source={{ uri: postImage }} 
+              style={{
+                marginLeft: responsiveHeight(0),
+                borderRadius: responsiveHeight(0.5),
+                width:100,height:100,
+                opacity:0.7,
+                }}>
+            <TouchableOpacity onPress={()=>setPostImage(null)} >      
+            <Entypo 
+            name="cross" 
+            size={30} color="white" 
+            style={{alignSelf:'flex-end'}}
+            />
+        </TouchableOpacity>
+      </ImageBackground>
             ) : null}
             <TextInput
               ref={inputRef}
@@ -268,13 +287,7 @@ const CreatePost = (props) => {
               placeholderTextColor={"grey"}
               autoFocus={true}
             />
-            <TouchableOpacity style={styles.publish} onPress={savePost}>
-              {loading ? (
-                <ActivityIndicator color={"red"} size={"small"} />
-              ) : (
-                <Text>Publish</Text>
-              )}
-            </TouchableOpacity>
+           
           </View>
         </View>
 
@@ -286,7 +299,7 @@ const CreatePost = (props) => {
               >
                 <MaterialIcons
                   name="multitrack-audio"
-                  size={18}
+                  size={22}
                   color={"black"}
                 />
               </TouchableOpacity>
@@ -294,7 +307,7 @@ const CreatePost = (props) => {
               <TouchableOpacity onPress={playSound}>
                 <MaterialIcons
                   name="multitrack-audio"
-                  size={18}
+                  size={22}
                   color={"blue"}
                 />
               </TouchableOpacity>
@@ -343,6 +356,7 @@ const CreatePost = (props) => {
             }}
           />
         ) : null}
+        </KeyboardAvoidingView>
       </ScrollView>
     </View>
   );
@@ -357,17 +371,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   cancelText: {
+    marginTop:responsiveHeight(2),
     color: "#FCB040",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 17,
+    //fontWeight: "600",
   },
   postTextContainer: {
-    marginTop: 80,
-    backgroundColor: "#FBFBFB",
-    height: windowHeight / 2.5,
-    borderTopRightRadius: 50,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
+    marginTop: responsiveHeight(5),
+    //backgroundColor: "#FBFBFB",
+    height: windowHeight / 3,
+    //borderTopRightRadius: 50,
+    //borderBottomLeftRadius: 50,
+    //borderBottomRightRadius: 50,
   },
   userImage: {
     width: 60,
@@ -378,9 +393,13 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   textArea: {
-    backgroundColor: "#FBFBFB",
-    textAlignVertical: "top",
-    padding: responsiveHeight(6),
+   // backgroundColor: "#FBFBFB",
+   // textAlignVertical: "top",
+   height:'100%',
+   fontSize:15,
+   color:'#464646', 
+   //padding: responsiveHeight(2),
+    marginTop:responsiveHeight(1)
   },
   publish: {
     alignSelf: "center",
@@ -400,8 +419,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   media: {
-    width: 18,
-    height: 18,
+    width: 25,
+    height: 25,
+  
   },
 });
 
