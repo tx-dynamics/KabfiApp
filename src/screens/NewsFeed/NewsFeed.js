@@ -12,10 +12,12 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
   KeyboardAvoidingView,
+  Modal,
+  Linking,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
-import { Header } from "react-native-elements";
+import { Header, Card } from "react-native-elements";
 import RBSheet from "react-native-raw-bottom-sheet";
 import {
   user,
@@ -52,6 +54,7 @@ const NewsFeed = (props) => {
   const [uid, setUid] = useState("");
   const [rate, setRate] = useState("");
   const [date, setDate] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
@@ -189,10 +192,9 @@ const NewsFeed = (props) => {
           });
           console.log("Pakkkmkmkm ", arr);
           const ik = arr.reverse();
-        } else {
+          setPosts(ik);
         }
       });
-    setPosts(arr.reverse());
     setRefreshing(false);
   }
 
@@ -227,6 +229,7 @@ const NewsFeed = (props) => {
       .child(uid)
       .set(uid)
       .then(() => {
+        fetchAllPosts();
         alert("Hide");
       });
   }
@@ -237,6 +240,7 @@ const NewsFeed = (props) => {
       .child(uid)
       .set(uid)
       .then(() => {
+        fetchAllPosts();
         alert("Reported");
       });
   }
@@ -354,6 +358,21 @@ const NewsFeed = (props) => {
               )} s`}</Text>
             </Text>
           </View>
+          {/* <TouchableOpacity
+            onPress={() => {
+              setModalVisible(false), renderModal();
+            }}
+          >
+            <Image
+              source={more}
+              style={{
+                width: 30,
+                height: 15,
+                resizeMode: "contain",
+                marginTop: 10,
+              }}
+            />
+          </TouchableOpacity> */}
           <OptionsMenu
             button={more}
             buttonStyle={{
@@ -429,19 +448,12 @@ const NewsFeed = (props) => {
                   likeHandler(item.id, item.likes_count, item.like)
                 }
               >
-                {/* <Image
-                  source={heartImage}
-                  resizeMode="contain"
-                  style={{ height: 17, width: 17 ,}}
-                /> */}
-
                 <Ionicons
                   name="heart"
                   size={17}
                   color={item.like ? "red" : "black"}
                 />
                 <Text style={styles.smallText}>{` ${item.likes_count} `}</Text>
-                {/* <Text style={styles.smallText}>{` 200 `}</Text> */}
               </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -501,6 +513,67 @@ const NewsFeed = (props) => {
       </View>
     );
   };
+  const renderModal = () => {
+    return (
+      <Modal
+        isVisible={!modalVisible}
+        coverScreen={true}
+        hasBackdrop={true}
+        animationIn="slideInUp"
+        swipeDirection="up"
+      >
+        <TouchableWithoutFeedback
+        // onPress={() => this.setState({show: false}, this.toggleModal())}
+        >
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              backgroundColor: "tomato",
+            }}
+          />
+        </TouchableWithoutFeedback>
+
+        <Card
+          containerStyle={{
+            width: "85%",
+            alignSelf: "center",
+            elevation: 5,
+            borderRadius: 10,
+          }}
+          titleStyle={{
+            textAlign: "left",
+            // color: theme.colors.secondary,
+            fontSize: 18,
+          }}
+        >
+          <Text
+            style={{
+              marginBottom: 5,
+              fontSize: 18,
+              fontWeight: "700",
+              // fontFamily: Fonts.RalewayRegurlar,
+            }}
+          >
+            YEs
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 14,
+              marginTop: 10,
+              fontWeight: "700",
+            }}
+          >
+            About
+          </Text>
+        </Card>
+      </Modal>
+    );
+  };
 
   return (
     <View style={styles.main}>
@@ -511,8 +584,6 @@ const NewsFeed = (props) => {
           <TouchableWithoutFeedback
             activeOpacity={0}
             style={{
-              height: 40,
-              width: 40,
               tintColor: "black",
               alignItems: "center",
             }}
@@ -525,7 +596,7 @@ const NewsFeed = (props) => {
             <Image
               source={menu}
               resizeMode={"contain"}
-              style={{ marginTop: 15 }}
+              style={{ marginTop: 15, height: 25, width: 25 }}
             />
           </TouchableWithoutFeedback>
         }
@@ -657,7 +728,10 @@ const NewsFeed = (props) => {
                 <Text style={styles.listText}>Feedback</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.listItem}>
+              <TouchableOpacity
+                style={styles.listItem}
+                onPress={() => Linking.openURL("https://kabfi.com/contact-us/")}
+              >
                 <Image
                   source={require("../../../assets/ProjectImages/users/profile/help.png")}
                   style={styles.listIconImage}
@@ -683,6 +757,7 @@ const NewsFeed = (props) => {
           </ScrollView>
         </View>
       </RBSheet>
+      {/* {modalVisible && renderModal} */}
     </View>
   );
 };

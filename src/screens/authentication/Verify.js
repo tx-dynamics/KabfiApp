@@ -43,14 +43,13 @@ const Verify = (props) => {
             Your account should be approved within 24 hours
           </Text>
         </View>
-
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.btn2}
-            // onPress={() => BackHandler.exitApp()}
-            onPress={() => props.navigation.navigate("Signin")}
+            onPress={() => BackHandler.exitApp()}
+            // onPress={() => props.navigation.navigate("Signin")}
           >
-            <Text style={styles.btn2Text}>Close the app</Text>
+            <Text style={styles.btn2Text}>Close Application</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -88,7 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "bold",
     width: "58%",
-    textAlign: "justify",
+    textAlign: "center",
   },
   buttonsContainer: {
     marginTop: 10,

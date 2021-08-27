@@ -245,7 +245,7 @@ const Signup = (props) => {
         .catch(function (error) {
           setLoader(false);
           success = false;
-          alert(error.code + ":: " + error.message);
+          alert(error.message);
         });
     } else {
       setLoader(false);
@@ -376,7 +376,7 @@ const Signup = (props) => {
                   placeholder="First Name"
                 />
                 <Image
-                  source={firstName.length > 2 ? checkImage : null}
+                  source={firstName.length >= 2 ? checkImage : null}
                   style={styles.checkImageIcon}
                 />
               </View>
@@ -393,7 +393,7 @@ const Signup = (props) => {
                   placeholder="Last Name"
                 />
                 <Image
-                  source={lastName.length > 2 ? checkImage : null}
+                  source={lastName.length >= 2 ? checkImage : null}
                   style={styles.checkImageIcon}
                 />
               </View>
@@ -436,7 +436,7 @@ const Signup = (props) => {
               <TextInput
                 style={styles.textFieldFull}
                 value={email}
-                onChangeText={(e) => setEmail(e)}
+                onChangeText={(e) => setEmail(e.trim())}
                 placeholder="name@example.com"
               />
               <Image
@@ -450,8 +450,8 @@ const Signup = (props) => {
             </View>
           </View>
 
-          <View style={styles.formField}>
-            <View style={styles.textFieldHalfContainer}>
+          <View style={[styles.formField, { width: "100%" }]}>
+            <View style={[styles.textFieldHalfContainer, { width: "100%" }]}>
               <View style={styles.uploadImageFieldsContainer}>
                 <Text
                   style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
@@ -465,6 +465,7 @@ const Signup = (props) => {
                     justifyContent: "space-between",
                     borderWidth: 1,
                     borderColor: badgeNumberImageValidator ? "red" : "#E6E6E6",
+                    width: "100%",
                   }}
                   onPress={AlertBadgeNumberImage}
                 >

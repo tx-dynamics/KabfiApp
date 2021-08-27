@@ -82,7 +82,7 @@ const EditProfile = (props) => {
       let profileIamge;
       if (!firstName == "") {
         if (!lastName == "") {
-          if (!mobileNo == "") {
+          if (!mobileNo == "" && mobileNo.length > 10) {
             if (!city == "") {
               if (Dp) {
                 console.log("OKKKK Man");
@@ -102,13 +102,13 @@ const EditProfile = (props) => {
                 .database()
                 .ref("users/" + user)
                 .update(Details);
-              alert("Data Updated Succsessfully");
+              alert("Profile Updated Succsessfully");
               props.navigation.navigate("NewsFeed");
             } else {
               setErroMessage("city name cannont be empty");
             }
           } else {
-            setErroMessage("Phone number cannont be empty");
+            setErroMessage("Phone number cannont be empty and 11 characters");
           }
         } else {
           console.log("1!");
@@ -129,13 +129,13 @@ const EditProfile = (props) => {
       result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0,
       });
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0,
       });
     }
 

@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: "center",
-    marginTop:responsiveHeight(4)
+    marginTop: responsiveHeight(4),
   },
   logoImage: {
     width: 140,

@@ -102,7 +102,6 @@ const CreatePost = (props) => {
           recoding: sound,
           location: loc,
           createdAt: new Date().toISOString(),
-          time: time,
         };
         let like = { userId };
 
@@ -131,7 +130,7 @@ const CreatePost = (props) => {
     result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0,
     });
     console.log("result", result.uri);
 
@@ -226,118 +225,132 @@ const CreatePost = (props) => {
     props.navigation.navigate("NewsFeed");
   }
   return (
-    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-      <View style={styles.contentArea}>
-        <TouchableOpacity onPress={oncancel}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-
-        <View style={styles.postTextContainer}>
-          <Image style={styles.userImage} source={Dp ? { uri: Dp } : user} />
-          {postImage ? (
-            <Image
-              style={{
-                alignSelf: "center",
-                marginLeft: responsiveHeight(1),
-                width: "70%",
-                height: "40%",
-                borderRadius: responsiveHeight(2),
-              }}
-              source={{ uri: postImage }}
-            />
-          ) : null}
-          <TextInput
-            ref={inputRef}
-            multiline={true}
-            numberOfLines={14}
-            onChangeText={(e) => setPostText(e)}
-            value={postText}
-            style={styles.textArea}
-            placeholder="What's happening ?"
-            placeholderTextColor={"grey"}
-            autoFocus={true}
-          />
-          <TouchableOpacity style={styles.publish} onPress={savePost}>
-            {loading ? (
-              <ActivityIndicator color={"red"} size={"small"} />
-            ) : (
-              <Text>Publish</Text>
-            )}
+    <View
+      style={{
+        flex: 1,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "white",
+      }}
+    >
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.contentArea}>
+          <TouchableOpacity onPress={oncancel}>
+            <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
-        </View>
-      </View>
 
-      <View style={styles.mediaContainerOuter}>
-        <View style={styles.mediaContainerInner}>
-          {!Sound ? (
-            <TouchableOpacity
-              onPress={recording ? stopRecording : startRecording}
-            >
-              <MaterialIcons
-                name="multitrack-audio"
-                size={18}
-                color={"black"}
+          <View style={styles.postTextContainer}>
+            <Image style={styles.userImage} source={Dp ? { uri: Dp } : user} />
+            {postImage ? (
+              <Image
+                style={{
+                  alignSelf: "center",
+                  marginLeft: responsiveHeight(1),
+                  width: "70%",
+                  height: "40%",
+                  borderRadius: responsiveHeight(2),
+                }}
+                source={{ uri: postImage }}
+              />
+            ) : null}
+            <TextInput
+              ref={inputRef}
+              multiline={true}
+              numberOfLines={14}
+              onChangeText={(e) => setPostText(e)}
+              value={postText}
+              style={styles.textArea}
+              placeholder="What's happening ?"
+              placeholderTextColor={"grey"}
+              autoFocus={true}
+            />
+            <TouchableOpacity style={styles.publish} onPress={savePost}>
+              {loading ? (
+                <ActivityIndicator color={"red"} size={"small"} />
+              ) : (
+                <Text>Publish</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.mediaContainerOuter}>
+          <View style={styles.mediaContainerInner}>
+            {!Sound ? (
+              <TouchableOpacity
+                onPress={recording ? stopRecording : startRecording}
+              >
+                <MaterialIcons
+                  name="multitrack-audio"
+                  size={18}
+                  color={"black"}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={playSound}>
+                <MaterialIcons
+                  name="multitrack-audio"
+                  size={18}
+                  color={"blue"}
+                />
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity onPress={pickPostImage}>
+              <Image
+                source={postImage ? { uri: postImage } : smallGallery}
+                style={styles.media}
               />
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={playSound}>
-              <MaterialIcons name="multitrack-audio" size={18} color={"blue"} />
-            </TouchableOpacity>
-          )}
 
-          <TouchableOpacity onPress={pickPostImage}>
-            <Image
-              source={postImage ? { uri: postImage } : smallGallery}
-              style={styles.media}
-            />
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
+            {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
             <SimpleLineIcons
               name="location-pin"
               size={24}
               color={loc ? "blue" : "black"}
             />
           </TouchableOpacity> */}
+          </View>
         </View>
-      </View>
-      {show ? (
-        <Stopwatch
-          laps
-          start={show}
-          reset={stopwatchReset}
-          //To start
-          options={{
-            container: {
-              backgroundColor: "#FBFBFB",
-              padding: 5,
-              borderRadius: 5,
-              width: 220,
-              alignSelf: "center",
-              marginTop: 5,
-            },
-            text: {
-              fontSize: 20,
-              color: "black",
-              alignSelf: "center",
-            },
-          }}
-          //options for the styling
-          getTime={(time) => {
-            console.log(time);
-          }}
-        />
-      ) : null}
-    </ScrollView>
+        {show ? (
+          <Stopwatch
+            laps
+            start={show}
+            reset={stopwatchReset}
+            //To start
+            options={{
+              container: {
+                backgroundColor: "#FBFBFB",
+                padding: 5,
+                borderRadius: 5,
+                width: 220,
+                alignSelf: "center",
+                marginTop: 5,
+              },
+              text: {
+                fontSize: 20,
+                color: "black",
+                alignSelf: "center",
+              },
+            }}
+            //options for the styling
+            getTime={(time) => {
+              console.log(time);
+            }}
+          />
+        ) : null}
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "white",
   },
   contentArea: {
     marginTop: "15%",

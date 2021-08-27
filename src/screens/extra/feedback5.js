@@ -1,22 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Image,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import styles from "./styles";
 import { StatusBar } from "expo-status-bar";
 import { Header } from "react-native-elements";
 import { star, sad, ok, smile, smiley } from "../../../assets";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import firebase from "firebase";
 const feedback5 = (props) => {
   const [isSmile, setisSmile] = useState(false);
   const [tell, settell] = useState("");
   const [phone, setphone] = useState("");
+  const [screen, setscreen] = useState("");
+  const [ease, setease] = useState(false);
+  const [usefull, setusefull] = useState(false);
+  const [technical, settechnical] = useState(false);
+  const [app, setapp] = useState(false);
+  const [other, setother] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
+  const [validphone, setvalidphone] = useState(false);
+  const [validtell, setvalidtell] = useState(false);
+  useEffect(() => {
+    const params = props.route.params;
+    console.log(params?.ease);
+    setapp(params?.app);
+    setease(params?.ease);
+    setother(params?.other);
+    settechnical(params?.technical);
+    setusefull(params?.usefull);
+    setscreen(params?.screen);
+  }, []);
+  async function onsubmit() {
+    setvalidphone(false);
+    setvalidtell(false);
+    setisLoading(true);
+    if (phone !== "" && tell !== "") {
+      const submitFeedback = await firebase
+        .database()
+        .ref("Feedback/" + firebase.auth().currentUser?.uid);
+      const data = {
+        ease,
+        app,
+        usefull,
+        other,
+        technical,
+        screen,
+        phone,
+        feedback: tell,
+      };
+      submitFeedback.push(data);
+      setisLoading(false);
+      props.navigation.navigate("feedback6");
+    } else {
+      setisLoading(false);
+      if (phone === "" && tell === "") {
+        setvalidphone(true);
+        setvalidtell(true);
+      }
+      if (phone === "") {
+        setvalidphone(true);
+      }
+      if (tell === "") {
+        setvalidtell(true);
+      }
+    }
+  }
   return (
     <View style={styles.main}>
       <StatusBar style="dark" />
@@ -64,6 +119,8 @@ const feedback5 = (props) => {
             fontSize: 16,
             fontWeight: "400",
             paddingVertical: 8,
+            borderColor: validtell ? "red" : "white",
+            borderWidth: 1,
           }}
           textAlignVertical="top"
           onChangeText={(text) => settell(text)}
@@ -85,6 +142,8 @@ const feedback5 = (props) => {
             borderRadius: 20,
             borderColor: "#FBFBFB",
             paddingVertical: 7,
+            borderColor: validphone ? "red" : "white",
+            borderWidth: 1,
           }}
           onChangeText={(text) => setphone(text)}
           value={phone}
@@ -103,7 +162,7 @@ const feedback5 = (props) => {
           }}
         >
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("feedback4")}
+            onPress={() => props.navigation.goBack()}
             style={{
               flexDirection: "row",
               borderRadius: 30,
@@ -133,7 +192,8 @@ const feedback5 = (props) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("feedback6")}
+            onPress={onsubmit}
+            // onPress={() => props.navigation.navigate("feedback6")}
             style={{
               flexDirection: "row",
               borderRadius: 30,
@@ -146,17 +206,21 @@ const feedback5 = (props) => {
               backgroundColor: "orange",
             }}
           >
-            <Text
-              style={[
-                {
-                  color: "white",
-                  textAlign: "center",
-                  alignSelf: "center",
-                },
-              ]}
-            >
-              SUBMIT
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator color={"white"} size={"small"} />
+            ) : (
+              <Text
+                style={[
+                  {
+                    color: "white",
+                    textAlign: "center",
+                    alignSelf: "center",
+                  },
+                ]}
+              >
+                SUBMIT
+              </Text>
+            )}
             <Ionicons
               name={"chevron-forward-outline"}
               color="white"
