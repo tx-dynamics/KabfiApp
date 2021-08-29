@@ -366,7 +366,7 @@ const [granted1, setGrandted1] = useState("");
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
           <Image
-            source={logoName}
+            source={require('../../../../assets/Kabfi-logo.png')}
             resizeMode="contain"
             style={{
               height: 50,
