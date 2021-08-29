@@ -12,6 +12,7 @@ const CurrentNavigator = () => {
     // setDataUpdated(!dataUpdated);
     if (firebase.auth().currentUser) {
       setIsLoggedIn(true);
+      
     }
   }, [firebase.auth().currentUser]);
 

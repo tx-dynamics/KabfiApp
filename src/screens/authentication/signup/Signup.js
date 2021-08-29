@@ -11,9 +11,9 @@ if (!firebase.apps.length) {
   });
 }
 // firebase.storage().ref();
-
+import * as Permissions from "expo-permissions";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -37,6 +37,24 @@ import {
 import { useLogin } from "../../../context/LoginProvider";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 const Signup = (props) => {
+  
+  useEffect(() => {
+    // You need to restrict it at some point
+    // This is just dummy code and should be replaced by actual
+  
+        getPermission();
+   
+  }, []);
+
+  const  getPermission= async () => {
+  const {granted} =   await Permissions.askAsync(Permissions.CAMERA)
+  const {granted1} = await  Permissions.askAsync(Permissions.CAMERA_ROLL)
+setGrandted(granted)
+setGrandted1(granted1)
+
+}
+const [granted, setGrandted] = useState("");
+const [granted1, setGrandted1] = useState("");
   const [firstName, setFirstName] = useState("");
   const [fNameValidator, setfNameValidator] = useState(false);
   const [lastName, setLastName] = useState("");
@@ -99,16 +117,21 @@ const Signup = (props) => {
   const pickBadgeNumberImage = async (val) => {
     let result = "";
     if (val === 1) {
+      if(granted||granted1){
       result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.5,
       });
+    }
+    else{
+      alert("Camera permission Denied")
+    }
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.5,
       });
     }
 
@@ -125,13 +148,13 @@ const Signup = (props) => {
       result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.6,
       });
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.5,
       });
     }
 
@@ -166,12 +189,15 @@ const Signup = (props) => {
       badgeNumberImage !== null &&
       taxiLicenseImage !== null
     ) {
-      if (!/^[0-9]+$/.test(mobileNo)) {
-        alert("Phone number should be numeric only.");
+      if (mobileNo.length < 10) {
+        alert("Phone number should be 11 digit only .");
+        setLoader(false);
+        setmobileNoValidator(true)
         return false;
       }
       if (password.length < 8) {
         alert("Password Must be atleast 8 characters");
+        setpasswordValidator(true)
         setLoader(false);
         return false;
       }
@@ -272,7 +298,7 @@ const Signup = (props) => {
       if (lastName === "") {
         setlNameValidator(true);
       }
-      if (mobileNo === "") {
+      if (mobileNo === "" || mobileNo.length<10) {
         setmobileNoValidator(true);
       }
       if (email === "") {
@@ -376,7 +402,7 @@ const Signup = (props) => {
                   placeholder="First Name"
                 />
                 <Image
-                  source={firstName.length >= 2 ? checkImage : null}
+                  source={firstName.length >= 2 ? tickImage : null}
                   style={styles.checkImageIcon}
                 />
               </View>
@@ -393,7 +419,7 @@ const Signup = (props) => {
                   placeholder="Last Name"
                 />
                 <Image
-                  source={lastName.length >= 2 ? checkImage : null}
+                  source={lastName.length >= 2 ? tickImage : null}
                   style={styles.checkImageIcon}
                 />
               </View>
@@ -419,7 +445,7 @@ const Signup = (props) => {
                 maxLength={10}
               />
               <Image
-                source={mobileNo.length > 9 ? checkImage : null}
+                source={mobileNo.length > 9 ? tickImage : null}
                 style={[styles.checkImageIcon, { marginRight: 15 }]}
               />
             </View>
@@ -442,7 +468,7 @@ const Signup = (props) => {
               <Image
                 source={
                   /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
-                    ? checkImage
+                    ? tickImage
                     : null
                 }
                 style={[styles.checkImageIcon, { marginRight: 15 }]}
@@ -479,7 +505,7 @@ const Signup = (props) => {
                   marginLeft:responsiveHeight(1),
                 opacity:0.3
                 }}> {
-                      !taxiLicenseImage ? "Upload Image" : "Image Uploaded"
+                      !badgeNumberImage ? "Upload Image" : "Image is uploaded"
                     } </Text>  
                   </View> 
                   <Image
@@ -514,7 +540,7 @@ const Signup = (props) => {
                   marginLeft:responsiveHeight(1),
                 opacity:0.3
                 }}> {
-                      !taxiLicenseImage ? "Upload Image" : "Image Uploaded"
+                      !taxiLicenseImage ? "Upload Image" : "Image is uploaded"
                     } </Text>  
                   </View> 
                   

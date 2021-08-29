@@ -12,11 +12,13 @@ import {
 } from "react-native";
 import firebase from "firebase";
 import { verifyImage } from "../../../assets";
-
 const Verify = (props) => {
   const [email, setEmail] = useState("");
   const [loader, setLoader] = useState(false);
-
+  const onPress = () => {
+    console.log("OK me ho ")
+  
+  }
   //   function userResetPassword() {
   //     firebase
   //       .auth()
@@ -45,10 +47,8 @@ const Verify = (props) => {
         </View>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
-            style={styles.btn2}
-            onPress={() => BackHandler.exitApp()}
-            // onPress={() => props.navigation.navigate("Signin")}
-          >
+            style={styles.btn2} 
+            onPress={onPress}>
             <Text style={styles.btn2Text}>Close Application</Text>
           </TouchableOpacity>
         </View>

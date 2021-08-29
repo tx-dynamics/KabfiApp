@@ -183,11 +183,11 @@ const CreatePost = (props) => {
         interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
         playThroughEarpieceAndroid: true,
       });
-      console.log("Starting recording..");
+      //console.log("Starting recording..");
       const { recording } = await Audio.Recording.createAsync(
         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
       );
-      console.log("Recording started");
+   
       setRecording(recording);
     } catch (err) {
       setshow(false);
@@ -211,6 +211,9 @@ const CreatePost = (props) => {
   }
   async function stopRecording() {
     console.log("Stopping recording..");
+    let testData = await recording.getStatusAsync()
+     
+    console.log("OKK",await testData)
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
     setshow(false);
@@ -352,7 +355,7 @@ const CreatePost = (props) => {
             }}
             //options for the styling
             getTime={(time) => {
-              console.log(time);
+              //console.log(time);
             }}
           />
         ) : null}
