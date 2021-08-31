@@ -61,24 +61,38 @@ const CreatePost = (props) => {
   }, [isFocused]);
   async function getLocation() {
     const user = firebase.auth().currentUser?.uid;
-    const data = firebase.database().ref("users/" + user);
+    const data = firebase.database().ref("users");
+    const userName = firebase.database().ref("users/" + user);
+
+    userName.on("value", (chil) => {
+      {
+        setUserId(user);
+        setUserName(chil.val()?.firstName + " " + chil.val()?.lastName);
+        chil.val()?.Dp ? setDp(chil.val().Dp) : null;
+      }
+    });
     const arr = [];
 
     data.on("value", (userdata) => {
       {
-        userdata.val()?.Dp ? setDp(userdata.val().Dp) : null;
-        if (userdata.val()?.isEnabled === true) {
-          arr.push([userdata.val()?.pushToken]);
-        }
+        userdata.forEach((child) => {
+          if (child.val()?.isEnabled === true && child.key !== user) {
+            arr.push(child.val()?.pushToken);
+          }
+        });
       }
-      setUserId(user);
-      console.log(userdata.val());
-      setUserName(userdata.val()?.firstName + " " + userdata.val()?.lastName);
     });
+    arr.map((item) =>
+      console.log(
+        "Token Array with condition if enabled and neglect current user id==>",
+        JSON.stringify(item)
+      )
+    );
     console.log(
       "Token Array with condition if enabled and neglect current user id==>",
       arr
     );
+
     setTokens(arr);
     const location = await AsyncStorage.getItem("location");
     if (location !== null) {
@@ -122,7 +136,7 @@ const CreatePost = (props) => {
 
         myRef.set(Details).then(() => {
           tokens.length > 0
-            ? RequestPushMsg(tokens, postText)
+            ? tokens.map((item) => RequestPushMsg(item, postText))
             : console.log("No One");
         });
         // mylike.set(userId);
