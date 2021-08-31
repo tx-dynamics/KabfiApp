@@ -41,7 +41,7 @@ const feedback5 = (props) => {
     setvalidphone(false);
     setvalidtell(false);
     setisLoading(true);
-    if (phone !== "" && tell !== "") {
+    // if (phone !== "" && tell !== "") {
       const submitFeedback = await firebase
         .database()
         .ref("Feedback/" + firebase.auth().currentUser?.uid);
@@ -58,19 +58,19 @@ const feedback5 = (props) => {
       submitFeedback.push(data);
       setisLoading(false);
       props.navigation.navigate("feedback6");
-    } else {
-      setisLoading(false);
-      if (phone === "" && tell === "") {
-        setvalidphone(true);
-        setvalidtell(true);
-      }
-      if (phone === "") {
-        setvalidphone(true);
-      }
-      if (tell === "") {
-        setvalidtell(true);
-      }
-    }
+    // } else {
+    //   setisLoading(false);
+    //   if (phone === "" && tell === "") {
+    //     setvalidphone(true);
+    //     setvalidtell(true);
+    //   }
+    //   if (phone === "") {
+    //     setvalidphone(true);
+    //   }
+    //   if (tell === "") {
+    //     setvalidtell(true);
+    //   }
+    // }
   }
   return (
     <View style={styles.main}>

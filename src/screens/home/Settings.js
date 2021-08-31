@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  Switch
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLogin } from "../../context/LoginProvider";
@@ -18,6 +19,8 @@ import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
 
 const Settings = (props) => {
   const { setIsLoggedIn } = useLogin();
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   function userLogout() {
     firebase.auth().signOut();
@@ -46,15 +49,25 @@ const Settings = (props) => {
             />
             <Text style={styles.listText}>Change Password</Text>
           </TouchableOpacity>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity style={styles.listItem}>
 
-          <TouchableOpacity style={styles.listItem}>
-            <Image
-              source={require("../../../assets/ProjectImages/userSettings/notification-settings.png")}
-              style={styles.listIconImage}
-              resizeMode="contain"
+              <Image
+                source={require("../../../assets/ProjectImages/userSettings/notification-settings.png")}
+                style={styles.listIconImage}
+                resizeMode="contain"
+              />
+              <Text style={styles.listText}>Notification</Text>
+
+            </TouchableOpacity>
+            <Switch
+              trackColor={{ false: "#474747", true: "#FCB040" }}
+              thumbColor={isEnabled ? "white" : "#FCB040"}
+              ios_backgroundColor="#474747"
+              onValueChange={toggleSwitch}
+              value={isEnabled}
             />
-            <Text style={styles.listText}>Notification</Text>
-          </TouchableOpacity>
+          </View>
           <TouchableOpacity style={styles.listItem}>
             <Image
               source={require("../../../assets/ProjectImages/locationImage.png")}
@@ -96,7 +109,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   listItem: {
-    width: "100%",
+    width: "90%",
     flexDirection: "row",
     paddingHorizontal: 10,
     paddingVertical: 17,

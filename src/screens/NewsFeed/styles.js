@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { ScreenHeight, ScreenWidth } from "react-native-elements/dist/helpers";
 
 const styles = StyleSheet.create({
   root: {
@@ -155,13 +156,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-   // marginTop: 22,
+    // marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    //margin: 20,
     backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
+    //borderRadius: 20,
+    paddingBottom: 35,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -171,15 +172,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    width:ScreenWidth,
+    height:ScreenHeight,
   },
   
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
+    alignSelf:'center',
+    fontSize:17,
   },
   modalText: {
-    marginBottom: 15,
+   // marginBottom: 15,
     textAlign: 'center',
   },
 });

@@ -1,12 +1,12 @@
 export const user = require("./ProjectImages/users/user.png");
 export const user2 = require("./ProjectImages/users/user2.png");
-export const more = require("./ProjectImages/users/more.png");
+export const more = require("./Union13.png");
 export const postImage = require("./ProjectImages/users/postImage.png");
 export const bar = require("./ProjectImages/users/bar.png");
 export const comments = require("./ProjectImages/users/comments.png");
 export const favourite = require("./ProjectImages/users/favourite.png");
 export const reload = require("./ProjectImages/users/reload.png");
-export const menu = require("./ProjectImages/users/menu.png");
+export const menu = require("./Group785.png");
 export const back = require("./ProjectImages/users/back.png");
 export const smile = require("./ProjectImages/users/smile.png");
 export const smiley = require("./ProjectImages/users/smiley.png");

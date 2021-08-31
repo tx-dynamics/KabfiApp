@@ -102,7 +102,7 @@ const EditProfile = (props) => {
                 .database()
                 .ref("users/" + user)
                 .update(Details);
-              alert("Profile Updated Succsessfully");
+              alert("Profile Updated Successfully");
               props.navigation.navigate("NewsFeed");
             } else {
               setErroMessage("city name cannont be empty");
@@ -194,13 +194,21 @@ const EditProfile = (props) => {
           }}
           leftComponent={
             <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Text style={{ color: "#368AFF", fontSize: 18 }}>Back</Text>
+              <Text style={{ 
+              color: "#FCB040", 
+              fontSize: 17,
+              letterSpacing:1 }}>Back</Text>
             </TouchableOpacity>
           }
-          centerComponent={<Text style={{ fontSize: 18 }}>Edit Profile</Text>}
+          centerComponent={<Text style={{ fontSize: 17 ,color:"#000000"}}>Edit Profile</Text>}
           rightComponent={
             <TouchableOpacity onPress={() => editProfileHandler()}>
-              <Text style={{ fontSize: 18, color: "#A9A9A9" }}>Save</Text>
+              <Text style={{ 
+                fontSize: 17, 
+                color: "#727272",
+                fontWeight:'700',
+                letterSpacing:1, 
+                }}>Save</Text>
             </TouchableOpacity>
           }
         />

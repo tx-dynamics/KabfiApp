@@ -44,6 +44,7 @@ import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import moment from "moment";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import { ActivityIndicator } from "react-native";
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -57,7 +58,10 @@ const NewsFeed = (props) => {
   const [uid, setUid] = useState("");
   const [rate, setRate] = useState("");
   const [date, setDate] = useState("");
-   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [refreshingModal, setRefreshingModal] = useState(true);
+  const [largImage, setLargeImage] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
@@ -133,7 +137,7 @@ const NewsFeed = (props) => {
                 .on("value", function (snapshot) {
                   if (chil.exists()) {
                     hideuser.on("value", (ishide) => {
-                      console.log("hide==>", !ishide.exists());
+                      //console.log("hide==>", !ishide.exists());
                       if (!ishide.exists()) {
                         //console.log("if");
                         setData({ ...data });
@@ -162,7 +166,7 @@ const NewsFeed = (props) => {
                     });
                   } else {
                     hideuser.on("value", (ishide) => {
-                      console.log("hide==>", !ishide.exists());
+                     // console.log("hide==>", !ishide.exists());
                       if (!ishide.exists()) {
                         // console.log("else", child);
                         setData({ ...data });
@@ -193,7 +197,7 @@ const NewsFeed = (props) => {
                 });
             });
           });
-          console.log("Pakkkmkmkm ", arr);
+          //console.log("Pakkkmkmkm ", arr);
           const ik = arr.reverse();
           setPosts(ik);
         }
@@ -201,11 +205,18 @@ const NewsFeed = (props) => {
     setRefreshing(false);
   }
 
-  async function likeHandler(post_id, likes_count, islike) {
+  async function likeHandler(post_id, likes_count, islike,index) {
+    console.log(index)
+    console.log("Like handler before", !islike); 
     const Details = {
       likes_count: islike ? likes_count - 1 : likes_count + 1,
     };
-    console.log("Like handler", islike);
+    posts[index].likes_count=Details.likes_count;
+    posts[index].like= !islike
+    setSelectedId(post_id+likes_count)
+    setPosts(posts) 
+   
+    console.log("Like handler", posts[index].like);
     const delUser = firebase
       .database()
       .ref("user_posts/" + post_id + "/Like/")
@@ -222,8 +233,8 @@ const NewsFeed = (props) => {
     }
     const data = await firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
-    setPosts(null);
-    fetchAllPosts();
+    //setPosts(null);
+    //fetchAllPosts();
   }
   async function hideHandler(post_id) {
     const hiderPost = firebase
@@ -321,8 +332,7 @@ const NewsFeed = (props) => {
       <View key={index} style={styles.cardStyle}>
         <View
           style={[
-            {
-             
+            {  
               backgroundColor: "#FBFBFB",
             },
           ]}
@@ -368,9 +378,7 @@ const NewsFeed = (props) => {
                     fontSize:11,
                   },
                 ]}
-              >{`\n@${item.userName.replace(/ /g, "")} .${moment(item.createdAt).format(
-                "m:ss"
-              )} s`}</Text>
+              >{`\n@${item.userName.replace(/ /g, "")} .${moment(item.createdAt).format("ddd, HH:mm")}`}</Text>
             </Text>
           </View>
           {/* <TouchableOpacity
@@ -393,9 +401,10 @@ const NewsFeed = (props) => {
             button={more}
             buttonStyle={{
               width: 30,
-              height: 15,
+              height: 18,
               resizeMode: "contain",
               marginTop: 10,
+              
             }}
             destructiveIndex={0}
             options={["Report", "Hide", "Cancel"]}
@@ -412,14 +421,23 @@ const NewsFeed = (props) => {
         <View
           style={{ flexDirection: "row", paddingLeft: 10, paddingVertical: 20 }}
         >
-          <View style={{ flex: 2 }}>
+          <TouchableOpacity 
+          onPress={() =>
+            {
+            setLargeImage(item.post_image)
+            setModalVisible(true)
+           setRefreshingModal(true)
+           
+          }
+          }
+          style={{ flex: 2 }}>
             {item.post_image ? (
               <Image
                 style={{ width: 80, height: 80, alignSelf: "flex-end" }}
                 source={{ uri: item.post_image }}
               />
             ) : null}
-          </View>
+          </TouchableOpacity>
 
           <View style={   
               item.post_image?
@@ -471,7 +489,7 @@ const NewsFeed = (props) => {
               <TouchableOpacity
                 style={{ flexDirection: "row" }}
                 onPress={() =>
-                  likeHandler(item.id, item.likes_count, item.like)
+                  likeHandler(item.id, item.likes_count, item.like,index)
                 }
               >
                 <Ionicons
@@ -603,27 +621,38 @@ const NewsFeed = (props) => {
 
   return (
     <View style={styles.main}>
-       {/* <Modal
+       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
         }}>
+        {
+         setTimeout(() => {
+          setRefreshingModal(false)
+        }, 3000), //wait for 3 sec
+        refreshingModal?
+          <ActivityIndicator size={'small'} color={'#FCB040'} style={{alignSelf:'center',marginTop:responsiveHeight(20)}}></ActivityIndicator>
+          :
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
-
+          
+            <Image
+                style={{ width:"100%" , height: "98%",}}
+                source={{ uri: largImage }}
+              />
             <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+              style={{backgroundColor: '#FCB040',width:'100%',height:'5%',justifyContent:'center' }}
               onPress={() => {
                 setModalVisible(!modalVisible);
               }}>
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              <Text style={styles.textStyle}>Hide Image</Text>
             </TouchableHighlight>
           </View>
         </View>
-      </Modal> */}
+}
+      </Modal>
       <Header
         backgroundColor="white"
         containerStyle={{ marginTop: 0 }}
@@ -655,8 +684,10 @@ const NewsFeed = (props) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />
         }
+       
         data={posts}
         renderItem={renderPosts}
+        extraData={selectedId}
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />

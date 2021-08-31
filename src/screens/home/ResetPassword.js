@@ -11,10 +11,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 // import { kabfiApp, firebase } from '../../database/config';
-import { Ionicons } from "@expo/vector-icons";
+
 import firebase from "firebase";
 import { returnImage } from "../../../assets";
-
+import Ionicons from "react-native-vector-icons/Ionicons";
 const ResetPassword = (props) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -138,8 +138,8 @@ const ResetPassword = (props) => {
           style={styles.backContainer}
           onPress={() => props.navigation.navigate("Settings")}
         >
-          <Image source={returnImage} />
-          <Text style={{ marginLeft: 20 }}>Back</Text>
+            <Ionicons name="chevron-back-outline" size={30} />
+          {/* <Text style={{ marginLeft: 10,alignSelf:'center' }}>Back</Text> */}
         </TouchableOpacity>
 
         <View style={styles.textContainer}>
@@ -306,6 +306,8 @@ const styles = StyleSheet.create({
   backContainer: {
     flexDirection: "row",
     paddingVertical: 10,
+    //justifyContent:'center',
+    alignContent:'center',
   },
   fieldContainer: {
     paddingHorizontal: 10,

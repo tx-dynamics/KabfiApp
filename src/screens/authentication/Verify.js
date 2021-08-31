@@ -9,6 +9,7 @@ import {
   TextInput,
   ScrollView,
   BackHandler,
+  Platform
 } from "react-native";
 import firebase from "firebase";
 import { verifyImage } from "../../../assets";
@@ -16,8 +17,13 @@ const Verify = (props) => {
   const [email, setEmail] = useState("");
   const [loader, setLoader] = useState(false);
   const onPress = () => {
-    console.log("OK me ho ")
-  
+   if(Platform.OS === 'ios'){
+    props.navigation.navigate("Signin");
+   }
+    else{
+      BackHandler.exitApp()
+    }
+    
   }
   //   function userResetPassword() {
   //     firebase
@@ -49,7 +55,7 @@ const Verify = (props) => {
           <TouchableOpacity
             style={styles.btn2} 
             onPress={onPress}>
-            <Text style={styles.btn2Text}>Close Application</Text>
+            <Text style={styles.btn2Text}>{!Platform.OS === 'ios'?"Close Application":"Sign In"}</Text>
           </TouchableOpacity>
         </View>
       </View>
