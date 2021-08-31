@@ -7,7 +7,8 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  Switch
+  Switch,
+  ActivityIndicator,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLogin } from "../../context/LoginProvider";
@@ -19,11 +20,25 @@ import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
 
 const Settings = (props) => {
   const { setIsLoggedIn } = useLogin();
+  const [loader, setLoader] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const toggleSwitch = async () => {
+    setIsEnabled(!isEnabled);
+    await firebase
+      .database()
+      .ref("users/" + firebase.auth().currentUser?.uid + "/")
+      .update({
+        isEnabled,
+      });
+  };
 
-  function userLogout() {
-    firebase.auth().signOut();
+  async function userLogout() {
+    // setLoader(true);
+    firebase
+      .auth()
+      .signOut()
+      .then(() => setLoader(false));
+    // setLoader(false);
     setIsLoggedIn(false);
   }
 
@@ -49,16 +64,14 @@ const Settings = (props) => {
             />
             <Text style={styles.listText}>Change Password</Text>
           </TouchableOpacity>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: "row" }}>
             <TouchableOpacity style={styles.listItem}>
-
               <Image
                 source={require("../../../assets/ProjectImages/userSettings/notification-settings.png")}
                 style={styles.listIconImage}
                 resizeMode="contain"
               />
               <Text style={styles.listText}>Notification</Text>
-
             </TouchableOpacity>
             <Switch
               trackColor={{ false: "#474747", true: "#FCB040" }}
@@ -83,7 +96,11 @@ const Settings = (props) => {
               style={styles.listIconImage}
               resizeMode="contain"
             />
-            <Text style={styles.listText}>Log Out</Text>
+            {loader ? (
+              <ActivityIndicator color={"red"} size={"small"} />
+            ) : (
+              <Text style={styles.listText}>Log Out</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

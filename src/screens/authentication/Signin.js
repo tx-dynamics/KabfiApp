@@ -1,5 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useRef, useEffect } from "react";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -12,6 +14,7 @@ import {
   Linking,
   ActivityIndicator,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   AntDesign,
@@ -26,7 +29,13 @@ import firebase from "firebase";
 import { useIsFocused } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import * as Permissions from "expo-permissions";
-
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -37,7 +46,8 @@ const Signin = (props) => {
   const [password, setPassword] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [loader, setLoader] = useState(false);
-
+  const notificationListener = useRef();
+  const responseListener = useRef();
   const { setIsLoggedIn } = useLogin();
   useEffect(() => {
     if (isFocused) {
@@ -45,6 +55,15 @@ const Signin = (props) => {
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
           // fetchLocation();
+          registerForPushNotificationsAsync().then((token) =>
+            firebase
+              .database()
+              .ref("users/" + firebase.auth().currentUser?.uid + "/")
+              .update({
+                pushToken: token,
+                userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
+              })
+          );
           setIsLoggedIn(true);
         } else {
           // fetchLocation();
@@ -52,6 +71,14 @@ const Signin = (props) => {
         }
       });
     }
+    // Notifications.addNotificationReceivedListener((response) => {
+    //   console.log(response);
+    // });
+
+    // return () => {
+    //   Notifications.removeNotificationSubscription();
+    //   Notifications.removeNotificationSubscription(responseListener.current);
+    // };
   }, [props, isFocused]);
 
   function passwordVisibility() {
@@ -60,13 +87,23 @@ const Signin = (props) => {
       : setPasswordHidden(true);
   }
 
-  function userSignin() {
+  async function userSignin() {
     setLoader(true);
     // fetchLocation();
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
+        registerForPushNotificationsAsync().then((token) =>
+          firebase
+            .database()
+            .ref("users/" + firebase.auth().currentUser?.uid + "/")
+            .update({
+              pushToken: token,
+              userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
+              isEnabled: true,
+            })
+        );
         setIsLoggedIn(true);
         setLoader(false);
       })
@@ -287,3 +324,34 @@ const styles = StyleSheet.create({
 });
 
 export default Signin;
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+}

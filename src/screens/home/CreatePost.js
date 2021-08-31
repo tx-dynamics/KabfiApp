@@ -37,6 +37,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+import { RequestPushMsg } from "../../components/RequestPushMsg";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -53,24 +54,34 @@ const CreatePost = (props) => {
   const [time, settime] = useState();
   const [show, setshow] = useState(false);
   const [stopwatchReset, setstopwatchReset] = useState(false);
+  const [tokens, setTokens] = useState([]);
   useEffect(() => {
     inputRef.current.focus();
+    getLocation();
+  }, [isFocused]);
+  async function getLocation() {
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
+    const arr = [];
+
     data.on("value", (userdata) => {
       {
         userdata.val()?.Dp ? setDp(userdata.val().Dp) : null;
+        if (userdata.val()?.isEnabled === true) {
+          arr.push([userdata.val()?.pushToken]);
+        }
       }
       setUserId(user);
       console.log(userdata.val());
       setUserName(userdata.val()?.firstName + " " + userdata.val()?.lastName);
     });
-    getLocation();
-  }, [isFocused]);
-  async function getLocation() {
+    console.log(
+      "Token Array with condition if enabled and neglect current user id==>",
+      arr
+    );
+    setTokens(arr);
     const location = await AsyncStorage.getItem("location");
     if (location !== null) {
-      console.log("location", JSON.parse(location));
       setLoc(JSON.parse(location));
       ToastAndroid.show("Location Added..", ToastAndroid.SHORT);
     }
@@ -109,7 +120,11 @@ const CreatePost = (props) => {
         };
         let like = { userId };
 
-        myRef.set(Details);
+        myRef.set(Details).then(() => {
+          tokens.length > 0
+            ? RequestPushMsg(tokens, postText)
+            : console.log("No One");
+        });
         // mylike.set(userId);
         alert("Post Added Succsessfully");
         await AsyncStorage.clear();
@@ -187,7 +202,7 @@ const CreatePost = (props) => {
       const { recording } = await Audio.Recording.createAsync(
         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
       );
-   
+
       setRecording(recording);
     } catch (err) {
       setshow(false);
@@ -211,9 +226,9 @@ const CreatePost = (props) => {
   }
   async function stopRecording() {
     console.log("Stopping recording..");
-    let testData = await recording.getStatusAsync()
-     
-    console.log("OKK",await testData)
+    let testData = await recording.getStatusAsync();
+
+    console.log("OKK", await testData);
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
     setshow(false);
@@ -245,120 +260,123 @@ const CreatePost = (props) => {
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
-<KeyboardAvoidingView>
-        <View style={styles.contentArea}>
-          <View style={{justifyContent:'space-between',flexDirection:'row'}}>
-          <TouchableOpacity onPress={oncancel}>
-            <Text style={styles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={savePost}>
-          {loading ? (
-                <ActivityIndicator color={"red"} size={"small"} />
-              ) : (
-                <Text style={styles.cancelText}>Publish</Text>
-              )}
-           
-          </TouchableOpacity>
-          </View>
-          <View style={styles.postTextContainer}>
-            {postImage ? ( 
-              <ImageBackground  
-              source={{ uri: postImage }} 
-              style={{
-                marginLeft: responsiveHeight(0),
-                borderRadius: responsiveHeight(0.5),
-                width:100,height:100,
-                opacity:0.7,
-                }}>
-            <TouchableOpacity onPress={()=>setPostImage(null)} >      
-            <Entypo 
-            name="cross" 
-            size={30} color="white" 
-            style={{alignSelf:'flex-end'}}
-            />
-        </TouchableOpacity>
-      </ImageBackground>
-            ) : null}
-            <TextInput
-              ref={inputRef}
-              multiline={true}
-              numberOfLines={14}
-              onChangeText={(e) => setPostText(e)}
-              value={postText}
-              style={styles.textArea}
-              placeholder="What's happening ?"
-              placeholderTextColor={"grey"}
-              autoFocus={true}
-            />
-           
-          </View>
-        </View>
-
-        <View style={styles.mediaContainerOuter}>
-          <View style={styles.mediaContainerInner}>
-            {!Sound ? (
-              <TouchableOpacity
-                onPress={recording ? stopRecording : startRecording}
-              >
-                <MaterialIcons
-                  name="multitrack-audio"
-                  size={22}
-                  color={"black"}
-                />
+        <KeyboardAvoidingView>
+          <View style={styles.contentArea}>
+            <View
+              style={{ justifyContent: "space-between", flexDirection: "row" }}
+            >
+              <TouchableOpacity onPress={oncancel}>
+                <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={playSound}>
-                <MaterialIcons
-                  name="multitrack-audio"
-                  size={22}
-                  color={"blue"}
-                />
+              <TouchableOpacity onPress={savePost}>
+                {loading ? (
+                  <ActivityIndicator color={"red"} size={"small"} />
+                ) : (
+                  <Text style={styles.cancelText}>Publish</Text>
+                )}
               </TouchableOpacity>
-            )}
-
-            <TouchableOpacity onPress={pickPostImage}>
-              <Image
-                source={postImage ? { uri: postImage } : smallGallery}
-                style={styles.media}
+            </View>
+            <View style={styles.postTextContainer}>
+              {postImage ? (
+                <ImageBackground
+                  source={{ uri: postImage }}
+                  style={{
+                    marginLeft: responsiveHeight(0),
+                    borderRadius: responsiveHeight(0.5),
+                    width: 100,
+                    height: 100,
+                    opacity: 0.7,
+                  }}
+                >
+                  <TouchableOpacity onPress={() => setPostImage(null)}>
+                    <Entypo
+                      name="cross"
+                      size={30}
+                      color="white"
+                      style={{ alignSelf: "flex-end" }}
+                    />
+                  </TouchableOpacity>
+                </ImageBackground>
+              ) : null}
+              <TextInput
+                ref={inputRef}
+                multiline={true}
+                numberOfLines={14}
+                onChangeText={(e) => setPostText(e)}
+                value={postText}
+                style={styles.textArea}
+                placeholder="What's happening ?"
+                placeholderTextColor={"grey"}
+                autoFocus={true}
               />
-            </TouchableOpacity>
+            </View>
+          </View>
 
-            {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
+          <View style={styles.mediaContainerOuter}>
+            <View style={styles.mediaContainerInner}>
+              {!Sound ? (
+                <TouchableOpacity
+                  onPress={recording ? stopRecording : startRecording}
+                >
+                  <MaterialIcons
+                    name="multitrack-audio"
+                    size={22}
+                    color={"black"}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={playSound}>
+                  <MaterialIcons
+                    name="multitrack-audio"
+                    size={22}
+                    color={"blue"}
+                  />
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity onPress={pickPostImage}>
+                <Image
+                  source={postImage ? { uri: postImage } : smallGallery}
+                  style={styles.media}
+                />
+              </TouchableOpacity>
+
+              {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
             <SimpleLineIcons
               name="location-pin"
               size={24}
               color={loc ? "blue" : "black"}
             />
           </TouchableOpacity> */}
+            </View>
           </View>
-        </View>
-        {show ? (
-          <Stopwatch
-            laps
-            start={show}
-            reset={stopwatchReset}
-            //To start
-            options={{
-              container: {
-                backgroundColor: "#FBFBFB",
-                padding: 5,
-                borderRadius: 5,
-                width: 220,
-                alignSelf: "center",
-                marginTop: 5,
-              },
-              text: {
-                fontSize: 20,
-                color: "black",
-                alignSelf: "center",
-              },
-            }}
-            //options for the styling
-            getTime={(time) => {
-              //console.log(time);
-            }}
-          />
-        ) : null}
+          {show ? (
+            <Stopwatch
+              laps
+              start={show}
+              reset={stopwatchReset}
+              //To start
+              options={{
+                container: {
+                  backgroundColor: "#FBFBFB",
+                  padding: 5,
+                  borderRadius: 5,
+                  width: 220,
+                  alignSelf: "center",
+                  marginTop: 5,
+                },
+                text: {
+                  fontSize: 20,
+                  color: "black",
+                  alignSelf: "center",
+                },
+              }}
+              //options for the styling
+              getTime={(time) => {
+                //console.log(time);
+              }}
+            />
+          ) : null}
         </KeyboardAvoidingView>
       </ScrollView>
     </View>
@@ -374,7 +392,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   cancelText: {
-    marginTop:responsiveHeight(2),
+    marginTop: responsiveHeight(2),
     color: "#FCB040",
     fontSize: 17,
     //fontWeight: "600",
@@ -396,13 +414,13 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   textArea: {
-   // backgroundColor: "#FBFBFB",
-   // textAlignVertical: "top",
-   height:'100%',
-   fontSize:15,
-   color:'#464646', 
-   //padding: responsiveHeight(2),
-    marginTop:responsiveHeight(1)
+    // backgroundColor: "#FBFBFB",
+    // textAlignVertical: "top",
+    height: "100%",
+    fontSize: 15,
+    color: "#464646",
+    //padding: responsiveHeight(2),
+    marginTop: responsiveHeight(1),
   },
   publish: {
     alignSelf: "center",
@@ -424,7 +442,6 @@ const styles = StyleSheet.create({
   media: {
     width: 25,
     height: 25,
-  
   },
 });
 
