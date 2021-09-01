@@ -60,7 +60,7 @@ const NewsFeed = (props) => {
   const [date, setDate] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [refreshingModal, setRefreshingModal] = useState(true);
-  const [largImage, setLargeImage] = useState('');
+  const [largImage, setLargeImage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const refRBSheet = useRef();
   useEffect(() => {
@@ -120,102 +120,115 @@ const NewsFeed = (props) => {
         const exists = snapshot.val() !== null;
         if (exists) {
           snapshot.forEach((child) => {
+            //it will fetch user like
             const userlike = firebase
               .database()
               .ref("user_posts/" + child.key + "/Like/" + uid);
+            //it will check user hide the post or not
             const hideuser = firebase
               .database()
               .ref("user_posts/" + child.key + "/Hide/" + uid);
-
+            //it will check the save post that user save
             const userSave = firebase
               .database()
               .ref("user_posts/" + child.key + "/Save/" + uid);
+            //this will update if user change the picture
+            const userImages = firebase
+              .database()
+              .ref("users/" + child.val().user);
             userlike.on("value", (chil) => {
               var myRef = firebase
                 .database()
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
-                  if (chil.exists()) {
-                    hideuser.on("value", (ishide) => {
-                      //console.log("hide==>", !ishide.exists());
-                      if (!ishide.exists()) {
-                        //console.log("if");
-                        setData({ ...data });
-                        arr.push({
-                          id: child.key,
-                          likes_count: child.val().likes_count,
-                          save_count: child.val().save_count
-                            ? child.val().save_count
-                            : 0,
-                          post_text: child.val().post_text,
-                          user: child.val().user,
-                          userName: child.val().userName,
-                          user_image: child.val().user_image,
-                          post_image: child.val().post_image,
-                          like: true,
-                          save: child.val().save_count ? true : false,
-                          comm: snapshot.numChildren(),
-                          rec: child.val().recoding,
-                          createdAt: child.val().createdAt,
-                          region:
-                            child.val().location != ""
-                              ? child.val().location
-                              : null,
-                        });
-                      }
-                    });
-                  } else {
-                    hideuser.on("value", (ishide) => {
-                     // console.log("hide==>", !ishide.exists());
-                      if (!ishide.exists()) {
-                        // console.log("else", child);
-                        setData({ ...data });
-                        arr.push({
-                          id: child.key,
-                          likes_count: child.val().likes_count,
-                          save_count: child.val().save_count
-                            ? child.val().save_count
-                            : 0,
-                          post_text: child.val().post_text,
-                          user: child.val().user,
-                          userName: child.val().userName,
-                          user_image: child.val().user_image,
-                          post_image: child.val().post_image,
-                          like: false,
-                          save: child.val().save_count ? true : false,
-                          comm: snapshot.numChildren(),
-                          rec: child.val().recoding,
-                          region:
-                            child.val().location != ""
-                              ? child.val().location
-                              : null,
-                          isShow: false,
-                        });
-                      }
-                    });
-                  }
+                  userImages.on("value", (updateImage) => {
+                    if (chil.exists()) {
+                      //it will check if user exist in current post or not to change heart color
+                      hideuser.on("value", (ishide) => {
+                        //it will check and bypass post if current user hide the post
+                        if (!ishide.exists()) {
+                          setData({ ...data });
+                          arr.push({
+                            id: child.key,
+                            likes_count: child.val().likes_count,
+                            save_count: child.val().save_count
+                              ? child.val().save_count
+                              : 0,
+                            post_text: child.val().post_text,
+                            user: child.val().user,
+                            userName: child.val().userName,
+                            user_image: updateImage.val().Dp,
+                            post_image: child.val().post_image,
+                            like: true,
+                            save: child.val().save_count ? true : false,
+                            comm: snapshot.numChildren(),
+                            rec: child.val().recoding,
+                            createdAt: child.val().createdAt,
+                            region:
+                              child.val().location != ""
+                                ? child.val().location
+                                : null,
+                          });
+                        }
+                      });
+                    } else {
+                      hideuser.on("value", (ishide) => {
+                        if (!ishide.exists()) {
+                          setData({ ...data });
+                          arr.push({
+                            id: child.key,
+                            likes_count: child.val().likes_count,
+                            save_count: child.val().save_count
+                              ? child.val().save_count
+                              : 0,
+                            post_text: child.val().post_text,
+                            user: child.val().user,
+                            userName:
+                              updateImage.val().firstName +
+                              " " +
+                              updateImage.val().lastName,
+                            user_image: updateImage.val().Dp,
+                            post_image: child.val().post_image,
+                            like: false,
+                            save: child.val().save_count ? true : false,
+                            comm: snapshot.numChildren(),
+                            rec: child.val().recoding,
+                            region:
+                              child.val().location != ""
+                                ? child.val().location
+                                : null,
+                            isShow: false,
+                          });
+                        }
+                      });
+                    }
+                  });
                 });
             });
           });
-          //console.log("Pakkkmkmkm ", arr);
-          const ik = arr.reverse();
-          setPosts(ik);
         }
       });
+    if (arr.length === 0) {
+      fetchAllPosts();
+    } else {
+      const ik = arr.reverse();
+      setPosts(ik);
+      console.log("posts", ik);
+    }
     setRefreshing(false);
   }
 
-  async function likeHandler(post_id, likes_count, islike,index) {
-    console.log(index)
-    console.log("Like handler before", !islike); 
+  async function likeHandler(post_id, likes_count, islike, index) {
+    console.log(index);
+    console.log("Like handler before", !islike);
     const Details = {
       likes_count: islike ? likes_count - 1 : likes_count + 1,
     };
-    posts[index].likes_count=Details.likes_count;
-    posts[index].like= !islike
-    setSelectedId(post_id+likes_count)
-    setPosts(posts) 
-   
+    posts[index].likes_count = Details.likes_count;
+    posts[index].like = !islike;
+    setSelectedId(post_id + likes_count);
+    setPosts(posts);
+
     console.log("Like handler", posts[index].like);
     const delUser = firebase
       .database()
@@ -233,8 +246,7 @@ const NewsFeed = (props) => {
     }
     const data = await firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
-    //setPosts(null);
-    //fetchAllPosts();
+    fetchAllPosts();
   }
   async function hideHandler(post_id) {
     const hiderPost = firebase
@@ -332,56 +344,57 @@ const NewsFeed = (props) => {
       <View key={index} style={styles.cardStyle}>
         <View
           style={[
-            {  
-              backgroundColor: "#FBFBFB",
-            },
-          ]}
-        >
-
-        <View
-          style={[
             {
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "95%",
-              alignSelf: "center",
               backgroundColor: "#FBFBFB",
             },
           ]}
         >
-          <View style={[{ flexDirection: "row" }]}>
-            <Image
-              source={item.user_image ? { uri: item.user_image } : user}
-              style={styles.userImgStyle}
-            />
-            <Text
-             // numberOfLines={3}
-              style={[
-                styles.largeText,
-                {
-                 marginTop:responsiveHeight(1.2),
-                  // alignSelf: "center",
-                  paddingLeft:5,
-                },
-              ]}
-            >
-              <Text style={[styles.largeText, { color: "black" }]}>
-                {item.userName}
-              </Text>
+          <View
+            style={[
+              {
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "95%",
+                alignSelf: "center",
+                backgroundColor: "#FBFBFB",
+              },
+            ]}
+          >
+            <View style={[{ flexDirection: "row" }]}>
+              <Image
+                source={item.user_image ? { uri: item.user_image } : user}
+                style={styles.userImgStyle}
+              />
               <Text
+                // numberOfLines={3}
                 style={[
-                  styles.mediumText,
+                  styles.largeText,
                   {
-                    // alignSelf: 'flex-start',
-                    // marginLeft: '15.5%',
-                    color: "#464646",
-                    fontSize:11,
+                    marginTop: responsiveHeight(1.2),
+                    // alignSelf: "center",
+                    paddingLeft: 5,
                   },
                 ]}
-              >{`\n@${item.userName.replace(/ /g, "")} .${moment(item.createdAt).format("ddd, HH:mm")}`}</Text>
-            </Text>
-          </View>
-          {/* <TouchableOpacity
+              >
+                <Text style={[styles.largeText, { color: "black" }]}>
+                  {item.userName}
+                </Text>
+                <Text
+                  style={[
+                    styles.mediumText,
+                    {
+                      // alignSelf: 'flex-start',
+                      // marginLeft: '15.5%',
+                      color: "#464646",
+                      fontSize: 11,
+                    },
+                  ]}
+                >{`\n@${item.userName.replace(/ /g, "")} .${moment(
+                  item.createdAt
+                ).format("ddd, HH:mm")}`}</Text>
+              </Text>
+            </View>
+            {/* <TouchableOpacity
             onPress={() => {
               setModalVisible(true);
             }}
@@ -397,73 +410,80 @@ const NewsFeed = (props) => {
               }}
             />
           </TouchableOpacity> */}
-          <OptionsMenu
-            button={more}
-            buttonStyle={{
-              width: 30,
-              height: 18,
-              resizeMode: "contain",
-              marginTop: 10,
-              
-            }}
-            destructiveIndex={0}
-            options={["Report", "Hide", "Cancel"]}
-            actions={[
-              () => {
-                reportHandler(item.id);
-              },
-              () => hideHandler(item.id),
-              () => console.log("cancel"),
-            ]}
-          />
-        </View>
-
-        <View
-          style={{ flexDirection: "row", paddingLeft: 10, paddingVertical: 20 }}
-        >
-          <TouchableOpacity 
-          onPress={() =>
-            {
-            setLargeImage(item.post_image)
-            setModalVisible(true)
-           setRefreshingModal(true)
-           
-          }
-          }
-          style={{ flex: 2 }}>
-            {item.post_image ? (
-              <Image
-                style={{ width: 80, height: 80, alignSelf: "flex-end" }}
-                source={{ uri: item.post_image }}
-              />
-            ) : null}
-          </TouchableOpacity>
-
-          <View style={   
-              item.post_image?
-              { flex: 5, paddingLeft: responsiveHeight(1.5),
-            marginTop:responsiveHeight(0.2) }
-            :
-            { flex:20, 
-              marginTop:responsiveHeight(0.2) }
-            }>
-            <Text numberOfLines={4} style={{ textAlign: "justify",color:'#464646',fontSize:13 }}>
-              {item.post_text}
-            </Text>
+            <OptionsMenu
+              button={more}
+              buttonStyle={{
+                width: 30,
+                height: 18,
+                resizeMode: "contain",
+                marginTop: 10,
+              }}
+              destructiveIndex={0}
+              options={["Report", "Hide", "Cancel"]}
+              actions={[
+                () => {
+                  reportHandler(item.id);
+                },
+                () => hideHandler(item.id),
+                () => console.log("cancel"),
+              ]}
+            />
           </View>
-        </View>
-        {item.rec ? (
-          <TouchableOpacity
-            onPress={() => playSound(item.id, item.rec)}
-            style={{ width: "99%", alignSelf: "center" }}
+
+          <View
+            style={{
+              flexDirection: "row",
+              paddingLeft: 10,
+              paddingVertical: 20,
+            }}
           >
-            {item.isShow ? (
-              <Ionicons name="pause" color="black" size={30} />
-            ) : (
-              <Ionicons name="play" color="orange" size={30} />
-            )}
-          </TouchableOpacity>
-        ) : null}
+            <TouchableOpacity
+              onPress={() => {
+                setLargeImage(item.post_image);
+                setModalVisible(true);
+                setRefreshingModal(true);
+              }}
+              style={{ flex: 2 }}
+            >
+              {item.post_image ? (
+                <Image
+                  style={{ width: 80, height: 80, alignSelf: "flex-end" }}
+                  source={{ uri: item.post_image }}
+                />
+              ) : null}
+            </TouchableOpacity>
+
+            <View
+              style={
+                item.post_image
+                  ? {
+                      flex: 5,
+                      paddingLeft: responsiveHeight(1.5),
+                      marginTop: responsiveHeight(0.2),
+                    }
+                  : { flex: 20, marginTop: responsiveHeight(0.2) }
+              }
+            >
+              <Text
+                numberOfLines={4}
+                style={{ textAlign: "justify", color: "#464646", fontSize: 13 }}
+              >
+                {item.post_text}
+              </Text>
+            </View>
+          </View>
+          {item.rec ? (
+            <TouchableOpacity
+              onPress={() => playSound(item.id, item.rec)}
+              style={{ width: "99%", alignSelf: "center" }}
+            >
+              {item.isShow ? (
+                <Ionicons name="pause" color="black" size={30} />
+              ) : (
+                <Ionicons name="play" color="orange" size={30} />
+              )}
+            </TouchableOpacity>
+          ) : null}
         </View>
         <View
           style={[
@@ -471,7 +491,7 @@ const NewsFeed = (props) => {
               flexDirection: "row",
               width: "100%",
               justifyContent: "space-between",
-              marginTop:responsiveHeight(1),
+              marginTop: responsiveHeight(1),
               backgroundColor: "#FBFBFB",
             },
           ]}
@@ -489,7 +509,7 @@ const NewsFeed = (props) => {
               <TouchableOpacity
                 style={{ flexDirection: "row" }}
                 onPress={() =>
-                  likeHandler(item.id, item.likes_count, item.like,index)
+                  likeHandler(item.id, item.likes_count, item.like, index)
                 }
               >
                 <Ionicons
@@ -621,37 +641,50 @@ const NewsFeed = (props) => {
 
   return (
     <View style={styles.main}>
-       <Modal
+      <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-        }}>
+          Alert.alert("Modal has been closed.");
+        }}
+      >
         {
-         setTimeout(() => {
-          setRefreshingModal(false)
-        }, 3000), //wait for 3 sec
-        refreshingModal?
-          <ActivityIndicator size={'small'} color={'#FCB040'} style={{alignSelf:'center',marginTop:responsiveHeight(20)}}></ActivityIndicator>
-          :
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-          
-            <Image
-                style={{ width:"100%" , height: "98%",}}
+          // (setTimeout(() => {
+          //   setRefreshingModal(false);
+          // }, 3000),
+          //wait for 3 sec
+          // refreshingModal ? (
+          //   <ActivityIndicator
+          //     size={"small"}
+          //     color={"#FCB040"}
+          //     style={{ alignSelf: "center", marginTop: responsiveHeight(20) }}
+          //   ></ActivityIndicator>
+          // ) : (
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Image
+                style={{ width: "100%", height: "98%" }}
                 source={{ uri: largImage }}
+                resizeMode="contain"
               />
-            <TouchableHighlight
-              style={{backgroundColor: '#FCB040',width:'100%',height:'5%',justifyContent:'center' }}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}>
-              <Text style={styles.textStyle}>Hide Image</Text>
-            </TouchableHighlight>
+              <TouchableHighlight
+                style={{
+                  backgroundColor: "#FCB040",
+                  width: "100%",
+                  height: "5%",
+                  justifyContent: "center",
+                }}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <Text style={styles.textStyle}>Hide Image</Text>
+              </TouchableHighlight>
+            </View>
           </View>
-        </View>
-}
+          // ))
+        }
       </Modal>
       <Header
         backgroundColor="white"
@@ -684,7 +717,6 @@ const NewsFeed = (props) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />
         }
-       
         data={posts}
         renderItem={renderPosts}
         extraData={selectedId}

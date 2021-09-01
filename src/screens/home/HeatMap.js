@@ -172,10 +172,6 @@ const styles = StyleSheet.create({
 });
 
 export default class HeatMap extends Component {
-  static navigationOptions = {
-    title: "New York",
-  };
-
   state = {
     initialPosition: {
       latitude: 51.5074,
@@ -187,18 +183,15 @@ export default class HeatMap extends Component {
     points: [{ latitude: 40.7828, longitude: -74.0065 }],
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     this.fetchLocation();
   }
 
   async fetchLocation() {
     try {
-      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         alert("Permission to access location was denied");
-        this.setState({
-          errorMessage: "Permission to access location was denied",
-        });
         return;
       }
       let location = await Location.getCurrentPositionAsync({});
@@ -214,6 +207,7 @@ export default class HeatMap extends Component {
         },
       });
       myRef.on("value", (child) => {
+        console.log(child.key);
         if (child.hasChildren()) {
           child.forEach((chill) => {
             points.push({
@@ -254,7 +248,9 @@ export default class HeatMap extends Component {
         },
       });
       console.log("Region", this.state.initialPosition);
-    } catch (err) {}
+    } catch (err) {
+      console.log(err.message);
+    }
   }
 
   points = [

@@ -13,6 +13,7 @@ import {
   ScrollView,
   ImageBackground,
   KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import {
   user,
@@ -38,6 +39,7 @@ import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { RequestPushMsg } from "../../components/RequestPushMsg";
+import AudioRecording from "./AudioRecording";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -58,6 +60,7 @@ const CreatePost = (props) => {
   useEffect(() => {
     inputRef.current.focus();
     getLocation();
+    setshow(true);
   }, [isFocused]);
   async function getLocation() {
     const user = firebase.auth().currentUser?.uid;
@@ -136,7 +139,7 @@ const CreatePost = (props) => {
 
         myRef.set(Details).then(() => {
           tokens.length > 0
-            ? tokens.map((item) => RequestPushMsg(item, postText))
+            ? tokens.map((item) => RequestPushMsg(item, userName, postText))
             : console.log("No One");
         });
         // mylike.set(userId);
@@ -201,8 +204,8 @@ const CreatePost = (props) => {
   };
   async function startRecording() {
     try {
-      setshow(true);
-      console.log("Requesting permissions..");
+      // setshow(true);
+      Keyboard.dismiss();
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -235,15 +238,15 @@ const CreatePost = (props) => {
     );
     // setSound(sound);
 
-    console.log("Playing Sound", sound);
+    console.log("Playing Sound", Sound);
     await playbackObject.playAsync();
   }
   async function stopRecording() {
+    setshow(false);
     console.log("Stopping recording..");
     let testData = await recording.getStatusAsync();
 
     console.log("OKK", await testData);
-    setRecording(undefined);
     await recording.stopAndUnloadAsync();
     setshow(false);
     setstopwatchReset(true);
@@ -326,7 +329,7 @@ const CreatePost = (props) => {
             </View>
           </View>
 
-          <View style={styles.mediaContainerOuter}>
+          <View style={[styles.mediaContainerOuter, {}]}>
             <View style={styles.mediaContainerInner}>
               {!Sound ? (
                 <TouchableOpacity
@@ -365,32 +368,33 @@ const CreatePost = (props) => {
             </View>
           </View>
           {show ? (
-            <Stopwatch
-              laps
-              start={show}
-              reset={stopwatchReset}
-              //To start
-              options={{
-                container: {
-                  backgroundColor: "#FBFBFB",
-                  padding: 5,
-                  borderRadius: 5,
-                  width: 220,
-                  alignSelf: "center",
-                  marginTop: 5,
-                },
-                text: {
-                  fontSize: 20,
-                  color: "black",
-                  alignSelf: "center",
-                },
-              }}
-              //options for the styling
-              getTime={(time) => {
-                //console.log(time);
-              }}
-            />
-          ) : null}
+            <AudioRecording />
+          ) : // <Stopwatch
+          //   laps
+          //   start={show}
+          //   reset={stopwatchReset}
+          //   //To start
+          //   options={{
+          //     container: {
+          //       backgroundColor: "#FBFBFB",
+          //       padding: 5,
+          //       borderRadius: 5,
+          //       width: 220,
+          //       alignSelf: "center",
+          //       marginTop: 5,
+          //     },
+          //     text: {
+          //       fontSize: 20,
+          //       color: "black",
+          //       alignSelf: "center",
+          //     },
+          //   }}
+          //   //options for the styling
+          //   getTime={(time) => {
+          //     //console.log(time);
+          //   }}
+          // />
+          null}
         </KeyboardAvoidingView>
       </ScrollView>
     </View>
@@ -442,7 +446,7 @@ const styles = StyleSheet.create({
     bottom: 20,
   },
   mediaContainerOuter: {
-    marginTop: 20,
+    marginTop: responsiveHeight(6.85),
     backgroundColor: "#FBFBFB",
     alignItems: "center",
     padding: 20,

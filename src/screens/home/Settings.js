@@ -64,7 +64,7 @@ const Settings = (props) => {
             />
             <Text style={styles.listText}>Change Password</Text>
           </TouchableOpacity>
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", marginTop: 15 }}>
             <TouchableOpacity style={styles.listItem}>
               <Image
                 source={require("../../../assets/ProjectImages/userSettings/notification-settings.png")}
@@ -81,7 +81,7 @@ const Settings = (props) => {
               value={isEnabled}
             />
           </View>
-          <TouchableOpacity style={styles.listItem}>
+          <TouchableOpacity style={[styles.listItem, { marginTop: 15 }]}>
             <Image
               source={require("../../../assets/ProjectImages/locationImage.png")}
               style={styles.listIconImage}
@@ -90,7 +90,10 @@ const Settings = (props) => {
             <Text style={styles.listText}>Location</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.listItem} onPress={userLogout}>
+          <TouchableOpacity
+            style={[styles.listItem, { marginTop: 15 }]}
+            onPress={userLogout}
+          >
             <Image
               source={require("../../../assets/ProjectImages/userSettings/logout.png")}
               style={styles.listIconImage}
@@ -128,8 +131,6 @@ const styles = StyleSheet.create({
   listItem: {
     width: "90%",
     flexDirection: "row",
-    paddingHorizontal: 10,
-    paddingVertical: 17,
     alignItems: "center",
   },
   listIconImage: {

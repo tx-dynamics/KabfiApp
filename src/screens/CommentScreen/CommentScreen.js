@@ -12,6 +12,7 @@ import {
   Platform,
   ActivityIndicator,
 } from "react-native";
+import Swipeout from "react-native-swipeout";
 import {
   user,
   more,
@@ -24,12 +25,10 @@ import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./styles";
-import { Header } from "react-native-elements";
-import HeaderCenterComponent from "../../components/HeaderCenterComponent";
-import HeaderRight from "../../components/HeaderRight";
+import { Header, Divider } from "react-native-elements";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import firebase from "firebase";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import { Audio } from "expo-av";
 const CommentScreen = ({ route, navigation }) => {
   const [Sound, setSound] = useState("");
@@ -42,6 +41,7 @@ const CommentScreen = ({ route, navigation }) => {
   const [sound] = useState();
   const [recording, setRecording] = useState();
   const [isloading, setisloading] = useState(false);
+  const [Close, setClose] = useState(true);
   useEffect(() => {
     console.log("posts", posts);
     const id = route.params.id;
@@ -62,77 +62,122 @@ const CommentScreen = ({ route, navigation }) => {
           image: child.val().image,
           name: child.val().name,
           text: child.val().comments,
-          recording: child.val().recording,
           createdAt: child.val()?.createdAt,
+          user: child.val()?.user,
         });
       });
       console.log("LI==>", li);
     });
     setPosts(li);
   }
+  async function delComment(index, cmntId) {
+    const userId = firebase.auth().currentUser?.uid;
+    if (userId === index) {
+      const delUser = firebase
+        .database()
+        .ref("comments/" + id + "/")
+        .child(cmntId);
+      delUser.remove(() => {
+        console.log("Operation Complete");
+        getData(id);
+      });
+    } else {
+      alert("You can only delete your comments. Thanks");
+    }
+  }
   const renderPosts = ({ item, index }) => {
     return (
-      <TouchableOpacity
-        key={index}
-        activeOpacity={0.9}
-        style={styles.cardStyle}
-      >
-        <View style={[styles.horizontalContainer]}>
-          <Image
-            source={item.image ? { uri: item.image } : user}
-            style={styles.userImgStyle}
-          />
-          <View>
-            <Text
-              numberOfLines={3}
-              style={[
-                styles.largeText,
-                {
-                  // alignSelf: "center",
-                  paddingVertical: 5,
-                },
-              ]}
-            >
-              {item.name}
-            </Text>
-            <Text style={[styles.largeText, { bottom: 3 }]}>
-              {moment(item.createdAt).format("ddd, HH:mm")}
-            </Text>
-          </View>
-        </View>
-        <Text
-          numberOfLines={2}
-          style={[
-            styles.mediumText,
-            {
-              width: "95%",
-              alignSelf: "center",
-              marginTop: 10,
-              marginBottom: 10,
+      <Swipeout
+        close={!Close}
+        right={[
+          {
+            component: (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  backgroundColor: "transparent",
+                }}
+              >
+                <TouchableOpacity
+                  style={{ marginRight: 5 }}
+                  onPress={() => setClose(!Close)}
+                >
+                  <AntDesign name="back" size={40} color="gray" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => delComment(item.user, item.id)}
+                  style={{ marginRight: 5 }}
+                >
+                  <MaterialCommunityIcons
+                    name="trash-can-outline"
+                    size={40}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              </View>
+            ),
+            backgroundColor: "white",
+            //   underlayColor: 'transparent',
+            onPress: () => {
+              console.log("Delete Item");
             },
-          ]}
+          },
+        ]}
+        autoClose={true}
+        backgroundColor="transparent"
+      >
+        <TouchableOpacity
+          key={index}
+          activeOpacity={0.9}
+          style={styles.cardStyle}
         >
-          {item.text}
-        </Text>
-        {item.recording ? (
-          <TouchableOpacity
-            style={{ marginTop: 10 }}
-            onPress={() => playSound(item.recording)}
-          >
-            <MaterialIcons name="multitrack-audio" size={18} color={"blue"} />
-          </TouchableOpacity>
-        ) : null}
-      </TouchableOpacity>
+          <View style={[styles.horizontalContainer, { width: "90%" }]}>
+            <Image
+              source={item.image ? { uri: item.image } : user}
+              style={styles.userImgStyle}
+            />
+            <View style={[{ width: "100%" }]}>
+              <Text
+                numberOfLines={3}
+                style={[
+                  styles.largeText,
+                  {
+                    // alignSelf: "center",
+                    paddingVertical: 5,
+                  },
+                ]}
+              >
+                {item.name}
+              </Text>
+              <Text style={[{ bottom: 3, color: "lightgray" }]}>
+                {moment(item.createdAt).format("ddd, HH:mm")}
+              </Text>
+              <Text
+                numberOfLines={2}
+                style={[
+                  styles.mediumText,
+                  {
+                    width: "70%",
+                    textAlign: "left",
+                  },
+                ]}
+              >
+                {item.text}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Swipeout>
     );
   };
   async function postComments() {
     setisloading(true);
     var user = firebase.auth()?.currentUser;
     var userData = firebase.database().ref("users/" + user?.uid);
-    let sound = await uploadImage(Sound);
-    if (!sound) {
-      sound = "";
-    }
+
     userData.on("value", async (data) => {
       console.log("Data==>", data.val().firstName + "" + data.val().lastName);
       setImg(data.val().Dp);
@@ -142,8 +187,8 @@ const CommentScreen = ({ route, navigation }) => {
         comments: cmnt,
         name: data.val().firstName + "" + data.val().lastName,
         image: data.val().Dp,
-        recording: sound,
         createdAt: new Date().toISOString(),
+        user: user?.uid,
       };
       myRef.push(data);
       setPosts(null);
@@ -233,6 +278,11 @@ const CommentScreen = ({ route, navigation }) => {
         leftComponent={
           <HeaderLeftComponent icon="back" navigation={navigation} />
         }
+        centerComponent={
+          <Text style={{ fontSize: 17, color: "#000000", fontWeight: "700" }}>
+            Comments
+          </Text>
+        }
       />
       <FlatList data={posts} renderItem={renderPosts} />
       <View
@@ -240,22 +290,16 @@ const CommentScreen = ({ route, navigation }) => {
           styles.horizontalContainer,
           {
             marginBottom: 10,
-            justifyContent: "space-between",
+            justifyContent: "space-around",
             width: "95%",
             alignSelf: "center",
+            alignItems: "center",
           },
         ]}
       >
-        <TouchableOpacity
-          style={{ alignSelf: "center", marginTop: 7 }}
-          onPress={recording ? stopRecording : startRecording}
-        >
-          <MaterialIcons name="multitrack-audio" size={20} color={"black"} />
-        </TouchableOpacity>
         <TextInput
           style={styles.input}
           placeholder="Comments"
-          // autoCorrect={props.autoCorrect}
           autoCapitalize={"none"}
           returnKeyType={"done"}
           keyboardType={"default"}
@@ -273,13 +317,12 @@ const CommentScreen = ({ route, navigation }) => {
           style={{
             justifyContent: "center",
             alignSelf: "center",
-            marginTop: 7,
           }}
         >
           {isloading ? (
             <ActivityIndicator color={"black"} size={"small"} />
           ) : (
-            <MaterialCommunityIcons name="send" size={20} color={"black"} />
+            <MaterialCommunityIcons name="send" size={26} color={"black"} />
           )}
         </TouchableOpacity>
       </View>

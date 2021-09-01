@@ -69,19 +69,13 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   input: {
-    marginTop: 7,
-    // marginLeft: 10,
     backgroundColor: "white",
     paddingLeft: 15,
     borderRadius: 30,
     width: "85%",
-    // fontFamily: "geometriaBold",
-    // alignSelf: 'center',
-    // textAlign: 'center',
     borderColor: "lightgray",
     borderWidth: 1,
-    // justifyContent:'center',
-    // alignItems:'center'
+    paddingVertical: 10,
   },
   statusIcon: {
     height: 18,
@@ -96,15 +90,13 @@ const styles = StyleSheet.create({
     // alignSelf: "center",
   },
   largeText: {
-    // fontFamily: Fonts.RobotoMedium,
     fontSize: 16,
-
-    color: "lightgray",
+    color: "black",
   },
   userImgStyle: {
-    height: 50,
-    width: 50,
-    borderRadius: 70,
+    height: 70,
+    width: 70,
+    borderRadius: 35,
     alignSelf: "center",
     margin: 5,
   },
@@ -125,7 +117,6 @@ const styles = StyleSheet.create({
   cardStyle: {
     flex: 1,
     margin: 10,
-    padding: 15,
     backgroundColor: "white",
     elevation: 10,
     shadowColor: "#BDBDBD",
@@ -138,6 +129,10 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     borderColor: "lightgray",
     borderRadius: 10,
+    justifyContent: "center",
+    padding: 10,
+    width: "95%",
+    alignSelf: "center",
   },
 });
 
