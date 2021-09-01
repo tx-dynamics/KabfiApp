@@ -1,125 +1,113 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Button,
-  LayoutAnimation,
-  Image,
-  ScrollView,
-  Animated,
-} from "react-native";
-//import RNSoundLevel from 'react-native-sound-level'
-export default class AudioRecording extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isPressed: true,
-      animated: new Animated.Value(0),
-      opacityA: new Animated.Value(1),
-    };
-    this._onPress = this._onPress.bind(this);
-  }
-  // componentDidMount() {
-  //     RNSoundLevel.start()
-  //     RNSoundLevel.onNewFrame = (data) => {
-  //       // see "Returned data" section below
-  //       console.log('Sound level info', data)
-  //     }
-  //   }
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+    TouchableOpacity,
+    Button,
+    LayoutAnimation,
+    Image,
+    ScrollView,
+    Animated
+} from 'react-native';
+const Audio=()=> {
+  const [animated, setAnimated] = useState(new Animated.Value(0));
+  const [opacityA, setOpacityA] = useState(new Animated.Value(1));
+  const [isPressed, setIsPressed] = useState(false)
+    // constructor(props) {
+    //     super(props);
+    //     this._onPress = this._onPress.bind(this);
+    // }
+    
+   const _runAnimation=() =>{
+        //const { animated, opacityA } = this.state;
 
-  //   // don't forget to stop it
-  //   componentWillUnmount() {
-  //     RNSoundLevel.stop()
-  //   }
+        Animated.loop(
+            Animated.parallel([
+                Animated.timing(animated, {
+                    toValue: 1,
+                    duration: 1000,
 
-  _runAnimation() {
-    const { animated, opacityA } = this.state;
+                }),
+                Animated.timing(opacityA, {
+                    toValue: 0,
+                    duration: 1000,
 
-    Animated.loop(
-      Animated.parallel([
-        Animated.timing(animated, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacityA, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }
-  _stopAnimation() {
-    Animated.loop(
-      Animated.parallel([Animated.timing(animated), Animated.timing(opacityA)])
-    ).stop();
-  }
-  _onPress() {
-    this.setState((state) => ({ isPressed: !this.state.isPressed }));
-  }
-  _micButton() {
-    const { isPressed, animated, opacityA } = this.state;
-    if (isPressed) {
-      //some function
-      this._runAnimation();
-      return (
-        <Animated.View
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-            backgroundColor: "rgba(153,0,0,0.4)",
-            opacity: opacityA,
-            transform: [
-              {
-                scale: animated,
-              },
-            ],
-          }}
-        >
-          {/* icon or image */}
-        </Animated.View>
-      );
-    } else {
-      //some function
-      return (
-        <View
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-            backgroundColor: "rgba(153,0,0,0.4)",
-          }}
-        >
-          {/* icon or image */}
-        </View>
-      );
+                })
+            ])
+        ).start();
     }
-  }
+   const _stopAnimation=()=> {
+        Animated.loop(
+            Animated.parallel([
+                Animated.timing(animated),
+                Animated.timing(opacityA)
+            ])
+        ).stop();
+    }
+   const _onPress=()=> {
+    setIsPressed(!isPressed)
+    }
+    const _micButton=()=> {
+        //const { isPressed, animated, opacityA, } = this.state;
+        if (isPressed) {
+            //some function
+            _runAnimation();
+            return (
+                <Animated.View style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 50,
+                    backgroundColor: 'rgba(153,0,0,0.4)',
+                    opacity: opacityA,
+                    transform: [
+                        {
+                            scale: animated
+                        }
+                    ]
+                }}>
+                    {/* icon or image */}
+                </Animated.View>
+            );
+        } else {
+            //some function
+            return (
+                <View style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 50,
+                    backgroundColor: 'rgba(153,0,0,0.4)',
+                }}>
+                    {/* icon or image */}
+                </View>
+            );
+        }
+    }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={this._onPress}>
-          {this._micButton()}
-        </TouchableOpacity>
-      </View>
-    );
-  }
+
+   
+        return (
+            <View style={styles.container}>
+                <TouchableOpacity onPress={_onPress}>
+                    {_micButton()}
+                </TouchableOpacity>
+            </View>
+        );
+    
 }
 
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF",
-  },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
+
 });
+export default Audio;
 
 // import React, { Component } from "react";
 // import { AppRegistry, PermissionsAndroid, Platform } from "react-native";

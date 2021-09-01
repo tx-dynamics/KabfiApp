@@ -14,6 +14,7 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   Keyboard,
+  Animated,
 } from "react-native";
 import {
   user,
@@ -39,10 +40,13 @@ import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { RequestPushMsg } from "../../components/RequestPushMsg";
-import AudioRecording from "./AudioRecording";
+
+import AudioView from "./AudioRecording";
+
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
+  const [isPressed, setIsPressed] = useState(true)
   const [recording, setRecording] = useState();
   const [postText, setPostText] = useState("");
   const [postImage, setPostImage] = useState(null);
@@ -57,6 +61,9 @@ const CreatePost = (props) => {
   const [show, setshow] = useState(false);
   const [stopwatchReset, setstopwatchReset] = useState(false);
   const [tokens, setTokens] = useState([]);
+  const [animated, setAnimated] = useState(new Animated.Value(0));
+  const [opacityA, setOpacityA] = useState(new Animated.Value(1));
+
   useEffect(() => {
     inputRef.current.focus();
     getLocation();
@@ -160,6 +167,72 @@ const CreatePost = (props) => {
       alert(error.message);
     }
   }
+
+const _runAnimation=()=> {
+    // const { animated, opacityA } = this.state; 
+   console.log("Run animation")
+    
+   Animated.loop(
+      Animated.parallel([
+        Animated.timing(animated, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityA, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }
+  async function _stopAnimation() {
+    Animated.loop(
+      Animated.parallel([Animated.timing(animated), Animated.timing(opacityA)])
+    ).stop();
+  }
+  const _onPress=()=> {
+    setIsPressed(!isPressed)
+  }
+
+  const _micButton=()=> {
+    //const { isPressed, animated, opacityA, } = this.state;
+    if (isPressed) {
+        //some function
+        _runAnimation();
+        return (
+            <Animated.View style={{
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                backgroundColor: 'rgba(153,0,0,0.4)',
+                opacity: opacityA,
+                transform: [
+                    {
+                        scale: animated
+                    }
+                ]
+            }}>
+                {/* icon or image */}
+            </Animated.View>
+        );
+    } else {
+        //some function
+        return (
+            <View style={{
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                backgroundColor: 'rgba(153,0,0,0.4)',
+            }}>
+                {/* icon or image */}
+            </View>
+        );
+    }
+}
+
+
   const pickPostImage = async (val) => {
     let result = "";
 
@@ -363,12 +436,15 @@ const CreatePost = (props) => {
               name="location-pin"
               size={24}
               color={loc ? "blue" : "black"}
-            />
-          </TouchableOpacity> */}
+            /> 
+          </TouchableOpacity>
+              */}
             </View>
           </View>
+         
           {show ? (
-            <AudioRecording />
+            <AudioView  />
+            
           ) : // <Stopwatch
           //   laps
           //   start={show}
@@ -404,6 +480,14 @@ const CreatePost = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  container1:{
+    flex: 0,
+   // alignSelf:'center',
+   marginTop:responsiveHeight(20), 
+   justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "red",
   },
   contentArea: {
     marginTop: "15%",

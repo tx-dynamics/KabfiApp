@@ -325,7 +325,9 @@ const styles = StyleSheet.create({
 
 export default Signin;
 async function registerForPushNotificationsAsync() {
+  try{
   let token;
+  
   if (Constants.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
@@ -354,4 +356,10 @@ async function registerForPushNotificationsAsync() {
   }
 
   return token;
+}
+catch(e)
+{
+console.log("error", e)
+}
+
 }
