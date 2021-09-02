@@ -102,19 +102,13 @@ const CommentScreen = ({ route, navigation }) => {
                 }}
               >
                 <TouchableOpacity
-                  style={{ marginRight: 5 }}
-                  onPress={() => setClose(!Close)}
-                >
-                  <AntDesign name="back" size={40} color="gray" />
-                </TouchableOpacity>
-                <TouchableOpacity
                   onPress={() => delComment(item.user, item.id)}
                   style={{ marginRight: 5 }}
                 >
                   <MaterialCommunityIcons
                     name="trash-can-outline"
-                    size={40}
-                    color="black"
+                    size={30}
+                    color="red"
                   />
                 </TouchableOpacity>
               </View>
@@ -134,37 +128,33 @@ const CommentScreen = ({ route, navigation }) => {
           activeOpacity={0.9}
           style={styles.cardStyle}
         >
-          <View style={[styles.horizontalContainer, { width: "90%" }]}>
+          <View
+            style={{
+              backgroundColor: index % 2 === 0 ? "#FBFBFB" : "#FFF3E3",
+              marginTop: 15,
+              marginLeft: index % 2 === 0 ? 30 : 0,
+              marginRight: index % 2 === 0 ? 0 : 30,
+              padding: 10,
+              borderRadius: 15,
+              flexDirection: "row",
+              paddingBottom: 15,
+            }}
+          >
             <Image
               source={item.image ? { uri: item.image } : user}
               style={styles.userImgStyle}
             />
-            <View style={[{ width: "100%" }]}>
-              <Text
-                numberOfLines={3}
-                style={[
-                  styles.largeText,
-                  {
-                    // alignSelf: "center",
-                    paddingVertical: 5,
-                  },
-                ]}
-              >
-                {item.name}
-              </Text>
-              <Text style={[{ bottom: 3, color: "lightgray" }]}>
-                {moment(item.createdAt).format("ddd, HH:mm")}
-              </Text>
-              <Text
-                numberOfLines={2}
-                style={[
-                  styles.mediumText,
-                  {
-                    width: "70%",
-                    textAlign: "left",
-                  },
-                ]}
-              >
+            <View style={{ width: "85%", marginTop: 3, marginLeft: 3 }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={{ color: "black", fontSize: 13 }}>
+                  {item.name}
+                </Text>
+                <Text style={{ color: "black", fontSize: 18 }}>{" • "}</Text>
+                <Text style={{ color: "black", fontSize: 13 }}>
+                  {moment(item.createdAt).format("ddd, hh:mm")}
+                </Text>
+              </View>
+              <Text numberOfLines={2} style={{ color: "black", fontSize: 13 }}>
                 {item.text}
               </Text>
             </View>

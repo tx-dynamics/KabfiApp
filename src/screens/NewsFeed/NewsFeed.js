@@ -44,7 +44,6 @@ import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import moment from "moment";
 import { responsiveHeight } from "react-native-responsive-dimensions";
-import { ActivityIndicator } from "react-native";
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -62,6 +61,7 @@ const NewsFeed = (props) => {
   const [refreshingModal, setRefreshingModal] = useState(true);
   const [largImage, setLargeImage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [menumodal, setmenumodal] = useState(false);
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
@@ -93,6 +93,7 @@ const NewsFeed = (props) => {
         }
       }
     } catch (err) {
+      fetchAllPosts();
       setRefreshing(false);
       // alert(err.message);
     }
@@ -108,15 +109,15 @@ const NewsFeed = (props) => {
       setRate(userdata.val()?.rating);
       setDate(userdata.val()?.createdAt);
     });
-    fetchLocation();
-    let arr = [];
 
+    let arr = [];
+    //.orderByChild("createdAt")
     setUid(uid);
     await firebase
       .database()
       .ref("user_posts")
-      .once("value")
-      .then(async function (snapshot) {
+      .orderByChild("createdAt")
+      .on("value", async function (snapshot) {
         const exists = snapshot.val() !== null;
         if (exists) {
           snapshot.forEach((child) => {
@@ -208,13 +209,9 @@ const NewsFeed = (props) => {
           });
         }
       });
-    // if (arr.length === 0) {
-    //   fetchAllPosts();
-    // } else {
     const ik = arr.reverse();
-    setPosts(ik);
+    setPosts(arr);
     console.log("posts", ik);
-    // }
     setRefreshing(false);
   }
 
@@ -391,7 +388,7 @@ const NewsFeed = (props) => {
                   ]}
                 >{`\n@${item.userName.replace(/ /g, "")} .${moment(
                   item.createdAt
-                ).format("ddd, HH:mm")}`}</Text>
+                ).format("ddd, hh:mm")}`}</Text>
               </Text>
             </View>
             {/* <TouchableOpacity
@@ -867,7 +864,6 @@ const NewsFeed = (props) => {
           </ScrollView>
         </View>
       </RBSheet>
-      {/* {modalVisible && renderModal} */}
     </View>
   );
 };

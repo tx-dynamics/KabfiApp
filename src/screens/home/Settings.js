@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -22,6 +22,15 @@ const Settings = (props) => {
   const { setIsLoggedIn } = useLogin();
   const [loader, setLoader] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
+  useEffect(() => {
+    const switchE = firebase
+      .database()
+      .ref("users/" + firebase.auth().currentUser?.uid + "/");
+    switchE.on("value", (child) => {
+      console.log(child.val().isEnabled);
+      setIsEnabled(!child.val().isEnabled);
+    });
+  }, []);
   const toggleSwitch = async () => {
     await firebase
       .database()
@@ -30,7 +39,7 @@ const Settings = (props) => {
         isEnabled,
       })
       .then(() => {
-        setIsEnabled(!isEnabled), props.navigation.navigate("Signin");
+        setIsEnabled(!isEnabled);
       });
   };
 
@@ -39,8 +48,12 @@ const Settings = (props) => {
     firebase
       .auth()
       .signOut()
-      .then(() => setLoader(false));
-    setIsLoggedIn(false);
+      .then(() => {
+        setLoader(false),
+          props.navigation.navigate("Signin"),
+          setIsLoggedIn(false);
+      });
+    setLoader(false);
   }
 
   return (

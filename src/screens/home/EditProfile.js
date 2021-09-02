@@ -103,7 +103,7 @@ const EditProfile = (props) => {
                 .ref("users/" + user)
                 .update(Details);
               alert("Profile Updated Successfully");
-              props.navigation.navigate("NewsFeed");
+              props.navigation.push("NewsFeed");
             } else {
               setErroMessage("city name cannont be empty");
             }

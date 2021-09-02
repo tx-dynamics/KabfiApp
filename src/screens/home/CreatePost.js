@@ -92,16 +92,6 @@ const CreatePost = (props) => {
         });
       }
     });
-    arr.map((item) =>
-      console.log(
-        "Token Array with condition if enabled and neglect current user id==>",
-        JSON.stringify(item)
-      )
-    );
-    console.log(
-      "Token Array with condition if enabled and neglect current user id==>",
-      arr
-    );
 
     setTokens(arr);
     const location = await AsyncStorage.getItem("location");
@@ -398,7 +388,7 @@ const CreatePost = (props) => {
                 onChangeText={(e) => setPostText(e)}
                 value={postText}
                 style={styles.textArea}
-                placeholder="What's happening ?"
+                placeholder="What's happening?"
                 placeholderTextColor={"grey"}
                 autoFocus={true}
               />
@@ -428,10 +418,7 @@ const CreatePost = (props) => {
               )}
 
               <TouchableOpacity onPress={pickPostImage}>
-                <Image
-                  source={postImage ? { uri: postImage } : smallGallery}
-                  style={styles.media}
-                />
+                <Image source={smallGallery} style={styles.media} />
               </TouchableOpacity>
 
               {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
@@ -521,7 +508,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#FBFBFB",
     // textAlignVertical: "top",
     height: "100%",
-    fontSize: 15,
+    fontSize: 17,
     color: "#464646",
     //padding: responsiveHeight(2),
     marginTop: responsiveHeight(1),
@@ -532,7 +519,7 @@ const styles = StyleSheet.create({
     bottom: 20,
   },
   mediaContainerOuter: {
-    marginTop: responsiveHeight(6.85),
+    marginTop: responsiveHeight(8),
     backgroundColor: "#FBFBFB",
     alignItems: "center",
     padding: 20,
