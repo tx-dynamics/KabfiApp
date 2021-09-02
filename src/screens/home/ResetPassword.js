@@ -58,87 +58,89 @@ const ResetPassword = (props) => {
   }
 
   async function userResetPassword() {
-    // setLoader(true);
+    setLoader(true);
 
-    // if(oldPassword === '' && newPassword === '' && confirmPassword === '' ){
-    //     setOldPasswordError('This Field is required');
-    //     setNewPasswordError('This Field is required');
-    //     setConfirmPasswordError('This Field is required');
-    // }
-    // if (oldPassword === "") {
-    //   setOldPasswordError("This Field is Required");
-    //   return;
-    // } else if (oldPassword.length < 8) {
-    //   setOldPasswordError("Must be atleast 8 Characters");
-    //   return;
-    // } else {
-    //   setOldPasswordError("");
-    // }
+    if (oldPassword === "" && newPassword === "" && confirmPassword === "") {
+      setOldPasswordError("This Field is required");
+      setNewPasswordError("This Field is required");
+      setConfirmPasswordError("This Field is required");
+      setLoader(false);
+    }
+    if (oldPassword === "") {
+      setOldPasswordError("This Field is Required");
+      setLoader(false);
+      return;
+    } else {
+      setOldPasswordError("");
+    }
 
-    // if (newPassword === "") {
-    //   setNewPasswordError("This Field is Required");
-    //   return;
-    // } else if (newPassword.length < 8) {
-    //   setNewPasswordError("Must be atleast 8 Characters");
-    //   return;
-    // } else {
-    //   setNewPasswordError("");
-    // }
+    if (newPassword === "") {
+      setNewPasswordError("This Field is Required");
+      setLoader(false);
+      return;
+    } else if (newPassword.length < 8) {
+      setNewPasswordError("Must be atleast 8 Characters");
+      setLoader(false);
+      return;
+    } else {
+      setNewPasswordError("");
+    }
 
-    // if (confirmPassword === "") {
-    //   setConfirmPasswordError("This Field is Required");
-    //   return;
-    // } else if (confirmPassword.length < 8) {
-    //   setConfirmPasswordError("Must be atleast 8 Characters");
-    //   return;
-    // } else if (confirmPassword !== newPassword) {
-    //   setConfirmPasswordError("Both passwords must match");
-    //   return;
-    // } else {
-    //   setConfirmPasswordError("");
-    // }
+    if (confirmPassword === "") {
+      setConfirmPasswordError("This Field is Required");
+      setLoader(false);
+      return;
+    } else if (confirmPassword.length < 8) {
+      setConfirmPasswordError("Must be atleast 8 Characters");
+      setLoader(false);
+      return;
+    } else if (confirmPassword !== newPassword) {
+      setConfirmPasswordError("Both passwords must match");
+      setLoader(false);
+      return;
+    } else {
+      setConfirmPasswordError("");
+    }
 
-    reauthenticate(oldPassword)
-      .then(() => {
-        var user = firebase.auth().currentUser;
-        user
-          .updatePassword(newPassword)
-          .then(() => {
-            alert("Password Updated Successfully");
-            setOldPassword("");
-            setNewPassword("");
-            setLoader(false);
-            props.navigation.navigate("NewsFeed");
-          })
-          .catch((error) => {
-            setLoader(false);
-            alert(error.message);
-          });
-      })
-      .catch((error) => {
-        setLoader(false);
-        alert(error.message);
-        // setLoader(false);
-      });
-
-    // if(oldPassword !== '' && newPassword !== '' && confirmPassword !== ''){
-
-    // }
-    // else{
-    //     setOldPasswordError('This Field is required');
-    //     setNewPasswordError('This Field is required');
-    //     setConfirmPasswordError('This Field is required');
-    // }
+    if (oldPassword !== "" && newPassword !== "" && confirmPassword !== "") {
+      reauthenticate(oldPassword)
+        .then(() => {
+          var user = firebase.auth().currentUser;
+          user
+            .updatePassword(newPassword)
+            .then(() => {
+              alert("Password Updated Successfully");
+              setOldPassword("");
+              setNewPassword("");
+              setLoader(false);
+              props.navigation.navigate("NewsFeed");
+            })
+            .catch((error) => {
+              setLoader(false);
+              alert(error.message);
+            });
+        })
+        .catch((error) => {
+          setLoader(false);
+          alert(error.message);
+          setLoader(false);
+        });
+    } else {
+      setOldPasswordError("This Field is required");
+      setNewPasswordError("This Field is required");
+      setConfirmPasswordError("This Field is required");
+      setLoader(false);
+    }
   }
 
   return (
-    <ScrollView style={styles.root}>
+    <ScrollView style={styles.root} keyboardShouldPersistTaps="handled">
       <View style={styles.contentArea}>
         <TouchableOpacity
-          style={styles.backContainer}
+          style={[styles.backContainer, { width: "100%" }]}
           onPress={() => props.navigation.navigate("Settings")}
         >
-            <Ionicons name="chevron-back-outline" size={30} />
+          <Ionicons name="chevron-back-outline" size={30} />
           {/* <Text style={{ marginLeft: 10,alignSelf:'center' }}>Back</Text> */}
         </TouchableOpacity>
 
@@ -187,6 +189,11 @@ const ResetPassword = (props) => {
               onChangeText={(e) => setNewPassword(e)}
               secureTextEntry={newpasswordHidden}
             />
+            <Text
+              style={{ paddingHorizontal: 17, fontSize: 13, color: "#464646" }}
+            >
+              Must be at least 8 Characters
+            </Text>
             <Text style={styles.errorMsg}>{newpasswordError}</Text>
           </View>
 
@@ -207,6 +214,11 @@ const ResetPassword = (props) => {
               onChangeText={(e) => setConfirmPassword(e)}
               secureTextEntry={confirmpasswordHidden}
             />
+            <Text
+              style={{ paddingHorizontal: 17, fontSize: 13, color: "#464646" }}
+            >
+              Both passwords must match
+            </Text>
             <Text style={styles.errorMsg}>{confirmpasswordError}</Text>
           </View>
 
@@ -256,7 +268,7 @@ const styles = StyleSheet.create({
     height: 130,
   },
   textContainer: {
-    marginTop: 30,
+    // marginTop: 30,
     // alignItems:'center'
   },
   textHeading: {
@@ -306,8 +318,8 @@ const styles = StyleSheet.create({
   backContainer: {
     flexDirection: "row",
     paddingVertical: 10,
-    //justifyContent:'center',
-    alignContent:'center',
+    alignContent: "center",
+    marginTop: 30,
   },
   fieldContainer: {
     paddingHorizontal: 10,
@@ -320,7 +332,7 @@ const styles = StyleSheet.create({
   errorMsg: {
     paddingHorizontal: 17,
     fontSize: 10,
-    color: "#464646",
+    color: "red",
     marginBottom: 10,
   },
 });

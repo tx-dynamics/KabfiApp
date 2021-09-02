@@ -42,22 +42,22 @@ const feedback5 = (props) => {
     setvalidtell(false);
     setisLoading(true);
     // if (phone !== "" && tell !== "") {
-      const submitFeedback = await firebase
-        .database()
-        .ref("Feedback/" + firebase.auth().currentUser?.uid);
-      const data = {
-        ease,
-        app,
-        usefull,
-        other,
-        technical,
-        screen,
-        phone,
-        feedback: tell,
-      };
-      submitFeedback.push(data);
-      setisLoading(false);
-      props.navigation.navigate("feedback6");
+    const submitFeedback = await firebase
+      .database()
+      .ref("Feedback/" + firebase.auth().currentUser?.uid);
+    const data = {
+      ease,
+      app,
+      usefull,
+      other,
+      technical,
+      screen,
+      phone,
+      feedback: tell,
+    };
+    submitFeedback.push(data);
+    setisLoading(false);
+    props.navigation.navigate("feedback6");
     // } else {
     //   setisLoading(false);
     //   if (phone === "" && tell === "") {
@@ -110,22 +110,20 @@ const feedback5 = (props) => {
             width: "80%",
             alignSelf: "center",
             height: 250,
-            backgroundColor: "#FBFBFB",
-            paddingHorizontal: 10,
-            borderTopRightRadius: 20,
-            borderBottomRightRadius: 20,
-            borderBottomLeftRadius: 20,
+            backgroundColor: "#FFFFFF",
+            paddingHorizontal: 15,
             marginTop: 10,
             fontSize: 16,
             fontWeight: "400",
-            paddingVertical: 8,
-            borderColor: validtell ? "red" : "white",
+            paddingVertical: 15,
             borderWidth: 1,
+            borderColor: "#D5D5D5",
+            borderRadius: 20,
           }}
           textAlignVertical="top"
           onChangeText={(text) => settell(text)}
           value={tell}
-          placeholderTextColor={"lightgray"}
+          placeholderTextColor={"black"}
           underlineColorAndroid="transparent"
         />
         <TextInput
@@ -134,21 +132,20 @@ const feedback5 = (props) => {
             width: "80%",
             alignSelf: "center",
             paddingHorizontal: 15,
-            backgroundColor: "white",
+            backgroundColor: "#FFFFFF",
             marginTop: 20,
             fontSize: 14,
             // fontWeight: "400",
             borderWidth: 2,
             borderRadius: 20,
-            borderColor: "#FBFBFB",
+            borderColor: "#D5D5D5",
             paddingVertical: 7,
-            borderColor: validphone ? "red" : "white",
             borderWidth: 1,
           }}
           onChangeText={(text) => setphone(text)}
           value={phone}
           keyboardType="phone-pad"
-          placeholderTextColor={"lightgray"}
+          placeholderTextColor={"black"}
           underlineColorAndroid="transparent"
         />
         <Text style={{ marginTop: 10 }}></Text>

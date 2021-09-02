@@ -23,22 +23,23 @@ const Settings = (props) => {
   const [loader, setLoader] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = async () => {
-    setIsEnabled(!isEnabled);
     await firebase
       .database()
       .ref("users/" + firebase.auth().currentUser?.uid + "/")
       .update({
         isEnabled,
+      })
+      .then(() => {
+        setIsEnabled(!isEnabled), props.navigation.navigate("Signin");
       });
   };
 
   async function userLogout() {
-    // setLoader(true);
+    setLoader(true);
     firebase
       .auth()
       .signOut()
       .then(() => setLoader(false));
-    // setLoader(false);
     setIsLoggedIn(false);
   }
 
@@ -48,7 +49,6 @@ const Settings = (props) => {
         backgroundColor="white"
         containerStyle={{ marginTop: 15 }}
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
-        // rightComponent={<HeaderRight />}
         centerComponent={<HeaderCenterComponent name="Settings" />}
       />
       <View style={styles.contentArea}>

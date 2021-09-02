@@ -208,13 +208,13 @@ const NewsFeed = (props) => {
           });
         }
       });
-    if (arr.length === 0) {
-      fetchAllPosts();
-    } else {
-      const ik = arr.reverse();
-      setPosts(ik);
-      console.log("posts", ik);
-    }
+    // if (arr.length === 0) {
+    //   fetchAllPosts();
+    // } else {
+    const ik = arr.reverse();
+    setPosts(ik);
+    console.log("posts", ik);
+    // }
     setRefreshing(false);
   }
 
@@ -227,7 +227,7 @@ const NewsFeed = (props) => {
     posts[index].likes_count = Details.likes_count;
     posts[index].like = !islike;
     setSelectedId(post_id + likes_count);
-    setPosts(posts);
+    // setPosts(posts);
 
     console.log("Like handler", posts[index].like);
     const delUser = firebase

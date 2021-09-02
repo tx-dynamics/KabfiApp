@@ -194,45 +194,60 @@ const EditProfile = (props) => {
           }}
           leftComponent={
             <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Text style={{ 
-              color: "#FCB040", 
-              fontSize: 17,
-              letterSpacing:1 }}>Back</Text>
+              <Text
+                style={{
+                  color: "#FCB040",
+                  fontSize: 17,
+                  letterSpacing: 1,
+                }}
+              >
+                Back
+              </Text>
             </TouchableOpacity>
           }
-          centerComponent={<Text style={{ fontSize: 17 ,color:"#000000"}}>Edit Profile</Text>}
+          centerComponent={
+            <Text style={{ fontSize: 17, color: "#000000" }}>Edit Profile</Text>
+          }
           rightComponent={
             <TouchableOpacity onPress={() => editProfileHandler()}>
-              <Text style={{ 
-                fontSize: 17, 
-                color: "#727272",
-                fontWeight:'700',
-                letterSpacing:1, 
-                }}>Save</Text>
+              {loader ? (
+                <ActivityIndicator color={"blue"} size={"small"} />
+              ) : (
+                <Text
+                  style={{
+                    fontSize: 17,
+                    color: "#727272",
+                    fontWeight: "700",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Save
+                </Text>
+              )}
             </TouchableOpacity>
           }
         />
-        {loader ? (
-          <ActivityIndicator color={"blue"} size={"small"} />
-        ) : (
-          <View style={styles.contentArea}>
-            <TouchableOpacity
-              style={[styles.imageContainer, { alignSelf: "center" }]}
-              onPress={AlertTaxiLicenseImage}
+        {/* {loader ? (
+          <ActivityIndicator color={"blue"} size={"small"} /> */}
+        {/* // ) : ( */}
+        <View style={styles.contentArea}>
+          <TouchableOpacity
+            style={[styles.imageContainer, { alignSelf: "center" }]}
+            onPress={AlertTaxiLicenseImage}
+          >
+            <ImageBackground
+              source={Dp ? { uri: Dp } : user}
+              borderRadius={50}
+              style={[styles.image, { alignItems: "flex-end" }]}
             >
-              <ImageBackground
-                source={Dp ? { uri: Dp } : user}
-                borderRadius={50}
-                style={[styles.image, { alignItems: "flex-end" }]}
-              >
-                <Image
-                  source={edit}
-                  style={{ height: 20, width: 20, marginTop: 10 }}
-                />
-              </ImageBackground>
-            </TouchableOpacity>
+              <Image
+                source={edit}
+                style={{ height: 20, width: 20, marginTop: 10 }}
+              />
+            </ImageBackground>
+          </TouchableOpacity>
 
-            {/* <TouchableOpacity onPress={pickDpImage}>
+          {/* <TouchableOpacity onPress={pickDpImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
@@ -240,104 +255,104 @@ const EditProfile = (props) => {
                   />
                 </TouchableOpacity>     */}
 
-            <View style={styles.fieldContainer}>
-              {/* <View style={styles.iconContainer}  >
+          <View style={styles.fieldContainer}>
+            {/* <View style={styles.iconContainer}  >
                         <Image source={require('../../../assets/ProjectImages/users/profile/pencil-icon.png')} style={styles.icon}  />
                     </View> */}
 
-              <Text style={styles.label}>First Name</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#D7D7D7",
-                }}
-              >
-                <TextInput
-                  value={firstName}
-                  onChangeText={(e) => setFirstName(e)}
-                  style={{
-                    marginTop: 5,
-                    paddingHorizontal: 10,
-                    paddingVertical: 5,
-                  }}
-                />
-                <AntDesign
-                  name="edit"
-                  color="#D7D7D7"
-                  size={18}
-                  style={{
-                    alignSelf: "center",
-                  }}
-                />
-              </View>
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>First Name</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                borderBottomWidth: 1,
+                borderBottomColor: "#D7D7D7",
+              }}
+            >
               <TextInput
-                value={lastName}
-                onChangeText={(e) => setLastName(e)}
-                style={styles.textField}
+                value={firstName}
+                onChangeText={(e) => setFirstName(e)}
+                style={{
+                  marginTop: 5,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                }}
+              />
+              <AntDesign
+                name="edit"
+                color="#D7D7D7"
+                size={18}
+                style={{
+                  alignSelf: "center",
+                }}
               />
             </View>
+          </View>
 
-            {/* <View style={styles.fieldContainer}>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Last Name</Text>
+            <TextInput
+              value={lastName}
+              onChangeText={(e) => setLastName(e)}
+              style={styles.textField}
+            />
+          </View>
+
+          {/* <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Password</Text>
                     <TextInput value="12345678" style={styles.textField} secureTextEntry={true}/>
                 </View>  */}
 
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Phone Number</Text>
-              <TextInput
-                value={mobileNo}
-                style={styles.textField}
-                onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
-                keyboardType="number-pad"
-                placeholder="7711111111"
-                maxLength={11}
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                value={email}
-                style={styles.textField}
-                editable={false}
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>City, State</Text>
-              <TextInput
-                value={city}
-                onChangeText={(e) => setCity(e)}
-                style={styles.textField}
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Country</Text>
-              <TextInput
-                value={"United Kingdom"}
-                // onChangeText={(e) => setCountry(e)}
-                style={styles.textField}
-                editable={false}
-              />
-            </View>
-            <Text
-              style={{
-                color: "red",
-                alignSelf: "center",
-                marginTop: responsiveHeight(2),
-              }}
-            >
-              {ErroMessage}
-            </Text>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Phone Number</Text>
+            <TextInput
+              value={mobileNo}
+              style={styles.textField}
+              onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
+              keyboardType="number-pad"
+              placeholder="7711111111"
+              maxLength={11}
+            />
           </View>
-        )}
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              value={email}
+              style={styles.textField}
+              editable={false}
+            />
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>City, State</Text>
+            <TextInput
+              value={city}
+              onChangeText={(e) => setCity(e)}
+              style={styles.textField}
+            />
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Country</Text>
+            <TextInput
+              value={"United Kingdom"}
+              // onChangeText={(e) => setCountry(e)}
+              style={styles.textField}
+              editable={false}
+            />
+          </View>
+          <Text
+            style={{
+              color: "red",
+              alignSelf: "center",
+              marginTop: responsiveHeight(2),
+            }}
+          >
+            {ErroMessage}
+          </Text>
+        </View>
+        {/* // )} */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

@@ -46,7 +46,7 @@ import AudioView from "./AudioRecording";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
-  const [isPressed, setIsPressed] = useState(true)
+  const [isPressed, setIsPressed] = useState(true);
   const [recording, setRecording] = useState();
   const [postText, setPostText] = useState("");
   const [postImage, setPostImage] = useState(null);
@@ -168,11 +168,11 @@ const CreatePost = (props) => {
     }
   }
 
-const _runAnimation=()=> {
-    // const { animated, opacityA } = this.state; 
-   console.log("Run animation")
-    
-   Animated.loop(
+  const _runAnimation = () => {
+    // const { animated, opacityA } = this.state;
+    console.log("Run animation");
+
+    Animated.loop(
       Animated.parallel([
         Animated.timing(animated, {
           toValue: 1,
@@ -186,52 +186,55 @@ const _runAnimation=()=> {
         }),
       ])
     ).start();
-  }
+  };
   async function _stopAnimation() {
     Animated.loop(
       Animated.parallel([Animated.timing(animated), Animated.timing(opacityA)])
     ).stop();
   }
-  const _onPress=()=> {
-    setIsPressed(!isPressed)
-  }
+  const _onPress = () => {
+    setIsPressed(!isPressed);
+  };
 
-  const _micButton=()=> {
+  const _micButton = () => {
     //const { isPressed, animated, opacityA, } = this.state;
     if (isPressed) {
-        //some function
-        _runAnimation();
-        return (
-            <Animated.View style={{
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                backgroundColor: 'rgba(153,0,0,0.4)',
-                opacity: opacityA,
-                transform: [
-                    {
-                        scale: animated
-                    }
-                ]
-            }}>
-                {/* icon or image */}
-            </Animated.View>
-        );
+      //some function
+      _runAnimation();
+      return (
+        <Animated.View
+          style={{
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            backgroundColor: "rgba(153,0,0,0.4)",
+            opacity: opacityA,
+            transform: [
+              {
+                scale: animated,
+              },
+            ],
+          }}
+        >
+          {/* icon or image */}
+        </Animated.View>
+      );
     } else {
-        //some function
-        return (
-            <View style={{
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                backgroundColor: 'rgba(153,0,0,0.4)',
-            }}>
-                {/* icon or image */}
-            </View>
-        );
+      //some function
+      return (
+        <View
+          style={{
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            backgroundColor: "rgba(153,0,0,0.4)",
+          }}
+        >
+          {/* icon or image */}
+        </View>
+      );
     }
-}
-
+  };
 
   const pickPostImage = async (val) => {
     let result = "";
@@ -286,7 +289,7 @@ const _runAnimation=()=> {
         playsInSilentModeIOS: true,
         shouldDuckAndroid: true,
         interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-        playThroughEarpieceAndroid: true,
+        // playThroughEarpieceAndroid: true,
       });
       //console.log("Starting recording..");
       const { recording } = await Audio.Recording.createAsync(
@@ -441,10 +444,9 @@ const _runAnimation=()=> {
               */}
             </View>
           </View>
-         
+
           {show ? (
-            <AudioView  />
-            
+            <AudioView />
           ) : // <Stopwatch
           //   laps
           //   start={show}
@@ -481,11 +483,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  container1:{
+  container1: {
     flex: 0,
-   // alignSelf:'center',
-   marginTop:responsiveHeight(20), 
-   justifyContent: "center",
+    // alignSelf:'center',
+    marginTop: responsiveHeight(20),
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "red",
   },
