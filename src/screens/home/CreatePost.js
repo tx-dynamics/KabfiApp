@@ -253,7 +253,7 @@ const CreatePost = (props) => {
       return new Promise((resolve, reject) => {
         task.on(
           "state_changed",
-          () => {},
+          () => { },
           (err) => {
             reject(err);
           },
@@ -332,6 +332,12 @@ const CreatePost = (props) => {
     await AsyncStorage.clear();
     props.navigation.navigate("NewsFeed");
   }
+
+
+  const startAudio = () => {
+    alert("ok Pressed")
+  }
+
   return (
     <View
       style={{
@@ -358,8 +364,8 @@ const CreatePost = (props) => {
                 {loading ? (
                   <ActivityIndicator color={"red"} size={"small"} />
                 ) : (
-                  <Text style={styles.cancelText}>Publish</Text>
-                )}
+                    <Text style={styles.cancelText}>Publish</Text>
+                  )}
               </TouchableOpacity>
             </View>
             <View style={styles.postTextContainer}>
@@ -411,14 +417,14 @@ const CreatePost = (props) => {
                   />
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity onPress={playSound}>
-                  <MaterialIcons
-                    name="multitrack-audio"
-                    size={22}
-                    color={"blue"}
-                  />
-                </TouchableOpacity>
-              )}
+                  <TouchableOpacity onPress={playSound}>
+                    <MaterialIcons
+                      name="multitrack-audio"
+                      size={22}
+                      color={"blue"}
+                    />
+                  </TouchableOpacity>
+                )}
 
               <TouchableOpacity onPress={pickPostImage}>
                 <Image source={smallGallery} style={styles.media} />
@@ -435,34 +441,35 @@ const CreatePost = (props) => {
             </View>
           </View>
 
-          {!show ? (
-            <AudioView />
+          {show ? (
+            <AudioView onPressAudio={() => startAudio()} />
+
           ) : // <Stopwatch
-          //   laps
-          //   start={show}
-          //   reset={stopwatchReset}
-          //   //To start
-          //   options={{
-          //     container: {
-          //       backgroundColor: "#FBFBFB",
-          //       padding: 5,
-          //       borderRadius: 5,
-          //       width: 220,
-          //       alignSelf: "center",
-          //       marginTop: 5,
-          //     },
-          //     text: {
-          //       fontSize: 20,
-          //       color: "black",
-          //       alignSelf: "center",
-          //     },
-          //   }}
-          //   //options for the styling
-          //   getTime={(time) => {
-          //     //console.log(time);
-          //   }}
-          // />
-          null}
+            //   laps
+            //   start={show}
+            //   reset={stopwatchReset}
+            //   //To start
+            //   options={{
+            //     container: {
+            //       backgroundColor: "#FBFBFB",
+            //       padding: 5,
+            //       borderRadius: 5,
+            //       width: 220,
+            //       alignSelf: "center",
+            //       marginTop: 5,
+            //     },
+            //     text: {
+            //       fontSize: 20,
+            //       color: "black",
+            //       alignSelf: "center",
+            //     },
+            //   }}
+            //   //options for the styling
+            //   getTime={(time) => {
+            //     //console.log(time);
+            //   }}
+            // />
+            null}
         </KeyboardAvoidingView>
       </ScrollView>
     </View>

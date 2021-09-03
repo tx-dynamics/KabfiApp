@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { responsiveHeight } from "react-native-responsive-dimensions";
-const Audio = () => {
+const Audio = (props) => {
   const [animated, setAnimated] = useState(new Animated.Value(0.7));
   const [opacityA, setOpacityA] = useState(new Animated.Value(1));
   const [isPressed, setIsPressed] = useState(false);
@@ -42,6 +42,7 @@ const Audio = () => {
     ).stop();
   };
   const _onPress = () => {
+    props.onPressAudio()
     setIsPressed(!isPressed);
   };
   const _micButton = () => {
@@ -99,7 +100,8 @@ const Audio = () => {
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={_onPress}>{_micButton()}</TouchableOpacity>
+      <TouchableOpacity onPress={ _onPress}>{_micButton()}</TouchableOpacity>
+
     </View>
   );
 };
