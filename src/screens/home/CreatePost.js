@@ -57,7 +57,7 @@ const CreatePost = (props) => {
   const [sound] = useState();
   const [loc, setLoc] = useState("");
   const isFocused = useIsFocused();
-  const [time, settime] = useState();
+  const [time, settime] = useState("");
   const [show, setshow] = useState(false);
   const [stopwatchReset, setstopwatchReset] = useState(false);
   const [tokens, setTokens] = useState([]);
@@ -103,6 +103,7 @@ const CreatePost = (props) => {
 
   async function savePost() {
     setloading(true);
+    console.log(time, "here-=>");
     try {
       if (postImage || postText || loc || Sound) {
         let post_Image = await uploadImage(postImage);
@@ -131,6 +132,7 @@ const CreatePost = (props) => {
           recoding: sound,
           location: loc,
           createdAt: new Date().toISOString(),
+          time: time,
         };
         let like = { userId };
 
@@ -182,9 +184,6 @@ const CreatePost = (props) => {
       Animated.parallel([Animated.timing(animated), Animated.timing(opacityA)])
     ).stop();
   }
-  const _onPress = () => {
-    setIsPressed(!isPressed);
-  };
 
   const _micButton = () => {
     //const { isPressed, animated, opacityA, } = this.state;
@@ -253,7 +252,7 @@ const CreatePost = (props) => {
       return new Promise((resolve, reject) => {
         task.on(
           "state_changed",
-          () => { },
+          () => {},
           (err) => {
             reject(err);
           },
@@ -270,8 +269,6 @@ const CreatePost = (props) => {
   };
   async function startRecording() {
     try {
-      // setshow(true);
-      Keyboard.dismiss();
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -281,7 +278,7 @@ const CreatePost = (props) => {
         interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
         // playThroughEarpieceAndroid: true,
       });
-      //console.log("Starting recording..");
+      console.log("Starting recording..");
       const { recording } = await Audio.Recording.createAsync(
         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
       );
@@ -309,6 +306,7 @@ const CreatePost = (props) => {
   }
   async function stopRecording() {
     setshow(false);
+    inputRef.current.focus();
     console.log("Stopping recording..");
     let testData = await recording.getStatusAsync();
 
@@ -320,22 +318,18 @@ const CreatePost = (props) => {
     console.log("Recording stopped and stored at", recording._uri);
     // let post_Image = await uploadImage(recording._uri);
     setSound(recording._uri);
-    settime(recording._finalDurationMillis);
+    settime(JSON.stringify(testData.durationMillis));
     console.log("post_Image", recording._finalDurationMillis / 1000);
 
     // playSound(recording._uri);
   }
   async function showMethod() {
-    Keyboard.dismiss(), setshow(!show);
+    Keyboard.dismiss();
+    setshow(!show);
   }
   async function oncancel() {
     await AsyncStorage.clear();
     props.navigation.navigate("NewsFeed");
-  }
-
-
-  const startAudio = () => {
-    alert("ok Pressed")
   }
 
   return (
@@ -364,8 +358,8 @@ const CreatePost = (props) => {
                 {loading ? (
                   <ActivityIndicator color={"red"} size={"small"} />
                 ) : (
-                    <Text style={styles.cancelText}>Publish</Text>
-                  )}
+                  <Text style={styles.cancelText}>Publish</Text>
+                )}
               </TouchableOpacity>
             </View>
             <View style={styles.postTextContainer}>
@@ -407,9 +401,7 @@ const CreatePost = (props) => {
           <View style={[styles.mediaContainerOuter, {}]}>
             <View style={styles.mediaContainerInner}>
               {!Sound ? (
-                <TouchableOpacity
-                  onPress={recording ? stopRecording : startRecording}
-                >
+                <TouchableOpacity onPress={showMethod}>
                   <MaterialIcons
                     name="multitrack-audio"
                     size={22}
@@ -417,14 +409,14 @@ const CreatePost = (props) => {
                   />
                 </TouchableOpacity>
               ) : (
-                  <TouchableOpacity onPress={playSound}>
-                    <MaterialIcons
-                      name="multitrack-audio"
-                      size={22}
-                      color={"blue"}
-                    />
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity onPress={playSound}>
+                  <MaterialIcons
+                    name="multitrack-audio"
+                    size={22}
+                    color={"blue"}
+                  />
+                </TouchableOpacity>
+              )}
 
               <TouchableOpacity onPress={pickPostImage}>
                 <Image source={smallGallery} style={styles.media} />
@@ -441,35 +433,36 @@ const CreatePost = (props) => {
             </View>
           </View>
 
-          {show ? (
-            <AudioView onPressAudio={() => startAudio()} />
-
+          {!show ? (
+            <AudioView
+              onPressAudio={recording ? stopRecording : startRecording}
+            />
           ) : // <Stopwatch
-            //   laps
-            //   start={show}
-            //   reset={stopwatchReset}
-            //   //To start
-            //   options={{
-            //     container: {
-            //       backgroundColor: "#FBFBFB",
-            //       padding: 5,
-            //       borderRadius: 5,
-            //       width: 220,
-            //       alignSelf: "center",
-            //       marginTop: 5,
-            //     },
-            //     text: {
-            //       fontSize: 20,
-            //       color: "black",
-            //       alignSelf: "center",
-            //     },
-            //   }}
-            //   //options for the styling
-            //   getTime={(time) => {
-            //     //console.log(time);
-            //   }}
-            // />
-            null}
+          //   laps
+          //   start={show}
+          //   reset={stopwatchReset}
+          //   //To start
+          //   options={{
+          //     container: {
+          //       backgroundColor: "#FBFBFB",
+          //       padding: 5,
+          //       borderRadius: 5,
+          //       width: 220,
+          //       alignSelf: "center",
+          //       marginTop: 5,
+          //     },
+          //     text: {
+          //       fontSize: 20,
+          //       color: "black",
+          //       alignSelf: "center",
+          //     },
+          //   }}
+          //   //options for the styling
+          //   getTime={(time) => {
+          //     //console.log(time);
+          //   }}
+          // />
+          null}
         </KeyboardAvoidingView>
       </ScrollView>
     </View>

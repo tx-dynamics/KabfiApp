@@ -92,7 +92,6 @@ const NewsFeed = (props) => {
         }
       }
     } catch (err) {
-      fetchAllPosts();
       setRefreshing(false);
       // alert(err.message);
     }
@@ -168,6 +167,7 @@ const NewsFeed = (props) => {
                               child.val().location != ""
                                 ? child.val().location
                                 : null,
+                            time: child.val().time,
                           });
                         }
                       });
@@ -177,6 +177,7 @@ const NewsFeed = (props) => {
                           setData({ ...data });
                           arr.push({
                             id: child.key,
+                            time: child.val().time,
                             likes_count: child.val().likes_count,
                             save_count: child.val().save_count
                               ? child.val().save_count
@@ -223,7 +224,7 @@ const NewsFeed = (props) => {
     posts[index].likes_count = Details.likes_count;
     posts[index].like = !islike;
     setSelectedId(post_id + likes_count);
-    // setPosts(posts);
+    setPosts(posts);
 
     console.log("Like handler", posts[index].like);
     const delUser = firebase
@@ -240,7 +241,7 @@ const NewsFeed = (props) => {
           })
         : mylike.set(uid);
     }
-    const data = await firebase.database().ref("user_posts/" + post_id);
+    const data = firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
     fetchAllPosts();
   }
@@ -291,7 +292,7 @@ const NewsFeed = (props) => {
     data.update(Details);
     fetchAllPosts();
   }
-  async function playSound(id, soundUri) {
+  async function playSound(id, soundUri, time) {
     try {
       await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
       toogleLike(id);
@@ -307,18 +308,20 @@ const NewsFeed = (props) => {
 
       console.log("Playing Sound", soundUri);
       await playbackObject.playAsync();
-      const res = posts.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            isShow: false,
-          };
-        } else {
-          return { ...item };
-        }
-      });
-      // console.log(res);
-      setPosts(res);
+      setTimeout(() => {
+        const res = posts.map((item) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              isShow: false,
+            };
+          } else {
+            return { ...item };
+          }
+        });
+        // console.log(res);
+        setPosts(res);
+      }, Number(time));
     } catch (err) {}
   }
   async function toogleLike(id) {
@@ -468,20 +471,24 @@ const NewsFeed = (props) => {
               >
                 {item.post_text}
               </Text>
+              {item.rec ? (
+                <TouchableOpacity
+                  onPress={() => playSound(item.id, item.rec, item.time)}
+                  style={{
+                    // alignSelf: "center",
+                    marginTop: 5,
+                    right: 4,
+                  }}
+                >
+                  {item.isShow ? (
+                    <Ionicons name="pause" color="black" size={30} />
+                  ) : (
+                    <Ionicons name="play" color="orange" size={30} />
+                  )}
+                </TouchableOpacity>
+              ) : null}
             </View>
           </View>
-          {item.rec ? (
-            <TouchableOpacity
-              onPress={() => playSound(item.id, item.rec)}
-              style={{ width: "99%", alignSelf: "center" }}
-            >
-              {item.isShow ? (
-                <Ionicons name="pause" color="black" size={30} />
-              ) : (
-                <Ionicons name="play" color="orange" size={30} />
-              )}
-            </TouchableOpacity>
-          ) : null}
         </View>
         <View
           style={[

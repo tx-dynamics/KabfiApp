@@ -28,10 +28,12 @@ const Audio = (props) => {
         Animated.timing(animated, {
           toValue: 1,
           duration: 1000,
+          useNativeDriver: true,
         }),
         Animated.timing(opacityA, {
           toValue: 0,
           duration: 1000,
+          useNativeDriver: true,
         }),
       ])
     ).start();
@@ -42,7 +44,7 @@ const Audio = (props) => {
     ).stop();
   };
   const _onPress = () => {
-    props.onPressAudio()
+    props.onPressAudio();
     setIsPressed(!isPressed);
   };
   const _micButton = () => {
@@ -100,8 +102,7 @@ const Audio = (props) => {
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={ _onPress}>{_micButton()}</TouchableOpacity>
-
+      <TouchableOpacity onPress={_onPress}>{_micButton()}</TouchableOpacity>
     </View>
   );
 };
