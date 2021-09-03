@@ -15,6 +15,7 @@ import {
   Modal,
   Linking,
   TouchableHighlight,
+  ActivityIndicator,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -51,8 +52,6 @@ const NewsFeed = (props) => {
   const [posts, setPosts] = useState(null);
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = React.useState(true);
-  const [region, setRegion] = useState({});
-  const [dataUpdated, setDataUpdated] = useState(false);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
   const [rate, setRate] = useState("");
@@ -61,7 +60,7 @@ const NewsFeed = (props) => {
   const [refreshingModal, setRefreshingModal] = useState(true);
   const [largImage, setLargeImage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [menumodal, setmenumodal] = useState(false);
+  const [itemid, setitemid] = useState("");
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
@@ -252,6 +251,7 @@ const NewsFeed = (props) => {
       .child(uid)
       .set(uid)
       .then(() => {
+        setShow(false);
         fetchAllPosts();
         alert("Hide");
       });
@@ -263,6 +263,7 @@ const NewsFeed = (props) => {
       .child(uid)
       .set(uid)
       .then(() => {
+        setShow(false);
         fetchAllPosts();
         alert("Reported");
       });
@@ -391,23 +392,23 @@ const NewsFeed = (props) => {
                 ).format("ddd, hh:mm")}`}</Text>
               </Text>
             </View>
-            {/* <TouchableOpacity
-            onPress={() => {
-              setModalVisible(true);
-            }}
-          >
-            <Image
-              source={more}
-              style={{
-                width: 30,
-                height: 15,
-                resizeMode: "contain",
-                marginTop: 10,
-                transform: [{ rotate: '90deg'}]
+            <TouchableOpacity
+              onPress={() => {
+                setShow(true), setitemid(item.id);
               }}
-            />
-          </TouchableOpacity> */}
-            <OptionsMenu
+            >
+              <Image
+                source={more}
+                style={{
+                  width: 30,
+                  height: 15,
+                  resizeMode: "contain",
+                  marginTop: 10,
+                  // transform: [{ rotate: "90deg" }],
+                }}
+              />
+            </TouchableOpacity>
+            {/* <OptionsMenu
               button={more}
               buttonStyle={{
                 width: 30,
@@ -424,7 +425,7 @@ const NewsFeed = (props) => {
                 () => hideHandler(item.id),
                 () => console.log("cancel"),
               ]}
-            />
+            /> */}
           </View>
 
           <View
@@ -574,67 +575,6 @@ const NewsFeed = (props) => {
       </View>
     );
   };
-  const renderModal = () => {
-    return (
-      <Modal
-        isVisible={!modalVisible}
-        coverScreen={true}
-        hasBackdrop={true}
-        animationIn="slideInUp"
-        swipeDirection="up"
-      >
-        <TouchableWithoutFeedback
-        // onPress={() => this.setState({show: false}, this.toggleModal())}
-        >
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              backgroundColor: "tomato",
-            }}
-          />
-        </TouchableWithoutFeedback>
-
-        <Card
-          containerStyle={{
-            width: "85%",
-            alignSelf: "center",
-            elevation: 5,
-            borderRadius: 10,
-          }}
-          titleStyle={{
-            textAlign: "left",
-            // color: theme.colors.secondary,
-            fontSize: 18,
-          }}
-        >
-          <Text
-            style={{
-              marginBottom: 5,
-              fontSize: 18,
-              fontWeight: "700",
-              // fontFamily: Fonts.RalewayRegurlar,
-            }}
-          >
-            YEs
-          </Text>
-
-          <Text
-            style={{
-              fontSize: 14,
-              marginTop: 10,
-              fontWeight: "700",
-            }}
-          >
-            About
-          </Text>
-        </Card>
-      </Modal>
-    );
-  };
 
   return (
     <View style={styles.main}>
@@ -694,10 +634,6 @@ const NewsFeed = (props) => {
               alignItems: "center",
             }}
             onPress={() => refRBSheet.current.open()}
-            // onPress={() => {
-            //   ref.open();
-            //   // props.navigation.navigate("Main");
-            // }}
           >
             <Image
               source={menu}
@@ -720,6 +656,67 @@ const NewsFeed = (props) => {
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
+      {show && (
+        <View
+          style={{
+            backgroundColor: "lightgray",
+            width: "100%",
+            alignSelf: "center",
+            // marginBottom: 15,
+            position: "absolute",
+            bottom: 0,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              marginTop: 10,
+              backgroundColor: "#FBFBFB",
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+              padding: 13,
+              alignItems: "center",
+              width: "90%",
+              alignSelf: "center",
+              borderBottomWidth: 0.5,
+              borderColor: "lightgray",
+            }}
+            onPress={() => hideHandler(itemid)}
+          >
+            <Text style={{ color: "skyblue" }}>Hide</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              // marginTop: 40,
+              backgroundColor: "#FBFBFB",
+              // borderRadius: 5,
+              padding: 13,
+              alignItems: "center",
+              width: "90%",
+              alignSelf: "center",
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 10,
+            }}
+            onPress={() => reportHandler(itemid)}
+          >
+            <Text style={{ color: "red" }}>Report</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              marginTop: 30,
+              backgroundColor: "#FBFBFB",
+              borderRadius: 5,
+              padding: 13,
+              alignItems: "center",
+              width: "90%",
+              alignSelf: "center",
+              marginBottom: 5,
+            }}
+            onPress={() => setShow(false)}
+          >
+            <Text style={{ color: "skyblue" }}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
@@ -743,14 +740,9 @@ const NewsFeed = (props) => {
                   source={Dp ? { uri: Dp } : user}
                   style={styles.smallImage}
                 />
-                {/* <Image source={Dp?{uri:Dp}:user} style={styles.image} /> */}
               </View>
               <View style={styles.userInfo2}>
                 <Text style={styles.userName}>{name}</Text>
-                {/* <View style={styles.userInfo2SubContainer}>
-                  <Text style={styles.info2Text}>{rate}</Text>
-                  <FontAwesome name="star" style={styles.star} />
-                </View> */}
               </View>
               <View style={styles.userInfo3}>
                 <Text

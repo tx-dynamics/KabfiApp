@@ -325,6 +325,9 @@ const CreatePost = (props) => {
 
     // playSound(recording._uri);
   }
+  async function showMethod() {
+    Keyboard.dismiss(), setshow(!show);
+  }
   async function oncancel() {
     await AsyncStorage.clear();
     props.navigation.navigate("NewsFeed");
@@ -432,7 +435,7 @@ const CreatePost = (props) => {
             </View>
           </View>
 
-          {show ? (
+          {!show ? (
             <AudioView />
           ) : // <Stopwatch
           //   laps

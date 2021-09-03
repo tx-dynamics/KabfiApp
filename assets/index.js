@@ -1,6 +1,6 @@
 export const user = require("./ProjectImages/users/user.png");
 export const user2 = require("./ProjectImages/users/user2.png");
-export const more = require("./Union13.png");
+export const more = require("./ProjectImages/users/more.png");
 export const postImage = require("./ProjectImages/users/postImage.png");
 export const bar = require("./ProjectImages/users/bar.png");
 export const comments = require("./ProjectImages/users/comments.png");
