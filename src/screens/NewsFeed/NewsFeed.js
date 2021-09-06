@@ -189,6 +189,7 @@ const NewsFeed = (props) => {
                               " " +
                               updateImage.val().lastName,
                             user_image: updateImage.val().Dp,
+                            createdAt: child.val().createdAt,
                             post_image: child.val().post_image,
                             like: false,
                             save: child.val().save_count ? true : false,
@@ -340,6 +341,21 @@ const NewsFeed = (props) => {
     // console.log(res);
     setPosts(res);
   }
+  async function delPost(index, postid) {
+    setRefreshing(true);
+    const userId = firebase.auth().currentUser?.uid;
+    if (userId === index) {
+      const delUser = firebase.database().ref("user_posts/").child(postid);
+      delUser.remove(() => {
+        alert("Post Deleted Successfully");
+        fetchAllPosts();
+        setRefreshing(false);
+      });
+    } else {
+      setRefreshing(false);
+      alert("You can only delete your posts. Thanks");
+    }
+  }
   const renderPosts = ({ item, index }) => {
     return (
       <View key={index} style={styles.cardStyle}>
@@ -390,12 +406,11 @@ const NewsFeed = (props) => {
                       fontSize: 11,
                     },
                   ]}
-                >{`\n@${item.userName.replace(/ /g, "")} .${moment(
-                  item.createdAt
-                ).format("ddd, hh:mm")}`}</Text>
+                  // @${item.userName.replace(/ /g, "")} .
+                >{`\n ${moment(item.createdAt).format("ddd, HH:mm")}`}</Text>
               </Text>
             </View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 setShow(true), setitemid(item.id);
               }}
@@ -410,8 +425,8 @@ const NewsFeed = (props) => {
                   // transform: [{ rotate: "90deg" }],
                 }}
               />
-            </TouchableOpacity>
-            {/* <OptionsMenu
+            </TouchableOpacity> */}
+            <OptionsMenu
               button={more}
               buttonStyle={{
                 width: 30,
@@ -420,15 +435,16 @@ const NewsFeed = (props) => {
                 marginTop: 10,
               }}
               destructiveIndex={0}
-              options={["Report", "Hide", "Cancel"]}
+              options={["Report", "Hide", "Delete", "Cancel"]}
               actions={[
                 () => {
                   reportHandler(item.id);
                 },
                 () => hideHandler(item.id),
+                () => delPost(item.user, item.id),
                 () => console.log("cancel"),
               ]}
-            /> */}
+            />
           </View>
 
           <View

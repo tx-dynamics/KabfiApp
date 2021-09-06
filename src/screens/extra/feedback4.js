@@ -47,7 +47,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setease(true);
+          setease(!ease);
         }}
         style={{
           backgroundColor: ease ? "orange" : "white",
@@ -74,7 +74,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setusefull(true);
+          setusefull(!usefull);
         }}
         style={{
           backgroundColor: usefull ? "orange" : "white",
@@ -101,7 +101,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          settechnical(true);
+          settechnical(!technical);
         }}
         style={{
           backgroundColor: technical ? "orange" : "white",
@@ -128,7 +128,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setapp(true);
+          setapp(!app);
         }}
         style={{
           backgroundColor: app ? "orange" : "white",
@@ -155,7 +155,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setother(true);
+          setother(!other);
         }}
         style={{
           backgroundColor: other ? "orange" : "white",

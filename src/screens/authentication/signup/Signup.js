@@ -13,7 +13,7 @@ if (!firebase.apps.length) {
 // firebase.storage().ref();
 import * as Permissions from "expo-permissions";
 import { StatusBar } from "expo-status-bar";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -37,24 +37,21 @@ import {
 import { useLogin } from "../../../context/LoginProvider";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 const Signup = (props) => {
-  
   useEffect(() => {
     // You need to restrict it at some point
     // This is just dummy code and should be replaced by actual
-  
-        getPermission();
-   
+
+    getPermission();
   }, []);
 
-  const  getPermission= async () => {
-  const {granted} =   await Permissions.askAsync(Permissions.CAMERA)
-  const {granted1} = await  Permissions.askAsync(Permissions.CAMERA_ROLL)
-setGrandted(granted)
-setGrandted1(granted1)
-
-}
-const [granted, setGrandted] = useState("");
-const [granted1, setGrandted1] = useState("");
+  const getPermission = async () => {
+    const { granted } = await Permissions.askAsync(Permissions.CAMERA);
+    const { granted1 } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    setGrandted(granted);
+    setGrandted1(granted1);
+  };
+  const [granted, setGrandted] = useState("");
+  const [granted1, setGrandted1] = useState("");
   const [firstName, setFirstName] = useState("");
   const [fNameValidator, setfNameValidator] = useState(false);
   const [lastName, setLastName] = useState("");
@@ -74,7 +71,6 @@ const [granted1, setGrandted1] = useState("");
   const [taxiLicenseValidator, settaxiLicenseValidator] = useState(false);
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [loader, setLoader] = useState(false);
-
 
   function AlertBadgeNumberImage() {
     Alert.alert(
@@ -117,16 +113,15 @@ const [granted1, setGrandted1] = useState("");
   const pickBadgeNumberImage = async (val) => {
     let result = "";
     if (val === 1) {
-      if(granted||granted1){
-      result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        aspect: [4, 3],
-        quality: 0.5,
-      });
-    }
-    else{
-      alert("Camera permission Denied")
-    }
+      if (granted || granted1) {
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          aspect: [4, 3],
+          quality: 0.5,
+        });
+      } else {
+        alert("Camera permission Denied");
+      }
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -146,13 +141,13 @@ const [granted1, setGrandted1] = useState("");
     let result = "";
     if (val === 1) {
       result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
         quality: 0.6,
       });
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
         quality: 0.5,
       });
@@ -192,12 +187,12 @@ const [granted1, setGrandted1] = useState("");
       if (mobileNo.length < 10) {
         alert("Phone number should be 11 digit only .");
         setLoader(false);
-        setmobileNoValidator(true)
+        setmobileNoValidator(true);
         return false;
       }
       if (password.length < 8) {
-        alert("Password Must be atleast 8 characters");
-        setpasswordValidator(true)
+        alert("Password must be at least 8 characters");
+        setpasswordValidator(true);
         setLoader(false);
         return false;
       }
@@ -298,7 +293,7 @@ const [granted1, setGrandted1] = useState("");
       if (lastName === "") {
         setlNameValidator(true);
       }
-      if (mobileNo === "" || mobileNo.length<10) {
+      if (mobileNo === "" || mobileNo.length < 10) {
         setmobileNoValidator(true);
       }
       if (email === "") {
@@ -366,7 +361,7 @@ const [granted1, setGrandted1] = useState("");
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
           <Image
-            source={require('../../../../assets/Kabfi-logo.png')}
+            source={require("../../../../assets/Kabfi-logo.png")}
             resizeMode="contain"
             style={{
               height: 50,
@@ -478,9 +473,10 @@ const [granted1, setGrandted1] = useState("");
 
           <View style={[styles.formField, { width: "100%" }]}>
             <View style={[styles.textFieldHalfContainer, { width: "100%" }]}>
-              <TouchableOpacity 
-              onPress={AlertTaxiLicenseImage}
-              style={styles.uploadImageFieldsContainer}>
+              <TouchableOpacity
+                onPress={AlertTaxiLicenseImage}
+                style={styles.uploadImageFieldsContainer}
+              >
                 <Text
                   style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
                 >
@@ -497,26 +493,30 @@ const [granted1, setGrandted1] = useState("");
                   }}
                   onPress={AlertBadgeNumberImage}
                 >
-                  <View
-                    style={styles.uploadImageFields}
-                   
-                  >
-                  <Text style={{textAlign:'center',
-                  marginLeft:responsiveHeight(1),
-                opacity:0.3
-                }}> {
-                      !badgeNumberImage ? "Upload Image" : "Image is uploaded"
-                    } </Text>  
-                  </View> 
+                  <View style={styles.uploadImageFields}>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        marginLeft: responsiveHeight(1),
+                        opacity: 0.3,
+                      }}
+                    >
+                      {" "}
+                      {!badgeNumberImage
+                        ? "Upload Image"
+                        : "Image is uploaded"}{" "}
+                    </Text>
+                  </View>
                   <Image
                     source={!badgeNumberImage ? galleryImage : tickImage}
                     style={styles.uploadIMageIcon}
                   />
                 </TouchableOpacity>
               </TouchableOpacity>
-              <TouchableOpacity 
-               onPress={AlertTaxiLicenseImage}
-              style={styles.uploadImageFieldsContainer}>
+              <TouchableOpacity
+                onPress={AlertTaxiLicenseImage}
+                style={styles.uploadImageFieldsContainer}
+              >
                 <Text
                   style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
                 >
@@ -532,18 +532,21 @@ const [granted1, setGrandted1] = useState("");
                   }}
                   onPress={AlertTaxiLicenseImage}
                 >
-                  <View
-                    style={styles.uploadImageFields}
-                   
-                  >
-                  <Text style={{textAlign:'center',
-                  marginLeft:responsiveHeight(1),
-                opacity:0.3
-                }}> {
-                      !taxiLicenseImage ? "Upload Image" : "Image is uploaded"
-                    } </Text>  
-                  </View> 
-                  
+                  <View style={styles.uploadImageFields}>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        marginLeft: responsiveHeight(1),
+                        opacity: 0.3,
+                      }}
+                    >
+                      {" "}
+                      {!taxiLicenseImage
+                        ? "Upload Image"
+                        : "Image is uploaded"}{" "}
+                    </Text>
+                  </View>
+
                   <Image
                     source={!taxiLicenseImage ? galleryImage : tickImage}
                     style={styles.uploadIMageIcon}

@@ -108,7 +108,9 @@ const EditProfile = (props) => {
               setErroMessage("city name cannont be empty");
             }
           } else {
-            setErroMessage("Phone number cannont be empty and 11 characters");
+            setErroMessage(
+              "Phone number cannot be empty and must be 11 characters"
+            );
           }
         } else {
           console.log("1!");
@@ -127,13 +129,13 @@ const EditProfile = (props) => {
     let result = "";
     if (val === 1) {
       result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
         quality: 0,
       });
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
         quality: 0,
       });

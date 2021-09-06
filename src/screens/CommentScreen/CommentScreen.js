@@ -169,13 +169,13 @@ const CommentScreen = ({ route, navigation }) => {
     var userData = firebase.database().ref("users/" + user?.uid);
 
     userData.on("value", async (data) => {
-      console.log("Data==>", data.val().firstName + "" + data.val().lastName);
+      console.log("Data==>", data.val().firstName + " " + data.val().lastName);
       setImg(data.val().Dp);
       setName(data.val().firstName + "" + data.val().lastName);
       var myRef = firebase.database().ref("comments/" + id + "/");
       var data = {
         comments: cmnt,
-        name: data.val().firstName + "" + data.val().lastName,
+        name: data.val().firstName + " " + data.val().lastName,
         image: data.val().Dp,
         createdAt: new Date().toISOString(),
         user: user?.uid,

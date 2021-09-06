@@ -122,7 +122,7 @@ const ResetPassword = (props) => {
         })
         .catch((error) => {
           setLoader(false);
-          alert(error.message);
+          alert("The current password is invalid.");
           setLoader(false);
         });
     } else {
@@ -214,11 +214,11 @@ const ResetPassword = (props) => {
               onChangeText={(e) => setConfirmPassword(e)}
               secureTextEntry={confirmpasswordHidden}
             />
-            <Text
+            {/* <Text
               style={{ paddingHorizontal: 17, fontSize: 13, color: "#464646" }}
             >
               Both passwords must match
-            </Text>
+            </Text> */}
             <Text style={styles.errorMsg}>{confirmpasswordError}</Text>
           </View>
 

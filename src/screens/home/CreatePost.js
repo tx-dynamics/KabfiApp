@@ -61,11 +61,9 @@ const CreatePost = (props) => {
   const [show, setshow] = useState(false);
   const [stopwatchReset, setstopwatchReset] = useState(false);
   const [tokens, setTokens] = useState([]);
-  const [animated, setAnimated] = useState(new Animated.Value(0));
-  const [opacityA, setOpacityA] = useState(new Animated.Value(1));
 
   useEffect(() => {
-    //inputRef.current.focus();
+    inputRef.current.focus();
     getLocation();
     setshow(true);
   }, [isFocused]);
@@ -142,7 +140,7 @@ const CreatePost = (props) => {
             : console.log("No One");
         });
         // mylike.set(userId);
-        alert("Post Added Succsessfully");
+        alert("Post Added Successfully");
         await AsyncStorage.clear();
         setloading(false);
         setPostText("");
@@ -152,7 +150,7 @@ const CreatePost = (props) => {
         props.navigation.navigate("NewsFeed");
       } else {
         setloading(false);
-        alert("please upload some data to post");
+        alert("Upload data to post");
       }
     } catch (error) {
       setloading(false);
@@ -160,7 +158,6 @@ const CreatePost = (props) => {
     }
   }
 
- 
   const pickPostImage = async (val) => {
     let result = "";
 
@@ -274,14 +271,14 @@ const CreatePost = (props) => {
         flex: 1,
         backgroundColor: "white",
       }}
-    > 
-         <KeyboardAvoidingView
-                        style={{ flex: 1 }}
-                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                        enabled={true}
-                        //keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-                    >
-          <ScrollView style={styles.scrollView}>
+    >
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        enabled={true}
+        //keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
+        <ScrollView style={styles.scrollView}>
           <View style={styles.contentArea}>
             <View
               style={{ justifyContent: "space-between", flexDirection: "row" }}
@@ -320,7 +317,7 @@ const CreatePost = (props) => {
                 </ImageBackground>
               ) : null}
               <TextInput
-               // ref={inputRef}
+                ref={inputRef}
                 multiline={true}
                 numberOfLines={14}
                 onChangeText={(e) => setPostText(e)}
@@ -332,32 +329,32 @@ const CreatePost = (props) => {
               />
             </View>
           </View>
-          </ScrollView>
-          <View style={[styles.mediaContainerOuter, {}]}>
-            <View style={styles.mediaContainerInner}>
-              {!Sound ? (
-                <TouchableOpacity onPress={showMethod}>
-                  <MaterialIcons
-                    name="multitrack-audio"
-                    size={22}
-                    color={"black"}
-                  />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={playSound}>
-                  <MaterialIcons
-                    name="multitrack-audio"
-                    size={22}
-                    color={"blue"}
-                  />
-                </TouchableOpacity>
-              )}
-
-              <TouchableOpacity onPress={pickPostImage}>
-                <Image source={smallGallery} style={styles.media} />
+        </ScrollView>
+        <View style={[styles.mediaContainerOuter, {}]}>
+          <View style={styles.mediaContainerInner}>
+            {!Sound ? (
+              <TouchableOpacity onPress={showMethod}>
+                <MaterialIcons
+                  name="multitrack-audio"
+                  size={22}
+                  color={"black"}
+                />
               </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={playSound}>
+                <MaterialIcons
+                  name="multitrack-audio"
+                  size={22}
+                  color={"blue"}
+                />
+              </TouchableOpacity>
+            )}
 
-              {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
+            <TouchableOpacity onPress={pickPostImage}>
+              <Image source={smallGallery} style={styles.media} />
+            </TouchableOpacity>
+
+            {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
             <SimpleLineIcons
               name="location-pin"
               size={24}
@@ -365,50 +362,47 @@ const CreatePost = (props) => {
             /> 
           </TouchableOpacity>
               */}
-            </View>
           </View>
+        </View>
 
-          {!show ? (
-            <AudioView
-              onPressAudio={recording ? stopRecording : startRecording}
-            />
-          ) : // <Stopwatch
-          //   laps
-          //   start={show}
-          //   reset={stopwatchReset}
-          //   //To start
-          //   options={{
-          //     container: {
-          //       backgroundColor: "#FBFBFB",
-          //       padding: 5,
-          //       borderRadius: 5,
-          //       width: 220,
-          //       alignSelf: "center",
-          //       marginTop: 5,
-          //     },
-          //     text: {
-          //       fontSize: 20,
-          //       color: "black",
-          //       alignSelf: "center",
-          //     },
-          //   }}
-          //   //options for the styling
-          //   getTime={(time) => {
-          //     //console.log(time);
-          //   }}
-          // />
-          null}
-    
-   </KeyboardAvoidingView>
+        {!show ? (
+          <AudioView
+            onPressAudio={recording ? stopRecording : startRecording}
+          />
+        ) : // <Stopwatch
+        //   laps
+        //   start={show}
+        //   reset={stopwatchReset}
+        //   //To start
+        //   options={{
+        //     container: {
+        //       backgroundColor: "#FBFBFB",
+        //       padding: 5,
+        //       borderRadius: 5,
+        //       width: 220,
+        //       alignSelf: "center",
+        //       marginTop: 5,
+        //     },
+        //     text: {
+        //       fontSize: 20,
+        //       color: "black",
+        //       alignSelf: "center",
+        //     },
+        //   }}
+        //   //options for the styling
+        //   getTime={(time) => {
+        //     //console.log(time);
+        //   }}
+        // />
+        null}
+      </KeyboardAvoidingView>
     </View>
-  
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
   },
   container1: {
     flex: 0,
@@ -451,7 +445,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: "#464646",
     //padding: responsiveHeight(2),
-   marginTop: responsiveHeight(1),
+    marginTop: responsiveHeight(1),
   },
   publish: {
     alignSelf: "center",
@@ -463,10 +457,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#FBFBFB",
     alignItems: "center",
     padding: 20,
-     //position:'absolute',
-   // bottom:0,
-     // marginTop:windowHeight/1.84,
-    width:'100%'
+    //position:'absolute',
+    // bottom:0,
+    // marginTop:windowHeight/1.84,
+    width: "100%",
   },
   mediaContainerInner: {
     width: "50%",
