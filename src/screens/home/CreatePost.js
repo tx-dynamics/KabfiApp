@@ -65,7 +65,7 @@ const CreatePost = (props) => {
   const [opacityA, setOpacityA] = useState(new Animated.Value(1));
 
   useEffect(() => {
-    inputRef.current.focus();
+    //inputRef.current.focus();
     getLocation();
     setshow(true);
   }, [isFocused]);
@@ -160,71 +160,7 @@ const CreatePost = (props) => {
     }
   }
 
-  const _runAnimation = () => {
-    // const { animated, opacityA } = this.state;
-    console.log("Run animation");
-
-    Animated.loop(
-      Animated.parallel([
-        Animated.timing(animated, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacityA, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  };
-  async function _stopAnimation() {
-    Animated.loop(
-      Animated.parallel([Animated.timing(animated), Animated.timing(opacityA)])
-    ).stop();
-  }
-
-  const _micButton = () => {
-    //const { isPressed, animated, opacityA, } = this.state;
-    if (isPressed) {
-      //some function
-      _runAnimation();
-      return (
-        <Animated.View
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-            backgroundColor: "rgba(153,0,0,0.4)",
-            opacity: opacityA,
-            transform: [
-              {
-                scale: animated,
-              },
-            ],
-          }}
-        >
-          {/* icon or image */}
-        </Animated.View>
-      );
-    } else {
-      //some function
-      return (
-        <View
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-            backgroundColor: "rgba(153,0,0,0.4)",
-          }}
-        >
-          {/* icon or image */}
-        </View>
-      );
-    }
-  };
-
+ 
   const pickPostImage = async (val) => {
     let result = "";
 
@@ -336,17 +272,16 @@ const CreatePost = (props) => {
     <View
       style={{
         flex: 1,
-        width: "100%",
-        height: "100%",
         backgroundColor: "white",
       }}
-    >
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-      >
-        <KeyboardAvoidingView>
+    > 
+         <KeyboardAvoidingView
+                        style={{ flex: 1 }}
+                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                        enabled={true}
+                        //keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+                    >
+          <ScrollView style={styles.scrollView}>
           <View style={styles.contentArea}>
             <View
               style={{ justifyContent: "space-between", flexDirection: "row" }}
@@ -385,7 +320,7 @@ const CreatePost = (props) => {
                 </ImageBackground>
               ) : null}
               <TextInput
-                ref={inputRef}
+               // ref={inputRef}
                 multiline={true}
                 numberOfLines={14}
                 onChangeText={(e) => setPostText(e)}
@@ -397,7 +332,7 @@ const CreatePost = (props) => {
               />
             </View>
           </View>
-
+          </ScrollView>
           <View style={[styles.mediaContainerOuter, {}]}>
             <View style={styles.mediaContainerInner}>
               {!Sound ? (
@@ -463,15 +398,17 @@ const CreatePost = (props) => {
           //   }}
           // />
           null}
-        </KeyboardAvoidingView>
-      </ScrollView>
+    
+   </KeyboardAvoidingView>
     </View>
+  
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
   },
   container1: {
     flex: 0,
@@ -514,7 +451,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: "#464646",
     //padding: responsiveHeight(2),
-    marginTop: responsiveHeight(1),
+   marginTop: responsiveHeight(1),
   },
   publish: {
     alignSelf: "center",
@@ -522,10 +459,14 @@ const styles = StyleSheet.create({
     bottom: 20,
   },
   mediaContainerOuter: {
-    marginTop: responsiveHeight(8),
+    marginTop: responsiveHeight(15),
     backgroundColor: "#FBFBFB",
     alignItems: "center",
     padding: 20,
+     //position:'absolute',
+   // bottom:0,
+     // marginTop:windowHeight/1.84,
+    width:'100%'
   },
   mediaContainerInner: {
     width: "50%",
