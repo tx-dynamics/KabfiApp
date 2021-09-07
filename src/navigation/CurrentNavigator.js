@@ -11,8 +11,7 @@ const CurrentNavigator = () => {
   useEffect(() => {
     // setDataUpdated(!dataUpdated);
     if (firebase.auth().currentUser) {
-      setIsLoggedIn(true);
-      
+      setIsLoggedIn(true);   
     }
   }, [firebase.auth().currentUser]);
 

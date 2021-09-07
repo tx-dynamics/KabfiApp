@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import CurrentNavigator from "./src/navigation/CurrentNavigator";
 import LoginProvider from "./src/context/LoginProvider";
 console.disableYellowBox = true;
-
+import { useLogin } from "./src/context/LoginProvider";
 export default function App() {
   return (
     <LoginProvider>
