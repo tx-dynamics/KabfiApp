@@ -1,5 +1,6 @@
 import firebase from "firebase";
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { ProgressBar, Colors } from "react-native-paper";
 import {
   View,
   Text,
@@ -16,6 +17,7 @@ import {
   Linking,
   TouchableHighlight,
   ActivityIndicator,
+  Slider,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -44,7 +46,10 @@ require("firebase/database");
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import moment from "moment";
-import { responsiveHeight } from "react-native-responsive-dimensions";
+import {
+  responsiveHeight,
+  responsiveWidth,
+} from "react-native-responsive-dimensions";
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -61,6 +66,7 @@ const NewsFeed = (props) => {
   const [largImage, setLargeImage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [itemid, setitemid] = useState("");
+  const [timer, settimer] = useState(0);
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
@@ -308,8 +314,11 @@ const NewsFeed = (props) => {
       );
 
       console.log("Playing Sound", soundUri);
+
       await playbackObject.playAsync();
+      settimer(Math.round(Number(time)));
       setTimeout(() => {
+        settimer(0);
         const res = posts.map((item) => {
           if (item.id === id) {
             return {
@@ -435,15 +444,29 @@ const NewsFeed = (props) => {
                 marginTop: 10,
               }}
               destructiveIndex={0}
-              options={["Report", "Hide", "Delete", "Cancel"]}
-              actions={[
-                () => {
-                  reportHandler(item.id);
-                },
-                () => hideHandler(item.id),
-                () => delPost(item.user, item.id),
-                () => console.log("cancel"),
-              ]}
+              options={
+                uid === item.user
+                  ? ["Report", "Hide", "Delete", "Cancel"]
+                  : ["Report", "Hide", "Cancel"]
+              }
+              actions={
+                uid === item.user
+                  ? [
+                      () => {
+                        reportHandler(item.id);
+                      },
+                      () => hideHandler(item.id),
+                      () => delPost(item.user, item.id),
+                      () => console.log("cancel"),
+                    ]
+                  : [
+                      () => {
+                        reportHandler(item.id);
+                      },
+                      () => hideHandler(item.id),
+                      () => console.log("cancel"),
+                    ]
+              }
             />
           </View>
 
@@ -488,6 +511,16 @@ const NewsFeed = (props) => {
                 {item.post_text}
               </Text>
               {item.rec ? (
+                // <View
+                //   style={{
+                //     backgroundColor: "lightgray",
+                //     width: responsiveWidth(50),
+                //     flexDirection: "row",
+                //     alignItems: "center",
+                //     padding: 4,
+                //     marginTop: 3,
+                //   }}
+                // >
                 <TouchableOpacity
                   onPress={() => playSound(item.id, item.rec, item.time)}
                   style={{
@@ -502,7 +535,24 @@ const NewsFeed = (props) => {
                     <Ionicons name="play" color="orange" size={30} />
                   )}
                 </TouchableOpacity>
-              ) : null}
+              ) : //   {/* <ProgressBar
+              //     style={{ width: responsiveWidth(40) }}
+              //     progress={timer}
+              //     color={Colors.red800}
+              //   /> */}
+              //   {/* <Slider
+              //     maximumValue={Number(item.time)}
+              //     onSlidingStart={false}
+              //     // onSlidingComplete={item.isShow}
+              //     value={timer}
+              //     minimumTrackTintColor={"black"}
+              //     maximumTrackTintColor={Colors.red800}
+              //     // thumbStyle={styles.thumb}
+              //     // trackStyle={styles.track}
+              //     style={{ width: responsiveWidth(40) }}
+              //   /> */}
+              // {/* </View> */}
+              null}
             </View>
           </View>
         </View>

@@ -13,10 +13,13 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import { Stopwatch } from "react-native-stopwatch-timer";
 const Audio = (props) => {
   const [animated, setAnimated] = useState(new Animated.Value(0.7));
   const [opacityA, setOpacityA] = useState(new Animated.Value(1));
   const [isPressed, setIsPressed] = useState(false);
+  const [stopwatchReset, setstopwatchReset] = useState(true);
+  const [show, setshow] = useState(false);
   // constructor(props) {
   //     super(props);
   //     this._onPress = this._onPress.bind(this);
@@ -33,7 +36,7 @@ const Audio = (props) => {
         Animated.timing(opacityA, {
           toValue: 0,
           duration: 1000,
-       //   useNativeDriver: true,
+          //   useNativeDriver: true,
         }),
       ])
     ).start();
@@ -46,6 +49,7 @@ const Audio = (props) => {
   const _onPress = () => {
     props.onPressAudio();
     setIsPressed(!isPressed);
+    setstopwatchReset(!stopwatchReset);
   };
   const _micButton = () => {
     //const { isPressed, animated, opacityA, } = this.state;
@@ -75,6 +79,31 @@ const Audio = (props) => {
             style={{ alignSelf: "center" }}
           />
           {/* icon or image */}
+          <Stopwatch
+            laps
+            start={isPressed}
+            // reset={!stopwatchReset}
+            //To start
+            options={{
+              container: {
+                backgroundColor: "transparent",
+                padding: 5,
+                borderRadius: 5,
+                width: 180,
+                alignSelf: "center",
+                marginTop: 5,
+              },
+              text: {
+                fontSize: 20,
+                color: "black",
+                alignSelf: "center",
+              },
+            }}
+            //options for the styling
+            getTime={(time) => {
+              //console.log(time);
+            }}
+          />
         </Animated.View>
       );
     } else {
@@ -102,10 +131,7 @@ const Audio = (props) => {
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-      onPress={_onPress}
-      >
-        {_micButton()}</TouchableOpacity>
+      <TouchableOpacity onPress={_onPress}>{_micButton()}</TouchableOpacity>
     </View>
   );
 };

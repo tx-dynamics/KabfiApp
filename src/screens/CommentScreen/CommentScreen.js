@@ -62,8 +62,8 @@ const CommentScreen = ({ route, navigation }) => {
           image: child.val().image,
           name: child.val().name,
           text: child.val().comments,
-          createdAt: child.val()?.createdAt,
-          user: child.val()?.user,
+          createdAt: child.val().createdAt,
+          user: child.val().user,
         });
       });
       console.log("LI==>", li);
@@ -151,7 +151,7 @@ const CommentScreen = ({ route, navigation }) => {
                 </Text>
                 <Text style={{ color: "black", fontSize: 18 }}>{" • "}</Text>
                 <Text style={{ color: "black", fontSize: 13 }}>
-                  {moment(item.createdAt).format("ddd, hh:mm")}
+                  {moment(item.createdAt).format("ddd, HH:mm")}
                 </Text>
               </View>
               <Text numberOfLines={2} style={{ color: "black", fontSize: 13 }}>

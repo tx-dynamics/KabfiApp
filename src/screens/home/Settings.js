@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Switch,
   ActivityIndicator,
+  AsyncStorage,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLogin } from "../../context/LoginProvider";
@@ -27,17 +28,15 @@ const Settings = (props) => {
       .database()
       .ref("users/" + firebase.auth().currentUser?.uid + "/");
     switchE.on("value", (child) => {
-      console.log(child.val().isEnabled);
       setIsEnabled(!child.val().isEnabled);
     });
   }, []);
   const toggleSwitch = async () => {
+    const data = { isEnabled: !isEnabled };
     await firebase
       .database()
       .ref("users/" + firebase.auth().currentUser?.uid + "/")
-      .update({
-        isEnabled,
-      })
+      .update({ isEnabled })
       .then(() => {
         setIsEnabled(!isEnabled);
       });

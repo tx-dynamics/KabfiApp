@@ -122,7 +122,7 @@ const ResetPassword = (props) => {
         })
         .catch((error) => {
           setLoader(false);
-          alert("The current password is invalid.");
+          alert("The current password is invalid");
           setLoader(false);
         });
     } else {
@@ -198,7 +198,7 @@ const ResetPassword = (props) => {
           </View>
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Confirm Password</Text>
+            <Text style={styles.label}>Confirm New Password</Text>
             <TouchableOpacity
               style={styles.eyeIconContainer}
               onPress={confirmPasswordVisibility}
