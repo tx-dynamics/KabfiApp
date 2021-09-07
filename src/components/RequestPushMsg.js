@@ -10,8 +10,8 @@ export function RequestPushMsg(token, name, msg) {
     },
     body: JSON.stringify({
       to: token,
-      title: `${name} Create New Post`,
-      body: msg,
+      title: `${name} Created New Post`,
+      body: "",
       data: { msg: msg, title: "Kabfi Notification" },
       priority: "high",
       sound: "default",

@@ -15,6 +15,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Animated,
+  TouchableWithoutFeedback
 } from "react-native";
 import {
   user,
@@ -40,7 +41,7 @@ import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { RequestPushMsg } from "../../components/RequestPushMsg";
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AudioView from "./AudioRecording";
 
 const CreatePost = (props) => {
@@ -63,10 +64,17 @@ const CreatePost = (props) => {
   const [tokens, setTokens] = useState([]);
 
   useEffect(() => {
-    inputRef.current.focus();
+ 
     getLocation();
     setshow(true);
+    inputRef.current.focus();
+    // cleanup function
+  
+   
+    
   }, [isFocused]);
+  
+
   async function getLocation() {
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users");
@@ -133,7 +141,7 @@ const CreatePost = (props) => {
           time: time,
         };
         let like = { userId };
-
+      console.log("Notification test ",userName)
         myRef.set(Details).then(() => {
           tokens.length > 0
             ? tokens.map((item) => RequestPushMsg(item, userName, postText))
@@ -267,18 +275,26 @@ const CreatePost = (props) => {
 
   return (
     <View
-      style={{
-        flex: 1,
-        backgroundColor: "white",
-      }}
-    >
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        enabled={true}
-        //keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      >
-        <ScrollView style={styles.scrollView}>
+    style={{
+      flex: 1,
+      backgroundColor: "white",
+    }}
+  >
+
+
+    {/* <KeyboardAvoidingView
+//    style={{ flex: 1 }}
+//    behavior={Platform.OS === "ios" ? "padding" : undefined}
+//    enabled={true}
+//    //keyboardVerticalOffset={Platform.OS === 'ios' ? 30 : 0}
+//  > */}
+   
+      
+      <KeyboardAwareScrollView>
+         <>
+         {/* <ScrollView style={styles.scrollView}>
+          */}
+        
           <View style={styles.contentArea}>
             <View
               style={{ justifyContent: "space-between", flexDirection: "row" }}
@@ -316,6 +332,7 @@ const CreatePost = (props) => {
                   </TouchableOpacity>
                 </ImageBackground>
               ) : null}
+              
               <TextInput
                 ref={inputRef}
                 multiline={true}
@@ -329,7 +346,7 @@ const CreatePost = (props) => {
               />
             </View>
           </View>
-        </ScrollView>
+        {/* </ScrollView> */}
         <View style={[styles.mediaContainerOuter, {}]}>
           <View style={styles.mediaContainerInner}>
             {!Sound ? (
@@ -395,7 +412,10 @@ const CreatePost = (props) => {
         //   }}
         // />
         null}
-      </KeyboardAvoidingView>
+</>
+</KeyboardAwareScrollView>
+   
+    {/* </KeyboardAvoidingView> */}
     </View>
   );
 };
@@ -403,6 +423,8 @@ const CreatePost = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor:'red'
+    
   },
   container1: {
     flex: 0,
@@ -411,6 +433,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "red",
+    backgroundColor:'white'
   },
   contentArea: {
     marginTop: "15%",
@@ -425,7 +448,7 @@ const styles = StyleSheet.create({
   postTextContainer: {
     marginTop: responsiveHeight(5),
     //backgroundColor: "#FBFBFB",
-    height: windowHeight / 3,
+    height: windowHeight / 4.1,
     //borderTopRightRadius: 50,
     //borderBottomLeftRadius: 50,
     //borderBottomRightRadius: 50,
@@ -441,7 +464,7 @@ const styles = StyleSheet.create({
   textArea: {
     // backgroundColor: "#FBFBFB",
     // textAlignVertical: "top",
-    height: "100%",
+    //height: "100%",
     fontSize: 17,
     color: "#464646",
     //padding: responsiveHeight(2),

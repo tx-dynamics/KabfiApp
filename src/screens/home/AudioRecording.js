@@ -59,9 +59,9 @@ const Audio = (props) => {
       return (
         <Animated.View
           style={{
-            width: 200,
-            height: 200,
-            borderRadius: 100,
+            width: 150,
+            height: 150,
+            borderRadius: 75,
             backgroundColor: "#FCB040",
             justifyContent: "center",
             opacity: opacityA,
@@ -74,7 +74,7 @@ const Audio = (props) => {
         >
           <Feather
             name="mic"
-            size={50}
+            size={40}
             color="black"
             style={{ alignSelf: "center" }}
           />
@@ -111,16 +111,16 @@ const Audio = (props) => {
       return (
         <View
           style={{
-            width: 200,
-            height: 200,
-            borderRadius: 100,
+            width: 150,
+            height: 150,
+            borderRadius: 75,
             backgroundColor: "#FCB040",
             justifyContent: "center",
           }}
         >
           <Feather
             name="mic"
-            size={50}
+            size={40}
             color="black"
             style={{ alignSelf: "center" }}
           />
@@ -137,10 +137,10 @@ const Audio = (props) => {
 };
 const styles = StyleSheet.create({
   container: {
-    //flex: 1,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: '#F5FCFF',
+    //backgroundColor: 'transparent',
     marginTop: responsiveHeight(4),
   },
 });

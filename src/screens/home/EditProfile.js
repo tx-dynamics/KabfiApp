@@ -14,6 +14,8 @@ import {
   ActivityIndicator,
   ImageBackground,
 } from "react-native";
+import * as ImageManipulator from 'expo-image-manipulator';
+
 // import { kabfiApp, firebase } from '../../database/config';
 import firebase from "firebase";
 import { Header } from "react-native-elements";
@@ -21,6 +23,7 @@ import { user2, user, edit } from "../../../assets";
 import * as ImagePicker from "expo-image-picker";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import { setNotificationChannelGroupAsync } from "expo-notifications";
 
 const EditProfile = (props) => {
   const [firstName, setFirstName] = useState("");
@@ -29,7 +32,8 @@ const EditProfile = (props) => {
   const [email, setEmail] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("United Kingdom");
-  const [Dp, setDp] = useState("");
+  const [Dp, setDp] = useState('');
+  const [flag, setFlag] = useState(true);
   const [loader, setLoader] = useState(false);
   const [ErroMessage, setErroMessage] = useState("");
   useEffect(() => {
@@ -37,13 +41,14 @@ const EditProfile = (props) => {
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
     data.on("value", (userdata) => {
+      userdata.val().Dp?setFlag(true):setFlag(false)
       setFirstName(userdata.val().firstName);
       setLastName(userdata.val().lastName);
       setMobileNo(userdata.val().mobileNo);
       setCity(userdata.val().city);
       setCountry(userdata.val().country);
       setEmail(userdata.val().email);
-      setDp(userdata.val().Dp);
+      setDp(userdata.val().Dp);      
     });
     setLoader(false);
   }, []);
@@ -133,6 +138,7 @@ const EditProfile = (props) => {
         aspect: [4, 3],
         quality: 0,
       });
+
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -140,10 +146,16 @@ const EditProfile = (props) => {
         quality: 0,
       });
     }
+    const manipResult = await ImageManipulator.manipulateAsync(
+      result.uri,
+      [],
+      { compress: 0, format: ImageManipulator.SaveFormat.PNG }
+    );
+  console.log(manipResult)
 
     if (!result.cancelled) {
-      setDp(result.uri);
-      console.log("OKKKK ", result.uri);
+      setDp(manipResult.uri);
+      console.log("OKKKK ", manipResult.uri);
       // setDp1(true);
       // alert("Taxi License Selected");
     }
@@ -230,15 +242,18 @@ const EditProfile = (props) => {
           }
         />
         {/* {loader ? (
-          <ActivityIndicator color={"blue"} size={"small"} /> */}
-        {/* // ) : ( */}
+          <ActivityIndicator color={"blue"} size={"small"} />
+          ) : ( */}
         <View style={styles.contentArea}>
           <TouchableOpacity
             style={[styles.imageContainer, { alignSelf: "center" }]}
             onPress={AlertTaxiLicenseImage}
           >
+           {
+           flag?
             <ImageBackground
-              source={Dp ? { uri: Dp } : user}
+             
+             source={{ uri: Dp }}
               borderRadius={50}
               style={[styles.image, { alignItems: "flex-end" }]}
             >
@@ -247,7 +262,20 @@ const EditProfile = (props) => {
                 style={{ height: 20, width: 20, marginTop: 10 }}
               />
             </ImageBackground>
+:
+            <ImageBackground     
+             source={user}
+              borderRadius={50}
+              style={[styles.image, { alignItems: "flex-end" }]}
+            >
+              <Image
+                source={edit}
+                style={{ height: 20, width: 20, marginTop: 10 }}
+              />
+            </ImageBackground>
+} 
           </TouchableOpacity>
+
 
           {/* <TouchableOpacity onPress={pickDpImage}>
                   <TextInput
@@ -354,7 +382,7 @@ const EditProfile = (props) => {
             {ErroMessage}
           </Text>
         </View>
-        {/* // )} */}
+       {/* )}  */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

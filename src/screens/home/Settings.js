@@ -10,12 +10,14 @@ import {
   Switch,
   ActivityIndicator,
   AsyncStorage,
+  Linking,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLogin } from "../../context/LoginProvider";
 import { Header } from "react-native-elements";
 import HeaderCenterComponent from "../../components/Settings/HeaderCenterComponent";
 import firebase from "firebase";
+
 // import HeaderRight from "../../components/Settings/HeaderRight";
 import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
 
@@ -93,7 +95,9 @@ const Settings = (props) => {
               value={isEnabled}
             />
           </View>
-          <TouchableOpacity style={[styles.listItem, { marginTop: 15 }]}>
+          <TouchableOpacity 
+          onPress={()=> Linking.openSettings()}
+          style={[styles.listItem, { marginTop: 15 }]}>
             <Image
               source={require("../../../assets/ProjectImages/locationImage.png")}
               style={styles.listIconImage}
