@@ -511,48 +511,47 @@ const NewsFeed = (props) => {
                 {item.post_text}
               </Text>
               {item.rec ? (
-                // <View
-                //   style={{
-                //     backgroundColor: "lightgray",
-                //     width: responsiveWidth(50),
-                //     flexDirection: "row",
-                //     alignItems: "center",
-                //     padding: 4,
-                //     marginTop: 3,
-                //   }}
-                // >
-                <TouchableOpacity
-                  onPress={() => playSound(item.id, item.rec, item.time)}
+                <View
                   style={{
-                    // alignSelf: "center",
-                    marginTop: 5,
-                    right: 4,
+                    backgroundColor: "lightgray",
+                    width: responsiveWidth(50),
+                    flexDirection: "row",
+                    alignItems: "center",
+                    padding: 4,
+                    marginTop: 3,
                   }}
                 >
-                  {item.isShow ? (
-                    <Ionicons name="pause" color="black" size={30} />
-                  ) : (
-                    <Ionicons name="play" color="orange" size={30} />
-                  )}
-                </TouchableOpacity>
-              ) : //   {/* <ProgressBar
-              //     style={{ width: responsiveWidth(40) }}
-              //     progress={timer}
-              //     color={Colors.red800}
-              //   /> */}
-              //   {/* <Slider
-              //     maximumValue={Number(item.time)}
-              //     onSlidingStart={false}
-              //     // onSlidingComplete={item.isShow}
-              //     value={timer}
-              //     minimumTrackTintColor={"black"}
-              //     maximumTrackTintColor={Colors.red800}
-              //     // thumbStyle={styles.thumb}
-              //     // trackStyle={styles.track}
-              //     style={{ width: responsiveWidth(40) }}
-              //   /> */}
-              // {/* </View> */}
-              null}
+                  <TouchableOpacity
+                    onPress={() => playSound(item.id, item.rec, item.time)}
+                    style={{
+                      // alignSelf: "center",
+                      marginTop: 5,
+                      right: 4,
+                    }}
+                  >
+                    {item.isShow ? (
+                      <Ionicons name="pause" color="black" size={30} />
+                    ) : (
+                      <Ionicons name="play" color="orange" size={30} />
+                    )}
+                  </TouchableOpacity>
+
+                  <Slider
+                    minimumValue={0}
+                    maximumValue={Number(item.time)}
+                    onSlidingStart={false}
+                    // onSlidingComplete={item.isShow}
+                    value={timer}
+                    minimumTrackTintColor={"orange"}
+                    maximumTrackTintColor={"black"}
+                    thumbStyle={{
+                      width: 15,
+                      height: 15,
+                    }}
+                    style={{ width: responsiveWidth(40) }}
+                  />
+                </View>
+              ) : null}
             </View>
           </View>
         </View>

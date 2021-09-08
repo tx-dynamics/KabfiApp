@@ -14,8 +14,7 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   Keyboard,
-  Animated,
-  TouchableWithoutFeedback,
+  Slider,
 } from "react-native";
 import {
   user,
@@ -47,7 +46,7 @@ import AudioView from "./AudioRecording";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
-  const [isPressed, setIsPressed] = useState(true);
+  const [showrec, setshowrec] = useState(false);
   const [recording, setRecording] = useState();
   const [postText, setPostText] = useState("");
   const [postImage, setPostImage] = useState(null);
@@ -62,6 +61,7 @@ const CreatePost = (props) => {
   const [show, setshow] = useState(false);
   const [stopwatchReset, setstopwatchReset] = useState(false);
   const [tokens, setTokens] = useState([]);
+  const [isplay, setisplay] = useState(false);
 
   useEffect(() => {
     getLocation();
@@ -165,7 +165,7 @@ const CreatePost = (props) => {
     let result = "";
 
     result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
       quality: 0,
     });
@@ -229,6 +229,7 @@ const CreatePost = (props) => {
   }
   async function playSound() {
     console.log("Loading Sound");
+    setisplay(true);
     const { sound: playbackObject } = await Audio.Sound.createAsync(
       {
         uri: Sound,
@@ -239,9 +240,11 @@ const CreatePost = (props) => {
 
     console.log("Playing Sound", Sound);
     await playbackObject.playAsync();
+    setisplay(false);
   }
   async function stopRecording() {
     setshow(false);
+    setshowrec(true);
     inputRef.current.focus();
     console.log("Stopping recording..");
     let testData = await recording.getStatusAsync();
@@ -336,28 +339,70 @@ const CreatePost = (props) => {
                 placeholderTextColor={"grey"}
                 autoFocus={true}
               />
+              {showrec ? (
+                <View
+                  style={{
+                    backgroundColor: "lightgray",
+                    width: responsiveWidth(50),
+                    flexDirection: "row",
+                    alignItems: "center",
+                    padding: 4,
+                    marginTop: 3,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={playSound}
+                    style={{
+                      // alignSelf: "center",
+                      marginTop: 5,
+                      right: 4,
+                    }}
+                  >
+                    {isplay ? (
+                      <Ionicons name="pause" color="black" size={30} />
+                    ) : (
+                      <Ionicons name="play" color="orange" size={30} />
+                    )}
+                  </TouchableOpacity>
+
+                  <Slider
+                    minimumValue={0}
+                    // maximumValue={Number(item.time)}
+                    onSlidingStart={false}
+                    // onSlidingComplete={item.isShow}
+                    // value={timer}
+                    minimumTrackTintColor={"orange"}
+                    maximumTrackTintColor={"black"}
+                    thumbStyle={{
+                      width: 15,
+                      height: 15,
+                    }}
+                    style={{ width: responsiveWidth(40) }}
+                  />
+                </View>
+              ) : null}
             </View>
           </View>
           {/* </ScrollView> */}
           <View style={[styles.mediaContainerOuter, {}]}>
             <View style={styles.mediaContainerInner}>
-              {!Sound ? (
-                <TouchableOpacity onPress={showMethod}>
-                  <MaterialIcons
-                    name="multitrack-audio"
-                    size={22}
-                    color={"black"}
-                  />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={playSound}>
-                  <MaterialIcons
-                    name="multitrack-audio"
-                    size={22}
-                    color={"blue"}
-                  />
-                </TouchableOpacity>
-              )}
+              {/* {!Sound ? ( */}
+              <TouchableOpacity onPress={showMethod}>
+                <MaterialIcons
+                  name="multitrack-audio"
+                  size={22}
+                  color={"black"}
+                />
+              </TouchableOpacity>
+              {/* // ) : (
+              //   <TouchableOpacity onPress={playSound}>
+              //     <MaterialIcons
+              //       name="multitrack-audio"
+              //       size={22}
+              //       color={"blue"}
+              //     />
+              //   </TouchableOpacity>
+              // )} */}
 
               <TouchableOpacity onPress={pickPostImage}>
                 <Image source={smallGallery} style={styles.media} />

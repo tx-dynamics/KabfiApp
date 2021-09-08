@@ -39,6 +39,7 @@
     "react-native-responsive-dimensions": "^3.1.1",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
+    "react-native-simple-audio-player": "^1.0.1",
     "react-native-stopwatch-timer": "^0.0.21",
     "react-native-svg": "^12.1.1",
     "react-native-swipeout": "^2.3.6",

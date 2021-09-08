@@ -5,6 +5,7 @@ import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 require("firebase/database");
 import firebase from "firebase";
+import { cos } from "react-native-reanimated";
 // export default class HeatMap extends Component {
 //   static navigationOptions = {
 //     title: "New York",
@@ -182,22 +183,87 @@ export default class HeatMap extends Component {
     region: {},
     points: [{ latitude: 40.7828, longitude: -74.0065 }],
   };
-
+  componentDidUpdate(prevProps) {
+    if (prevProps.isFocused !== this.props.isFocused) {
+      this.fetchLocation();
+    }
+  }
   componentDidMount() {
     this.fetchLocation();
   }
 
+  // async fetchLocation() {
+  //   try {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       alert("Permission to access location was denied");
+  //       return;
+  //     }
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     //const uid = firebase.auth().currentUser?.uid;
+  //     var myRef = firebase.database().ref("locations/");
+  //     var points = [];
+  //     this.setState({
+  //       initialPosition: {
+  //         latitude: location.coords.latitude,
+  //         longitude: location.coords.longitude,
+  //         latitudeDelta: 0.015,
+  //         longitudeDelta: 0.0121,
+  //       },
+  //     });
+  //     myRef.on("value", (child) => {
+  //       console.log(child.key);
+  //       if (child.hasChildren()) {
+  //         child.forEach((chill) => {
+  //           points.push({
+  //             latitude: chill.val().latitude,
+  //             longitude: chill.val().longitude,
+  //             latitudeDelta: 0.015,
+  //             longitudeDelta: 0.0121,
+  //           });
+  //         });
+
+  //         if (points[0].latitude) {
+  //           this.setState({
+  //             initialPosition: {
+  //               latitude: points[0].latitude,
+  //               longitude: points[0].longitude,
+  //               latitudeDelta: 0.015,
+  //               longitudeDelta: 0.0121,
+  //             },
+  //           });
+  //         }
+  //         this.setState({ points });
+  //         console.log("myRef", points);
+  //       }
+  //     });
+
+  //     this.setState({
+  //       initialPosition: {
+  //         latitude: location.coords.latitude,
+  //         longitude: location.coords.longitude,
+  //         latitudeDelta: 0.015,
+  //         longitudeDelta: 0.0121,
+  //       },
+  //       location: {
+  //         latitude: location.coords.latitude,
+  //         longitude: location.coords.longitude,
+  //         latitudeDelta: 0.015,
+  //         longitudeDelta: 0.0121,
+  //       },
+  //     });
+  //     console.log("Region", this.state.initialPosition);
+  //   } catch (err) {
+  //     console.log(err.message);
+  //   }
+  // }
   async fetchLocation() {
     try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        alert("Permission to access location was denied");
-        return;
-      }
-      let location = await Location.getCurrentPositionAsync({});
-      //const uid = firebase.auth().currentUser?.uid;
-      var myRef = firebase.database().ref("locations/");
-      var points = [];
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      console.log("Location==>", location);
+
       this.setState({
         initialPosition: {
           latitude: location.coords.latitude,
@@ -206,9 +272,21 @@ export default class HeatMap extends Component {
           longitudeDelta: 0.0121,
         },
       });
-      myRef.on("value", (child) => {
-        console.log(child.key);
-        if (child.hasChildren()) {
+      // if (location) {
+      //   this.setState({
+      //     initialPosition: {
+      //       latitude: location.coords.latitude,
+      //       longitude: location.coords.longitude,
+      //       latitudeDelta: 0.015,
+      //       longitudeDelta: 0.0121,
+      //     },
+      //   });
+      try {
+        const mylocation = firebase.database().ref("locations/");
+        mylocation.once("value", (child) => {
+          const points = [];
+          console.log(child.key);
+          // if (child.hasChildren()) {
           child.forEach((chill) => {
             points.push({
               latitude: chill.val().latitude,
@@ -217,39 +295,18 @@ export default class HeatMap extends Component {
               longitudeDelta: 0.0121,
             });
           });
-
-          if (points[0].latitude) {
-            this.setState({
-              initialPosition: {
-                latitude: points[0].latitude,
-                longitude: points[0].longitude,
-                latitudeDelta: 0.015,
-                longitudeDelta: 0.0121,
-              },
-            });
-          }
+          // }
+          console.log("Points==>", points);
           this.setState({ points });
-          console.log("myRef", points);
-        }
-      });
-
-      this.setState({
-        initialPosition: {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.0121,
-        },
-        location: {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.0121,
-        },
-      });
-      console.log("Region", this.state.initialPosition);
+        });
+      } catch (err) {
+        // this.fetchLocation();
+        alert(err.message);
+      }
+      // }
     } catch (err) {
-      console.log(err.message);
+      this.fetchLocation();
+      // alert(err.message);
     }
   }
 
@@ -304,7 +361,7 @@ export default class HeatMap extends Component {
           provider={PROVIDER_GOOGLE}
           ref={(map) => (this._map = map)}
           style={styles.map}
-          initialRegion={this.state.initialPosition}
+          region={this.state.initialPosition}
         >
           <Heatmap
             points={this.state.points}
