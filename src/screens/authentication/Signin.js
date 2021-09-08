@@ -24,11 +24,13 @@ import {
   MaterialIcons,
   Entypo,
 } from "@expo/vector-icons";
-import { useLogin } from "../../context/LoginProvider";
+// import { useLogin } from "../../context/LoginProvider";
 import firebase from "firebase";
 import { useIsFocused } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import * as Permissions from "expo-permissions";
+import { connect } from 'react-redux';
+import { SetSession } from '../../Redux/Actions/Actions';
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -48,7 +50,7 @@ const Signin = (props) => {
   const [loader, setLoader] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-  const { setIsLoggedIn } = useLogin();
+  // const { setIsLoggedIn } = useLogin();
   useEffect(() => {
     if (isFocused) {
       console.log("TETS", firebase.auth().currentUser);
@@ -103,7 +105,8 @@ const Signin = (props) => {
               userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
             })
         );
-        setIsLoggedIn(true);
+        props.SessionMaintain({"isLogin": true})
+        // setIsLoggedIn(true);
         setLoader(false);
       })
       .catch((error) => {
@@ -322,7 +325,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Signin;
+const mapDispatchToProps = (dispatch) => {
+  return {
+      SessionMaintain: (data) => dispatch(SetSession(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Signin);
 async function registerForPushNotificationsAsync() {
   try {
     let token;

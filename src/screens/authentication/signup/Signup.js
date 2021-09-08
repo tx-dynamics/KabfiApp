@@ -34,8 +34,10 @@ import {
   exclamation_mark,
   logoName,
 } from "../../../../assets";
-import { useLogin } from "../../../context/LoginProvider";
+// import { useLogin } from "../../../context/LoginProvider";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import { connect } from 'react-redux';
+import { SetSession } from '../../../Redux/Actions/Actions';
 const Signup = (props) => {
   useEffect(() => {
     // You need to restrict it at some point
@@ -62,7 +64,7 @@ const Signup = (props) => {
   const [mobileNoValidator, setmobileNoValidator] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordValidator, setpasswordValidator] = useState(false);
-  const { setIsLoggedIn } = useLogin();
+  // const { setIsLoggedIn } = useLogin();
   const [badgeNumberImage, setBadgeNumberImage] = useState(null);
   const [badgeNumberImageValidator, setbadgeNumberImageValidator] =
     useState(false);
@@ -225,7 +227,8 @@ const Signup = (props) => {
             .child(uuid)
             .set(Details)
             .then(() => {
-              setIsLoggedIn(false);
+              props.SessionMaintain({ "isLogin": true })
+              // setIsLoggedIn(false);
               setFirstName("");
               setLastName("");
               setMobileNo("");
@@ -633,5 +636,11 @@ const Signup = (props) => {
     </ScrollView>
   );
 };
+const mapDispatchToProps = (dispatch) => {
+  return {
+    SessionMaintain: (data) => dispatch(SetSession(data)),
+  };
+};
 
-export default Signup;
+export default connect(null, mapDispatchToProps)(Signup);
+
