@@ -190,7 +190,7 @@ const ResetPassword = (props) => {
               secureTextEntry={newpasswordHidden}
             />
             <Text
-              style={{ paddingHorizontal: 17, fontSize: 13, color: "#464646" }}
+              style={{ paddingHorizontal: 2, fontSize: 13, color: "#464646" }}
             >
               Must be at least 8 Characters
             </Text>
@@ -287,8 +287,16 @@ const styles = StyleSheet.create({
   },
   emailInput: {
     backgroundColor: "#FBFBFB",
-    borderRadius: 50,
+    // borderRadius: 50,
     padding: 13,
+    // paddingHorizontal: 20,
+    // paddingVertical: 9,
+    fontSize: 13,
+    textAlign: "left",
+    // width: "80%",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#E6E6E6",
   },
 
   btn2: {
@@ -297,6 +305,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 13,
     alignItems: "center",
+    width: "95%",
+    alignSelf: "center",
   },
   btn2Text: {
     color: "white",
@@ -325,9 +335,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   label: {
-    paddingHorizontal: 17,
+    // paddingHorizontal: 17,
     fontSize: 13,
     color: "#464646",
+    // fontWeight: "bold",
   },
   errorMsg: {
     paddingHorizontal: 17,

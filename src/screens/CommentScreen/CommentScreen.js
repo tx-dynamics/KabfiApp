@@ -164,7 +164,6 @@ const CommentScreen = ({ route, navigation }) => {
     );
   };
   async function postComments() {
-    setisloading(true);
     var user = firebase.auth()?.currentUser;
     var userData = firebase.database().ref("users/" + user?.uid);
 
@@ -180,14 +179,14 @@ const CommentScreen = ({ route, navigation }) => {
         createdAt: new Date().toISOString(),
         user: user?.uid,
       };
-      myRef.push(data);
+      myRef.push(data).then(() => setisloading(false));
       setPosts(null);
     });
-    setisloading(false);
     setCmnt("");
     // setPosts([]);
     getData(id);
     console.log("here");
+    setisloading(false);
   }
   async function startRecording() {
     try {
@@ -303,7 +302,9 @@ const CommentScreen = ({ route, navigation }) => {
         />
         <TouchableOpacity
           disabled={cmnt === "" ? true : false}
-          onPress={postComments}
+          onPress={() => {
+            postComments(), setisloading(true);
+          }}
           style={{
             justifyContent: "center",
             alignSelf: "center",

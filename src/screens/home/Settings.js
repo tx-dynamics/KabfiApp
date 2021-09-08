@@ -30,15 +30,15 @@ const Settings = (props) => {
       .database()
       .ref("users/" + firebase.auth().currentUser?.uid + "/");
     switchE.on("value", (child) => {
-      setIsEnabled(!child.val().isEnabled);
+      setIsEnabled(child.val().isEnabled);
     });
   }, []);
   const toggleSwitch = async () => {
-    const data = { isEnabled: !isEnabled };
+    const dat = { isEnabled: !isEnabled };
     await firebase
       .database()
       .ref("users/" + firebase.auth().currentUser?.uid + "/")
-      .update({ isEnabled })
+      .update(dat)
       .then(() => {
         setIsEnabled(!isEnabled);
       });
@@ -95,9 +95,10 @@ const Settings = (props) => {
               value={isEnabled}
             />
           </View>
-          <TouchableOpacity 
-          onPress={()=> Linking.openSettings()}
-          style={[styles.listItem, { marginTop: 15 }]}>
+          <TouchableOpacity
+            onPress={() => Linking.openSettings()}
+            style={[styles.listItem, { marginTop: 15 }]}
+          >
             <Image
               source={require("../../../assets/ProjectImages/locationImage.png")}
               style={styles.listIconImage}

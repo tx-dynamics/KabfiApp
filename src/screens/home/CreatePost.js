@@ -15,7 +15,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Animated,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from "react-native";
 import {
   user,
@@ -41,7 +41,7 @@ import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { RequestPushMsg } from "../../components/RequestPushMsg";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AudioView from "./AudioRecording";
 
 const CreatePost = (props) => {
@@ -64,16 +64,11 @@ const CreatePost = (props) => {
   const [tokens, setTokens] = useState([]);
 
   useEffect(() => {
- 
     getLocation();
     setshow(true);
     inputRef.current.focus();
     // cleanup function
-  
-   
-    
   }, [isFocused]);
-  
 
   async function getLocation() {
     const user = firebase.auth().currentUser?.uid;
@@ -92,7 +87,7 @@ const CreatePost = (props) => {
     data.on("value", (userdata) => {
       {
         userdata.forEach((child) => {
-          if (child.val()?.isEnabled === true && child.key !== user) {
+          if (child.val()?.isEnabled === false && child.key !== user) {
             arr.push(child.val()?.pushToken);
           }
         });
@@ -141,7 +136,7 @@ const CreatePost = (props) => {
           time: time,
         };
         let like = { userId };
-      console.log("Notification test ",userName)
+        console.log("Notification test ", userName);
         myRef.set(Details).then(() => {
           tokens.length > 0
             ? tokens.map((item) => RequestPushMsg(item, userName, postText))
@@ -275,26 +270,23 @@ const CreatePost = (props) => {
 
   return (
     <View
-    style={{
-      flex: 1,
-      backgroundColor: "white",
-    }}
-  >
-
-
-    {/* <KeyboardAvoidingView
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+      }}
+    >
+      {/* <KeyboardAvoidingView
 //    style={{ flex: 1 }}
 //    behavior={Platform.OS === "ios" ? "padding" : undefined}
 //    enabled={true}
 //    //keyboardVerticalOffset={Platform.OS === 'ios' ? 30 : 0}
 //  > */}
-   
-      
+
       <KeyboardAwareScrollView>
-         <>
-         {/* <ScrollView style={styles.scrollView}>
-          */}
-        
+        <>
+          {/* <ScrollView style={styles.scrollView}>
+           */}
+
           <View style={styles.contentArea}>
             <View
               style={{ justifyContent: "space-between", flexDirection: "row" }}
@@ -332,7 +324,7 @@ const CreatePost = (props) => {
                   </TouchableOpacity>
                 </ImageBackground>
               ) : null}
-              
+
               <TextInput
                 ref={inputRef}
                 multiline={true}
@@ -346,32 +338,32 @@ const CreatePost = (props) => {
               />
             </View>
           </View>
-        {/* </ScrollView> */}
-        <View style={[styles.mediaContainerOuter, {}]}>
-          <View style={styles.mediaContainerInner}>
-            {!Sound ? (
-              <TouchableOpacity onPress={showMethod}>
-                <MaterialIcons
-                  name="multitrack-audio"
-                  size={22}
-                  color={"black"}
-                />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={playSound}>
-                <MaterialIcons
-                  name="multitrack-audio"
-                  size={22}
-                  color={"blue"}
-                />
-              </TouchableOpacity>
-            )}
+          {/* </ScrollView> */}
+          <View style={[styles.mediaContainerOuter, {}]}>
+            <View style={styles.mediaContainerInner}>
+              {!Sound ? (
+                <TouchableOpacity onPress={showMethod}>
+                  <MaterialIcons
+                    name="multitrack-audio"
+                    size={22}
+                    color={"black"}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={playSound}>
+                  <MaterialIcons
+                    name="multitrack-audio"
+                    size={22}
+                    color={"blue"}
+                  />
+                </TouchableOpacity>
+              )}
 
-            <TouchableOpacity onPress={pickPostImage}>
-              <Image source={smallGallery} style={styles.media} />
-            </TouchableOpacity>
+              <TouchableOpacity onPress={pickPostImage}>
+                <Image source={smallGallery} style={styles.media} />
+              </TouchableOpacity>
 
-            {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
+              {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
             <SimpleLineIcons
               name="location-pin"
               size={24}
@@ -379,43 +371,43 @@ const CreatePost = (props) => {
             /> 
           </TouchableOpacity>
               */}
+            </View>
           </View>
-        </View>
 
-        {!show ? (
-          <AudioView
-            onPressAudio={recording ? stopRecording : startRecording}
-          />
-        ) : // <Stopwatch
-        //   laps
-        //   start={show}
-        //   reset={stopwatchReset}
-        //   //To start
-        //   options={{
-        //     container: {
-        //       backgroundColor: "#FBFBFB",
-        //       padding: 5,
-        //       borderRadius: 5,
-        //       width: 220,
-        //       alignSelf: "center",
-        //       marginTop: 5,
-        //     },
-        //     text: {
-        //       fontSize: 20,
-        //       color: "black",
-        //       alignSelf: "center",
-        //     },
-        //   }}
-        //   //options for the styling
-        //   getTime={(time) => {
-        //     //console.log(time);
-        //   }}
-        // />
-        null}
-</>
-</KeyboardAwareScrollView>
-   
-    {/* </KeyboardAvoidingView> */}
+          {!show ? (
+            <AudioView
+              onPressAudio={recording ? stopRecording : startRecording}
+            />
+          ) : // <Stopwatch
+          //   laps
+          //   start={show}
+          //   reset={stopwatchReset}
+          //   //To start
+          //   options={{
+          //     container: {
+          //       backgroundColor: "#FBFBFB",
+          //       padding: 5,
+          //       borderRadius: 5,
+          //       width: 220,
+          //       alignSelf: "center",
+          //       marginTop: 5,
+          //     },
+          //     text: {
+          //       fontSize: 20,
+          //       color: "black",
+          //       alignSelf: "center",
+          //     },
+          //   }}
+          //   //options for the styling
+          //   getTime={(time) => {
+          //     //console.log(time);
+          //   }}
+          // />
+          null}
+        </>
+      </KeyboardAwareScrollView>
+
+      {/* </KeyboardAvoidingView> */}
     </View>
   );
 };
@@ -423,8 +415,7 @@ const CreatePost = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:'red'
-    
+    backgroundColor: "red",
   },
   container1: {
     flex: 0,
@@ -433,7 +424,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "red",
-    backgroundColor:'white'
+    backgroundColor: "white",
   },
   contentArea: {
     marginTop: "15%",
