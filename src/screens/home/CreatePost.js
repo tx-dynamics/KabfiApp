@@ -236,8 +236,6 @@ const CreatePost = (props) => {
       },
       { shouldPlay: true }
     );
-    // setSound(sound);
-
     console.log("Playing Sound", Sound);
     await playbackObject.playAsync();
     setisplay(false);
