@@ -49,7 +49,6 @@ const Audio = (props) => {
   const _onPress = () => {
     props.onPressAudio();
     setIsPressed(!isPressed);
-    setstopwatchReset(!stopwatchReset);
   };
   const _micButton = () => {
     //const { isPressed, animated, opacityA, } = this.state;

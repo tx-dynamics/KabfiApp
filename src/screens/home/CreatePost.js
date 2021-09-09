@@ -287,6 +287,7 @@ const CreatePost = (props) => {
     setshowrec(false);
     setisstopwatch(false);
     setstopwatchReset(false);
+    setisdisable(false);
     setRecording("");
   }
   async function oncancel() {
@@ -299,12 +300,14 @@ const CreatePost = (props) => {
     setshowrec(true);
     setisstopwatch(false);
     setstopwatchReset(true);
+    setisdisable(false);
   }
   async function ondelaudio() {
     console.log("here");
     setstopwatchReset(true);
     setstopwatchReset(false);
     setRecording("");
+    setisdisable(false);
   }
   return (
     <View
@@ -473,7 +476,10 @@ const CreatePost = (props) => {
                 }}
               >
                 {isstopwatch ? (
-                  <TouchableOpacity onPress={onsendaudio} disabled={isdisable}>
+                  <TouchableOpacity
+                    onPress={onsendaudio}
+                    disabled={!stopwatchReset ? true : false}
+                  >
                     <Image
                       source={send}
                       style={{
@@ -531,7 +537,7 @@ const CreatePost = (props) => {
               />
               {isstopwatch ? (
                 <TouchableOpacity
-                  disabled={isdisable}
+                  disabled={!stopwatchReset ? true : false}
                   onPress={ondelaudio}
                   style={{
                     flexDirection: "row",
