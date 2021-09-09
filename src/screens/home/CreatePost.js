@@ -56,7 +56,7 @@ const CreatePost = (props) => {
   const [userName, setUserName] = useState("");
   const [Dp, setDp] = useState("");
   const [loading, setloading] = useState(false);
-  const [sound] = useState();
+  const [sound, setsound] = useState();
   const [loc, setLoc] = useState("");
   const isFocused = useIsFocused();
   const [time, settime] = useState("");
@@ -71,8 +71,14 @@ const CreatePost = (props) => {
     getLocation();
     setshow(true);
     inputRef.current.focus();
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
     // cleanup function
-  }, [isFocused]);
+  }, [isFocused, sound]);
 
   async function getLocation() {
     const user = firebase.auth().currentUser?.uid;
@@ -208,6 +214,11 @@ const CreatePost = (props) => {
     }
   };
   async function startRecording() {
+    setisstopwatch(false);
+    setontimer(false);
+    setisdisable(false);
+    setshowrec(false);
+    setRecording("");
     try {
       setisstopwatch(true);
       setontimer(true);
@@ -231,6 +242,7 @@ const CreatePost = (props) => {
     } catch (err) {
       setshow(false);
       setstopwatchReset(true);
+      setstopwatchReset(false);
       alert(err.message);
       console.error("Failed to start recording", err);
     }
@@ -245,8 +257,10 @@ const CreatePost = (props) => {
       { shouldPlay: true }
     );
     console.log("Playing Sound", Sound);
+    setsound(playbackObject);
     await playbackObject.playAsync();
     setisplay(false);
+    setshow(false);
   }
   async function stopRecording() {
     // inputRef.current.focus();
@@ -269,7 +283,11 @@ const CreatePost = (props) => {
   }
   async function showMethod() {
     Keyboard.dismiss();
-    setshow(!show);
+    setshow(true);
+    setshowrec(false);
+    setisstopwatch(false);
+    setstopwatchReset(false);
+    setRecording("");
   }
   async function oncancel() {
     await AsyncStorage.clear();
@@ -284,7 +302,8 @@ const CreatePost = (props) => {
   }
   async function ondelaudio() {
     console.log("here");
-    // setstopwatchReset(true);
+    setstopwatchReset(true);
+    setstopwatchReset(false);
     setRecording("");
   }
   return (
@@ -442,7 +461,7 @@ const CreatePost = (props) => {
             </View>
           </View>
 
-          {!show ? (
+          {show ? (
             <View style={{}}>
               <View
                 style={{
@@ -535,32 +554,7 @@ const CreatePost = (props) => {
                 </TouchableOpacity>
               ) : null}
             </View>
-          ) : // <Stopwatch
-          //   laps
-          //   start={show}
-          //   reset={stopwatchReset}
-          //   //To start
-          //   options={{
-          //     container: {
-          //       backgroundColor: "#FBFBFB",
-          //       padding: 5,
-          //       borderRadius: 5,
-          //       width: 220,
-          //       alignSelf: "center",
-          //       marginTop: 5,
-          //     },
-          //     text: {
-          //       fontSize: 20,
-          //       color: "black",
-          //       alignSelf: "center",
-          //     },
-          //   }}
-          //   //options for the styling
-          //   getTime={(time) => {
-          //     //console.log(time);
-          //   }}
-          // />
-          null}
+          ) : null}
         </>
       </KeyboardAwareScrollView>
 
