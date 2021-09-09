@@ -77,7 +77,6 @@ const CreatePost = (props) => {
           sound.unloadAsync();
         }
       : undefined;
-    // cleanup function
   }, [isFocused, sound]);
 
   async function getLocation() {
