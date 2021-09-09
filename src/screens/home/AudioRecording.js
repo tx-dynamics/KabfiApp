@@ -57,10 +57,38 @@ const Audio = (props) => {
       //some function
       _runAnimation();
       return (
+        // <View style={{ alignItems: "center" }}>
+        //   <View style={{ flexDirection: "row", backgroundColor: "tomato" }}>
+        //     <Stopwatch
+        //       laps
+        //       start={isPressed}
+        //       // reset={!stopwatchReset}
+        //       //To start
+        //       options={{
+        //         container: {
+        //           backgroundColor: "transparent",
+        //           padding: 5,
+        //           borderRadius: 5,
+        //           width: 180,
+        //           alignSelf: "center",
+        //           marginTop: 5,
+        //         },
+        //         text: {
+        //           fontSize: 20,
+        //           color: "black",
+        //           alignSelf: "center",
+        //         },
+        //       }}
+        //       //options for the styling
+        //       getTime={(time) => {
+        //         //console.log(time);
+        //       }}
+        //     />
+        //   </View>
         <Animated.View
           style={{
-            width: 150,
-            height: 150,
+            width: 100,
+            height: 100,
             borderRadius: 75,
             backgroundColor: "#FCB040",
             justifyContent: "center",
@@ -74,45 +102,31 @@ const Audio = (props) => {
         >
           <Feather
             name="mic"
-            size={40}
-            color="black"
+            size={30}
+            color="white"
             style={{ alignSelf: "center" }}
           />
+          <Text
+            style={{
+              color: "white",
+              alignSelf: "center",
+              fontWeight: "700",
+              fontSize: 16,
+            }}
+          >
+            Rec.
+          </Text>
           {/* icon or image */}
-          <Stopwatch
-            laps
-            start={isPressed}
-            // reset={!stopwatchReset}
-            //To start
-            options={{
-              container: {
-                backgroundColor: "transparent",
-                padding: 5,
-                borderRadius: 5,
-                width: 180,
-                alignSelf: "center",
-                marginTop: 5,
-              },
-              text: {
-                fontSize: 20,
-                color: "black",
-                alignSelf: "center",
-              },
-            }}
-            //options for the styling
-            getTime={(time) => {
-              //console.log(time);
-            }}
-          />
         </Animated.View>
+        // {/* </View> */}
       );
     } else {
       //some function
       return (
         <View
           style={{
-            width: 150,
-            height: 150,
+            width: 100,
+            height: 100,
             borderRadius: 75,
             backgroundColor: "#FCB040",
             justifyContent: "center",
@@ -120,11 +134,21 @@ const Audio = (props) => {
         >
           <Feather
             name="mic"
-            size={40}
-            color="black"
+            size={30}
+            color="white"
             style={{ alignSelf: "center" }}
           />
           {/* icon or image */}
+          <Text
+            style={{
+              color: "white",
+              alignSelf: "center",
+              fontWeight: "700",
+              fontSize: 16,
+            }}
+          >
+            Rec.
+          </Text>
         </View>
       );
     }

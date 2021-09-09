@@ -22,6 +22,8 @@ import {
   smallGallery,
   smallLocation,
   voiceImage,
+  send,
+  del,
 } from "../../../assets";
 import {
   responsiveWidth,
@@ -62,7 +64,9 @@ const CreatePost = (props) => {
   const [stopwatchReset, setstopwatchReset] = useState(false);
   const [tokens, setTokens] = useState([]);
   const [isplay, setisplay] = useState(false);
-
+  const [isstopwatch, setisstopwatch] = useState(false);
+  const [ontimer, setontimer] = useState(false);
+  const [isdisable, setisdisable] = useState(false);
   useEffect(() => {
     getLocation();
     setshow(true);
@@ -205,6 +209,10 @@ const CreatePost = (props) => {
   };
   async function startRecording() {
     try {
+      setisstopwatch(true);
+      setontimer(true);
+      setisdisable(true);
+      setshowrec(false);
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -241,16 +249,15 @@ const CreatePost = (props) => {
     setisplay(false);
   }
   async function stopRecording() {
-    setshow(false);
-    setshowrec(true);
-    inputRef.current.focus();
+    // inputRef.current.focus();
+    setisdisable(false);
+    setstopwatchReset(true);
+    setontimer(false);
     console.log("Stopping recording..");
     let testData = await recording.getStatusAsync();
 
     console.log("OKK", await testData);
     await recording.stopAndUnloadAsync();
-    setshow(false);
-    setstopwatchReset(true);
     const uri = recording.getURI();
     console.log("Recording stopped and stored at", recording._uri);
     // let post_Image = await uploadImage(recording._uri);
@@ -268,7 +275,18 @@ const CreatePost = (props) => {
     await AsyncStorage.clear();
     props.navigation.navigate("NewsFeed");
   }
-
+  async function onsendaudio() {
+    inputRef.current.focus();
+    setshow(false);
+    setshowrec(true);
+    setisstopwatch(false);
+    setstopwatchReset(true);
+  }
+  async function ondelaudio() {
+    console.log("here");
+    // setstopwatchReset(true);
+    setRecording("");
+  }
   return (
     <View
       style={{
@@ -340,7 +358,7 @@ const CreatePost = (props) => {
               {showrec ? (
                 <View
                   style={{
-                    backgroundColor: "lightgray",
+                    backgroundColor: "#FBFBFB",
                     width: responsiveWidth(50),
                     flexDirection: "row",
                     alignItems: "center",
@@ -372,9 +390,13 @@ const CreatePost = (props) => {
                     minimumTrackTintColor={"orange"}
                     maximumTrackTintColor={"black"}
                     thumbStyle={{
-                      width: 15,
-                      height: 15,
+                      borderColor: "white",
+                      borderWidth: 4.5,
+                      height: 10,
+                      width: 10,
+                      borderRadius: 12,
                     }}
+                    thumbTintColor={"#FF9900"}
                     style={{ width: responsiveWidth(40) }}
                   />
                 </View>
@@ -385,7 +407,10 @@ const CreatePost = (props) => {
           <View style={[styles.mediaContainerOuter, {}]}>
             <View style={styles.mediaContainerInner}>
               {/* {!Sound ? ( */}
-              <TouchableOpacity onPress={showMethod}>
+              <TouchableOpacity
+                onPress={showMethod}
+                // disabled={recording ? true : false}
+              >
                 <MaterialIcons
                   name="multitrack-audio"
                   size={22}
@@ -418,9 +443,98 @@ const CreatePost = (props) => {
           </View>
 
           {!show ? (
-            <AudioView
-              onPressAudio={recording ? stopRecording : startRecording}
-            />
+            <View style={{}}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  // backgroundColor: "tomato",
+                  alignSelf: "flex-end",
+                  width: "53%",
+                  justifyContent: "space-between",
+                }}
+              >
+                {isstopwatch ? (
+                  <TouchableOpacity onPress={onsendaudio} disabled={isdisable}>
+                    <Image
+                      source={send}
+                      style={{
+                        height: 30,
+                        width: 30,
+                        alignSelf: "center",
+                        marginTop: 5,
+                      }}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                ) : null}
+                {isstopwatch ? (
+                  <Stopwatch
+                    laps
+                    start={ontimer}
+                    reset={stopwatchReset}
+                    //To start
+                    options={{
+                      container: {
+                        backgroundColor: "transparent",
+                        // padding: 5,
+                        // borderRadius: 5,
+                        // width: 180,
+                        alignSelf: "center",
+                        marginRight: 10,
+                        // marginTop: 5,
+                      },
+                      text: {
+                        fontSize: 20,
+                        color: "black",
+                        alignSelf: "center",
+                      },
+                    }}
+                    //options for the styling
+                    getTime={(time) => {
+                      //console.log(time);
+                    }}
+                  />
+                ) : null}
+              </View>
+              <AudioView
+                onPressAudio={() => {
+                  recording
+                    ? (stopRecording(),
+                      setisdisable(false),
+                      setstopwatchReset(true),
+                      setontimer(false))
+                    : (startRecording(),
+                      setisstopwatch(true),
+                      setontimer(true),
+                      setisdisable(true),
+                      setshowrec(false));
+                }}
+              />
+              {isstopwatch ? (
+                <TouchableOpacity
+                  disabled={isdisable}
+                  onPress={ondelaudio}
+                  style={{
+                    flexDirection: "row",
+                    alignSelf: "flex-end",
+                    width: "53%",
+                    justifyContent: "space-between",
+                    marginTop: 30,
+                  }}
+                >
+                  <Image
+                    source={del}
+                    style={{
+                      height: 30,
+                      width: 30,
+                      alignSelf: "center",
+                      marginTop: 5,
+                    }}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              ) : null}
+            </View>
           ) : // <Stopwatch
           //   laps
           //   start={show}

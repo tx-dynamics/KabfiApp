@@ -446,15 +446,12 @@ const NewsFeed = (props) => {
               destructiveIndex={0}
               options={
                 uid === item.user
-                  ? ["Report", "Hide", "Delete", "Cancel"]
+                  ? ["Hide", "Delete", "Cancel"]
                   : ["Report", "Hide", "Cancel"]
               }
               actions={
                 uid === item.user
                   ? [
-                      () => {
-                        reportHandler(item.id);
-                      },
                       () => hideHandler(item.id),
                       () => delPost(item.user, item.id),
                       () => console.log("cancel"),
@@ -513,7 +510,7 @@ const NewsFeed = (props) => {
               {item.rec ? (
                 <View
                   style={{
-                    backgroundColor: "lightgray",
+                    backgroundColor: "white",
                     width: responsiveWidth(50),
                     flexDirection: "row",
                     alignItems: "center",
@@ -545,9 +542,13 @@ const NewsFeed = (props) => {
                     minimumTrackTintColor={"orange"}
                     maximumTrackTintColor={"black"}
                     thumbStyle={{
-                      width: 15,
-                      height: 15,
+                      borderColor: "white",
+                      borderWidth: 4.5,
+                      height: 10,
+                      width: 10,
+                      borderRadius: 12,
                     }}
+                    thumbTintColor={"#FF9900"}
                     style={{ width: responsiveWidth(40) }}
                   />
                 </View>

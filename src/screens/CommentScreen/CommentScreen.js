@@ -72,6 +72,7 @@ const CommentScreen = ({ route, navigation }) => {
   }
   async function delComment(index, cmntId) {
     const userId = firebase.auth().currentUser?.uid;
+    console.log("index", index, "\n cmntId", cmntId, "userid", userId);
     if (userId === index) {
       const delUser = firebase
         .database()
@@ -115,9 +116,9 @@ const CommentScreen = ({ route, navigation }) => {
             ),
             backgroundColor: "white",
             //   underlayColor: 'transparent',
-            onPress: () => {
-              console.log("Delete Item");
-            },
+            // onPress: () => {
+            //   console.log("Delete Item");
+            // },
           },
         ]}
         autoClose={true}

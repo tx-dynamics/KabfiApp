@@ -17,7 +17,8 @@ export const star = require("./ProjectImages/users/star.png");
 export const logoName = require("./ProjectImages/logo-name.png");
 export const edit = require("./ProjectImages/users/edit.png");
 export const splash = require("./splash.png");
-
+export const del = require("./ProjectImages/users/del.png");
+export const send = require("./ProjectImages/users/send.png");
 //others
 export const galleryImage = require("./ProjectImages/authentication/PhotoIcon.png");
 export const tickImage = require("./ProjectImages/authentication/tick.png");
