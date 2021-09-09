@@ -44,7 +44,7 @@ const windowHeight = Dimensions.get("window").height;
 import { RequestPushMsg } from "../../components/RequestPushMsg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AudioView from "./AudioRecording";
-
+import { Feather } from "@expo/vector-icons";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -67,9 +67,10 @@ const CreatePost = (props) => {
   const [isstopwatch, setisstopwatch] = useState(false);
   const [ontimer, setontimer] = useState(false);
   const [isdisable, setisdisable] = useState(false);
+  const [index, setindex] = useState(false);
   useEffect(() => {
     getLocation();
-    setshow(true);
+    setshow(false);
     inputRef.current.focus();
     return sound
       ? () => {
@@ -214,7 +215,6 @@ const CreatePost = (props) => {
   };
   async function startRecording() {
     setisstopwatch(false);
-    setontimer(false);
     setisdisable(false);
     setshowrec(false);
     setRecording("");
@@ -223,6 +223,7 @@ const CreatePost = (props) => {
       setontimer(true);
       setisdisable(true);
       setshowrec(false);
+      // setstopwatchReset(true);
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -263,20 +264,26 @@ const CreatePost = (props) => {
   }
   async function stopRecording() {
     // inputRef.current.focus();
-    setisdisable(false);
-    setstopwatchReset(true);
-    setontimer(false);
-    console.log("Stopping recording..");
-    let testData = await recording.getStatusAsync();
+    if (!index) {
+      setindex(true);
+      setisdisable(false);
+      setstopwatchReset(true);
+      // setstopwatchReset(false);
+      setontimer(false);
+      console.log("Stopping recording..");
+      let testData = await recording.getStatusAsync();
 
-    console.log("OKK", await testData);
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    console.log("Recording stopped and stored at", recording._uri);
-    // let post_Image = await uploadImage(recording._uri);
-    setSound(recording._uri);
-    settime(JSON.stringify(testData.durationMillis));
-    console.log("post_Image", recording._finalDurationMillis / 1000);
+      console.log("OKK", await testData);
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      console.log("Recording stopped and stored at", recording._uri);
+      // let post_Image = await uploadImage(recording._uri);
+      setSound(recording._uri);
+      settime(JSON.stringify(testData.durationMillis));
+      console.log("post_Image", recording._finalDurationMillis / 1000);
+    } else {
+      alert("Kindly delete previous recording first");
+    }
 
     // playSound(recording._uri);
   }
@@ -288,6 +295,7 @@ const CreatePost = (props) => {
     setstopwatchReset(false);
     setisdisable(false);
     setRecording("");
+    setindex(false);
   }
   async function oncancel() {
     await AsyncStorage.clear();
@@ -299,14 +307,17 @@ const CreatePost = (props) => {
     setshowrec(true);
     setisstopwatch(false);
     setstopwatchReset(true);
+    setstopwatchReset(false);
     setisdisable(false);
+    setindex(false);
   }
   async function ondelaudio() {
     console.log("here");
     setstopwatchReset(true);
-    setstopwatchReset(false);
+    setontimer(false);
     setRecording("");
     setisdisable(false);
+    setindex(false);
   }
   return (
     <View
@@ -520,20 +531,53 @@ const CreatePost = (props) => {
                   />
                 ) : null}
               </View>
-              <AudioView
-                onPressAudio={() => {
-                  recording
-                    ? (stopRecording(),
-                      setisdisable(false),
-                      setstopwatchReset(true),
-                      setontimer(false))
-                    : (startRecording(),
-                      setisstopwatch(true),
-                      setontimer(true),
-                      setisdisable(true),
-                      setshowrec(false));
-                }}
-              />
+              {index ? (
+                <View
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 75,
+                    backgroundColor: "#FCB040",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    marginTop: 30,
+                  }}
+                >
+                  <Feather
+                    name="mic"
+                    size={30}
+                    color="white"
+                    style={{ alignSelf: "center" }}
+                  />
+                  {/* icon or image */}
+                  <Text
+                    style={{
+                      color: "white",
+                      alignSelf: "center",
+                      fontWeight: "700",
+                      fontSize: 16,
+                    }}
+                  >
+                    Rec.
+                  </Text>
+                </View>
+              ) : (
+                <AudioView
+                  onPressAudio={() => {
+                    recording
+                      ? (stopRecording(),
+                        setisdisable(false),
+                        setstopwatchReset(true),
+                        setontimer(false))
+                      : (startRecording(),
+                        setisstopwatch(true),
+                        setontimer(true),
+                        setstopwatchReset(false),
+                        setisdisable(true),
+                        setshowrec(false));
+                  }}
+                />
+              )}
               {isstopwatch ? (
                 <TouchableOpacity
                   disabled={!stopwatchReset ? true : false}

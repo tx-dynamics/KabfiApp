@@ -259,8 +259,8 @@ const CommentScreen = ({ route, navigation }) => {
     }
   };
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : null}
+    <View
+      // behavior={Platform.OS === "ios" ? "padding" : null}
       style={{ flex: 1, backgroundColor: "white" }}
     >
       <Header
@@ -274,7 +274,13 @@ const CommentScreen = ({ route, navigation }) => {
           </Text>
         }
       />
-      <FlatList data={posts} renderItem={renderPosts} />
+      <ScrollView
+        // behavior={Platform.OS === "ios" ? "padding" : null}
+        keyboardShouldPersistTaps="handled"
+        style={{ flex: 1, backgroundColor: "white", flexGrow: 1 }}
+      >
+        <FlatList data={posts} renderItem={renderPosts} />
+      </ScrollView>
       <View
         style={[
           styles.horizontalContainer,
@@ -284,6 +290,8 @@ const CommentScreen = ({ route, navigation }) => {
             width: "95%",
             alignSelf: "center",
             alignItems: "center",
+            position: "absolute",
+            bottom: 0,
           },
         ]}
       >
@@ -318,7 +326,7 @@ const CommentScreen = ({ route, navigation }) => {
           )}
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 export default CommentScreen;

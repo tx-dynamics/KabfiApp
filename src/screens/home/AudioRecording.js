@@ -31,12 +31,10 @@ const Audio = (props) => {
         Animated.timing(animated, {
           toValue: 1,
           duration: 1000,
-          //useNativeDriver: true,
         }),
         Animated.timing(opacityA, {
           toValue: 0,
           duration: 1000,
-          //   useNativeDriver: true,
         }),
       ])
     ).start();
