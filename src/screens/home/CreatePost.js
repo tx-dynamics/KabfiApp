@@ -42,7 +42,7 @@ import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { RequestPushMsg } from "../../components/RequestPushMsg";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useSafeAreaInsets, initialWindowMetrics } from 'react-native-safe-area-context';
 import AudioView from "./AudioRecording";
 import { Feather } from "@expo/vector-icons";
 const CreatePost = (props) => {
@@ -68,17 +68,30 @@ const CreatePost = (props) => {
   const [ontimer, setontimer] = useState(false);
   const [isdisable, setisdisable] = useState(false);
   const [index, setindex] = useState(false);
+  const [keyBoardHeight, setKeyBoardHeight] = useState(false);
   useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
     getLocation();
     setshow(false);
     inputRef.current.focus();
     return sound
       ? () => {
-          console.log("Unloading Sound");
+        Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
+        Keyboard.removeListener('keyboardDidHide', _keyboardDidHide); 
+        console.log("Unloading Sound");
           sound.unloadAsync();
         }
       : undefined;
   }, [isFocused, sound]);
+  const _keyboardDidShow = (e) => {
+    setKeyBoardHeight(e.endCoordinates.height)
+    console.log( e.endCoordinates.height)
+   
+   };
+   const _keyboardDidHide = () => {
+    console.log('Keyboard Hidden');
+  };
 
   async function getLocation() {
     const user = firebase.auth().currentUser?.uid;
@@ -326,18 +339,7 @@ const CreatePost = (props) => {
         backgroundColor: "white",
       }}
     >
-      {/* <KeyboardAvoidingView
-//    style={{ flex: 1 }}
-//    behavior={Platform.OS === "ios" ? "padding" : undefined}
-//    enabled={true}
-//    //keyboardVerticalOffset={Platform.OS === 'ios' ? 30 : 0}
-//  > */}
-
-      <KeyboardAwareScrollView>
-        <>
-          {/* <ScrollView style={styles.scrollView}>
-           */}
-
+   
           <View style={styles.contentArea}>
             <View
               style={{ justifyContent: "space-between", flexDirection: "row" }}
@@ -435,8 +437,8 @@ const CreatePost = (props) => {
               ) : null}
             </View>
           </View>
-          {/* </ScrollView> */}
-          <View style={[styles.mediaContainerOuter, {}]}>
+         
+          <View style={[styles.mediaContainerOuter, {bottom:keyBoardHeight-initialWindowMetrics.insets.bottom}]}>
             <View style={styles.mediaContainerInner}>
               {/* {!Sound ? ( */}
               <TouchableOpacity
@@ -475,7 +477,7 @@ const CreatePost = (props) => {
           </View>
 
           {show ? (
-            <View style={{}}>
+            <View style={{marginTop:responsiveHeight(15)}}>
               <View
                 style={{
                   flexDirection: "row",
@@ -601,13 +603,12 @@ const CreatePost = (props) => {
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
+                
               ) : null}
             </View>
           ) : null}
-        </>
-      </KeyboardAwareScrollView>
-
-      {/* </KeyboardAvoidingView> */}
+      
+  
     </View>
   );
 };
@@ -671,8 +672,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#FBFBFB",
     alignItems: "center",
     padding: 20,
-    //position:'absolute',
-    // bottom:0,
+    position:'absolute',
+     bottom:0,
     // marginTop:windowHeight/1.84,
     width: "100%",
   },
