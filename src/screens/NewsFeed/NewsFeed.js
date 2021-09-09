@@ -447,7 +447,7 @@ const NewsFeed = (props) => {
               options={
                 uid === item.user
                   ? ["Hide", "Delete", "Cancel"]
-                  : ["Report", "Hide", "Cancel"]
+                  : ["Report", "Cancel"]
               }
               actions={
                 uid === item.user
@@ -460,7 +460,6 @@ const NewsFeed = (props) => {
                       () => {
                         reportHandler(item.id);
                       },
-                      () => hideHandler(item.id),
                       () => console.log("cancel"),
                     ]
               }
