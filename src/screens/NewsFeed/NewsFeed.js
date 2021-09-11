@@ -19,6 +19,7 @@ import {
   ActivityIndicator,
   Slider,
 } from "react-native";
+import * as Progress from 'react-native-progress';
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
 import { Header, Card } from "react-native-elements";
@@ -50,6 +51,28 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+
+const useProgress = (maxTimeInSeconds = 700) => {
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (progress < 1) {
+        setElapsedTime(t => t + 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    setProgress(elapsedTime / maxTimeInSeconds);
+  }, [elapsedTime]);
+
+  return progress;
+};
+
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -67,11 +90,38 @@ const NewsFeed = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [itemid, setitemid] = useState("");
   const [timer, settimer] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [progress, setProgress] = useState(0);
+ const maxTimeInSeconds= 30
+  //const [maxTimeInSeconds,setMaxTimeInSeconds] =useState(3000);;
+  //const progress = useProgress();
+
   const refRBSheet = useRef();
   useEffect(() => {
+    
+    
+   
     fetchAllPosts();
     fetchLocation();
+   
+   // console.log("OKK",progress)
   }, [isFocused]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (progress < 1) {
+        setElapsedTime(t => t + 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    setProgress(elapsedTime / maxTimeInSeconds);
+    console.log("TETS",progress)
+  }, [elapsedTime]);
+ 
   async function fetchLocation() {
     setRefreshing(true);
     try {
@@ -94,7 +144,7 @@ const NewsFeed = (props) => {
             const id = firebase.auth().currentUser?.uid;
             const mylocation = firebase.database().ref("locations/" + id);
             mylocation.set(da);
-          } catch (err) {}
+          } catch (err) { }
         }
       }
     } catch (err) {
@@ -218,7 +268,7 @@ const NewsFeed = (props) => {
       });
     const ik = arr.reverse();
     setPosts(arr);
-    console.log("posts", ik);
+   // console.log("posts", ik);
     setRefreshing(false);
   }
 
@@ -244,8 +294,8 @@ const NewsFeed = (props) => {
     {
       islike
         ? delUser.remove(() => {
-            console.log("Operation Complete");
-          })
+          console.log("Operation Complete");
+        })
         : mylike.set(uid);
     }
     const data = firebase.database().ref("user_posts/" + post_id);
@@ -291,8 +341,8 @@ const NewsFeed = (props) => {
     {
       isSave
         ? delUser.remove(() => {
-            console.log("Operation Complete");
-          })
+          console.log("Operation Complete");
+        })
         : mysave.set(uid);
     }
     const data = await firebase.database().ref("user_posts/" + post_id);
@@ -300,9 +350,14 @@ const NewsFeed = (props) => {
     fetchAllPosts();
   }
   async function playSound(id, soundUri, time) {
+    console.log(time)
+    setMaxTimeInSeconds(time/1000)
     try {
       await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
       toogleLike(id);
+      
+
+     
 
       console.log("Loading Sound", soundUri);
 
@@ -312,7 +367,9 @@ const NewsFeed = (props) => {
         },
         { shouldPlay: true }
       );
-
+    
+     
+      
       console.log("Playing Sound", soundUri);
 
       await playbackObject.playAsync();
@@ -332,7 +389,7 @@ const NewsFeed = (props) => {
         // console.log(res);
         setPosts(res);
       }, Number(time));
-    } catch (err) {}
+    } catch (err) { }
   }
   async function toogleLike(id) {
     console.log(id);
@@ -415,7 +472,7 @@ const NewsFeed = (props) => {
                       fontSize: 11,
                     },
                   ]}
-                  // @${item.userName.replace(/ /g, "")} .
+                // @${item.userName.replace(/ /g, "")} .
                 >{`\n ${moment(item.createdAt).format("ddd, HH:mm")}`}</Text>
               </Text>
             </View>
@@ -452,16 +509,16 @@ const NewsFeed = (props) => {
               actions={
                 uid === item.user
                   ? [
-                      () => hideHandler(item.id),
-                      () => delPost(item.user, item.id),
-                      () => console.log("cancel"),
-                    ]
+                    () => hideHandler(item.id),
+                    () => delPost(item.user, item.id),
+                    () => console.log("cancel"),
+                  ]
                   : [
-                      () => {
-                        reportHandler(item.id);
-                      },
-                      () => console.log("cancel"),
-                    ]
+                    () => {
+                      reportHandler(item.id);
+                    },
+                    () => console.log("cancel"),
+                  ]
               }
             />
           </View>
@@ -493,10 +550,10 @@ const NewsFeed = (props) => {
               style={
                 item.post_image
                   ? {
-                      flex: 5,
-                      paddingLeft: responsiveHeight(1.5),
-                      marginTop: responsiveHeight(0.2),
-                    }
+                    flex: 5,
+                    paddingLeft: responsiveHeight(1.5),
+                    marginTop: responsiveHeight(0.2),
+                  }
                   : { flex: 20, marginTop: responsiveHeight(0.2) }
               }
             >
@@ -532,24 +589,34 @@ const NewsFeed = (props) => {
                     )}
                   </TouchableOpacity>
 
-                  <Slider
+                 
+
+                  <Progress.Bar
+                    progress={progress}
+                    borderWidth={0}
+                    color={'orange'}
+                    unfilledColor={'grey'}
+                    width={200}
+                    style={{ marginTop: responsiveHeight(0.8) }}
+                  />
+                  {/* <Slider
                     minimumValue={0}
-                    maximumValue={Number(item.time)}
+                    maximumValue={1000}
                     onSlidingStart={false}
                     // onSlidingComplete={item.isShow}
-                    value={timer}
+                    value={144}
                     minimumTrackTintColor={"orange"}
                     maximumTrackTintColor={"black"}
                     thumbStyle={{
                       borderColor: "white",
                       borderWidth: 4.5,
-                      height: 10,
-                      width: 10,
-                      borderRadius: 12,
+                      height: 5,
+                      width: 5,
+                      borderRadius: 2,
                     }}
                     thumbTintColor={"#FF9900"}
                     style={{ width: responsiveWidth(40) }}
-                  />
+                  /> */}
                 </View>
               ) : null}
             </View>
