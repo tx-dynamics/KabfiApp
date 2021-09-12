@@ -52,26 +52,26 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 
-const useProgress = (maxTimeInSeconds = 700) => {
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [progress, setProgress] = useState(0);
+// const useProgress = (maxTimeInSeconds = 700) => {
+//   const [elapsedTime, setElapsedTime] = useState(0);
+//   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (progress < 1) {
-        setElapsedTime(t => t + 1);
-      }
-    }, 1000);
+//   useEffect(() => {
+//     const intervalId = setInterval(() => {
+//       if (progress < 1) {
+//         setElapsedTime(t => t + 1);
+//       }
+//     }, 1000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+//     return () => clearInterval(intervalId);
+//   }, []);
 
-  useEffect(() => {
-    setProgress(elapsedTime / maxTimeInSeconds);
-  }, [elapsedTime]);
+//   useEffect(() => {
+//     setProgress(elapsedTime / maxTimeInSeconds);
+//   }, [elapsedTime]);
 
-  return progress;
-};
+//   return progress;
+// };
 
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
@@ -92,35 +92,33 @@ const NewsFeed = (props) => {
   const [timer, settimer] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [progress, setProgress] = useState(0);
- const maxTimeInSeconds= 30
-  //const [maxTimeInSeconds,setMaxTimeInSeconds] =useState(3000);;
+  //const maxTimeInSeconds= 30
+  const [maxTimeInSeconds,setMaxTimeInSeconds] =useState(0);;
   //const progress = useProgress();
 
   const refRBSheet = useRef();
   useEffect(() => {
-    
-    
-   
     fetchAllPosts();
     fetchLocation();
    
    // console.log("OKK",progress)
   }, [isFocused]);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (progress < 1) {
-        setElapsedTime(t => t + 1);
-      }
-    }, 1000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     if (progress < 1) {
+  //       setElapsedTime(t => t + 1);
+  //     }
+  //   }, 1000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
-  useEffect(() => {
-    setProgress(elapsedTime / maxTimeInSeconds);
-    console.log("TETS",progress)
-  }, [elapsedTime]);
+  // const progressBarFunc= () => {
+  //   setProgress(elapsedTime / maxTimeInSeconds);
+  //   console.log("TETS",progress)
+  
+  // }
  
   async function fetchLocation() {
     setRefreshing(true);
@@ -355,25 +353,35 @@ const NewsFeed = (props) => {
     try {
       await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
       toogleLike(id);
-      
-
-     
 
       console.log("Loading Sound", soundUri);
 
       const { sound: playbackObject } = await Audio.Sound.createAsync(
         {
+       
           uri: soundUri,
         },
-        { shouldPlay: true }
+        { shouldPlay: true,
+         
+        }
+
       );
-    
      
       
       console.log("Playing Sound", soundUri);
 
       await playbackObject.playAsync();
-      settimer(Math.round(Number(time)));
+     settimer(Math.round(Number(time)));
+     
+      const InervalID=setInterval(() => {
+        
+        if (progress < 1) {
+          console.log("Test",elapsedTime)
+          setElapsedTime(t => t + 1);
+          setProgress(elapsedTime / 300);
+        }
+      }, 1000);
+
       setTimeout(() => {
         settimer(0);
         const res = posts.map((item) => {
@@ -386,6 +394,8 @@ const NewsFeed = (props) => {
             return { ...item };
           }
         });
+        clearInterval(InervalID);
+        
         // console.log(res);
         setPosts(res);
       }, Number(time));
