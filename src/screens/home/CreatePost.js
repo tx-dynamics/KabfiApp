@@ -951,9 +951,22 @@ const CreatePost = (props) => {
         // playThroughEarpieceAndroid: true,
       });
       console.log("Starting recording..");
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-      );
+      const recording = new Audio.Recording();
+      const { ios, android } = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      await recording.prepareToRecordAsync( {
+        android: android,
+        ios: {
+          ...ios,
+          extension: '.mp4',
+          outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4AAC
+        }
+      
+      } )
+      await recording.startAsync();
+      // const { recording } = await Audio.Recording.createAsync(
+      //   Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      
+      //   );
 
       setRecording(recording);
     } catch (err) {
