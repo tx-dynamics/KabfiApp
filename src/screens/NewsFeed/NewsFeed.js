@@ -92,16 +92,17 @@ const NewsFeed = (props) => {
   const [timer, settimer] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [progressPlay, setProgressPlay] = useState(0);
   //const maxTimeInSeconds= 30
-  const [maxTimeInSeconds,setMaxTimeInSeconds] =useState(0);;
+  const [maxTimeInSeconds, setMaxTimeInSeconds] = useState(0);;
   //const progress = useProgress();
 
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
     fetchLocation();
-   
-   // console.log("OKK",progress)
+
+    // console.log("OKK",progress)
   }, [isFocused]);
 
   // useEffect(() => {
@@ -117,9 +118,52 @@ const NewsFeed = (props) => {
   // const progressBarFunc= () => {
   //   setProgress(elapsedTime / maxTimeInSeconds);
   //   console.log("TETS",progress)
-  
+
   // }
- 
+  useEffect(() => {
+    //  var arr = splitInteger(1.0, 6)
+    //  var arr = divvy(1.0, 6, 1)
+    var number = 1.0;
+    var n = 10;
+
+    var values = [];
+    while (number > 0 && n > 0) {
+      var a = number / n / 50 * 50;
+      number -= a;
+      n--;
+      values.push(parseFloat(a.toFixed(1)));
+    }
+
+    // alert(JSON.stringify(values[0]+values[1]))
+  }, [])
+
+  //   const breakIntoParts = (num, parts) => 
+  //         [...Array(parts)].map((_,i) => 
+  //           0|num/parts+(i < num%parts))
+
+  //   function divvy(number, parts, min) {
+
+  //   var randombit = number - min * parts;
+  //   var out = [];
+
+  //   for (var i=0; i < parts; i++) {
+  //     out.push(Math.random());
+  //   }
+
+  //   var mult = randombit / out.reduce(function (a,b) {return a+b;});
+
+  //   return out.map(function (el) { return el * mult + min; });
+  // }
+
+
+  const splitInteger = (number, parts) => {
+    const remainder = number % parts
+    const baseValue = (number - remainder) / parts
+
+    // return Array(parts).fill(baseValue).fill(baseValue + 1, parts - remainder)
+    return remainder
+  }
+
   async function fetchLocation() {
     setRefreshing(true);
     try {
@@ -254,6 +298,7 @@ const NewsFeed = (props) => {
                                 ? child.val().location
                                 : null,
                             isShow: false,
+                            progressbar: false
                           });
                         }
                       });
@@ -266,7 +311,7 @@ const NewsFeed = (props) => {
       });
     const ik = arr.reverse();
     setPosts(arr);
-   // console.log("posts", ik);
+    // console.log("posts", ik);
     setRefreshing(false);
   }
 
@@ -348,8 +393,8 @@ const NewsFeed = (props) => {
     fetchAllPosts();
   }
   async function playSound(id, soundUri, time) {
-    console.log(time)
-    setMaxTimeInSeconds(time/1000)
+    console.log("testtt" + parseInt(time / 1000))
+    setMaxTimeInSeconds(parseInt(time / 1000))
     try {
       await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
       toogleLike(id);
@@ -358,27 +403,45 @@ const NewsFeed = (props) => {
 
       const { sound: playbackObject } = await Audio.Sound.createAsync(
         {
-       
+
           uri: soundUri,
         },
-        { shouldPlay: true,
-         
+        {
+          shouldPlay: true,
+
         }
 
       );
-     
-      
+
+
       console.log("Playing Sound", soundUri);
 
       await playbackObject.playAsync();
-     settimer(Math.round(Number(time)));
-     
-      const InervalID=setInterval(() => {
-        
-        if (progress < 1) {
-          console.log("Test",elapsedTime)
+      // settimer(Math.round(Number(time)));
+
+      // maxTimeInSeconds
+      var number = 1.0;
+      var n = parseInt(time / 1000) ;
+
+      var values = [];
+      while (number > 0 && n > 0) {
+        var a = number / n / 50 * 50;
+        number -= a;
+        n--;
+        values.push(parseFloat(a.toFixed(1)));
+      }
+      let index = 0;
+      let sum = 0;
+      console.log("Playing Sound", JSON.stringify(values));
+      const InervalID = setInterval(() => {
+        if (progress < 1.1) {
+          // console.log("Test", elapsedTime)
           setElapsedTime(t => t + 1);
-          setProgress(elapsedTime / 300);
+          // maxTimeInSeconds
+          // setProgress(elapsedTime / 300);
+          sum = sum + values[index]
+          console.log("Test", sum)
+          setProgress(sum);
         }
       }, 1000);
 
@@ -389,16 +452,22 @@ const NewsFeed = (props) => {
             return {
               ...item,
               isShow: false,
+              progressbar: false
             };
           } else {
             return { ...item };
           }
         });
+        // setTimeout(() => {
+           setProgress(0) 
         clearInterval(InervalID);
-        
+          // }, 2000)
+        // setProgress(0)
+
+
         // console.log(res);
         setPosts(res);
-      }, Number(time));
+      }, Number(time)+1500);
     } catch (err) { }
   }
   async function toogleLike(id) {
@@ -409,6 +478,7 @@ const NewsFeed = (props) => {
         return {
           ...item,
           isShow: true,
+          progressbar: true,
         };
       } else {
         return { ...item };
@@ -595,20 +665,30 @@ const NewsFeed = (props) => {
                     {item.isShow ? (
                       <Ionicons name="pause" color="black" size={30} />
                     ) : (
-                      <Ionicons name="play" color="orange" size={30} />
-                    )}
+                        <Ionicons name="play" color="orange" size={30} />
+                      )}
                   </TouchableOpacity>
 
-                 
+                  {item.progressbar ?
 
-                  <Progress.Bar
-                    progress={progress}
-                    borderWidth={0}
-                    color={'orange'}
-                    unfilledColor={'grey'}
-                    width={200}
-                    style={{ marginTop: responsiveHeight(0.8) }}
-                  />
+                    <Progress.Bar
+                      progress={progress}
+                      borderWidth={0}
+                      color={'orange'}
+                      unfilledColor={'grey'}
+                      width={200}
+                      style={{ marginTop: responsiveHeight(0.8) }}
+                    />
+                    :
+                    <Progress.Bar
+                      progress={progressPlay}
+                      borderWidth={0}
+                      color={'orange'}
+                      unfilledColor={'grey'}
+                      width={200}
+                      style={{ marginTop: responsiveHeight(0.8) }}
+                    />
+                  }
                   {/* <Slider
                     minimumValue={0}
                     maximumValue={1000}
@@ -716,10 +796,10 @@ const NewsFeed = (props) => {
               {/* <Image source={locationImage} style={{ width: 20, height: 28 }} /> */}
             </TouchableOpacity>
           ) : (
-            <View
-              style={{ flex: 2, alignSelf: "flex-end", alignItems: "center" }}
-            ></View>
-          )}
+              <View
+                style={{ flex: 2, alignSelf: "flex-end", alignItems: "center" }}
+              ></View>
+            )}
         </View>
       </View>
     );
