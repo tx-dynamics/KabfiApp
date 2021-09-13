@@ -52,26 +52,26 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 
-// const useProgress = (maxTimeInSeconds = 700) => {
-//   const [elapsedTime, setElapsedTime] = useState(0);
-//   const [progress, setProgress] = useState(0);
+const useProgress = (maxTimeInSeconds = 700) => {
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [progress, setProgress] = useState(0);
 
-//   useEffect(() => {
-//     const intervalId = setInterval(() => {
-//       if (progress < 1) {
-//         setElapsedTime(t => t + 1);
-//       }
-//     }, 1000);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (progress < 1) {
+        setElapsedTime(t => t + 1);
+      }
+    }, 1000);
 
-//     return () => clearInterval(intervalId);
-//   }, []);
+    return () => clearInterval(intervalId);
+  }, []);
 
-//   useEffect(() => {
-//     setProgress(elapsedTime / maxTimeInSeconds);
-//   }, [elapsedTime]);
+  useEffect(() => {
+    setProgress(elapsedTime / maxTimeInSeconds);
+  }, [elapsedTime]);
 
-//   return progress;
-// };
+  return progress;
+};
 
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
@@ -95,7 +95,7 @@ const NewsFeed = (props) => {
   const [progressPlay, setProgressPlay] = useState(0);
   //const maxTimeInSeconds= 30
   const [maxTimeInSeconds, setMaxTimeInSeconds] = useState(0);;
-  //const progress = useProgress();
+
 
   const refRBSheet = useRef();
   useEffect(() => {
@@ -394,7 +394,8 @@ const NewsFeed = (props) => {
   }
   async function playSound(id, soundUri, time) {
     console.log("testtt" + parseInt(time / 1000))
-    setMaxTimeInSeconds(parseInt(time / 1000))
+    //const progresss1 = useProgress();
+    setMaxTimeInSeconds(time / 1000)
     try {
       await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
       toogleLike(id);
@@ -415,13 +416,8 @@ const NewsFeed = (props) => {
 
 
       console.log("Playing Sound", soundUri);
-
-      await playbackObject.playAsync();
-      // settimer(Math.round(Number(time)));
-
-      // maxTimeInSeconds
       var number = 1.0;
-      var n = parseInt(time / 1000) ;
+      var n = parseInt(time / 1000);
 
       var values = [];
       while (number > 0 && n > 0) {
@@ -432,16 +428,23 @@ const NewsFeed = (props) => {
       }
       let index = 0;
       let sum = 0;
+
+      await playbackObject.playAsync();
+      // settimer(Math.round(Number(time)));
+
+      // maxTimeInSeconds
+    
       console.log("Playing Sound", JSON.stringify(values));
-      const InervalID = setInterval(() => {
-        if (progress < 1.1) {
-          // console.log("Test", elapsedTime)
-          setElapsedTime(t => t + 1);
-          // maxTimeInSeconds
-          // setProgress(elapsedTime / 300);
+      
+      const InervalID = setInterval( async() => {
+        
+        if (progress < 1) {
+         await setElapsedTime(t => t + 1);
+          
           sum = sum + values[index]
-          console.log("Test", sum)
-          setProgress(sum);
+        
+         await  setProgress(sum);
+       
         }
       }, 1000);
 
@@ -459,16 +462,19 @@ const NewsFeed = (props) => {
           }
         });
         // setTimeout(() => {
-           setProgress(0) 
+          console.log("Test", progress)  
+        setElapsedTime(0)
+        setProgress(0)
         clearInterval(InervalID);
-          // }, 2000)
+        // }, 2000)
         // setProgress(0)
 
 
         // console.log(res);
         setPosts(res);
-      }, Number(time)+1500);
+      }, Number(time)+2000);
     } catch (err) { }
+
   }
   async function toogleLike(id) {
     console.log(id);
@@ -610,6 +616,7 @@ const NewsFeed = (props) => {
               paddingVertical: 20,
             }}
           >
+            {item.post_image ? (
             <TouchableOpacity
               onPress={() => {
                 setLargeImage(item.post_image);
@@ -618,14 +625,14 @@ const NewsFeed = (props) => {
               }}
               style={{ flex: 2 }}
             >
-              {item.post_image ? (
+             
                 <Image
                   style={{ width: 80, height: 80, alignSelf: "flex-end" }}
                   source={{ uri: item.post_image }}
                 />
-              ) : null}
+             
             </TouchableOpacity>
-
+ ) : null}
             <View
               style={
                 item.post_image
@@ -665,8 +672,8 @@ const NewsFeed = (props) => {
                     {item.isShow ? (
                       <Ionicons name="pause" color="black" size={30} />
                     ) : (
-                        <Ionicons name="play" color="orange" size={30} />
-                      )}
+                      <Ionicons name="play" color="orange" size={30} />
+                    )}
                   </TouchableOpacity>
 
                   {item.progressbar ?
@@ -796,10 +803,10 @@ const NewsFeed = (props) => {
               {/* <Image source={locationImage} style={{ width: 20, height: 28 }} /> */}
             </TouchableOpacity>
           ) : (
-              <View
-                style={{ flex: 2, alignSelf: "flex-end", alignItems: "center" }}
-              ></View>
-            )}
+            <View
+              style={{ flex: 2, alignSelf: "flex-end", alignItems: "center" }}
+            ></View>
+          )}
         </View>
       </View>
     );

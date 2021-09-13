@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Keyboard,
 } from "react-native";
 import Swipeout from "react-native-swipeout";
 import {
@@ -21,6 +22,8 @@ import {
   comments,
   favourite,
 } from "../../../assets";
+import { useSafeAreaInsets, 
+  initialWindowMetrics } from 'react-native-safe-area-context';
 import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -30,7 +33,9 @@ import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import firebase from "firebase";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { Audio } from "expo-av";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 const CommentScreen = ({ route, navigation }) => {
+  const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
   const isFocused = useIsFocused();
   const [id, setId] = useState("");
@@ -42,20 +47,40 @@ const CommentScreen = ({ route, navigation }) => {
   const [recording, setRecording] = useState();
   const [isloading, setisloading] = useState(false);
   const [Close, setClose] = useState(true);
+  const [keyBoardHeight, setKeyBoardHeight] = useState(false);
+  const[valueforBorrom,setValueforBorrom] =useState(false)
   useEffect(() => {
-    console.log("posts", posts);
+   // console.log("posts", posts);
     const id = route.params.id;
     if (id) {
       setId(id);
       getData(id);
+     
     }
-    console.log("id", id);
+    inputRef.current.focus();
+      Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+      Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+    
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide); 
+    }
   }, [isFocused]);
+  const _keyboardDidShow = (e) => {
+    setKeyBoardHeight(e.endCoordinates.height)
+    setValueforBorrom(true)
+    console.log( e.endCoordinates.height)
+   
+   };
+   const _keyboardDidHide = () => {
+    console.log('Keyboard Hidden');
+    setValueforBorrom(false)
+  };
   async function getData(id) {
     var myRef = firebase.database().ref("comments/" + id);
     var li = [];
     myRef.on("value", (data) => {
-      console.log("data", data);
+      //console.log("data", data);
       data.forEach((child) => {
         li.push({
           id: child.key,
@@ -95,7 +120,7 @@ const CommentScreen = ({ route, navigation }) => {
             component: (
               <View
                 style={{
-                  flex: 1,
+                  //flex: 1,
                   alignItems: "center",
                   flexDirection: "row",
                   justifyContent: "center",
@@ -274,28 +299,26 @@ const CommentScreen = ({ route, navigation }) => {
           </Text>
         }
       />
-      <ScrollView
-        // behavior={Platform.OS === "ios" ? "padding" : null}
-        keyboardShouldPersistTaps="handled"
-        style={{ flex: 1, backgroundColor: "white", flexGrow: 1 }}
-      >
+    
         <FlatList data={posts} renderItem={renderPosts} />
-      </ScrollView>
+    
+      
+   
       <View
         style={[
           styles.horizontalContainer,
           {
-            marginBottom: 10,
             justifyContent: "space-around",
             width: "95%",
             alignSelf: "center",
             alignItems: "center",
             position: "absolute",
-            bottom: 0,
+            bottom:valueforBorrom? keyBoardHeight-initialWindowMetrics.insets.bottom:0,
           },
         ]}
       >
         <TextInput
+         ref={inputRef}
           style={styles.input}
           placeholder="Comments"
           autoCapitalize={"none"}
@@ -326,6 +349,7 @@ const CommentScreen = ({ route, navigation }) => {
           )}
         </TouchableOpacity>
       </View>
+    {/* </KeyboardAvoidingView> */}
     </View>
   );
 };
