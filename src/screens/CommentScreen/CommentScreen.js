@@ -22,8 +22,10 @@ import {
   comments,
   favourite,
 } from "../../../assets";
-import { useSafeAreaInsets, 
-  initialWindowMetrics } from 'react-native-safe-area-context';
+import {
+  useSafeAreaInsets,
+  initialWindowMetrics,
+} from "react-native-safe-area-context";
 import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -48,33 +50,31 @@ const CommentScreen = ({ route, navigation }) => {
   const [isloading, setisloading] = useState(false);
   const [Close, setClose] = useState(true);
   const [keyBoardHeight, setKeyBoardHeight] = useState(false);
-  const[valueforBorrom,setValueforBorrom] =useState(false)
+  const [valueforBorrom, setValueforBorrom] = useState(false);
   useEffect(() => {
-   // console.log("posts", posts);
+    // console.log("posts", posts);
     const id = route.params.id;
     if (id) {
       setId(id);
       getData(id);
-     
     }
     inputRef.current.focus();
-      Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
-      Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
-    
+    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+
     return () => {
-      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
-      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide); 
-    }
+      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
   }, [isFocused]);
   const _keyboardDidShow = (e) => {
-    setKeyBoardHeight(e.endCoordinates.height)
-    setValueforBorrom(true)
-    console.log( e.endCoordinates.height)
-   
-   };
-   const _keyboardDidHide = () => {
-    console.log('Keyboard Hidden');
-    setValueforBorrom(false)
+    setKeyBoardHeight(e.endCoordinates.height);
+    setValueforBorrom(true);
+    console.log(e.endCoordinates.height);
+  };
+  const _keyboardDidHide = () => {
+    console.log("Keyboard Hidden");
+    setValueforBorrom(false);
   };
   async function getData(id) {
     var myRef = firebase.database().ref("comments/" + id);
@@ -127,16 +127,18 @@ const CommentScreen = ({ route, navigation }) => {
                   backgroundColor: "transparent",
                 }}
               >
-                <TouchableOpacity
-                  onPress={() => delComment(item.user, item.id)}
-                  style={{ marginRight: 5 }}
-                >
-                  <MaterialCommunityIcons
-                    name="trash-can-outline"
-                    size={30}
-                    color="red"
-                  />
-                </TouchableOpacity>
+                {firebase.auth().currentUser?.uid === item.user ? (
+                  <TouchableOpacity
+                    onPress={() => delComment(item.user, item.id)}
+                    style={{ marginRight: 5 }}
+                  >
+                    <MaterialCommunityIcons
+                      name="trash-can-outline"
+                      size={30}
+                      color="red"
+                    />
+                  </TouchableOpacity>
+                ) : null}
               </View>
             ),
             backgroundColor: "white",
@@ -299,11 +301,9 @@ const CommentScreen = ({ route, navigation }) => {
           </Text>
         }
       />
-    
-        <FlatList data={posts} renderItem={renderPosts} />
-    
-      
-   
+
+      <FlatList data={posts} renderItem={renderPosts} />
+
       <View
         style={[
           styles.horizontalContainer,
@@ -313,12 +313,14 @@ const CommentScreen = ({ route, navigation }) => {
             alignSelf: "center",
             alignItems: "center",
             position: "absolute",
-            bottom:valueforBorrom? keyBoardHeight-initialWindowMetrics.insets.bottom:0,
+            bottom: valueforBorrom
+              ? keyBoardHeight - initialWindowMetrics.insets.bottom
+              : 0,
           },
         ]}
       >
         <TextInput
-         ref={inputRef}
+          ref={inputRef}
           style={styles.input}
           placeholder="Comments"
           autoCapitalize={"none"}
@@ -349,7 +351,7 @@ const CommentScreen = ({ route, navigation }) => {
           )}
         </TouchableOpacity>
       </View>
-    {/* </KeyboardAvoidingView> */}
+      {/* </KeyboardAvoidingView> */}
     </View>
   );
 };

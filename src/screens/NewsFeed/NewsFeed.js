@@ -19,7 +19,7 @@ import {
   ActivityIndicator,
   Slider,
 } from "react-native";
-import * as Progress from 'react-native-progress';
+import * as Progress from "react-native-progress";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
 import { Header, Card } from "react-native-elements";
@@ -59,7 +59,7 @@ const useProgress = (maxTimeInSeconds = 700) => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (progress < 1) {
-        setElapsedTime(t => t + 1);
+        setElapsedTime((t) => t + 1);
       }
     }, 1000);
 
@@ -94,16 +94,20 @@ const NewsFeed = (props) => {
   const [progress, setProgress] = useState(0);
   const [progressPlay, setProgressPlay] = useState(0);
   //const maxTimeInSeconds= 30
-  const [maxTimeInSeconds, setMaxTimeInSeconds] = useState(0);;
-
-
+  const [maxTimeInSeconds, setMaxTimeInSeconds] = useState(0);
+  const [sound, setsound] = useState();
   const refRBSheet = useRef();
   useEffect(() => {
     fetchAllPosts();
     fetchLocation();
-
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
     // console.log("OKK",progress)
-  }, [isFocused]);
+  }, [isFocused, sound]);
 
   // useEffect(() => {
   //   const intervalId = setInterval(() => {
@@ -128,17 +132,17 @@ const NewsFeed = (props) => {
 
     var values = [];
     while (number > 0 && n > 0) {
-      var a = number / n / 50 * 50;
+      var a = (number / n / 50) * 50;
       number -= a;
       n--;
       values.push(parseFloat(a.toFixed(1)));
     }
 
     // alert(JSON.stringify(values[0]+values[1]))
-  }, [])
+  }, []);
 
-  //   const breakIntoParts = (num, parts) => 
-  //         [...Array(parts)].map((_,i) => 
+  //   const breakIntoParts = (num, parts) =>
+  //         [...Array(parts)].map((_,i) =>
   //           0|num/parts+(i < num%parts))
 
   //   function divvy(number, parts, min) {
@@ -155,14 +159,13 @@ const NewsFeed = (props) => {
   //   return out.map(function (el) { return el * mult + min; });
   // }
 
-
   const splitInteger = (number, parts) => {
-    const remainder = number % parts
-    const baseValue = (number - remainder) / parts
+    const remainder = number % parts;
+    const baseValue = (number - remainder) / parts;
 
     // return Array(parts).fill(baseValue).fill(baseValue + 1, parts - remainder)
-    return remainder
-  }
+    return remainder;
+  };
 
   async function fetchLocation() {
     setRefreshing(true);
@@ -186,7 +189,7 @@ const NewsFeed = (props) => {
             const id = firebase.auth().currentUser?.uid;
             const mylocation = firebase.database().ref("locations/" + id);
             mylocation.set(da);
-          } catch (err) { }
+          } catch (err) {}
         }
       }
     } catch (err) {
@@ -298,7 +301,7 @@ const NewsFeed = (props) => {
                                 ? child.val().location
                                 : null,
                             isShow: false,
-                            progressbar: false
+                            progressbar: false,
                           });
                         }
                       });
@@ -337,8 +340,8 @@ const NewsFeed = (props) => {
     {
       islike
         ? delUser.remove(() => {
-          console.log("Operation Complete");
-        })
+            console.log("Operation Complete");
+          })
         : mylike.set(uid);
     }
     const data = firebase.database().ref("user_posts/" + post_id);
@@ -384,8 +387,8 @@ const NewsFeed = (props) => {
     {
       isSave
         ? delUser.remove(() => {
-          console.log("Operation Complete");
-        })
+            console.log("Operation Complete");
+          })
         : mysave.set(uid);
     }
     const data = await firebase.database().ref("user_posts/" + post_id);
@@ -393,9 +396,9 @@ const NewsFeed = (props) => {
     fetchAllPosts();
   }
   async function playSound(id, soundUri, time) {
-    console.log("testtt" + parseInt(time / 1000))
+    console.log("testtt" + parseInt(time / 1000));
     //const progresss1 = useProgress();
-    setMaxTimeInSeconds(time / 1000)
+    setMaxTimeInSeconds(time / 1000);
     try {
       await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
       toogleLike(id);
@@ -404,24 +407,20 @@ const NewsFeed = (props) => {
 
       const { sound: playbackObject } = await Audio.Sound.createAsync(
         {
-
           uri: soundUri,
         },
         {
           shouldPlay: true,
-
         }
-
       );
-
-
+      setsound(playbackObject);
       console.log("Playing Sound", soundUri);
       var number = 1.0;
       var n = parseInt(time / 1000);
 
       var values = [];
       while (number > 0 && n > 0) {
-        var a = number / n / 50 * 50;
+        var a = (number / n / 50) * 50;
         number -= a;
         n--;
         values.push(parseFloat(a.toFixed(1)));
@@ -433,18 +432,16 @@ const NewsFeed = (props) => {
       // settimer(Math.round(Number(time)));
 
       // maxTimeInSeconds
-    
+
       console.log("Playing Sound", JSON.stringify(values));
-      
-      const InervalID = setInterval( async() => {
-        
+
+      const InervalID = setInterval(async () => {
         if (progress < 1) {
-         await setElapsedTime(t => t + 1);
-          
-          sum = sum + values[index]
-        
-         await  setProgress(sum);
-       
+          await setElapsedTime((t) => t + 1);
+
+          sum = sum + values[index];
+
+          await setProgress(sum);
         }
       }, 1000);
 
@@ -455,26 +452,24 @@ const NewsFeed = (props) => {
             return {
               ...item,
               isShow: false,
-              progressbar: false
+              progressbar: false,
             };
           } else {
             return { ...item };
           }
         });
         // setTimeout(() => {
-          console.log("Test", progress)  
-        setElapsedTime(0)
-        setProgress(0)
+        console.log("Test", progress);
+        setElapsedTime(0);
+        setProgress(0);
         clearInterval(InervalID);
         // }, 2000)
         // setProgress(0)
 
-
         // console.log(res);
         setPosts(res);
-      }, Number(time)+2000);
-    } catch (err) { }
-
+      }, Number(time) + 2000);
+    } catch (err) {}
   }
   async function toogleLike(id) {
     console.log(id);
@@ -558,7 +553,7 @@ const NewsFeed = (props) => {
                       fontSize: 11,
                     },
                   ]}
-                // @${item.userName.replace(/ /g, "")} .
+                  // @${item.userName.replace(/ /g, "")} .
                 >{`\n ${moment(item.createdAt).format("ddd, HH:mm")}`}</Text>
               </Text>
             </View>
@@ -588,23 +583,23 @@ const NewsFeed = (props) => {
               }}
               destructiveIndex={0}
               options={
-                uid === item.user
-                  ? ["Hide", "Delete", "Cancel"]
-                  : ["Report", "Cancel"]
+                firebase.auth().currentUser?.uid === item.user
+                  ? ["Delete", "Cancel"]
+                  : ["Hide", "Report", "Cancel"]
               }
               actions={
-                uid === item.user
+                firebase.auth().currentUser?.uid === item.user
                   ? [
-                    () => hideHandler(item.id),
-                    () => delPost(item.user, item.id),
-                    () => console.log("cancel"),
-                  ]
+                      () => delPost(item.user, item.id),
+                      () => console.log("cancel"),
+                    ]
                   : [
-                    () => {
-                      reportHandler(item.id);
-                    },
-                    () => console.log("cancel"),
-                  ]
+                      () => hideHandler(item.id),
+                      () => {
+                        reportHandler(item.id);
+                      },
+                      () => console.log("cancel"),
+                    ]
               }
             />
           </View>
@@ -617,30 +612,28 @@ const NewsFeed = (props) => {
             }}
           >
             {item.post_image ? (
-            <TouchableOpacity
-              onPress={() => {
-                setLargeImage(item.post_image);
-                setModalVisible(true);
-                setRefreshingModal(true);
-              }}
-              style={{ flex: 2 }}
-            >
-             
+              <TouchableOpacity
+                onPress={() => {
+                  setLargeImage(item.post_image);
+                  setModalVisible(true);
+                  setRefreshingModal(true);
+                }}
+                style={{ flex: 2 }}
+              >
                 <Image
                   style={{ width: 80, height: 80, alignSelf: "flex-end" }}
                   source={{ uri: item.post_image }}
                 />
-             
-            </TouchableOpacity>
- ) : null}
+              </TouchableOpacity>
+            ) : null}
             <View
               style={
                 item.post_image
                   ? {
-                    flex: 5,
-                    paddingLeft: responsiveHeight(1.5),
-                    marginTop: responsiveHeight(0.2),
-                  }
+                      flex: 5,
+                      paddingLeft: responsiveHeight(1.5),
+                      marginTop: responsiveHeight(0.2),
+                    }
                   : { flex: 20, marginTop: responsiveHeight(0.2) }
               }
             >
@@ -676,26 +669,25 @@ const NewsFeed = (props) => {
                     )}
                   </TouchableOpacity>
 
-                  {item.progressbar ?
-
+                  {item.progressbar ? (
                     <Progress.Bar
                       progress={progress}
                       borderWidth={0}
-                      color={'orange'}
-                      unfilledColor={'grey'}
+                      color={"orange"}
+                      unfilledColor={"grey"}
                       width={200}
                       style={{ marginTop: responsiveHeight(0.8) }}
                     />
-                    :
+                  ) : (
                     <Progress.Bar
                       progress={progressPlay}
                       borderWidth={0}
-                      color={'orange'}
-                      unfilledColor={'grey'}
+                      color={"orange"}
+                      unfilledColor={"grey"}
                       width={200}
                       style={{ marginTop: responsiveHeight(0.8) }}
                     />
-                  }
+                  )}
                   {/* <Slider
                     minimumValue={0}
                     maximumValue={1000}
