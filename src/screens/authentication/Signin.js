@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     width: 15,
     height: 13,
     position: "absolute",
-    top: 19,
+    top: 12,
     alignItems: "center",
   },
   loginBtn: {
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   eyeIconContainer: {
     position: "absolute",
-    top: 14,
+    top: 8,
     right: 13,
     width: 35,
     height: 25,

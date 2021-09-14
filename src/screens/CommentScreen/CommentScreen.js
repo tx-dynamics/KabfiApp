@@ -36,6 +36,7 @@ import firebase from "firebase";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { Audio } from "expo-av";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 const CommentScreen = ({ route, navigation }) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -130,7 +131,7 @@ const CommentScreen = ({ route, navigation }) => {
                 {firebase.auth().currentUser?.uid === item.user ? (
                   <TouchableOpacity
                     onPress={() => delComment(item.user, item.id)}
-                    style={{ marginRight: 5 }}
+                    style={{ marginRight: 5, marginTop:responsiveHeight(3.5) }}
                   >
                     <MaterialCommunityIcons
                       name="trash-can-outline"

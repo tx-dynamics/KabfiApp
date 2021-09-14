@@ -100,12 +100,7 @@ const NewsFeed = (props) => {
   useEffect(() => {
     fetchAllPosts();
     fetchLocation();
-    return sound
-      ? () => {
-          console.log("Unloading Sound");
-          sound.unloadAsync();
-        }
-      : undefined;
+   
     // console.log("OKK",progress)
   }, [isFocused, sound]);
 
@@ -677,7 +672,7 @@ const NewsFeed = (props) => {
                       borderWidth={0}
                       color={"orange"}
                       unfilledColor={"grey"}
-                      width={200}
+                      width={responsiveWidth(50)}
                       style={{ marginTop: responsiveHeight(0.8) }}
                     />
                   ) : (
@@ -686,7 +681,7 @@ const NewsFeed = (props) => {
                       borderWidth={0}
                       color={"orange"}
                       unfilledColor={"grey"}
-                      width={200}
+                      width={responsiveWidth(50)}
                       style={{ marginTop: responsiveHeight(0.8) }}
                     />
                   )}

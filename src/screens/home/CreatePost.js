@@ -51,6 +51,7 @@ import { RequestPushMsg } from "../../components/RequestPushMsg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AudioView from "./AudioRecording";
 import { Feather } from "@expo/vector-icons";
+import { set } from "react-native-reanimated";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -135,17 +136,26 @@ const CreatePost = (props) => {
   async function savePost() {
     setloading(true);
     console.log(time, "here-=>");
+    let post_Image
+    let sound
     try {
       if (postImage || postText || loc || Sound) {
-        let post_Image = await uploadImage(postImage);
-        let sound = await uploadImage(Sound);
-        if (!post_Image) {
-          post_Image = "";
+        
+        // if(postImage)
+        // {
+        //  post_Image = await uploadImage(postImage);
+        // }   
+        if(Sound)
+        {
+        sound = await uploadImage(Sound);
         }
+        // if (!post_Image) {
+        //   post_Image = "";
+        // }
         if (!sound) {
           sound = "";
         }
-        console.log("postImage", post_Image);
+        console.log("postImage", postImage);
         var myRef = firebase.database().ref("user_posts").push();
         var key = myRef.getKey();
         var mylike = firebase
@@ -155,7 +165,7 @@ const CreatePost = (props) => {
           post_id: key,
           user: userId,
           userName: userName,
-          post_image: post_Image,
+          post_image: postImage,
           post_text: postText,
           user_image: Dp,
           likes_count: 0,
@@ -207,6 +217,7 @@ const CreatePost = (props) => {
 
     if (!result.cancelled) {
       setPostImage(manipResult.uri);
+      uploadImage(manipResult.uri)
     }
   };
 
@@ -229,6 +240,7 @@ const CreatePost = (props) => {
           async () => {
             const url = await task.snapshot.ref.getDownloadURL();
             resolve(url);
+            setPostImage(url)
             // setLoader(false);
           }
         );
@@ -356,8 +368,8 @@ const CreatePost = (props) => {
   }
   async function ondelaudio() {
     console.log("here");
-    setstopwatchReset(true);
-    setstopwatchReset(false);
+   setstopwatchReset(true);
+    //setstopwatchReset(false);
     setDelTop(true);
     setontimer(false);
     setRecording("");
@@ -538,7 +550,7 @@ const CreatePost = (props) => {
               {isstopwatch ? (
                 <TouchableOpacity
                   onPress={onsendaudio}
-                  disabled={isdisable ? true : false}
+                  disabled={isdisable || !recording ? true : false}
                 >
                   <Image
                     source={send}
@@ -546,7 +558,7 @@ const CreatePost = (props) => {
                       height: 30,
                       width: 30,
                       alignSelf: "center",
-                      marginTop: 5,
+                      marginTop: responsiveHeight(4.5),
                     }}
                     resizeMode="contain"
                   />
@@ -679,7 +691,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   contentArea: {
-    marginTop: "15%",
+    marginTop: "9%",
     paddingHorizontal: 30,
   },
   cancelText: {
