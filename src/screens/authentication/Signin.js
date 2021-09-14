@@ -29,8 +29,8 @@ import firebase from "firebase";
 import { useIsFocused } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import * as Permissions from "expo-permissions";
-import { connect } from 'react-redux';
-import { SetSession } from '../../Redux/Actions/Actions';
+import { connect } from "react-redux";
+import { SetSession } from "../../Redux/Actions/Actions";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -105,7 +105,7 @@ const Signin = (props) => {
               userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
             })
         );
-        props.SessionMaintain({"isLogin": true})
+        props.SessionMaintain({ isLogin: true });
         // setIsLoggedIn(true);
         setLoader(false);
       })
@@ -151,7 +151,7 @@ const Signin = (props) => {
             />
           </View>
 
-          <View style={[styles.textFieldContainer, { marginTop: 20 }]}>
+          <View style={[styles.textFieldContainer, { marginTop: 26 }]}>
             <Image
               source={require("../../../assets/ProjectImages/authentication/password-icon.png")}
               style={styles.fieldIcon}
@@ -276,13 +276,14 @@ const styles = StyleSheet.create({
     width: 15,
     height: 13,
     position: "absolute",
-    top: 18,
+    top: 19,
+    alignItems: "center",
   },
   loginBtn: {
     marginTop: 50,
     backgroundColor: "#FAB040",
     alignItems: "center",
-    padding: 12,
+    padding: 15,
     borderRadius: 10,
   },
   socialIconsContainer: {
@@ -308,15 +309,16 @@ const styles = StyleSheet.create({
     marginTop: 60,
   },
   forgotPasswordText: {
-    fontSize: 12,
+    fontSize: 13,
   },
   eyeIcon: {
     fontSize: 24,
     color: "#E6E6E6",
+    alignSelf: "center",
   },
   eyeIconContainer: {
     position: "absolute",
-    top: 13,
+    top: 14,
     right: 13,
     width: 35,
     height: 25,
@@ -327,7 +329,7 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-      SessionMaintain: (data) => dispatch(SetSession(data)),
+    SessionMaintain: (data) => dispatch(SetSession(data)),
   };
 };
 

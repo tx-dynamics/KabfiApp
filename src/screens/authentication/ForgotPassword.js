@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from "react-native";
 import firebase from "firebase";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -19,52 +19,50 @@ const ForgotPassword = (props) => {
   const [loader, setLoader] = useState(false);
 
   async function userResetPassword() {
-  let data= await firebase.auth().fetchSignInMethodsForEmail(email)
-   if(data && data.length>0){
-    firebase
-      .auth()
-      .sendPasswordResetEmail(email)
-      .then(async function (user) {
-        //console.log(user)
-        // alert('Please check your email...')
-        props.navigation.navigate("SendEmail");
-      })
-      .catch((error) => {
-        alert(error.message);
-        // setLoader(false);
-      });
+    let data = await firebase.auth().fetchSignInMethodsForEmail(email);
+    if (data && data.length > 0) {
+      firebase
+        .auth()
+        .sendPasswordResetEmail(email)
+        .then(async function (user) {
+          //console.log(user)
+          // alert('Please check your email...')
+          props.navigation.navigate("SendEmail");
+        })
+        .catch((error) => {
+          alert(error.message);
+          // setLoader(false);
+        });
+    } else {
+      alert(
+        "There is no user record corresponding to this email. Please check and try again, if you are having further trouble accessing your account please email info@kabfi.com"
+      );
     }
-   else{
-     alert('There is no user record corresponding to this email. Please check and try again, if you are having further trouble accessing your account please email info@kabfi.com')
-   }
-    
   }
   return (
     <ScrollView style={styles.root}>
-     <Header
+      <Header
         containerStyle={{ borderBottomWidth: 0 }}
         backgroundColor="white"
         leftComponent={
-         
-            <TouchableWithoutFeedback
-          activeOpacity={0}
-          style={styles.drawerIcon}
-          onPress={() => {
-            props.navigation.goBack();
-          }}
-        >
-          {/* <Image
+          <TouchableWithoutFeedback
+            activeOpacity={0}
+            style={styles.drawerIcon}
+            onPress={() => {
+              props.navigation.goBack();
+            }}
+          >
+            {/* <Image
             source={back}
             // resizeMode={'contain'}
             style={{height: 20.97, width: 11.98, tintColor: 'black'}}
           /> */}
-          <Ionicons name="chevron-back-outline" size={30} />
-        </TouchableWithoutFeedback>
+            <Ionicons name="chevron-back-outline" size={30} />
+          </TouchableWithoutFeedback>
         }
-          />
-        
+      />
+
       <View style={styles.contentArea}>
-        
         <View style={styles.lockImageContainer}>
           <Image
             source={require("../../../assets/ProjectImages/big-lock-image.png")}
@@ -75,7 +73,8 @@ const ForgotPassword = (props) => {
         <View style={styles.textContainer}>
           <Text style={styles.textHeading}>Reset Password</Text>
           <Text style={[styles.textSimple, { width: "80%" }]}>
-          Enter the email associated with your account and we’ll send an email with instructions to reset your password.
+            Enter the email associated with your account and we’ll send an email
+            with instructions to reset your password.
           </Text>
           {/* <Text style={styles.textSimple}>
             {" "}
@@ -158,7 +157,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     backgroundColor: "#FAB040",
     borderRadius: 5,
-    padding: 13,
+    padding: 15,
     alignItems: "center",
   },
   btn2Text: {

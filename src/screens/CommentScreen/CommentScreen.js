@@ -158,10 +158,15 @@ const CommentScreen = ({ route, navigation }) => {
         >
           <View
             style={{
-              backgroundColor: index % 2 === 0 ? "#FBFBFB" : "#FFF3E3",
+              backgroundColor:
+                firebase.auth().currentUser?.uid === item.user
+                  ? "#FBFBFB"
+                  : "#FFF3E3",
               marginTop: 15,
-              marginLeft: index % 2 === 0 ? 30 : 0,
-              marginRight: index % 2 === 0 ? 0 : 30,
+              marginLeft:
+                firebase.auth().currentUser?.uid === item.user ? 30 : 0,
+              marginRight:
+                firebase.auth().currentUser?.uid === item.user ? 0 : 30,
               padding: 10,
               borderRadius: 15,
               flexDirection: "row",
@@ -174,7 +179,9 @@ const CommentScreen = ({ route, navigation }) => {
             />
             <View style={{ width: "85%", marginTop: 3, marginLeft: 3 }}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ color: "black", fontSize: 13 }}>
+                <Text
+                  style={{ color: "black", fontSize: 13, fontWeight: "700" }}
+                >
                   {item.name}
                 </Text>
                 <Text style={{ color: "black", fontSize: 18 }}>{" • "}</Text>

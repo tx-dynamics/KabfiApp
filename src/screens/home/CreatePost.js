@@ -304,6 +304,7 @@ const CreatePost = (props) => {
   async function stopRecording() {
     // inputRef.current.focus();
     setDelTop(false);
+    setontimer(false);
     if (!index) {
       setindex(true);
       setisdisable(false);
@@ -537,7 +538,7 @@ const CreatePost = (props) => {
               {isstopwatch ? (
                 <TouchableOpacity
                   onPress={onsendaudio}
-                  disabled={!stopwatchReset ? true : false}
+                  disabled={isdisable ? true : false}
                 >
                   <Image
                     source={send}
@@ -629,7 +630,7 @@ const CreatePost = (props) => {
             )}
             {isstopwatch ? (
               <TouchableOpacity
-                disabled={!stopwatchReset ? true : false}
+                disabled={isdisable ? true : false}
                 onPress={ondelaudio}
                 style={{
                   flexDirection: "row",

@@ -540,7 +540,7 @@ const NewsFeed = (props) => {
                   },
                 ]}
               >
-                <Text style={[styles.largeText, { color: "black" }]}>
+                <Text style={[{ color: "black", fontWeight: "700" }]}>
                   {item.userName}
                 </Text>
                 <Text
@@ -554,7 +554,9 @@ const NewsFeed = (props) => {
                     },
                   ]}
                   // @${item.userName.replace(/ /g, "")} .
-                >{`\n ${moment(item.createdAt).format("ddd, HH:mm")}`}</Text>
+                >{`\n@${item.userName.replace(/ /g, "")}. ${moment(
+                  item.createdAt
+                ).format("ddd, HH:mm")}`}</Text>
               </Text>
             </View>
             {/* <TouchableOpacity
@@ -577,9 +579,9 @@ const NewsFeed = (props) => {
               button={more}
               buttonStyle={{
                 width: 30,
-                height: 18,
+                height: 15,
                 resizeMode: "contain",
-                marginTop: 10,
+                marginTop: 14,
               }}
               destructiveIndex={0}
               options={
