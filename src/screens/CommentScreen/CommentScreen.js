@@ -14,14 +14,7 @@ import {
   Keyboard,
 } from "react-native";
 import Swipeout from "react-native-swipeout";
-import {
-  user,
-  more,
-  postImage,
-  reload,
-  comments,
-  favourite,
-} from "../../../assets";
+import { user, send } from "../../../assets";
 import {
   useSafeAreaInsets,
   initialWindowMetrics,
@@ -131,7 +124,7 @@ const CommentScreen = ({ route, navigation }) => {
                 {firebase.auth().currentUser?.uid === item.user ? (
                   <TouchableOpacity
                     onPress={() => delComment(item.user, item.id)}
-                    style={{ marginRight: 5, marginTop:responsiveHeight(3.5) }}
+                    style={{ marginRight: 5, marginTop: responsiveHeight(3.5) }}
                   >
                     <MaterialCommunityIcons
                       name="trash-can-outline"
@@ -355,7 +348,11 @@ const CommentScreen = ({ route, navigation }) => {
           {isloading ? (
             <ActivityIndicator color={"black"} size={"small"} />
           ) : (
-            <MaterialCommunityIcons name="send" size={26} color={"black"} />
+            <Image
+              source={send}
+              style={{ height: 26, width: 26 }}
+              resizeMode="contain"
+            />
           )}
         </TouchableOpacity>
       </View>

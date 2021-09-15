@@ -34,6 +34,7 @@ import {
   heartImage,
   locationImage,
   menu,
+  bars,
 } from "../../../assets";
 import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
@@ -100,7 +101,7 @@ const NewsFeed = (props) => {
   useEffect(() => {
     fetchAllPosts();
     fetchLocation();
-   
+
     // console.log("OKK",progress)
   }, [isFocused, sound]);
 
@@ -198,10 +199,13 @@ const NewsFeed = (props) => {
     const uid = firebase.auth().currentUser?.uid;
     const userdataNAme = firebase.database().ref("users/" + uid);
     userdataNAme.on("value", (userdata) => {
-      setDp(userdata.val()?.Dp);
-      setName(userdata.val()?.firstName + " " + userdata.val()?.lastName);
-      setRate(userdata.val()?.rating);
-      setDate(userdata.val()?.createdAt);
+      if (userdata.val()?.Dp) {
+        setDp(userdata.val().Dp);
+      }
+      if (userdata.val()?.firstName && userdata.val()?.lastName) {
+        setName(userdata.val().firstName + " " + userdata.val().lastName);
+        setDate(userdata.val().createdAt);
+      }
     });
 
     let arr = [];
@@ -484,19 +488,10 @@ const NewsFeed = (props) => {
     setPosts(res);
   }
   async function delPost(index, postid) {
-    setRefreshing(true);
-    const userId = firebase.auth().currentUser?.uid;
-    if (userId === index) {
-      const delUser = firebase.database().ref("user_posts/").child(postid);
-      delUser.remove(() => {
-        alert("Post Deleted Successfully");
-        fetchAllPosts();
-        setRefreshing(false);
-      });
-    } else {
-      setRefreshing(false);
-      alert("You can only delete your posts. Thanks");
-    }
+    const del = firebase.database().ref("user_posts").child(postid);
+    del.remove(() => {
+      alert("Post Deleted Successfully");
+    });
   }
   const renderPosts = ({ item, index }) => {
     return (
@@ -643,12 +638,13 @@ const NewsFeed = (props) => {
               {item.rec ? (
                 <View
                   style={{
-                    backgroundColor: "white",
+                    backgroundColor: "#FF9900",
                     width: responsiveWidth(50),
                     flexDirection: "row",
                     alignItems: "center",
                     padding: 4,
                     marginTop: 3,
+                    borderRadius: 20,
                   }}
                 >
                   <TouchableOpacity
@@ -656,17 +652,25 @@ const NewsFeed = (props) => {
                     style={{
                       // alignSelf: "center",
                       marginTop: 5,
-                      right: 4,
+                      // right: 4,
                     }}
                   >
                     {item.isShow ? (
-                      <Ionicons name="pause" color="black" size={30} />
+                      <Ionicons name="pause" color="white" size={30} />
                     ) : (
-                      <Ionicons name="play" color="orange" size={30} />
+                      <Ionicons name="play" color="white" size={30} />
                     )}
                   </TouchableOpacity>
-
-                  {item.progressbar ? (
+                  {item.time > 5999 ? (
+                    <Text style={{ color: "white" }}>
+                      {`${(item.time / 1000).toFixed(0)}:0`}
+                    </Text>
+                  ) : (
+                    <Text style={{ color: "white" }}>
+                      {`0:${(item.time / 1000).toFixed(0)}`}
+                    </Text>
+                  )}
+                  {/* {item.progressbar ? (
                     <Progress.Bar
                       progress={progress}
                       borderWidth={0}
@@ -676,15 +680,24 @@ const NewsFeed = (props) => {
                       style={{ marginTop: responsiveHeight(0.8) }}
                     />
                   ) : (
-                    <Progress.Bar
-                      progress={progressPlay}
-                      borderWidth={0}
-                      color={"orange"}
-                      unfilledColor={"grey"}
-                      width={responsiveWidth(50)}
-                      style={{ marginTop: responsiveHeight(0.8) }}
-                    />
-                  )}
+                    // <Progress.Bar
+                    //   progress={progressPlay}
+                    //   borderWidth={0}
+                    //   color={"orange"}
+                    //   unfilledColor={"grey"}
+                    //   width={responsiveWidth(50)}
+                    //   style={{ marginTop: responsiveHeight(0.8) }}
+                    // />
+                   
+                  )} */}
+                  <Image
+                    source={bars}
+                    style={{
+                      height: 30,
+                      width: responsiveWidth(30),
+                    }}
+                    resizeMode="contain"
+                  />
                   {/* <Slider
                     minimumValue={0}
                     maximumValue={1000}
@@ -972,7 +985,9 @@ const NewsFeed = (props) => {
               <View style={styles.userInfo3}>
                 <Text
                   style={[styles.info3Text, { fontWeight: "500" }]}
-                >{`Member since ${moment(date).format("YYYY")}`}</Text>
+                >{`Member since ${
+                  date ? moment(date).format("YYYY") : ""
+                }`}</Text>
               </View>
             </View>
 

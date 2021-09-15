@@ -30,6 +30,9 @@ import {
   voiceImage,
   send,
   del,
+  stop,
+  bars,
+  loadad,
 } from "../../../assets";
 import {
   responsiveWidth,
@@ -136,18 +139,16 @@ const CreatePost = (props) => {
   async function savePost() {
     setloading(true);
     console.log(time, "here-=>");
-    let post_Image
-    let sound
+    let post_Image;
+    let sound;
     try {
       if (postImage || postText || loc || Sound) {
-        
         // if(postImage)
         // {
         //  post_Image = await uploadImage(postImage);
-        // }   
-        if(Sound)
-        {
-        sound = await uploadImage(Sound);
+        // }
+        if (Sound) {
+          sound = await uploadImage(Sound);
         }
         // if (!post_Image) {
         //   post_Image = "";
@@ -217,7 +218,7 @@ const CreatePost = (props) => {
 
     if (!result.cancelled) {
       setPostImage(manipResult.uri);
-      uploadImage(manipResult.uri)
+      uploadImage(manipResult.uri);
     }
   };
 
@@ -240,7 +241,7 @@ const CreatePost = (props) => {
           async () => {
             const url = await task.snapshot.ref.getDownloadURL();
             resolve(url);
-            setPostImage(url)
+            setPostImage(url);
             // setLoader(false);
           }
         );
@@ -250,17 +251,14 @@ const CreatePost = (props) => {
     }
   };
   async function startRecording() {
-    setisstopwatch(false);
-    setisdisable(false);
-    setshowrec(false);
-    setDelTop(true);
     setRecording("");
     try {
+      setindex(true);
       setisstopwatch(true);
       setontimer(true);
       setisdisable(true);
       setshowrec(false);
-      // setstopwatchReset(true);
+      setstopwatchReset(false);
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
@@ -271,9 +269,9 @@ const CreatePost = (props) => {
         // playThroughEarpieceAndroid: true,
       });
       console.log("Starting recording..");
-      const recording = new Audio.Recording();
+      const record = new Audio.Recording();
       const { ios, android } = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY;
-      await recording.prepareToRecordAsync({
+      await record.prepareToRecordAsync({
         android: android,
         ios: {
           ...ios,
@@ -281,13 +279,28 @@ const CreatePost = (props) => {
           outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4AAC,
         },
       });
-      await recording.startAsync();
+      await record.startAsync();
+      const timer = setInterval(() => {}, 6000);
+      // setTimeout(() => {
+      //   setisdisable(false);
+      //   setindex(true);
+      //   setontimer(false);
+      //   setRecording(record);
+      //   stopRecording();
+      // }, 6000);
       // const { recording } = await Audio.Recording.createAsync(
       //   Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
 
       //   );
-
-      setRecording(recording);
+      if (timer > 5999) {
+        clearInterval(timer);
+        setisdisable(false);
+        setindex(true);
+        setontimer(false);
+        setRecording(record);
+        stopRecording();
+      }
+      setRecording(record);
     } catch (err) {
       setshow(false);
       setstopwatchReset(true);
@@ -307,37 +320,39 @@ const CreatePost = (props) => {
     );
     console.log("Playing Sound", Sound);
     setsound(playbackObject);
-    await playbackObject.playAsync();
+    // let ntime = time;
+    // await playbackObject.playAsync();
+    // while (ntime) {
+    //   settime(time / 10);
+    // }
     setTimeout(() => {
       setisplay(false);
       setshow(false);
+      // settime(ntime);
     }, Number(time));
   }
   async function stopRecording() {
     // inputRef.current.focus();
     setDelTop(false);
     setontimer(false);
-    if (!index) {
-      setindex(true);
-      setisdisable(false);
-      // setstopwatchReset(true);
 
-      // setstopwatchReset(false);
-      setontimer(false);
-      console.log("Stopping recording..");
-      let testData = await recording.getStatusAsync();
+    setindex(false);
+    setisdisable(false);
+    // setstopwatchReset(true);
 
-      console.log("OKK", await testData);
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      console.log("Recording stopped and stored at", recording._uri);
-      // let post_Image = await uploadImage(recording._uri);
-      setSound(recording._uri);
-      settime(JSON.stringify(testData.durationMillis));
-      console.log("post_Image", recording._finalDurationMillis / 1000);
-    } else {
-      alert("Kindly delete previous recording first");
-    }
+    // setstopwatchReset(false);
+    setontimer(false);
+    console.log("Stopping recording..");
+    let testData = await recording.getStatusAsync();
+
+    // console.log("OKK", await testData);
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI();
+    console.log("Recording stopped and stored at", recording._uri);
+    // let post_Image = await uploadImage(recording._uri);
+    setSound(recording._uri);
+    settime(JSON.stringify(testData.durationMillis));
+    console.log("post_Image", recording._finalDurationMillis / 1000);
 
     // playSound(recording._uri);
   }
@@ -368,8 +383,8 @@ const CreatePost = (props) => {
   }
   async function ondelaudio() {
     console.log("here");
-   setstopwatchReset(true);
-    //setstopwatchReset(false);
+    setstopwatchReset(true);
+    // setstopwatchReset(false);
     setDelTop(true);
     setontimer(false);
     setRecording("");
@@ -447,12 +462,13 @@ const CreatePost = (props) => {
             {showrec ? (
               <View
                 style={{
-                  backgroundColor: "#FBFBFB",
-                  width: responsiveWidth(50),
+                  backgroundColor: "orange",
+                  width: responsiveWidth(54),
                   flexDirection: "row",
                   alignItems: "center",
                   padding: 4,
                   marginTop: 3,
+                  borderRadius: 20,
                 }}
               >
                 <TouchableOpacity
@@ -460,17 +476,19 @@ const CreatePost = (props) => {
                   style={{
                     // alignSelf: "center",
                     marginTop: 5,
-                    right: 4,
+                    // right: 4,
                   }}
                 >
                   {isplay ? (
-                    <Ionicons name="pause" color="black" size={30} />
+                    <Ionicons name="pause" color="white" size={30} />
                   ) : (
-                    <Ionicons name="play" color="orange" size={30} />
+                    <Ionicons name="play" color="white" size={30} />
                   )}
                 </TouchableOpacity>
-
-                <Slider
+                <Text style={{ color: "white" }}>{`${(time / 1000).toFixed(
+                  0
+                )}:00`}</Text>
+                {/* <Slider
                   minimumValue={0}
                   maximumValue={Number(time)}
                   onSlidingStart={isplay}
@@ -487,7 +505,22 @@ const CreatePost = (props) => {
                   }}
                   thumbTintColor={"#FF9900"}
                   style={{ width: responsiveWidth(40) }}
+                /> */}
+                <Image
+                  source={bars}
+                  style={{
+                    height: 30,
+                    width: responsiveWidth(30),
+                  }}
+                  resizeMode="contain"
                 />
+                <TouchableOpacity
+                  onPress={() => {
+                    setshowrec(false), setRecording("");
+                  }}
+                >
+                  <Entypo name={"cross"} color="white" size={20} />
+                </TouchableOpacity>
               </View>
             ) : null}
           </View>
@@ -496,7 +529,9 @@ const CreatePost = (props) => {
         <View
           style={[
             styles.mediaContainerOuter,
-            { bottom: keyBoardHeight - initialWindowMetrics.insets.bottom },
+            {
+              bottom: keyBoardHeight - initialWindowMetrics.insets.bottom,
+            },
           ]}
         >
           <View style={styles.mediaContainerInner}>
@@ -537,7 +572,11 @@ const CreatePost = (props) => {
         </View>
 
         {show ? (
-          <View style={{ marginTop: responsiveHeight(15) }}>
+          <View
+            style={{
+              marginTop: responsiveHeight(15),
+            }}
+          >
             <View
               style={{
                 flexDirection: "row",
@@ -553,7 +592,7 @@ const CreatePost = (props) => {
                   disabled={isdisable || !recording ? true : false}
                 >
                   <Image
-                    source={send}
+                    source={loadad}
                     style={{
                       height: 30,
                       width: 30,
@@ -569,6 +608,10 @@ const CreatePost = (props) => {
                   laps
                   start={ontimer}
                   reset={stopwatchReset}
+                  // totalDuration={6000}
+                  // handleFinish={() => {
+                  //   ontimer(false), setindex(false), stopRecording();
+                  // }}
                   //To start
                   options={{
                     container: {
@@ -593,8 +636,11 @@ const CreatePost = (props) => {
                 />
               ) : null}
             </View>
-            {index ? (
-              <View
+            {!index ? (
+              <TouchableOpacity
+                onPress={() => {
+                  startRecording();
+                }}
                 style={{
                   width: 100,
                   height: 100,
@@ -602,7 +648,7 @@ const CreatePost = (props) => {
                   backgroundColor: "#FCB040",
                   justifyContent: "center",
                   alignSelf: "center",
-                  marginTop: 30,
+                  // marginTop: 30,
                 }}
               >
                 <Feather
@@ -622,23 +668,52 @@ const CreatePost = (props) => {
                 >
                   Rec.
                 </Text>
-              </View>
+              </TouchableOpacity>
             ) : (
-              <AudioView
-                onPressAudio={() => {
-                  recording
-                    ? (stopRecording(),
-                      setisdisable(false),
-                      // setstopwatchReset(true),
-                      setontimer(false))
-                    : (startRecording(),
-                      setisstopwatch(true),
-                      setontimer(true),
-                      setstopwatchReset(false),
-                      setisdisable(true),
-                      setshowrec(false));
+              // <AudioView
+              //   onPressAudio={() => {
+              //     recording
+              //       ? (stopRecording(),
+              //         setisdisable(false),
+              //         // setstopwatchReset(true),
+              //         setontimer(false))
+              //       : (startRecording(),
+              //         setisstopwatch(true),
+              //         setontimer(true),
+              //         setstopwatchReset(false),
+              //         setisdisable(true),
+              //         setshowrec(false));
+              //   }}
+              // />
+              <TouchableOpacity
+                onPress={() => {
+                  // recording
+                  //   ?
+                  stopRecording(),
+                    setisdisable(false),
+                    // setstopwatchReset(true),
+                    setontimer(false);
+                  // :
+                  //  (startRecording(),
+                  //   setisstopwatch(true),
+                  //   setontimer(true),
+                  //   setstopwatchReset(false),
+                  //   setisdisable(true),
+                  //   setshowrec(false));
                 }}
-              />
+                style={{
+                  borderRadius: 75,
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  marginTop: 30,
+                }}
+              >
+                <Image
+                  source={stop}
+                  style={{ width: 100, height: 100 }}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
             )}
             {isstopwatch ? (
               <TouchableOpacity
@@ -669,9 +744,6 @@ const CreatePost = (props) => {
           </View>
         ) : null}
       </>
-      {/* </KeyboardAwareScrollView> */}
-
-      {/* </KeyboardAvoidingView> */}
     </View>
   );
 };
