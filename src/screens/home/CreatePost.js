@@ -184,6 +184,7 @@ const CreatePost = (props) => {
             : console.log("No One");
         });
         // mylike.set(userId);
+        // myRef.set(Details);
         alert("Post Added Successfully");
         await AsyncStorage.clear();
         setloading(false);

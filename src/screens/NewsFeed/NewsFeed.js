@@ -104,7 +104,7 @@ const NewsFeed = (props) => {
 
     // console.log("OKK",progress)
   }, [isFocused, sound]);
-
+  //isFocused, sound
   // useEffect(() => {
   //   const intervalId = setInterval(() => {
   //     if (progress < 1) {
@@ -255,8 +255,16 @@ const NewsFeed = (props) => {
                               : 0,
                             post_text: child.val().post_text,
                             user: child.val().user,
-                            userName: child.val().userName,
-                            user_image: updateImage.val().Dp,
+                            userName:
+                              updateImage.val()?.firstName &&
+                              updateImage.val()?.lastName
+                                ? updateImage.val()?.firstName +
+                                  " " +
+                                  updateImage.val().lastName
+                                : "",
+                            user_image: updateImage.val()?.Dp
+                              ? updateImage.val().Dp
+                              : "",
                             post_image: child.val().post_image,
                             like: true,
                             save: child.val().save_count ? true : false,
@@ -285,10 +293,15 @@ const NewsFeed = (props) => {
                             post_text: child.val().post_text,
                             user: child.val().user,
                             userName:
-                              updateImage.val().firstName +
-                              " " +
-                              updateImage.val().lastName,
-                            user_image: updateImage.val().Dp,
+                              updateImage.val()?.firstName &&
+                              updateImage.val()?.lastName
+                                ? updateImage.val()?.firstName +
+                                  " " +
+                                  updateImage.val().lastName
+                                : "",
+                            user_image: updateImage.val()?.Dp
+                              ? updateImage.val().Dp
+                              : "",
                             createdAt: child.val().createdAt,
                             post_image: child.val().post_image,
                             like: false,
@@ -348,28 +361,36 @@ const NewsFeed = (props) => {
     fetchAllPosts();
   }
   async function hideHandler(post_id) {
+    // setRefreshing(true);
+    let filtered = posts.filter((i) => {
+      return post_id !== i.id;
+    });
+    console.log("post filter", filtered, "\n", post_id);
+    setPosts(filtered);
     const hiderPost = firebase
       .database()
-      .ref("user_posts/" + post_id + "/Hide/")
-      .child(uid)
-      .set(uid)
-      .then(() => {
-        setShow(false);
-        fetchAllPosts();
-        alert("Hide");
-      });
+      .ref("user_posts/" + post_id + "/Hide/");
+    hiderPost.set(uid);
+    alert("Hide");
+    setShow(false);
+    // setRefreshing(false);
+    // fetchAllPosts();
   }
   async function reportHandler(post_id) {
-    const reportPost = firebase
-      .database()
-      .ref("report/" + post_id)
-      .child(uid)
-      .set(uid)
-      .then(() => {
-        setShow(false);
-        fetchAllPosts();
-        alert("Reported");
-      });
+    // let filtered = posts.filter((i) => {
+    //   return post_id !== i.id;
+    // });
+    // console.log("post filter", filtered, "\n", post_id);
+    // setPosts(filtered);
+    const reportPost = firebase.database().ref("report/" + post_id + "/");
+    reportPost.set(uid);
+    // .then(() => {
+    alert("Reported");
+    setShow(false);
+
+    // fetchAllPosts();
+
+    // });
   }
   async function saveHandler(post_id, save_count, isSave) {
     const Details = {
@@ -488,10 +509,16 @@ const NewsFeed = (props) => {
     setPosts(res);
   }
   async function delPost(index, postid) {
-    const del = firebase.database().ref("user_posts").child(postid);
-    del.remove(() => {
-      alert("Post Deleted Successfully");
+    let filtered = posts.filter((i) => {
+      return postid !== i.id;
     });
+    console.log("post filter", filtered, "\n", postid);
+    setPosts(filtered);
+    alert("Post Deleted Successfully");
+    const del = firebase.database().ref("user_posts/" + postid);
+    // .child(postid);
+    del.remove();
+    // alert("Post Deleted Successfully");
   }
   const renderPosts = ({ item, index }) => {
     return (
@@ -544,7 +571,7 @@ const NewsFeed = (props) => {
                     },
                   ]}
                   // @${item.userName.replace(/ /g, "")} .
-                >{`\n@${item.userName.replace(/ /g, "")}. ${moment(
+                >{`\n@${item?.userName.replace(/ /g, "")}. ${moment(
                   item.createdAt
                 ).format("ddd, HH:mm")}`}</Text>
               </Text>

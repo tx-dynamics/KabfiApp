@@ -66,10 +66,10 @@ const Signin = (props) => {
                 userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
               })
           );
-          setIsLoggedIn(true);
+          // setIsLoggedIn(true);
         } else {
           // fetchLocation();
-          setIsLoggedIn(false);
+          // setIsLoggedIn(false);
         }
       });
     }
