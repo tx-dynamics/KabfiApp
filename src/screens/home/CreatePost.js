@@ -84,6 +84,7 @@ const CreatePost = (props) => {
   useEffect(() => {
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+    setRecording(null)
     getLocation();
     setshow(false);
     inputRef.current.focus();
@@ -388,7 +389,7 @@ const CreatePost = (props) => {
     // setstopwatchReset(false);
     setDelTop(true);
     setontimer(false);
-    setRecording("");
+    setRecording(null);
     setisdisable(false);
     setindex(false);
   }
@@ -418,7 +419,9 @@ const CreatePost = (props) => {
             <TouchableOpacity onPress={oncancel}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={savePost}>
+            <TouchableOpacity 
+              disabled={recording || postText || postImage ? false : true}
+            onPress={savePost}>
               {loading ? (
                 <ActivityIndicator color={"red"} size={"small"} />
               ) : (

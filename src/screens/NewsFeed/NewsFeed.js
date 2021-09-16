@@ -101,7 +101,6 @@ const NewsFeed = (props) => {
   useEffect(() => {
     fetchAllPosts();
     fetchLocation();
-
     // console.log("OKK",progress)
   }, [isFocused, sound]);
   //isFocused, sound
@@ -120,22 +119,22 @@ const NewsFeed = (props) => {
   //   console.log("TETS",progress)
 
   // }
-  useEffect(() => {
-    //  var arr = splitInteger(1.0, 6)
-    //  var arr = divvy(1.0, 6, 1)
-    var number = 1.0;
-    var n = 10;
+  // useEffect(() => {
+  //   //  var arr = splitInteger(1.0, 6)
+  //   //  var arr = divvy(1.0, 6, 1)
+  //   var number = 1.0;
+  //   var n = 10;
 
-    var values = [];
-    while (number > 0 && n > 0) {
-      var a = (number / n / 50) * 50;
-      number -= a;
-      n--;
-      values.push(parseFloat(a.toFixed(1)));
-    }
+  //   var values = [];
+  //   while (number > 0 && n > 0) {
+  //     var a = (number / n / 50) * 50;
+  //     number -= a;
+  //     n--;
+  //     values.push(parseFloat(a.toFixed(1)));
+  //   }
 
-    // alert(JSON.stringify(values[0]+values[1]))
-  }, []);
+  //   // alert(JSON.stringify(values[0]+values[1]))
+  // }, []);
 
   //   const breakIntoParts = (num, parts) =>
   //         [...Array(parts)].map((_,i) =>
@@ -194,6 +193,7 @@ const NewsFeed = (props) => {
     }
     setRefreshing(false);
   }
+  
   async function fetchAllPosts() {
     setRefreshing(true);
     const uid = firebase.auth().currentUser?.uid;
@@ -362,16 +362,17 @@ const NewsFeed = (props) => {
   }
   async function hideHandler(post_id) {
     // setRefreshing(true);
-    let filtered = posts.filter((i) => {
+    let filtered =   posts.filter((i) => {
       return post_id !== i.id;
     });
+   
     console.log("post filter", filtered, "\n", post_id);
-    setPosts(filtered);
+   setPosts(filtered);
+    alert("This post is no longer availble for you");
     const hiderPost = firebase
       .database()
       .ref("user_posts/" + post_id + "/Hide/");
     hiderPost.set(uid);
-    alert("Hide");
     setShow(false);
     // setRefreshing(false);
     // fetchAllPosts();
@@ -382,10 +383,11 @@ const NewsFeed = (props) => {
     // });
     // console.log("post filter", filtered, "\n", post_id);
     // setPosts(filtered);
+    alert("Reported");
     const reportPost = firebase.database().ref("report/" + post_id + "/");
     reportPost.set(uid);
     // .then(() => {
-    alert("Reported");
+   
     setShow(false);
 
     // fetchAllPosts();

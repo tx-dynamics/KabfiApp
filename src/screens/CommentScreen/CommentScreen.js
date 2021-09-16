@@ -310,12 +310,13 @@ const CommentScreen = ({ route, navigation }) => {
           styles.horizontalContainer,
           {
             justifyContent: "space-around",
-            width: "95%",
+            width: "85%",
             alignSelf: "center",
             alignItems: "center",
             position: "absolute",
+            
             bottom: valueforBorrom
-              ? keyBoardHeight - initialWindowMetrics.insets.bottom
+              ? keyBoardHeight - initialWindowMetrics.insets.bottom+responsiveHeight(1)
               : 0,
           },
         ]}
