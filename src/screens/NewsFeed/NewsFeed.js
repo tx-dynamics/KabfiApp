@@ -94,15 +94,20 @@ const NewsFeed = (props) => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [progress, setProgress] = useState(0);
   const [progressPlay, setProgressPlay] = useState(0);
-  //const maxTimeInSeconds= 30
   const [maxTimeInSeconds, setMaxTimeInSeconds] = useState(0);
   const [sound, setsound] = useState();
   const refRBSheet = useRef();
+  const [isplaying, setisplaying] = useState(false);
   useEffect(() => {
     fetchAllPosts();
     fetchLocation();
-    // console.log("OKK",progress)
-  }, [isFocused, sound]);
+    // return sound
+    //   ? () => {
+    //       console.log("Unloading Sound");
+    //       sound.unloadAsync();
+    //     }
+    //   : undefined;
+  }, [isFocused]);
   //isFocused, sound
   // useEffect(() => {
   //   const intervalId = setInterval(() => {
@@ -193,7 +198,7 @@ const NewsFeed = (props) => {
     }
     setRefreshing(false);
   }
-  
+
   async function fetchAllPosts() {
     setRefreshing(true);
     const uid = firebase.auth().currentUser?.uid;
@@ -276,6 +281,7 @@ const NewsFeed = (props) => {
                                 ? child.val().location
                                 : null,
                             time: child.val().time,
+                            // isplaying: false,
                           });
                         }
                       });
@@ -314,6 +320,7 @@ const NewsFeed = (props) => {
                                 : null,
                             isShow: false,
                             progressbar: false,
+                            // isplaying: false,
                           });
                         }
                       });
@@ -362,12 +369,12 @@ const NewsFeed = (props) => {
   }
   async function hideHandler(post_id) {
     // setRefreshing(true);
-    let filtered =   posts.filter((i) => {
+    let filtered = posts.filter((i) => {
       return post_id !== i.id;
     });
-   
+
     console.log("post filter", filtered, "\n", post_id);
-   setPosts(filtered);
+    setPosts(filtered);
     alert("This post is no longer availble for you");
     const hiderPost = firebase
       .database()
@@ -378,21 +385,10 @@ const NewsFeed = (props) => {
     // fetchAllPosts();
   }
   async function reportHandler(post_id) {
-    // let filtered = posts.filter((i) => {
-    //   return post_id !== i.id;
-    // });
-    // console.log("post filter", filtered, "\n", post_id);
-    // setPosts(filtered);
     alert("Reported");
     const reportPost = firebase.database().ref("report/" + post_id + "/");
     reportPost.set(uid);
-    // .then(() => {
-   
     setShow(false);
-
-    // fetchAllPosts();
-
-    // });
   }
   async function saveHandler(post_id, save_count, isSave) {
     const Details = {
@@ -419,89 +415,105 @@ const NewsFeed = (props) => {
   }
   async function playSound(id, soundUri, time) {
     console.log("testtt" + parseInt(time / 1000));
-    //const progresss1 = useProgress();
     setMaxTimeInSeconds(time / 1000);
-    try {
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-      toogleLike(id);
+    if (!isplaying) {
+      try {
+        console.log("isplaying", isplaying);
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
 
-      console.log("Loading Sound", soundUri);
-
-      const { sound: playbackObject } = await Audio.Sound.createAsync(
-        {
-          uri: soundUri,
-        },
-        {
-          shouldPlay: true,
-        }
-      );
-      setsound(playbackObject);
-      console.log("Playing Sound", soundUri);
-      var number = 1.0;
-      var n = parseInt(time / 1000);
-
-      var values = [];
-      while (number > 0 && n > 0) {
-        var a = (number / n / 50) * 50;
-        number -= a;
-        n--;
-        values.push(parseFloat(a.toFixed(1)));
-      }
-      let index = 0;
-      let sum = 0;
-
-      await playbackObject.playAsync();
-      // settimer(Math.round(Number(time)));
-
-      // maxTimeInSeconds
-
-      console.log("Playing Sound", JSON.stringify(values));
-
-      const InervalID = setInterval(async () => {
-        if (progress < 1) {
-          await setElapsedTime((t) => t + 1);
-
-          sum = sum + values[index];
-
-          await setProgress(sum);
-        }
-      }, 1000);
-
-      setTimeout(() => {
-        settimer(0);
-        const res = posts.map((item) => {
-          if (item.id === id) {
-            return {
-              ...item,
-              isShow: false,
-              progressbar: false,
-            };
-          } else {
-            return { ...item };
+        console.log("Loading Sound", soundUri);
+        toogleLike(id);
+        const { sound: playbackObject } = await Audio.Sound.createAsync(
+          {
+            uri: soundUri,
+          },
+          {
+            shouldPlay: true,
           }
-        });
-        // setTimeout(() => {
-        console.log("Test", progress);
-        setElapsedTime(0);
-        setProgress(0);
-        clearInterval(InervalID);
-        // }, 2000)
-        // setProgress(0)
+        );
+        setsound(playbackObject);
+        // console.log("Playing Sound", playbackObject);
+        // var number = 1.0;
+        // var n = parseInt(time / 1000);
 
-        // console.log(res);
-        setPosts(res);
-      }, Number(time) + 2000);
-    } catch (err) {}
+        // var values = [];
+        // while (number > 0 && n > 0) {
+        //   var a = (number / n / 50) * 50;
+        //   number -= a;
+        //   n--;
+        //   values.push(parseFloat(a.toFixed(1)));
+        // }
+        // let index = 0;
+        // let sum = 0;
+
+        await playbackObject.playAsync();
+        // settimer(Math.round(Number(time)));
+
+        // maxTimeInSeconds
+
+        // console.log("Playing Sound", JSON.stringify(values));
+
+        // const InervalID = setInterval(async () => {
+        //   if (progress < 1) {
+        //     await setElapsedTime((t) => t + 1);
+
+        //     sum = sum + values[index];
+
+        //     await setProgress(sum);
+        //   }
+        // }, 1000);
+
+        setTimeout(() => {
+          setisplaying(false);
+          const res = posts.map((item) => {
+            if (item.id === id) {
+              return {
+                ...item,
+                isShow: false,
+                progressbar: false,
+              };
+            } else {
+              return { ...item };
+            }
+          });
+          // setTimeout(() => {
+          // console.log("Test", progress);
+          // setElapsedTime(0);
+          // setProgress(0);
+          // clearInterval(InervalID);
+          // }, 2000)
+          // setProgress(0)
+
+          // console.log(res);
+          setPosts(res);
+        }, Number(time) + 2000);
+      } catch (err) {}
+    } else {
+      console.log("isplaying", isplaying);
+      sound.pauseAsync();
+      setisplaying(false);
+      const res = posts.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            isShow: false,
+          };
+        } else {
+          return { ...item };
+        }
+      });
+      setPosts(res);
+    }
   }
-  async function toogleLike(id) {
+  async function toogleLike(id, isplaying) {
     console.log(id);
-
     const res = posts.map((item) => {
       if (item.id === id) {
         return {
           ...item,
           isShow: true,
           progressbar: true,
+          isplaying: !isplaying,
         };
       } else {
         return { ...item };
@@ -518,9 +530,7 @@ const NewsFeed = (props) => {
     setPosts(filtered);
     alert("Post Deleted Successfully");
     const del = firebase.database().ref("user_posts/" + postid);
-    // .child(postid);
     del.remove();
-    // alert("Post Deleted Successfully");
   }
   const renderPosts = ({ item, index }) => {
     return (
@@ -578,22 +588,7 @@ const NewsFeed = (props) => {
                 ).format("ddd, HH:mm")}`}</Text>
               </Text>
             </View>
-            {/* <TouchableOpacity
-              onPress={() => {
-                setShow(true), setitemid(item.id);
-              }}
-            >
-              <Image
-                source={more}
-                style={{
-                  width: 30,
-                  height: 15,
-                  resizeMode: "contain",
-                  marginTop: 10,
-                  // transform: [{ rotate: "90deg" }],
-                }}
-              />
-            </TouchableOpacity> */}
+
             <OptionsMenu
               button={more}
               buttonStyle={{
@@ -668,16 +663,19 @@ const NewsFeed = (props) => {
                 <View
                   style={{
                     backgroundColor: "#FF9900",
-                    width: responsiveWidth(50),
+                    width: responsiveWidth(48),
                     flexDirection: "row",
                     alignItems: "center",
-                    padding: 4,
+                    padding: 2,
                     marginTop: 3,
                     borderRadius: 20,
                   }}
                 >
                   <TouchableOpacity
-                    onPress={() => playSound(item.id, item.rec, item.time)}
+                    onPress={() => {
+                      playSound(item.id, item.rec, item.time),
+                        setisplaying(!isplaying);
+                    }}
                     style={{
                       // alignSelf: "center",
                       marginTop: 5,
@@ -699,26 +697,6 @@ const NewsFeed = (props) => {
                       {`0:${(item.time / 1000).toFixed(0)}`}
                     </Text>
                   )}
-                  {/* {item.progressbar ? (
-                    <Progress.Bar
-                      progress={progress}
-                      borderWidth={0}
-                      color={"orange"}
-                      unfilledColor={"grey"}
-                      width={responsiveWidth(50)}
-                      style={{ marginTop: responsiveHeight(0.8) }}
-                    />
-                  ) : (
-                    // <Progress.Bar
-                    //   progress={progressPlay}
-                    //   borderWidth={0}
-                    //   color={"orange"}
-                    //   unfilledColor={"grey"}
-                    //   width={responsiveWidth(50)}
-                    //   style={{ marginTop: responsiveHeight(0.8) }}
-                    // />
-                   
-                  )} */}
                   <Image
                     source={bars}
                     style={{
@@ -727,24 +705,6 @@ const NewsFeed = (props) => {
                     }}
                     resizeMode="contain"
                   />
-                  {/* <Slider
-                    minimumValue={0}
-                    maximumValue={1000}
-                    onSlidingStart={false}
-                    // onSlidingComplete={item.isShow}
-                    value={144}
-                    minimumTrackTintColor={"orange"}
-                    maximumTrackTintColor={"black"}
-                    thumbStyle={{
-                      borderColor: "white",
-                      borderWidth: 4.5,
-                      height: 5,
-                      width: 5,
-                      borderRadius: 2,
-                    }}
-                    thumbTintColor={"#FF9900"}
-                    style={{ width: responsiveWidth(40) }}
-                  /> */}
                 </View>
               ) : null}
             </View>
@@ -853,42 +813,28 @@ const NewsFeed = (props) => {
           Alert.alert("Modal has been closed.");
         }}
       >
-        {
-          // (setTimeout(() => {
-          //   setRefreshingModal(false);
-          // }, 3000),
-          //wait for 3 sec
-          // refreshingModal ? (
-          //   <ActivityIndicator
-          //     size={"small"}
-          //     color={"#FCB040"}
-          //     style={{ alignSelf: "center", marginTop: responsiveHeight(20) }}
-          //   ></ActivityIndicator>
-          // ) : (
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Image
-                style={{ width: "100%", height: "98%" }}
-                source={{ uri: largImage }}
-                resizeMode="contain"
-              />
-              <TouchableHighlight
-                style={{
-                  backgroundColor: "#FCB040",
-                  width: "100%",
-                  height: "5%",
-                  justifyContent: "center",
-                }}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <Text style={styles.textStyle}>Hide Image</Text>
-              </TouchableHighlight>
-            </View>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Image
+              style={{ width: "100%", height: "98%" }}
+              source={{ uri: largImage }}
+              resizeMode="contain"
+            />
+            <TouchableHighlight
+              style={{
+                backgroundColor: "#FCB040",
+                width: "100%",
+                height: "5%",
+                justifyContent: "center",
+              }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>Hide Image</Text>
+            </TouchableHighlight>
           </View>
-          // ))
-        }
+        </View>
       </Modal>
       <Header
         backgroundColor="white"

@@ -139,10 +139,10 @@ const Signin = (props) => {
 
         <View style={styles.loginForm}>
           <View style={[styles.textFieldContainer, { marginTop: 20 }]}>
-            <Image
+            {/* <Image
               source={require("../../../assets/ProjectImages/authentication/mail-icon.png")}
               style={styles.fieldIcon}
-            />
+            /> */}
             <TextInput
               style={styles.textField}
               value={email}
@@ -152,10 +152,10 @@ const Signin = (props) => {
           </View>
 
           <View style={[styles.textFieldContainer, { marginTop: 26 }]}>
-            <Image
+            {/* <Image
               source={require("../../../assets/ProjectImages/authentication/password-icon.png")}
               style={styles.fieldIcon}
-            />
+            /> */}
 
             <TouchableOpacity
               style={styles.eyeIconContainer}
@@ -265,10 +265,11 @@ const styles = StyleSheet.create({
   },
   textFieldContainer: {},
   textField: {
-    borderBottomWidth: 1,
-    borderBottomColor: "black",
+    // borderBottomWidth: 1,
+    // borderBottomColor: "black",
     paddingHorizontal: 40,
     paddingVertical: 10,
+    backgroundColor: "#FBFBFB",
   },
   fieldIcon: {
     // fontSize:18,
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
     width: "65%",
     // flex:1,
     alignSelf: "center",
-    marginTop: 80,
+    marginTop: 40,
     // backgroundColor:'red',
     // height:300
   },

@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
   ImageBackground,
 } from "react-native";
-import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImageManipulator from "expo-image-manipulator";
 
 // import { kabfiApp, firebase } from '../../database/config';
 import firebase from "firebase";
@@ -32,7 +32,7 @@ const EditProfile = (props) => {
   const [email, setEmail] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("United Kingdom");
-  const [Dp, setDp] = useState('');
+  const [Dp, setDp] = useState("");
   const [flag, setFlag] = useState(true);
   const [loader, setLoader] = useState(false);
   const [ErroMessage, setErroMessage] = useState("");
@@ -41,14 +41,14 @@ const EditProfile = (props) => {
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
     data.on("value", (userdata) => {
-      userdata.val().Dp?setFlag(true):setFlag(false)
+      userdata.val().Dp ? setFlag(true) : setFlag(false);
       setFirstName(userdata.val().firstName);
       setLastName(userdata.val().lastName);
       setMobileNo(userdata.val().mobileNo);
       setCity(userdata.val().city);
       setCountry(userdata.val().country);
       setEmail(userdata.val().email);
-      setDp(userdata.val().Dp);      
+      setDp(userdata.val().Dp);
     });
     setLoader(false);
   }, []);
@@ -113,9 +113,7 @@ const EditProfile = (props) => {
               setErroMessage("city name cannont be empty");
             }
           } else {
-            setErroMessage(
-              "Phone number cannot be empty and must be 11 characters"
-            );
+            setErroMessage("Phone number cannot be empty and 11 characters");
           }
         } else {
           console.log("1!");
@@ -138,7 +136,6 @@ const EditProfile = (props) => {
         aspect: [4, 3],
         quality: 0,
       });
-
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -146,12 +143,11 @@ const EditProfile = (props) => {
         quality: 0,
       });
     }
-    const manipResult = await ImageManipulator.manipulateAsync(
-      result.uri,
-      [],
-      { compress: 0, format: ImageManipulator.SaveFormat.PNG }
-    );
-  console.log(manipResult)
+    const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {
+      compress: 0,
+      format: ImageManipulator.SaveFormat.PNG,
+    });
+    console.log(manipResult);
 
     if (!result.cancelled) {
       setDp(manipResult.uri);
@@ -249,33 +245,30 @@ const EditProfile = (props) => {
             style={[styles.imageContainer, { alignSelf: "center" }]}
             onPress={AlertTaxiLicenseImage}
           >
-           {
-           flag?
-            <ImageBackground
-             
-             source={{ uri: Dp }}
-              borderRadius={50}
-              style={[styles.image, { alignItems: "flex-end" }]}
-            >
-              <Image
-                source={edit}
-                style={{ height: 20, width: 20, marginTop: 10 }}
-              />
-            </ImageBackground>
-:
-            <ImageBackground     
-             source={user}
-              borderRadius={50}
-              style={[styles.image, { alignItems: "flex-end" }]}
-            >
-              <Image
-                source={edit}
-                style={{ height: 20, width: 20, marginTop: 10 }}
-              />
-            </ImageBackground>
-} 
+            {flag ? (
+              <ImageBackground
+                source={{ uri: Dp }}
+                borderRadius={50}
+                style={[styles.image, { alignItems: "flex-end" }]}
+              >
+                <Image
+                  source={edit}
+                  style={{ height: 20, width: 20, marginTop: 10 }}
+                />
+              </ImageBackground>
+            ) : (
+              <ImageBackground
+                source={user}
+                borderRadius={50}
+                style={[styles.image, { alignItems: "flex-end" }]}
+              >
+                <Image
+                  source={edit}
+                  style={{ height: 20, width: 20, marginTop: 10 }}
+                />
+              </ImageBackground>
+            )}
           </TouchableOpacity>
-
 
           {/* <TouchableOpacity onPress={pickDpImage}>
                   <TextInput
@@ -382,7 +375,7 @@ const EditProfile = (props) => {
             {ErroMessage}
           </Text>
         </View>
-       {/* )}  */}
+        {/* )}  */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

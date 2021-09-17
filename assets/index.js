@@ -22,6 +22,7 @@ export const send = require("./ProjectImages/send.png");
 export const stop = require("./ProjectImages/users/stop.png");
 export const bars = require("./ProjectImages/users/bars.png");
 export const loadad = require("./ProjectImages/users/loadad.png");
+export const cross = require("./ProjectImages/users/close.png");
 //others
 export const galleryImage = require("./ProjectImages/authentication/PhotoIcon.png");
 export const tickImage = require("./ProjectImages/authentication/tick.png");

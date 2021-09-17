@@ -22,18 +22,7 @@ import {
   useSafeAreaInsets,
   initialWindowMetrics,
 } from "react-native-safe-area-context";
-import {
-  user,
-  user2,
-  smallGallery,
-  smallLocation,
-  voiceImage,
-  send,
-  del,
-  stop,
-  bars,
-  loadad,
-} from "../../../assets";
+import { smallGallery, del, stop, bars, loadad, cross } from "../../../assets";
 import {
   responsiveWidth,
   responsiveHeight,
@@ -80,11 +69,12 @@ const CreatePost = (props) => {
   const [isdisable, setisdisable] = useState(false);
   const [index, setindex] = useState(false);
   const [keyBoardHeight, setKeyBoardHeight] = useState(false);
+  const [isplaying, setisplaying] = useState(false);
 
   useEffect(() => {
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
-    setRecording(null)
+    setRecording(null);
     getLocation();
     setshow(false);
     inputRef.current.focus();
@@ -196,7 +186,7 @@ const CreatePost = (props) => {
         props.navigation.navigate("NewsFeed");
       } else {
         setloading(false);
-        alert("Upload data to post");
+        // alert("Upload data to post");
       }
     } catch (error) {
       setloading(false);
@@ -313,25 +303,31 @@ const CreatePost = (props) => {
   }
   async function playSound() {
     console.log("Loading Sound");
-    setisplay(true);
-    const { sound: playbackObject } = await Audio.Sound.createAsync(
-      {
-        uri: Sound,
-      },
-      { shouldPlay: true }
-    );
-    console.log("Playing Sound", Sound);
-    setsound(playbackObject);
-    // let ntime = time;
-    // await playbackObject.playAsync();
-    // while (ntime) {
-    //   settime(time / 10);
-    // }
-    setTimeout(() => {
-      setisplay(false);
-      setshow(false);
-      // settime(ntime);
-    }, Number(time));
+    // setisplay(true);
+
+    if (!isplaying) {
+      const { sound: playbackObject } = await Audio.Sound.createAsync(
+        {
+          uri: Sound,
+        },
+        { shouldPlay: true }
+      );
+      console.log("Playing Sound", playbackObject);
+      setsound(playbackObject);
+      // let ntime = time;
+      // await playbackObject.playAsync();
+      // while (ntime) {
+      //   settime(time / 10);
+      // }
+      setTimeout(() => {
+        setisplay(false);
+        setshow(false);
+        setisplaying(false);
+        // settime(ntime);
+      }, Number(time));
+    } else {
+      sound.pauseAsync();
+    }
   }
   async function stopRecording() {
     // inputRef.current.focus();
@@ -419,9 +415,10 @@ const CreatePost = (props) => {
             <TouchableOpacity onPress={oncancel}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               disabled={recording || postText || postImage ? false : true}
-            onPress={savePost}>
+              onPress={savePost}
+            >
               {loading ? (
                 <ActivityIndicator color={"red"} size={"small"} />
               ) : (
@@ -441,12 +438,23 @@ const CreatePost = (props) => {
                   opacity: 0.7,
                 }}
               >
-                <TouchableOpacity onPress={() => setPostImage(null)}>
-                  <Entypo
-                    name="cross"
-                    size={30}
-                    color="white"
-                    style={{ alignSelf: "flex-end" }}
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#000",
+                    opacity: 0.8,
+                    alignItems: "flex-end",
+                  }}
+                  onPress={() => setPostImage(null)}
+                >
+                  <Image
+                    source={cross}
+                    style={{
+                      height: 15,
+                      width: 15,
+                      margin: 5,
+                      tintColor: "white",
+                    }}
                   />
                 </TouchableOpacity>
               </ImageBackground>
@@ -467,16 +475,18 @@ const CreatePost = (props) => {
               <View
                 style={{
                   backgroundColor: "orange",
-                  width: responsiveWidth(54),
+                  width: responsiveWidth(50),
                   flexDirection: "row",
                   alignItems: "center",
-                  padding: 4,
+                  padding: 2,
                   marginTop: 3,
                   borderRadius: 20,
                 }}
               >
                 <TouchableOpacity
-                  onPress={playSound}
+                  onPress={() => {
+                    playSound(), setisplaying(!isplaying), setisplay(!isplay);
+                  }}
                   style={{
                     // alignSelf: "center",
                     marginTop: 5,
@@ -492,24 +502,6 @@ const CreatePost = (props) => {
                 <Text style={{ color: "white" }}>{`${(time / 1000).toFixed(
                   0
                 )}:00`}</Text>
-                {/* <Slider
-                  minimumValue={0}
-                  maximumValue={Number(time)}
-                  onSlidingStart={isplay}
-                  onSlidingComplete={isplay}
-                  // value={timer}
-                  minimumTrackTintColor={"orange"}
-                  maximumTrackTintColor={"lightgray"}
-                  thumbStyle={{
-                    // borderColor: "white",
-                    borderWidth: 4.5,
-                    height: 10,
-                    width: 10,
-                    borderRadius: 12,
-                  }}
-                  thumbTintColor={"#FF9900"}
-                  style={{ width: responsiveWidth(40) }}
-                /> */}
                 <Image
                   source={bars}
                   style={{
@@ -574,72 +566,82 @@ const CreatePost = (props) => {
               */}
           </View>
         </View>
-
+        <View
+          style={{
+            alignSelf: "center",
+            width: "90%",
+            // backgroundColor: "tomato",
+            alignItems: "flex-end",
+          }}
+        >
+          {isstopwatch ? (
+            <Stopwatch
+              laps
+              start={ontimer}
+              reset={stopwatchReset}
+              // totalDuration={6000}
+              // handleFinish={() => {
+              //   ontimer(false), setindex(false), stopRecording();
+              // }}
+              //To start
+              options={{
+                container: {
+                  backgroundColor: "transparent",
+                  // padding: 5,
+                  // borderRadius: 5,
+                  // width: 180,
+                  // alignSelf: "center",
+                  marginRight: 10,
+                  // marginTop: 5,
+                },
+                text: {
+                  fontSize: 20,
+                  color: "black",
+                  alignSelf: "center",
+                },
+              }}
+              //options for the styling
+              getTime={(time) => {
+                //console.log(time);
+              }}
+            />
+          ) : null}
+        </View>
         {show ? (
           <View
             style={{
               marginTop: responsiveHeight(15),
+              flexDirection: "row",
+              alignItems: "center",
+              width: "90%",
+              // backgroundColor: "tomato",
+              alignSelf: "center",
+              justifyContent: "space-between",
             }}
           >
-            <View
-              style={{
-                flexDirection: "row",
-                // backgroundColor: "tomato",
-                alignSelf: "flex-end",
-                width: "53%",
-                justifyContent: "space-between",
-              }}
-            >
-              {isstopwatch ? (
-                <TouchableOpacity
-                  onPress={onsendaudio}
-                  disabled={isdisable || !recording ? true : false}
-                >
-                  <Image
-                    source={loadad}
-                    style={{
-                      height: 30,
-                      width: 30,
-                      alignSelf: "center",
-                      marginTop: responsiveHeight(4.5),
-                    }}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
-              ) : null}
-              {isstopwatch ? (
-                <Stopwatch
-                  laps
-                  start={ontimer}
-                  reset={stopwatchReset}
-                  // totalDuration={6000}
-                  // handleFinish={() => {
-                  //   ontimer(false), setindex(false), stopRecording();
-                  // }}
-                  //To start
-                  options={{
-                    container: {
-                      backgroundColor: "transparent",
-                      // padding: 5,
-                      // borderRadius: 5,
-                      // width: 180,
-                      alignSelf: "center",
-                      marginRight: 10,
-                      // marginTop: 5,
-                    },
-                    text: {
-                      fontSize: 20,
-                      color: "black",
-                      alignSelf: "center",
-                    },
+            {isstopwatch ? (
+              <TouchableOpacity
+                onPress={onsendaudio}
+                disabled={isdisable || !recording ? true : false}
+              >
+                <Image
+                  source={loadad}
+                  style={{
+                    height: 40,
+                    width: 30,
+                    top: 5,
                   }}
-                  //options for the styling
-                  getTime={(time) => {
-                    //console.log(time);
-                  }}
+                  resizeMode="contain"
                 />
-              ) : null}
-            </View>
+              </TouchableOpacity>
+            ) : (
+              <Feather
+                name="mic"
+                size={5}
+                color="transparent"
+                style={{ alignSelf: "center" }}
+              />
+            )}
             {!index ? (
               <TouchableOpacity
                 onPress={() => {
@@ -651,8 +653,7 @@ const CreatePost = (props) => {
                   borderRadius: 75,
                   backgroundColor: "#FCB040",
                   justifyContent: "center",
-                  alignSelf: "center",
-                  // marginTop: 30,
+                  // alignSelf: "center",
                 }}
               >
                 <Feather
@@ -674,42 +675,13 @@ const CreatePost = (props) => {
                 </Text>
               </TouchableOpacity>
             ) : (
-              // <AudioView
-              //   onPressAudio={() => {
-              //     recording
-              //       ? (stopRecording(),
-              //         setisdisable(false),
-              //         // setstopwatchReset(true),
-              //         setontimer(false))
-              //       : (startRecording(),
-              //         setisstopwatch(true),
-              //         setontimer(true),
-              //         setstopwatchReset(false),
-              //         setisdisable(true),
-              //         setshowrec(false));
-              //   }}
-              // />
               <TouchableOpacity
                 onPress={() => {
-                  // recording
-                  //   ?
-                  stopRecording(),
-                    setisdisable(false),
-                    // setstopwatchReset(true),
-                    setontimer(false);
-                  // :
-                  //  (startRecording(),
-                  //   setisstopwatch(true),
-                  //   setontimer(true),
-                  //   setstopwatchReset(false),
-                  //   setisdisable(true),
-                  //   setshowrec(false));
+                  stopRecording(), setisdisable(false), setontimer(false);
                 }}
                 style={{
                   borderRadius: 75,
                   justifyContent: "center",
-                  alignSelf: "center",
-                  marginTop: 30,
                 }}
               >
                 <Image
@@ -723,28 +695,26 @@ const CreatePost = (props) => {
               <TouchableOpacity
                 disabled={isdisable ? true : false}
                 onPress={ondelaudio}
-                style={{
-                  flexDirection: "row",
-                  alignSelf: "flex-end",
-                  width: "53%",
-                  justifyContent: "space-between",
-                  marginTop: 30,
-
-                  top: delTop ? responsiveHeight(11.5) : 0,
-                }}
+                style={{}}
               >
                 <Image
                   source={del}
                   style={{
-                    height: 30,
+                    height: 25,
                     width: 30,
-                    alignSelf: "center",
-                    marginTop: 5,
+                    bottom: 1,
                   }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
-            ) : null}
+            ) : (
+              <Feather
+                name="mic"
+                size={5}
+                color="transparent"
+                style={{ alignSelf: "center" }}
+              />
+            )}
           </View>
         ) : null}
       </>

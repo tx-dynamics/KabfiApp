@@ -304,58 +304,66 @@ const CommentScreen = ({ route, navigation }) => {
       />
 
       <FlatList data={posts} renderItem={renderPosts} />
-
       <View
-        style={[
-          styles.horizontalContainer,
-          {
-            justifyContent: "space-around",
-            width: "85%",
-            alignSelf: "center",
-            alignItems: "center",
-            position: "absolute",
-            
-            bottom: valueforBorrom
-              ? keyBoardHeight - initialWindowMetrics.insets.bottom+responsiveHeight(1)
-              : 0,
-          },
-        ]}
+        style={{
+          backgroundColor: "#FBFBFB",
+          width: "100%",
+          position: "absolute",
+          bottom: valueforBorrom
+            ? keyBoardHeight -
+              initialWindowMetrics.insets.bottom +
+              responsiveHeight(1)
+            : 0,
+          paddingVertical: 8,
+        }}
       >
-        <TextInput
-          ref={inputRef}
-          style={styles.input}
-          placeholder="Comments"
-          autoCapitalize={"none"}
-          returnKeyType={"done"}
-          keyboardType={"default"}
-          placeholderTextColor="gray"
-          value={cmnt}
-          multiline={true}
-          underlineColorAndroid="transparent"
-          onChangeText={(text) => {
-            setCmnt(text);
-          }}
-        />
-        <TouchableOpacity
-          disabled={cmnt === "" ? true : false}
-          onPress={() => {
-            postComments(), setisloading(true);
-          }}
-          style={{
-            justifyContent: "center",
-            alignSelf: "center",
-          }}
+        <View
+          style={[
+            styles.horizontalContainer,
+            {
+              justifyContent: "space-around",
+              width: "85%",
+              alignSelf: "center",
+              alignItems: "center",
+            },
+          ]}
         >
-          {isloading ? (
-            <ActivityIndicator color={"black"} size={"small"} />
-          ) : (
-            <Image
-              source={send}
-              style={{ height: 26, width: 26 }}
-              resizeMode="contain"
-            />
-          )}
-        </TouchableOpacity>
+          <TextInput
+            ref={inputRef}
+            style={styles.input}
+            // placeholder="Comments"
+            autoCapitalize={"none"}
+            returnKeyType={"done"}
+            keyboardType={"default"}
+            placeholderTextColor="gray"
+            value={cmnt}
+            multiline={true}
+            underlineColorAndroid="transparent"
+            onChangeText={(text) => {
+              setCmnt(text);
+            }}
+          />
+          <TouchableOpacity
+            disabled={cmnt === "" ? true : false}
+            onPress={() => {
+              postComments(), setisloading(true);
+            }}
+            style={{
+              justifyContent: "center",
+              alignSelf: "center",
+            }}
+          >
+            {isloading ? (
+              <ActivityIndicator color={"black"} size={"small"} />
+            ) : (
+              <Image
+                source={send}
+                style={{ height: 26, width: 26 }}
+                resizeMode="contain"
+              />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
       {/* </KeyboardAvoidingView> */}
     </View>

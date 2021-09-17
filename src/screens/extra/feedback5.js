@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import styles from "./styles";
 import { StatusBar } from "expo-status-bar";
@@ -14,6 +16,11 @@ import { Header } from "react-native-elements";
 import { star, sad, ok, smile, smiley } from "../../../assets";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import firebase from "firebase";
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from "react-native-responsive-dimensions";
 const feedback5 = (props) => {
   const [isSmile, setisSmile] = useState(false);
   const [tell, settell] = useState("");
@@ -73,24 +80,28 @@ const feedback5 = (props) => {
     // }
   }
   return (
-    <View style={styles.main}>
-      <StatusBar style="dark" />
-      <Header
-        backgroundColor="white"
-        containerStyle={{ marginTop: 0, borderBottomWidth: 0 }}
-      />
-      <ScrollView
-        style={{ flex: 0.9, backgroundColor: "white" }}
-        keyboardShouldPersistTaps="handled"
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "white", flexGrow: 1 }}
+      // keyboardShouldPersistTaps="always"
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, backgroundColor: "white" }}
+        // keyboardShouldPersistTaps="handled"
       >
+        <StatusBar style="dark" />
+        <Header
+          backgroundColor="white"
+          containerStyle={{ marginTop: 0, borderBottomWidth: 0 }}
+        />
+
         <Text style={{ marginTop: 15 }}></Text>
         <Text style={[styles.happytxt, { alignSelf: "center", width: "80%" }]}>
           Share your feedback
         </Text>
         <Text
           style={[
-            styles.largetxt,
-            { alignSelf: "center", width: "80%", marginTop: 5 },
+            { alignSelf: "center", width: "80%", marginTop: 5, fontSize: 14 },
           ]}
         >
           How you satisfied are you with KABFI?
@@ -109,13 +120,13 @@ const feedback5 = (props) => {
           style={{
             width: "80%",
             alignSelf: "center",
-            height: 250,
+            height: 200,
             backgroundColor: "#FFFFFF",
             paddingHorizontal: 15,
             marginTop: 10,
             fontSize: 16,
             fontWeight: "400",
-            paddingVertical: 15,
+            paddingVertical: responsiveHeight(2),
             borderWidth: 1,
             borderColor: "#D5D5D5",
             borderRadius: 20,
@@ -155,7 +166,7 @@ const feedback5 = (props) => {
             width: "80%",
             alignSelf: "center",
             justifyContent: "space-between",
-            marginTop: 30,
+            marginTop: responsiveHeight(24),
           }}
         >
           <TouchableOpacity
@@ -226,8 +237,8 @@ const feedback5 = (props) => {
             />
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </View>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 export default feedback5;
