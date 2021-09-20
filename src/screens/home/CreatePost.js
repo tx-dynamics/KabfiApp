@@ -272,7 +272,9 @@ const CreatePost = (props) => {
         },
       });
       await record.startAsync();
-      const timer = setInterval(() => {}, 6000);
+      // const timer = setInterval(() => {
+      //   console.log("test")
+      // }, 6000);
       // setTimeout(() => {
       //   setisdisable(false);
       //   setindex(true);
@@ -435,7 +437,7 @@ const CreatePost = (props) => {
                   borderRadius: responsiveHeight(0.5),
                   width: 100,
                   height: 100,
-                  opacity: 0.7,
+                  opacity:0.6,
                 }}
               >
                 <TouchableOpacity
@@ -566,15 +568,19 @@ const CreatePost = (props) => {
               */}
           </View>
         </View>
-        <View
+      
+        {show ? (
+          <>
+          <View
           style={{
+            marginTop: responsiveHeight(20),
             alignSelf: "center",
             width: "90%",
             // backgroundColor: "tomato",
             alignItems: "flex-end",
           }}
         >
-          {isstopwatch ? (
+          
             <Stopwatch
               laps
               start={ontimer}
@@ -605,12 +611,12 @@ const CreatePost = (props) => {
                 //console.log(time);
               }}
             />
-          ) : null}
+        
         </View>
-        {show ? (
+          
           <View
             style={{
-              marginTop: responsiveHeight(15),
+              marginTop: responsiveHeight(5),
               flexDirection: "row",
               alignItems: "center",
               width: "90%",
@@ -620,6 +626,9 @@ const CreatePost = (props) => {
             }}
           >
             {isstopwatch ? (
+
+             
+
               <TouchableOpacity
                 onPress={onsendaudio}
                 disabled={isdisable || !recording ? true : false}
@@ -716,7 +725,9 @@ const CreatePost = (props) => {
               />
             )}
           </View>
+         </> 
         ) : null}
+    
       </>
     </View>
   );

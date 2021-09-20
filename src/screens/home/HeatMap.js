@@ -1,11 +1,14 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform,
+ActivityIndicator,
+} from "react-native";
 import MapView, { Heatmap, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 require("firebase/database");
 import firebase from "firebase";
 import { cos } from "react-native-reanimated";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 // export default class HeatMap extends Component {
 //   static navigationOptions = {
 //     title: "New York",
@@ -173,15 +176,17 @@ const styles = StyleSheet.create({
 });
 
 export default class HeatMap extends Component {
+  
   state = {
     initialPosition: {
-      latitude: 51.5074,
-      longitude: 0.1278,
-      latitudeDelta: 0.09,
-      longitudeDelta: 0.035,
+      // latitude: 51.5074,
+      // longitude: 0.1278,
+      // latitudeDelta: 0.09,
+      // longitudeDelta: 0.035,
     },
+    loader:false,
     region: {},
-    points: [{ latitude: 40.7828, longitude: -74.0065 }],
+    points: [],
   };
   componentDidUpdate(prevProps) {
     if (prevProps.isFocused !== this.props.isFocused) {
@@ -189,6 +194,7 @@ export default class HeatMap extends Component {
     }
   }
   componentDidMount() {
+    
     this.fetchLocation();
   }
 
@@ -259,6 +265,7 @@ export default class HeatMap extends Component {
   // }
   async fetchLocation() {
     try {
+      this.setState({loader:true})
       let location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
@@ -284,11 +291,11 @@ export default class HeatMap extends Component {
       try {
         const mylocation = firebase.database().ref("locations/");
         mylocation.once("value", (child) => {
-          const points = [];
+          const points1 = [];
           console.log(child.key);
           // if (child.hasChildren()) {
           child.forEach((chill) => {
-            points.push({
+            points1.push({
               latitude: chill.val().latitude,
               longitude: chill.val().longitude,
               latitudeDelta: 0.015,
@@ -296,8 +303,8 @@ export default class HeatMap extends Component {
             });
           });
           // }
-          console.log("Points==>", points);
-          this.setState({ points });
+          console.log("Points==>", points1);
+          this.setState({ points:points1,loader:false });
         });
       } catch (err) {
         // this.fetchLocation();
@@ -310,53 +317,16 @@ export default class HeatMap extends Component {
     }
   }
 
-  points = [
-    { latitude: 40.7828, longitude: -74.0065, weight: 1 },
-    { latitude: 41.7121, longitude: -74.0042, weight: 1 },
-    { latitude: 40.7102, longitude: -75.006, weight: 1 },
-    { latitude: 40.7123, longitude: -74.0052, weight: 1 },
-    { latitude: 40.7032, longitude: -74.0042, weight: 1 },
-    { latitude: 40.7198, longitude: -74.0024, weight: 1 },
-    { latitude: 41.7223, longitude: -74.0053, weight: 1 },
-    { latitude: 40.7181, longitude: -74.0042, weight: 1 },
-    { latitude: 40.7124, longitude: -74.0023, weight: 1 },
-    { latitude: 40.7648, longitude: -74.0012, weight: 1 },
-    { latitude: 41.7128, longitude: -74.0027, weight: 1 },
-    { latitude: 40.7223, longitude: -74.0153, weight: 1 },
-    { latitude: 40.7193, longitude: -74.0052, weight: 1 },
-    { latitude: 40.7241, longitude: -75.0013, weight: 1 },
-    { latitude: 41.7518, longitude: -74.0085, weight: 1 },
-    { latitude: 40.7599, longitude: -74.0093, weight: 1 },
-    { latitude: 41.7523, longitude: -74.0021, weight: 1 },
-    { latitude: 40.7342, longitude: -74.0152, weight: 1 },
-    { latitude: 40.7484, longitude: -75.0042, weight: 1 },
-    { latitude: 40.7929, longitude: -75.0023, weight: 1 },
-    { latitude: 40.7292, longitude: -74.0013, weight: 1 },
-    { latitude: 40.794, longitude: -74.0048, weight: 1 },
-    { latitude: 40.7874, longitude: -74.0052, weight: 1 },
-    { latitude: 40.7824, longitude: -74.0024, weight: 1 },
-    { latitude: 40.7232, longitude: -74.0094, weight: 1 },
-    { latitude: 41.7342, longitude: -74.0152, weight: 1 },
-    { latitude: 41.7484, longitude: -74.0012, weight: 1 },
-    { latitude: 41.7929, longitude: -74.0073, weight: 1 },
-    { latitude: 41.7292, longitude: -74.0013, weight: 1 },
-    { latitude: 41.794, longitude: -74.0058, weight: 1 },
-    { latitude: 41.7874, longitude: -74.0352, weight: 1 },
-    { latitude: 41.7824, longitude: -74.0024, weight: 1 },
-    { latitude: 41.7232, longitude: -74.0094, weight: 1 },
-    { latitude: 41.0342, longitude: -75.0152, weight: 1 },
-    { latitude: 41.0484, longitude: -75.0012, weight: 1 },
-    { latitude: 41.0929, longitude: -75.0073, weight: 1 },
-    { latitude: 41.0292, longitude: -74.0013, weight: 1 },
-    { latitude: 41.094, longitude: -74.0068, weight: 1 },
-    { latitude: 41.0874, longitude: -74.0052, weight: 1 },
-    { latitude: 41.0824, longitude: -74.0024, weight: 1 },
-    { latitude: 41.0232, longitude: -74.0014, weight: 1 },
-  ];
+ 
 
   render() {
     return (
       <View style={styles.container}>
+        {this.state.loader?
+      <ActivityIndicator size={'large'} style={{marginTop:responsiveHeight(20), alignSelf:'center'}}></ActivityIndicator>
+      
+    :
+    
         <MapView
           provider={PROVIDER_GOOGLE}
           ref={(map) => (this._map = map)}
@@ -377,6 +347,7 @@ export default class HeatMap extends Component {
             }}
           ></Heatmap>
         </MapView>
+        }
       </View>
     );
   }

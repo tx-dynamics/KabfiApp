@@ -52,7 +52,9 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-
+import { Stopwatch, Timer } from "react-native-stopwatch-timer";
+import CountDown from "react-native-countdown-component";
+import { color } from "react-native-reanimated";
 const useProgress = (maxTimeInSeconds = 700) => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -98,6 +100,21 @@ const NewsFeed = (props) => {
   const [sound, setsound] = useState();
   const refRBSheet = useRef();
   const [isplaying, setisplaying] = useState(false);
+  const [timerStart, settimerStart] = useState(false);
+  const [timerReset, settimerReset] = useState(false);
+  const options = {
+    container: {
+      //backgroundColor: '#000',
+      //padding: 5,
+      borderRadius: 5,
+      //width: 220,
+    },
+    text: {
+      fontSize: 12,
+      color: "#FFF",
+      marginLeft: -7,
+    },
+  };
   useEffect(() => {
     fetchAllPosts();
     fetchLocation();
@@ -109,6 +126,19 @@ const NewsFeed = (props) => {
     //   : undefined;
   }, [isFocused]);
   //isFocused, sound
+  // const handleTimerComplete = () => {
+  //  console.log("Hadle complete ")
+  //   settimerStart(false)
+  //   settimerReset(false)
+  // }
+
+  async function handleTimerComplete(index, time) {
+    //posts[index].time= time
+    //fetchAllPosts()
+    settimerReset(false);
+    settimerStart(false);
+    // alert("custom completion function");
+  }
 
   async function fetchLocation() {
     setRefreshing(true);
@@ -372,6 +402,7 @@ const NewsFeed = (props) => {
   }
   async function playSound(id, soundUri, time) {
     console.log("testtt" + parseInt(time / 1000));
+
     setMaxTimeInSeconds(time / 1000);
     if (!isplaying) {
       try {
@@ -395,16 +426,21 @@ const NewsFeed = (props) => {
         //   await playbackObject.playAsync();
         // }, 1000);
         var inter = 0;
+
+        settimerStart(true);
         await playbackObject.playAsync();
+        settimerReset(true);
         //time update
-        inter = setInterval(async () => {
-          var remainingTime =
-            status["durationMillis"] - status["positionMillis"];
-          console.log(remainingTime);
-        }, Number(time));
+
+        // inter = setInterval(async () => {
+        //   var remainingTime =
+        //     status["durationMillis"] - status["positionMillis"];
+        //   console.log(remainingTime);
+        // }, Number(time));
 
         setTimeout(() => {
           setisplaying(false);
+
           const res = posts.map((item) => {
             if (item.id === id) {
               return {
@@ -435,6 +471,8 @@ const NewsFeed = (props) => {
       });
       setPosts(res);
     }
+    settimerStart(false);
+    settimerReset(false);
   }
   async function getStatus() {
     var status = await sound.getStatusAsync();
@@ -624,6 +662,7 @@ const NewsFeed = (props) => {
                     onPress={() => {
                       playSound(item.id, item.rec, item.time),
                         setisplaying(!isplaying);
+                      //settimerReset(true)
                     }}
                     style={{
                       // alignSelf: "center",
@@ -637,15 +676,39 @@ const NewsFeed = (props) => {
                       <Ionicons name="play" color="white" size={30} />
                     )}
                   </TouchableOpacity>
-                  {item.time > 5999 ? (
-                    <Text style={{ color: "white" }}>
+                  {/* {item.time > 5999 ? ( */}
+                  <>
+                    {/* <CountDown
+                      until={((parseInt(item.time)/1000)).toFixed(0)}
+                      size={12}
+                      onFinish={() => handleTimerComplete}
+                      digitStyle={{ backgroundColor: "transparent" }}
+                      digitTxtStyle={{ color: "white" }}
+                      timeToShow={["M", "S"]}
+                      timeLabels={{ m: "", s: "" }}
+                      showSeparator
+                      separatorStyle={{color:'white'}}
+                      running={timerStart}
+                      style={{marginLeft:responsiveWidth(-2)}}
+                    /> */}
+                    <Timer
+                      totalDuration={parseInt(item.time)}
+                      start={timerStart}
+                      reset={timerReset}
+                      options={options}
+                      handleFinish={handleTimerComplete}
+                      //  msec
+                      //getTime={this.getFormattedTime}
+                    />
+                    {/* <Text style={{ color: "white" }}>
                       {`${(item.time / 1000).toFixed(0)}:0`}
-                    </Text>
-                  ) : (
+                    </Text> */}
+                  </>
+                  {/* ) : (
                     <Text style={{ color: "white" }}>
                       {`0:${(item.time / 1000).toFixed(0)}`}
                     </Text>
-                  )}
+                  )} */}
                   <Image
                     source={bars}
                     style={{
