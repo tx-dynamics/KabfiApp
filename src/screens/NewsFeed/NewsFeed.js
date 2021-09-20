@@ -109,63 +109,6 @@ const NewsFeed = (props) => {
     //   : undefined;
   }, [isFocused]);
   //isFocused, sound
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     if (progress < 1) {
-  //       setElapsedTime(t => t + 1);
-  //     }
-  //   }, 1000);
-
-  //   return () => clearInterval(intervalId);
-  // }, []);
-
-  // const progressBarFunc= () => {
-  //   setProgress(elapsedTime / maxTimeInSeconds);
-  //   console.log("TETS",progress)
-
-  // }
-  // useEffect(() => {
-  //   //  var arr = splitInteger(1.0, 6)
-  //   //  var arr = divvy(1.0, 6, 1)
-  //   var number = 1.0;
-  //   var n = 10;
-
-  //   var values = [];
-  //   while (number > 0 && n > 0) {
-  //     var a = (number / n / 50) * 50;
-  //     number -= a;
-  //     n--;
-  //     values.push(parseFloat(a.toFixed(1)));
-  //   }
-
-  //   // alert(JSON.stringify(values[0]+values[1]))
-  // }, []);
-
-  //   const breakIntoParts = (num, parts) =>
-  //         [...Array(parts)].map((_,i) =>
-  //           0|num/parts+(i < num%parts))
-
-  //   function divvy(number, parts, min) {
-
-  //   var randombit = number - min * parts;
-  //   var out = [];
-
-  //   for (var i=0; i < parts; i++) {
-  //     out.push(Math.random());
-  //   }
-
-  //   var mult = randombit / out.reduce(function (a,b) {return a+b;});
-
-  //   return out.map(function (el) { return el * mult + min; });
-  // }
-
-  const splitInteger = (number, parts) => {
-    const remainder = number % parts;
-    const baseValue = (number - remainder) / parts;
-
-    // return Array(parts).fill(baseValue).fill(baseValue + 1, parts - remainder)
-    return remainder;
-  };
 
   async function fetchLocation() {
     setRefreshing(true);
@@ -227,15 +170,30 @@ const NewsFeed = (props) => {
             //it will fetch user like
             const userlike = firebase
               .database()
-              .ref("user_posts/" + child.key + "/Like/" + uid);
+              .ref(
+                "user_posts/" +
+                  child.key +
+                  "/Like/" +
+                  firebase.auth().currentUser?.uid
+              );
             //it will check user hide the post or not
             const hideuser = firebase
               .database()
-              .ref("user_posts/" + child.key + "/Hide/" + uid);
+              .ref(
+                "user_posts/" +
+                  child.key +
+                  "/Hide/" +
+                  firebase.auth().currentUser?.uid
+              );
             //it will check the save post that user save
             const userSave = firebase
               .database()
-              .ref("user_posts/" + child.key + "/Save/" + uid);
+              .ref(
+                "user_posts/" +
+                  child.key +
+                  "/Save/" +
+                  firebase.auth().currentUser?.uid
+              );
             //this will update if user change the picture
             const userImages = firebase
               .database()
@@ -319,8 +277,6 @@ const NewsFeed = (props) => {
                                 ? child.val().location
                                 : null,
                             isShow: false,
-                            progressbar: false,
-                            // isplaying: false,
                           });
                         }
                       });
@@ -373,7 +329,7 @@ const NewsFeed = (props) => {
       return post_id !== i.id;
     });
 
-    console.log("post filter", filtered, "\n", post_id);
+    console.log("\n", post_id);
     setPosts(filtered);
     alert("This post is no longer availble for you");
     const hiderPost = firebase
@@ -381,6 +337,7 @@ const NewsFeed = (props) => {
       .ref("user_posts/" + post_id + "/Hide/");
     hiderPost.set(uid);
     setShow(false);
+    console.log("post_id==>", post_id);
     // setRefreshing(false);
     // fetchAllPosts();
   }
@@ -432,36 +389,19 @@ const NewsFeed = (props) => {
           }
         );
         setsound(playbackObject);
-        // console.log("Playing Sound", playbackObject);
-        // var number = 1.0;
-        // var n = parseInt(time / 1000);
-
-        // var values = [];
-        // while (number > 0 && n > 0) {
-        //   var a = (number / n / 50) * 50;
-        //   number -= a;
-        //   n--;
-        //   values.push(parseFloat(a.toFixed(1)));
-        // }
-        // let index = 0;
-        // let sum = 0;
-
-        await playbackObject.playAsync();
-        // settimer(Math.round(Number(time)));
-
-        // maxTimeInSeconds
-
-        // console.log("Playing Sound", JSON.stringify(values));
-
-        // const InervalID = setInterval(async () => {
-        //   if (progress < 1) {
-        //     await setElapsedTime((t) => t + 1);
-
-        //     sum = sum + values[index];
-
-        //     await setProgress(sum);
-        //   }
+        var status = await playbackObject.getStatusAsync();
+        // setTimeout(async () => {
+        //   console.log("status", status);
+        //   await playbackObject.playAsync();
         // }, 1000);
+        var inter = 0;
+        await playbackObject.playAsync();
+        //time update
+        inter = setInterval(async () => {
+          var remainingTime =
+            status["durationMillis"] - status["positionMillis"];
+          console.log(remainingTime);
+        }, Number(time));
 
         setTimeout(() => {
           setisplaying(false);
@@ -470,23 +410,14 @@ const NewsFeed = (props) => {
               return {
                 ...item,
                 isShow: false,
-                progressbar: false,
               };
             } else {
               return { ...item };
             }
           });
-          // setTimeout(() => {
-          // console.log("Test", progress);
-          // setElapsedTime(0);
-          // setProgress(0);
-          // clearInterval(InervalID);
-          // }, 2000)
-          // setProgress(0)
-
-          // console.log(res);
           setPosts(res);
-        }, Number(time) + 2000);
+          clearInterval(inter);
+        }, Number(time) + 1000);
       } catch (err) {}
     } else {
       console.log("isplaying", isplaying);
@@ -504,6 +435,24 @@ const NewsFeed = (props) => {
       });
       setPosts(res);
     }
+  }
+  async function getStatus() {
+    var status = await sound.getStatusAsync();
+    var percentage =
+      (status["positionMillis"] / status["durationMillis"]) * 100;
+    var remainingTime = status["durationMillis"] - status["positionMillis"];
+
+    // For use to move the slider automatically
+    this.state.value = percentage;
+    console.log(percentage);
+
+    // Convert to mm:ss format
+    var milliseconds = remainingTime % 1000;
+    var seconds = Math.floor((remainingTime / 1000) % 60);
+    var minutes = Math.floor((remainingTime / (60 * 1000)) % 60);
+    remainingTime = minutes + ":" + seconds;
+
+    this.setState({ position: percentage, timeLeft: remainingTime });
   }
   async function toogleLike(id, isplaying) {
     console.log(id);
