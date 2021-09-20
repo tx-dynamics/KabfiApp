@@ -761,15 +761,16 @@ const NewsFeed = (props) => {
             </TouchableOpacity>
 
             <TouchableOpacity
+              disabled={true}
               onPress={() => saveHandler(item.id, item.save_count, item.save)}
               style={[styles.bottomContainer]}
             >
-              <Image
+              {/* <Image
                 source={favourite}
                 resizeMode="contain"
                 style={{ height: 18, width: 18 }}
               />
-              <Text style={styles.smallText}>{` ${item.save_count} `}</Text>
+              <Text style={styles.smallText}>{` ${item.save_count} `}</Text> */}
             </TouchableOpacity>
           </View>
           {item.region ? (
@@ -1002,7 +1003,7 @@ const NewsFeed = (props) => {
                 />
                 <Text style={styles.listText}>Hot spots</Text>
               </TouchableOpacity>
-
+              {/* 
               <TouchableOpacity
                 style={styles.listItem}
                 onPress={() => props.navigation.navigate("savedPost")}
@@ -1012,7 +1013,7 @@ const NewsFeed = (props) => {
                   style={styles.listIconImage}
                 />
                 <Text style={styles.listText}>Saved Post</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               <TouchableOpacity
                 style={styles.listItem}
