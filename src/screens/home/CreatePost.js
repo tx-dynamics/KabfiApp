@@ -60,7 +60,7 @@ const CreatePost = (props) => {
   const [loc, setLoc] = useState("");
   const isFocused = useIsFocused();
   const [time, settime] = useState("");
-  const [show, setshow] = useState(true);
+  const [show, setshow] = useState(false);
   const [stopwatchReset, setstopwatchReset] = useState(false);
   const [tokens, setTokens] = useState([]);
   const [isplay, setisplay] = useState(false);
@@ -272,6 +272,7 @@ const CreatePost = (props) => {
         },
       });
       await record.startAsync();
+      const timer = setInterval(() => {}, 6000);
       // const timer = setInterval(() => {
       //   console.log("test")
       // }, 6000);
@@ -437,7 +438,7 @@ const CreatePost = (props) => {
                   borderRadius: responsiveHeight(0.5),
                   width: 100,
                   height: 100,
-                  opacity:0.6,
+                  opacity: 0.6,
                 }}
               >
                 <TouchableOpacity
@@ -568,19 +569,16 @@ const CreatePost = (props) => {
               */}
           </View>
         </View>
-      
-        {show ? (
-          <>
+        {isstopwatch && (
           <View
-          style={{
-            marginTop: responsiveHeight(20),
-            alignSelf: "center",
-            width: "90%",
-            // backgroundColor: "tomato",
-            alignItems: "flex-end",
-          }}
-        >
-          
+            style={{
+              marginTop: responsiveHeight(20),
+              alignSelf: "center",
+              width: "90%",
+              // backgroundColor: "tomato",
+              alignItems: "flex-end",
+            }}
+          >
             <Stopwatch
               laps
               start={ontimer}
@@ -611,9 +609,12 @@ const CreatePost = (props) => {
                 //console.log(time);
               }}
             />
-        
-        </View>
-          
+          </View>
+        )}
+
+        {show ? (
+          // <>
+
           <View
             style={{
               marginTop: responsiveHeight(5),
@@ -626,9 +627,6 @@ const CreatePost = (props) => {
             }}
           >
             {isstopwatch ? (
-
-             
-
               <TouchableOpacity
                 onPress={onsendaudio}
                 disabled={isdisable || !recording ? true : false}
@@ -725,9 +723,8 @@ const CreatePost = (props) => {
               />
             )}
           </View>
-         </> 
-        ) : null}
-    
+        ) : // </>
+        null}
       </>
     </View>
   );
