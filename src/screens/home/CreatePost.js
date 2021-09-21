@@ -22,7 +22,8 @@ import {
   useSafeAreaInsets,
   initialWindowMetrics,
 } from "react-native-safe-area-context";
-import { smallGallery, del, stop, bars, loadad, cross } from "../../../assets";
+import CountDown from "react-native-countdown-component";
+import { smallGallery, del, stop, bars, loadad, cross,soundpic } from "../../../assets";
 import {
   responsiveWidth,
   responsiveHeight,
@@ -502,19 +503,72 @@ const CreatePost = (props) => {
                     <Ionicons name="play" color="white" size={30} />
                   )}
                 </TouchableOpacity>
-                <Text style={{ color: "white" }}>{`${(time / 1000).toFixed(
+
+                <>
+                    
+                    {isplay ? (
+                    <CountDown
+                      until={((parseInt(time)/1000)).toFixed(0)}
+                      onChange={(e)=>{console.log(e)}}
+                      size={10}
+                      // onFinish={() => handleTimerComplete}
+                      digitStyle={{ backgroundColor: "transparent",width:responsiveWidth(4) }}
+                      digitTxtStyle={{ color: "white" }}
+                      timeToShow={["M", "S"]}
+                      timeLabels={{ m: "", s: "" }}
+                      showSeparator
+                      separatorStyle={{color:'white'}}
+                      // running={timerStart}
+                      // style={{marginLeft:responsiveWidth(-2)}}
+                    /> 
+                    // <Timer
+                      //   totalDuration={parseInt(item.time)}
+                      //   start={timerStart}
+                      //   reset={timerReset}
+                      //   options={options}
+                      //   handleFinish={handleTimerComplete}
+                      //   // msec
+                      //   //getTime={this.getFormattedTime}
+                      // />
+                    ) : (
+                      <View style={{flexDirection:'row',}} >
+                        <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
+                          {(parseInt(time)/1000).toFixed(0) > 59? <>{(parseInt(time)/1000).toFixed(0)}  </>:
+                            <Text>00:</Text>}</Text>
+                        <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
+                          {(parseInt(time)/1000).toFixed(0) > 9? <>{(parseInt(time)/1000).toFixed(0)}</>: <>0{(parseInt(time)/1000).toFixed(0)}</>} 
+                          </Text>
+                      </View>
+                      // <Timer
+                        // totalDuration={parseInt(item.time)}
+                        // start={timerStart}
+                        // reset={timerReset}
+                        // options={options}
+                        // handleFinish={handleTimerComplete}
+                        //  msec
+                        //getTime={this.getFormattedTime}
+                      // />
+                    )}
+                    {/* <Text style={{ color: "white" }}>
+                      {`${(item.time / 1000).toFixed(0)}:0`}
+                    </Text> */}
+                  </>
+                  
+
+                {/* <Text style={{ color: "white" }}>{`${(time / 1000).toFixed(
                   0
-                )}:00`}</Text>
+                )}:00`}</Text> */}
                 <Image
                   source={bars}
                   style={{
                     height: 30,
-                    width: responsiveWidth(30),
+                    width: responsiveWidth(27),
                   }}
                   resizeMode="contain"
                 />
                 <TouchableOpacity
-                  onPress={() => {
+                    styles={{right:30}}
+                    onPress={() => {
                     setshowrec(false), setRecording("");
                   }}
                 >
@@ -539,11 +593,12 @@ const CreatePost = (props) => {
               onPress={showMethod}
               // disabled={recording ? true : false}
             >
-              <MaterialIcons
+              <Image source={soundpic} style={styles.media} />
+              {/* <MaterialIcons
                 name="multitrack-audio"
                 size={22}
                 color={"black"}
-              />
+              /> */}
             </TouchableOpacity>
             {/* // ) : (
               //   <TouchableOpacity onPress={playSound}>

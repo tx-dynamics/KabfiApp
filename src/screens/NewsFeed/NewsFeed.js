@@ -404,13 +404,15 @@ const NewsFeed = (props) => {
     console.log("testtt" + parseInt(time / 1000));
 
     setMaxTimeInSeconds(time / 1000);
+    setisplaying(!isplaying)
+    
     if (!isplaying) {
       try {
-        console.log("isplaying", isplaying);
-        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
 
-        console.log("Loading Sound", soundUri);
+        // console.log("isplaying", isplaying);
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
         toogleLike(id);
+        // console.log("Loading Sound", soundUri);
         const { sound: playbackObject } = await Audio.Sound.createAsync(
           {
             uri: soundUri,
@@ -664,8 +666,7 @@ const NewsFeed = (props) => {
                 >
                   <TouchableOpacity
                     onPress={() => {
-                      playSound(item.id, item.rec, item.time),
-                        setisplaying(!isplaying);
+                      playSound(item.id, item.rec, item.time);
                       //settimerReset(true)
                     }}
                     style={{
@@ -682,39 +683,50 @@ const NewsFeed = (props) => {
                   </TouchableOpacity>
                   {/* {item.time > 5999 ? ( */}
                   <>
-                    {/* <CountDown
+                    
+                    {item.isShow ? (
+                    <CountDown
                       until={((parseInt(item.time)/1000)).toFixed(0)}
+                      onChange={(e)=>{console.log(e)}}
                       size={12}
                       onFinish={() => handleTimerComplete}
-                      digitStyle={{ backgroundColor: "transparent" }}
+                      digitStyle={{ backgroundColor: "transparent",width:responsiveWidth(4) }}
                       digitTxtStyle={{ color: "white" }}
                       timeToShow={["M", "S"]}
                       timeLabels={{ m: "", s: "" }}
-                      showSeparator
+                      // showSeparators
                       separatorStyle={{color:'white'}}
-                      running={timerStart}
-                      style={{marginLeft:responsiveWidth(-2)}}
-                    /> */}
-                    {item.isShow ? (
-                      <Timer
-                        totalDuration={parseInt(item.time)}
-                        start={timerStart}
-                        reset={timerReset}
-                        options={options}
-                        handleFinish={handleTimerComplete}
-                        // msec
-                        //getTime={this.getFormattedTime}
-                      />
+                      // running={timerStart}
+                      style={{marginLeft:responsiveWidth(-2),}}
+                    /> 
+                    // <Timer
+                      //   totalDuration={parseInt(item.time)}
+                      //   start={timerStart}
+                      //   reset={timerReset}
+                      //   options={options}
+                      //   handleFinish={handleTimerComplete}
+                      //   // msec
+                      //   //getTime={this.getFormattedTime}
+                      // />
                     ) : (
-                      <Timer
-                        totalDuration={parseInt(item.time)}
+                      <View style={{flexDirection:'row'}} >
+                        <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
+                          {(parseInt(item.time)/1000).toFixed(0) > 59? <>{(parseInt(item.time)/1000).toFixed(0)}  </>:
+                            <Text>00:</Text>}
+                        </Text>
+                        <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
+                          {(parseInt(item.time)/1000).toFixed(0) > 9? <>{(parseInt(item.time)/1000).toFixed(0)}  </>: <>0{(parseInt(item.time)/1000).toFixed(0)}</>} 
+                          </Text>
+                      </View>
+                      // <Timer
+                        // totalDuration={parseInt(item.time)}
                         // start={timerStart}
                         // reset={timerReset}
-                        options={options}
+                        // options={options}
                         // handleFinish={handleTimerComplete}
                         //  msec
                         //getTime={this.getFormattedTime}
-                      />
+                      // />
                     )}
                     {/* <Text style={{ color: "white" }}>
                       {`${(item.time / 1000).toFixed(0)}:0`}

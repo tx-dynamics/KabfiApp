@@ -36,3 +36,4 @@ export const smallLocation = require("./ProjectImages/smallLocation.png");
 export const smallGallery = require("./ProjectImages/smallGallery.png");
 export const checkImage = require("./ProjectImages/authentication/check.png");
 export const exclamation_mark = require("./ProjectImages/authentication/exclamation-mark.png");
+export const soundpic = require("./ProjectImages/radio-wave.png");
