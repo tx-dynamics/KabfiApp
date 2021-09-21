@@ -440,6 +440,7 @@ const NewsFeed = (props) => {
 
         setTimeout(() => {
           setisplaying(false);
+          settimerStart(false);
 
           const res = posts.map((item) => {
             if (item.id === id) {
@@ -691,15 +692,27 @@ const NewsFeed = (props) => {
                       running={timerStart}
                       style={{marginLeft:responsiveWidth(-2)}}
                     /> */}
-                    <Timer
-                      totalDuration={parseInt(item.time)}
-                      start={timerStart}
-                      reset={timerReset}
-                      options={options}
-                      handleFinish={handleTimerComplete}
-                      //  msec
-                      //getTime={this.getFormattedTime}
-                    />
+                    {item.isShow ? (
+                      <Timer
+                        totalDuration={parseInt(item.time)}
+                        start={timerStart}
+                        reset={timerReset}
+                        options={options}
+                        handleFinish={handleTimerComplete}
+                        //  msec
+                        //getTime={this.getFormattedTime}
+                      />
+                    ) : (
+                      <Timer
+                        totalDuration={parseInt(item.time)}
+                        // start={timerStart}
+                        // reset={timerReset}
+                        options={options}
+                        // handleFinish={handleTimerComplete}
+                        //  msec
+                        //getTime={this.getFormattedTime}
+                      />
+                    )}
                     {/* <Text style={{ color: "white" }}>
                       {`${(item.time / 1000).toFixed(0)}:0`}
                     </Text> */}
