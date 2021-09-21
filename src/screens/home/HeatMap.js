@@ -179,10 +179,10 @@ export default class HeatMap extends Component {
   
   state = {
     initialPosition: {
-      // latitude: 51.5074,
-      // longitude: 0.1278,
-      // latitudeDelta: 0.09,
-      // longitudeDelta: 0.035,
+      latitude: 51.5074,
+      longitude: 0.1278,
+      latitudeDelta: 0.09,
+      longitudeDelta: 0.035,
     },
     loader:false,
     region: {},
