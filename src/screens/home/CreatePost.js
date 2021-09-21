@@ -262,9 +262,9 @@ const CreatePost = (props) => {
         // playThroughEarpieceAndroid: true,
       });
       console.log("Starting recording..");
-      const record = new Audio.Recording();
+      const recording = new Audio.Recording();
       const { ios, android } = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY;
-      await record.prepareToRecordAsync({
+      await recording.prepareToRecordAsync({
         android: android,
         ios: {
           ...ios,
@@ -272,8 +272,48 @@ const CreatePost = (props) => {
           outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4AAC,
         },
       });
-      await record.startAsync();
-      const timer = setInterval(() => {}, 6000);
+      await recording.startAsync();
+
+
+
+
+      console.log("timer start");
+      let interval;
+      var secs = 0;
+      const startTimer = (recording) => {
+        // console.log(recording);
+      interval = setInterval(() => {
+        // console.log(secs);
+        secs = secs + 1;
+      
+        if (secs === 60) {
+          console.log("calling");
+          setisdisable(false);
+          setindex(true);
+          setontimer(false);
+          clearInterval(interval);
+      
+          // setRecording(recording);
+          setTimeout(() => {
+            // console.log(record);
+            stopRecording(recording)
+          }, 500);
+          console.log("called");
+        }else{
+          setRecording(recording);
+        }
+      }, 1000);
+      }
+      clearInterval(interval);
+      startTimer(recording)
+      
+      setRecording(recording);
+
+
+
+
+
+      // const timer = setInterval(() => {}, 6000);
       // const timer = setInterval(() => {
       //   console.log("test")
       // }, 6000);
@@ -288,15 +328,16 @@ const CreatePost = (props) => {
       //   Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
 
       //   );
-      if (timer > 5999) {
-        clearInterval(timer);
-        setisdisable(false);
-        setindex(true);
-        setontimer(false);
-        setRecording(record);
-        stopRecording();
-      }
-      setRecording(record);
+      // if (timer > 5999) {
+      //   console.log("timer")
+      //   clearInterval(timer);
+      //   setisdisable(false);
+      //   setindex(true);
+      //   setontimer(false);
+      //   setRecording(record);
+      //   stopRecording();
+      // }
+      // setRecording(record);
     } catch (err) {
       setshow(false);
       setstopwatchReset(true);
@@ -333,7 +374,7 @@ const CreatePost = (props) => {
       sound.pauseAsync();
     }
   }
-  async function stopRecording() {
+  async function stopRecording(recor) {
     // inputRef.current.focus();
     setDelTop(false);
     setontimer(false);
@@ -345,16 +386,17 @@ const CreatePost = (props) => {
     // setstopwatchReset(false);
     setontimer(false);
     console.log("Stopping recording..");
-    let testData = await recording.getStatusAsync();
+    console.log("recorded at  "+recor.getURI());
+    let testData = await recor.getStatusAsync();
 
     // console.log("OKK", await testData);
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    console.log("Recording stopped and stored at", recording._uri);
+    await recor.stopAndUnloadAsync();
+    const uri = recor.getURI();
+    console.log("Recording stopped and stored at", recor._uri);
     // let post_Image = await uploadImage(recording._uri);
-    setSound(recording._uri);
+    setSound(recor._uri);
     settime(JSON.stringify(testData.durationMillis));
-    console.log("post_Image", recording._finalDurationMillis / 1000);
+    console.log("post_Image", recor._finalDurationMillis / 1000);
 
     // playSound(recording._uri);
   }
@@ -533,10 +575,24 @@ const CreatePost = (props) => {
                     ) : (
                       <View style={{flexDirection:'row',}} >
                         <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
-                          {(parseInt(time)/1000).toFixed(0) > 59? <>{(parseInt(time)/1000).toFixed(0)}  </>:
-                            <Text>00:</Text>}</Text>
+                          {(parseInt(time)/1000).toFixed(0) >= 59? <>01:</>
+                          :
+                            <Text>00:</Text>
+                          }
+                        </Text>
                         <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
-                          {(parseInt(time)/1000).toFixed(0) > 9? <>{(parseInt(time)/1000).toFixed(0)}</>: <>0{(parseInt(time)/1000).toFixed(0)}</>} 
+                          {(parseInt(time)/1000).toFixed(0) > 9? 
+                          <>
+                          {(parseInt(time)/1000).toFixed(0) >= 59?
+                            <Text>00</Text>
+                            :
+                            <>{(parseInt(time)/1000).toFixed(0)}</>
+                          }
+                          
+                          </>
+                          : 
+                          <>0{(parseInt(time)/1000).toFixed(0)}</>
+                          } 
                           </Text>
                       </View>
                       // <Timer
@@ -739,7 +795,7 @@ const CreatePost = (props) => {
             ) : (
               <TouchableOpacity
                 onPress={() => {
-                  stopRecording(), setisdisable(false), setontimer(false);
+                  stopRecording(recording), setisdisable(false), setontimer(false);
                 }}
                 style={{
                   borderRadius: 75,
