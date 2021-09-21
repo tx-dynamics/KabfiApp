@@ -1,14 +1,13 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Platform,
-ActivityIndicator,
-} from "react-native";
+import { StyleSheet, View, Platform, ActivityIndicator } from "react-native";
 import MapView, { Heatmap, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 require("firebase/database");
 import firebase from "firebase";
-import { cos } from "react-native-reanimated";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import HeaderLeftComponent from "../../components/HeaderLeftComponent";
+import { Header } from "react-native-elements";
 // export default class HeatMap extends Component {
 //   static navigationOptions = {
 //     title: "New York",
@@ -168,15 +167,15 @@ import { responsiveHeight } from "react-native-responsive-dimensions";
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    // ...StyleSheet.absoluteFillObject,
+    flex: 1,
   },
 });
 
 export default class HeatMap extends Component {
-  
   state = {
     initialPosition: {
       latitude: 51.5074,
@@ -184,7 +183,7 @@ export default class HeatMap extends Component {
       latitudeDelta: 0.09,
       longitudeDelta: 0.035,
     },
-    loader:false,
+    loader: false,
     region: {},
     points: [],
   };
@@ -194,7 +193,6 @@ export default class HeatMap extends Component {
     }
   }
   componentDidMount() {
-    
     this.fetchLocation();
   }
 
@@ -265,7 +263,7 @@ export default class HeatMap extends Component {
   // }
   async fetchLocation() {
     try {
-      this.setState({loader:true})
+      this.setState({ loader: true });
       let location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
@@ -304,7 +302,7 @@ export default class HeatMap extends Component {
           });
           // }
           console.log("Points==>", points1);
-          this.setState({ points:points1,loader:false });
+          this.setState({ points: points1, loader: false });
         });
       } catch (err) {
         // this.fetchLocation();
@@ -317,37 +315,52 @@ export default class HeatMap extends Component {
     }
   }
 
- 
-
   render() {
     return (
-      <View style={styles.container}>
-        {this.state.loader?
-      <ActivityIndicator size={'large'} style={{marginTop:responsiveHeight(20), alignSelf:'center'}}></ActivityIndicator>
-      
-    :
-    
-        <MapView
-          provider={PROVIDER_GOOGLE}
-          ref={(map) => (this._map = map)}
-          style={styles.map}
-          region={this.state.initialPosition}
-        >
-          <Heatmap
-            points={this.state.points}
-            radius={40}
-            opacity={1}
-            gradient={{
-              colors: ["black", "purple", "red", "orange", "white"],
-              startPoints:
-                Platform.OS === "ios"
-                  ? [0.01, 0.04, 0.1, 0.45, 0.5]
-                  : [0.1, 0.25, 0.5, 0.75, 1],
-              colorMapSize: 2000,
-            }}
-          ></Heatmap>
-        </MapView>
-        }
+      <View style={{ flex: 1, backgroundColor: "white" }}>
+        <Header
+          backgroundColor="white"
+          leftComponent={
+            <HeaderLeftComponent
+              icon="back"
+              navigation={this.props.navigation}
+            />
+          }
+          // centerComponent={
+          //   <Text style={{ fontSize: 17, color: "#000000", fontWeight: "700" }}>
+          //     Comments
+          //   </Text>
+          // }
+        />
+        <View style={styles.container}>
+          {this.state.loader ? (
+            <ActivityIndicator
+              size={"large"}
+              style={{ marginTop: responsiveHeight(20), alignSelf: "center" }}
+            ></ActivityIndicator>
+          ) : (
+            <MapView
+              provider={PROVIDER_GOOGLE}
+              ref={(map) => (this._map = map)}
+              style={styles.map}
+              region={this.state.initialPosition}
+            >
+              <Heatmap
+                points={this.state.points}
+                radius={40}
+                opacity={1}
+                gradient={{
+                  colors: ["black", "purple", "red", "orange", "white"],
+                  startPoints:
+                    Platform.OS === "ios"
+                      ? [0.01, 0.04, 0.1, 0.45, 0.5]
+                      : [0.1, 0.25, 0.5, 0.75, 1],
+                  colorMapSize: 2000,
+                }}
+              ></Heatmap>
+            </MapView>
+          )}
+        </View>
       </View>
     );
   }

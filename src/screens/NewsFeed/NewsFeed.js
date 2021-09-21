@@ -447,6 +447,7 @@ const NewsFeed = (props) => {
               return {
                 ...item,
                 isShow: false,
+                time,
               };
             } else {
               return { ...item };
@@ -460,11 +461,13 @@ const NewsFeed = (props) => {
       console.log("isplaying", isplaying);
       sound.pauseAsync();
       setisplaying(false);
+      settimerStart(false);
       const res = posts.map((item) => {
         if (item.id === id) {
           return {
             ...item,
             isShow: false,
+            time,
           };
         } else {
           return { ...item };
@@ -491,7 +494,7 @@ const NewsFeed = (props) => {
     var minutes = Math.floor((remainingTime / (60 * 1000)) % 60);
     remainingTime = minutes + ":" + seconds;
 
-    this.setState({ position: percentage, timeLeft: remainingTime });
+    // this.setState({ position: percentage, timeLeft: remainingTime });
   }
   async function toogleLike(id, isplaying) {
     console.log(id);
@@ -699,7 +702,7 @@ const NewsFeed = (props) => {
                         reset={timerReset}
                         options={options}
                         handleFinish={handleTimerComplete}
-                        //  msec
+                        // msec
                         //getTime={this.getFormattedTime}
                       />
                     ) : (

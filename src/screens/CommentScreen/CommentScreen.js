@@ -306,7 +306,7 @@ const CommentScreen = ({ route, navigation }) => {
       <FlatList data={posts} renderItem={renderPosts} />
       <View
         style={{
-          backgroundColor: "#FBFBFB",
+          backgroundColor: "#FFF",
           width: "100%",
           position: "absolute",
           bottom: valueforBorrom
