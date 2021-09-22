@@ -23,7 +23,15 @@ import {
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 import CountDown from "react-native-countdown-component";
-import { smallGallery, del, stop, bars, loadad, cross,soundpic } from "../../../assets";
+import {
+  smallGallery,
+  del,
+  stop,
+  bars,
+  loadad,
+  cross,
+  soundpic,
+} from "../../../assets";
 import {
   responsiveWidth,
   responsiveHeight,
@@ -274,44 +282,37 @@ const CreatePost = (props) => {
       });
       await recording.startAsync();
 
-
-
-
       console.log("timer start");
       let interval;
       var secs = 0;
       const startTimer = (recording) => {
         // console.log(recording);
-      interval = setInterval(() => {
-        // console.log(secs);
-        secs = secs + 1;
-      
-        if (secs === 60) {
-          console.log("calling");
-          setisdisable(false);
-          setindex(true);
-          setontimer(false);
-          clearInterval(interval);
-      
-          // setRecording(recording);
-          setTimeout(() => {
-            // console.log(record);
-            stopRecording(recording)
-          }, 500);
-          console.log("called");
-        }else{
-          setRecording(recording);
-        }
-      }, 1000);
-      }
+        interval = setInterval(() => {
+          // console.log(secs);
+          secs = secs + 1;
+
+          if (secs === 60) {
+            console.log("calling");
+            setisdisable(false);
+            setindex(true);
+            setontimer(false);
+            clearInterval(interval);
+
+            // setRecording(recording);
+            setTimeout(() => {
+              // console.log(record);
+              stopRecording(recording);
+            }, 500);
+            console.log("called");
+          } else {
+            setRecording(recording);
+          }
+        }, 1000);
+      };
       clearInterval(interval);
-      startTimer(recording)
-      
+      startTimer(recording);
+
       setRecording(recording);
-
-
-
-
 
       // const timer = setInterval(() => {}, 6000);
       // const timer = setInterval(() => {
@@ -349,7 +350,7 @@ const CreatePost = (props) => {
   async function playSound() {
     console.log("Loading Sound");
     // setisplay(true);
-
+    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     if (!isplaying) {
       const { sound: playbackObject } = await Audio.Sound.createAsync(
         {
@@ -358,6 +359,7 @@ const CreatePost = (props) => {
         { shouldPlay: true }
       );
       console.log("Playing Sound", playbackObject);
+
       setsound(playbackObject);
       // let ntime = time;
       // await playbackObject.playAsync();
@@ -386,7 +388,7 @@ const CreatePost = (props) => {
     // setstopwatchReset(false);
     setontimer(false);
     console.log("Stopping recording..");
-    console.log("recorded at  "+recor.getURI());
+    console.log("recorded at  " + recor.getURI());
     let testData = await recor.getStatusAsync();
 
     // console.log("OKK", await testData);
@@ -547,69 +549,84 @@ const CreatePost = (props) => {
                 </TouchableOpacity>
 
                 <>
-                    
-                    {isplay ? (
+                  {isplay ? (
                     <CountDown
-                      until={((parseInt(time)/1000)).toFixed(0)}
-                      onChange={(e)=>{console.log(e)}}
+                      until={(parseInt(time) / 1000).toFixed(0)}
+                      onChange={(e) => {
+                        console.log(e);
+                      }}
                       size={10}
                       // onFinish={() => handleTimerComplete}
-                      digitStyle={{ backgroundColor: "transparent",width:responsiveWidth(4) }}
+                      digitStyle={{
+                        backgroundColor: "transparent",
+                        width: responsiveWidth(4),
+                      }}
                       digitTxtStyle={{ color: "white" }}
                       timeToShow={["M", "S"]}
                       timeLabels={{ m: "", s: "" }}
                       showSeparator
-                      separatorStyle={{color:'white'}}
+                      separatorStyle={{ color: "white" }}
                       // running={timerStart}
                       // style={{marginLeft:responsiveWidth(-2)}}
-                    /> 
+                    />
+                  ) : (
                     // <Timer
-                      //   totalDuration={parseInt(item.time)}
-                      //   start={timerStart}
-                      //   reset={timerReset}
-                      //   options={options}
-                      //   handleFinish={handleTimerComplete}
-                      //   // msec
-                      //   //getTime={this.getFormattedTime}
-                      // />
-                    ) : (
-                      <View style={{flexDirection:'row',}} >
-                        <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
-                          {(parseInt(time)/1000).toFixed(0) >= 59? <>01:</>
-                          :
-                            <Text>00:</Text>
-                          }
-                        </Text>
-                        <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
-                          {(parseInt(time)/1000).toFixed(0) > 9? 
+                    //   totalDuration={parseInt(item.time)}
+                    //   start={timerStart}
+                    //   reset={timerReset}
+                    //   options={options}
+                    //   handleFinish={handleTimerComplete}
+                    //   // msec
+                    //   //getTime={this.getFormattedTime}
+                    // />
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: 12,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {(parseInt(time) / 1000).toFixed(0) >= 59 ? (
+                          <>01:</>
+                        ) : (
+                          <Text>00:</Text>
+                        )}
+                      </Text>
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: 12,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {(parseInt(time) / 1000).toFixed(0) > 9 ? (
                           <>
-                          {(parseInt(time)/1000).toFixed(0) >= 59?
-                            <Text>00</Text>
-                            :
-                            <>{(parseInt(time)/1000).toFixed(0)}</>
-                          }
-                          
+                            {(parseInt(time) / 1000).toFixed(0) >= 59 ? (
+                              <Text>00</Text>
+                            ) : (
+                              <>{(parseInt(time) / 1000).toFixed(0)}</>
+                            )}
                           </>
-                          : 
-                          <>0{(parseInt(time)/1000).toFixed(0)}</>
-                          } 
-                          </Text>
-                      </View>
-                      // <Timer
-                        // totalDuration={parseInt(item.time)}
-                        // start={timerStart}
-                        // reset={timerReset}
-                        // options={options}
-                        // handleFinish={handleTimerComplete}
-                        //  msec
-                        //getTime={this.getFormattedTime}
-                      // />
-                    )}
-                    {/* <Text style={{ color: "white" }}>
+                        ) : (
+                          <>0{(parseInt(time) / 1000).toFixed(0)}</>
+                        )}
+                      </Text>
+                    </View>
+                    // <Timer
+                    // totalDuration={parseInt(item.time)}
+                    // start={timerStart}
+                    // reset={timerReset}
+                    // options={options}
+                    // handleFinish={handleTimerComplete}
+                    //  msec
+                    //getTime={this.getFormattedTime}
+                    // />
+                  )}
+                  {/* <Text style={{ color: "white" }}>
                       {`${(item.time / 1000).toFixed(0)}:0`}
                     </Text> */}
-                  </>
-                  
+                </>
 
                 {/* <Text style={{ color: "white" }}>{`${(time / 1000).toFixed(
                   0
@@ -623,8 +640,8 @@ const CreatePost = (props) => {
                   resizeMode="contain"
                 />
                 <TouchableOpacity
-                    styles={{right:30}}
-                    onPress={() => {
+                  styles={{ right: 30 }}
+                  onPress={() => {
                     setshowrec(false), setRecording("");
                   }}
                 >
@@ -795,7 +812,9 @@ const CreatePost = (props) => {
             ) : (
               <TouchableOpacity
                 onPress={() => {
-                  stopRecording(recording), setisdisable(false), setontimer(false);
+                  stopRecording(recording),
+                    setisdisable(false),
+                    setontimer(false);
                 }}
                 style={{
                   borderRadius: 75,
