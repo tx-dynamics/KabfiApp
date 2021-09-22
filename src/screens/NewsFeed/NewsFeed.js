@@ -404,11 +404,10 @@ const NewsFeed = (props) => {
     console.log("testtt" + parseInt(time / 1000));
 
     setMaxTimeInSeconds(time / 1000);
-    setisplaying(!isplaying)
-    
+    setisplaying(!isplaying);
+
     if (!isplaying) {
       try {
-
         // console.log("isplaying", isplaying);
         await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
         toogleLike(id);
@@ -522,8 +521,8 @@ const NewsFeed = (props) => {
     console.log("post filter", filtered, "\n", postid);
     setPosts(filtered);
     alert("Post Deleted Successfully");
-    const del = firebase.database().ref("user_posts/" + postid);
-    del.remove();
+    const del = firebase.database().ref("user_posts").child(postid);
+    del.remove().then(() => console.log("Post Deleted Successfully"));
   }
   const renderPosts = ({ item, index }) => {
     return (
@@ -683,23 +682,28 @@ const NewsFeed = (props) => {
                   </TouchableOpacity>
                   {/* {item.time > 5999 ? ( */}
                   <>
-                    
                     {item.isShow ? (
-                    <CountDown
-                      until={((parseInt(item.time)/1000)).toFixed(0)}
-                      onChange={(e)=>{console.log(e)}}
-                      size={12}
-                      onFinish={() => handleTimerComplete}
-                      digitStyle={{ backgroundColor: "transparent",width:responsiveWidth(4) }}
-                      digitTxtStyle={{ color: "white" }}
-                      timeToShow={["M", "S"]}
-                      timeLabels={{ m: "", s: "" }}
-                      // showSeparators
-                      separatorStyle={{color:'white'}}
-                      // running={timerStart}
-                      style={{marginLeft:responsiveWidth(-2),}}
-                    /> 
-                    // <Timer
+                      <CountDown
+                        until={(parseInt(item.time) / 1000).toFixed(0)}
+                        onChange={(e) => {
+                          console.log(e);
+                        }}
+                        size={12}
+                        onFinish={() => handleTimerComplete}
+                        digitStyle={{
+                          backgroundColor: "transparent",
+                          width: responsiveWidth(4),
+                        }}
+                        digitTxtStyle={{ color: "white" }}
+                        timeToShow={["M", "S"]}
+                        timeLabels={{ m: "", s: "" }}
+                        // showSeparators
+                        separatorStyle={{ color: "white" }}
+                        // running={timerStart}
+                        style={{ marginLeft: responsiveWidth(-2) }}
+                      />
+                    ) : (
+                      // <Timer
                       //   totalDuration={parseInt(item.time)}
                       //   start={timerStart}
                       //   reset={timerReset}
@@ -708,24 +712,42 @@ const NewsFeed = (props) => {
                       //   // msec
                       //   //getTime={this.getFormattedTime}
                       // />
-                    ) : (
-                      <View style={{flexDirection:'row'}} >
-                        <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
-                          {(parseInt(item.time)/1000).toFixed(0) > 59? <>{(parseInt(item.time)/1000).toFixed(0)}  </>:
-                            <Text>00:</Text>}
+                      <View style={{ flexDirection: "row" }}>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 12,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {(parseInt(item.time) / 1000).toFixed(0) > 59 ? (
+                            <>{(parseInt(item.time) / 1000).toFixed(0)} </>
+                          ) : (
+                            <Text>00:</Text>
+                          )}
                         </Text>
-                        <Text style={{ color: "white",fontSize:12,fontWeight:'bold' }}>
-                          {(parseInt(item.time)/1000).toFixed(0) > 9? <>{(parseInt(item.time)/1000).toFixed(0)}  </>: <>0{(parseInt(item.time)/1000).toFixed(0)}</>} 
-                          </Text>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 12,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
+                            <>{(parseInt(item.time) / 1000).toFixed(0)} </>
+                          ) : (
+                            <>0{(parseInt(item.time) / 1000).toFixed(0)}</>
+                          )}
+                        </Text>
                       </View>
                       // <Timer
-                        // totalDuration={parseInt(item.time)}
-                        // start={timerStart}
-                        // reset={timerReset}
-                        // options={options}
-                        // handleFinish={handleTimerComplete}
-                        //  msec
-                        //getTime={this.getFormattedTime}
+                      // totalDuration={parseInt(item.time)}
+                      // start={timerStart}
+                      // reset={timerReset}
+                      // options={options}
+                      // handleFinish={handleTimerComplete}
+                      //  msec
+                      //getTime={this.getFormattedTime}
                       // />
                     )}
                     {/* <Text style={{ color: "white" }}>
