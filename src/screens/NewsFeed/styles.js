@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 70,
     alignSelf: "center",
     margin: 5,
+    top:0
   },
   bottomContainer: {
     // marginLeft: "4%",

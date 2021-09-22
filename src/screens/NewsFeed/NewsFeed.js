@@ -19,6 +19,14 @@ import {
   ActivityIndicator,
   Slider,
 } from "react-native";
+import {
+  MenuContext,
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+  MenuProvider
+} from 'react-native-popup-menu';
 import * as Progress from "react-native-progress";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -562,7 +570,8 @@ const NewsFeed = (props) => {
             <View style={[{ flexDirection: "row" }]}>
               <Image
                 source={item.user_image ? { uri: item.user_image } : user}
-                style={styles.userImgStyle}
+                // style={[styles.userImgStyle,{marginTop:-30}]}
+                style={Platform.OS == "android"?[styles.userImgStyle,{marginTop:-30}]:[styles.userImgStyle,{}]}
               />
               <Text
                 // numberOfLines={3}
@@ -595,6 +604,40 @@ const NewsFeed = (props) => {
               </Text>
             </View>
 
+            {Platform.OS == "android"?
+            <MenuProvider>
+              <View style={{height:100}}>
+              <Menu style={{position:'absolute',top:10,right:0}} >
+                <MenuTrigger style={{ width: 40, marginTop: 6 }} >
+                  <SimpleLineIcons name="options-vertical" size={18} color="black" />
+                </MenuTrigger>
+                { firebase.auth().currentUser?.uid === item.user?
+                  <MenuOptions  optionsContainerStyle={{height:80,width:100}}>
+                    <MenuOption customStyles={{height:48,width:100}}   >
+                      <Text onPress={()=>delPost(item.user, item.id)} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Delete</Text>
+                    </MenuOption>
+                    <MenuOption customStyles={{height:48,width:100}} >
+                      <Text style={{fontWeight:'bold',alignSelf:'center'}} >Cancel</Text>
+                    </MenuOption>
+                  </MenuOptions>
+                  :
+                  <MenuOptions  optionsContainerStyle={{paddingLeft:8,height:100,width:100}}>
+                  <MenuOption customStyles={{height:48,width:100}}   >
+                    <Text onPress={()=>hideHandler(item.id)} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Hide</Text>
+                  </MenuOption>
+                  <MenuOption customStyles={{height:48,width:100}}   >
+                    <Text onPress={()=>reportHandler(item.id)} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Report</Text>
+                  </MenuOption>
+                  <MenuOption customStyles={{height:48,width:100}} >
+                    <Text style={{fontWeight:'bold',alignSelf:'center'}} >Cancel</Text>
+                  </MenuOption>
+                </MenuOptions>
+                }
+                
+              </Menu>
+              </View>
+            </MenuProvider>
+            :
             <OptionsMenu
               button={more}
               buttonStyle={{
@@ -624,7 +667,8 @@ const NewsFeed = (props) => {
                       () => console.log("cancel"),
                     ]
               }
-            />
+            /> 
+          }
           </View>
 
           <View

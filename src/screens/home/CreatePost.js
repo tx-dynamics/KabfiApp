@@ -19,7 +19,7 @@ import {
 //import Slider from "react-native-slider";
 import * as ImageManipulator from "expo-image-manipulator";
 import {
-  useSafeAreaInsets,
+  // useSafeAreaInsets,
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 import CountDown from "react-native-countdown-component";
@@ -28,6 +28,8 @@ import {
   del,
   stop,
   bars,
+  sendd,
+  dell,
   loadad,
   cross,
   soundpic,
@@ -760,7 +762,7 @@ const CreatePost = (props) => {
                 disabled={isdisable || !recording ? true : false}
               >
                 <Image
-                  source={loadad}
+                  source={sendd}
                   style={{
                     height: 40,
                     width: 30,
@@ -835,7 +837,7 @@ const CreatePost = (props) => {
                 style={{}}
               >
                 <Image
-                  source={del}
+                  source={dell}
                   style={{
                     height: 25,
                     width: 30,
