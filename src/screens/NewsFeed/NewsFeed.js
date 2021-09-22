@@ -403,15 +403,18 @@ const NewsFeed = (props) => {
   async function playSound(id, soundUri, time) {
     // console.log("testtt" + parseInt(time / 1000));
 
-<<<<<<< HEAD
+// <<<<<<< HEAD
     // setMaxTimeInSeconds(time / 1000);
-    setisplaying(!isplaying)
     
-=======
     setMaxTimeInSeconds(time / 1000);
-    setisplaying(!isplaying);
+    setTimeout(() => {
 
->>>>>>> 0c399b6e4f264d33f2bc88f865686658ecbcdb99
+      console.log("setting timout");
+      setisplaying(!isplaying);
+   
+    }, 2000);
+
+// >>>>>>> 0c399b6e4f264d33f2bc88f865686658ecbcdb99
     if (!isplaying) {
       try {
         // console.log("isplaying", isplaying);
@@ -572,7 +575,6 @@ const NewsFeed = (props) => {
                   },
                 ]}
               >
-                
                 <Text style={[{ color: "black", fontWeight: "700" }]}>
                   {item.userName}
                 </Text>
@@ -696,25 +698,34 @@ const NewsFeed = (props) => {
                   {/* {item.time > 5999 ? ( */}
                   <>
                     {item.isShow ? (
-                      <CountDown
-                        until={(parseInt(item.time) / 1000).toFixed(0)}
-                        onChange={(e) => {
-                          console.log(e);
-                        }}
-                        size={12}
-                        onFinish={() => handleTimerComplete}
-                        digitStyle={{
-                          backgroundColor: "transparent",
-                          width: responsiveWidth(4),
-                        }}
-                        digitTxtStyle={{ color: "white" }}
-                        timeToShow={["M", "S"]}
-                        timeLabels={{ m: "", s: "" }}
-                        // showSeparators
-                        separatorStyle={{ color: "white" }}
-                        // running={timerStart}
-                        style={{ marginLeft: responsiveWidth(-2) }}
-                      />
+                      <>
+                      {isplaying?
+                          <CountDown
+                            until={(parseInt(item.time) / 1000).toFixed(0)}
+                            onChange={(e) => {
+                              console.log(e);
+                            }}
+                            size={12}
+                            onFinish={() => handleTimerComplete}
+                            digitStyle={{
+                              backgroundColor: "transparent",
+                              width: responsiveWidth(4),
+                            }}
+                            digitTxtStyle={{ color: "white" }}
+                            timeToShow={["M", "S"]}
+                            timeLabels={{ m: "", s: "" }}
+                            showSeparators
+                            separatorStyle={{ color: "white" }}
+                            // running={timerStart}
+                            style={{ marginLeft: responsiveWidth(-2) }}
+                        />
+                          :
+                          <>
+                            <ActivityIndicator size={'small'} color={'white'} />
+                          </>
+                      }
+                      </>
+                      
                     ) : (
                       // <Timer
                       //   totalDuration={parseInt(item.time)}
