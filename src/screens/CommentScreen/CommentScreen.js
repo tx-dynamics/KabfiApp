@@ -322,9 +322,11 @@ const CommentScreen = ({ route, navigation }) => {
             styles.horizontalContainer,
             {
               justifyContent: "space-around",
-              width: "85%",
-              alignSelf: "center",
+              width: "100%",
+              //alignSelf: "center",
               alignItems: "center",
+              borderTopWidth:0.5,
+              borderColor:'#E3E3E3',
             },
           ]}
         >
@@ -351,6 +353,8 @@ const CommentScreen = ({ route, navigation }) => {
             style={{
               justifyContent: "center",
               alignSelf: "center",
+              marginRight:responsiveHeight(1.5),
+              marginTop:responsiveHeight(1.5)
             }}
           >
             {isloading ? (

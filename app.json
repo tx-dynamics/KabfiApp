@@ -2,7 +2,7 @@
   "expo": {
     "name": "Kabfi",
     "slug": "Kabfi",
-    "version": "1.1.3",
+    "version": "1.1.5",
     "orientation": "portrait",
     "icon": "./assets/AppLogo.png",
     "splash": {
@@ -20,7 +20,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.alii.amadd.KabfiApp",
       "config":{
-        "googleMapsApiKey": "AIzaSyDt9GY0qjMwSFvi-ODbrRJFZg3wCwtZofc"
+        "googleMapsApiKey": "AIzaSyAjfDSky5j_NDUWoEjCrx65j4ezzH4uFgs"
       }
     },
     "android": {

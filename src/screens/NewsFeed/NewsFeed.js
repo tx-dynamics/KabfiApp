@@ -638,6 +638,7 @@ const NewsFeed = (props) => {
               </View>
             </MenuProvider>
             :
+         
             <OptionsMenu
               button={more}
               buttonStyle={{
@@ -645,14 +646,17 @@ const NewsFeed = (props) => {
                 height: 15,
                 resizeMode: "contain",
                 marginTop: 14,
+              
               }}
               // customStyles={{}}
-              destructiveIndex={0}
+              destructiveIndex={1}
               options={
                 firebase.auth().currentUser?.uid === item.user
                   ? ["Delete", "Cancel"]
                   : ["Hide", "Report", "Cancel"]
               }
+              optionText={{color:'green'}}
+             
               actions={
                 firebase.auth().currentUser?.uid === item.user
                   ? [

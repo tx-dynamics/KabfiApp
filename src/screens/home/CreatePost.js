@@ -791,6 +791,8 @@ const CreatePost = (props) => {
                   backgroundColor: "#FCB040",
                   justifyContent: "center",
                   // alignSelf: "center",
+                  marginTop:
+                  !isstopwatch?responsiveHeight(20):responsiveHeight(0)
                 }}
               >
                 <Feather

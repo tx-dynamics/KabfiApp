@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
@@ -70,12 +71,17 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "white",
-    paddingLeft: 15,
+    //paddingLeft: 15,
     borderRadius: 30,
-    width: "85%",
+    width: "75%",
+    height:responsiveHeight(4),
     borderColor: "lightgray",
     borderWidth: 1,
-    paddingVertical: 10,
+    paddingLeft: responsiveHeight(2),
+    paddingTop:responsiveHeight(1),
+    alignSelf:'center',
+    marginTop:responsiveHeight(1.5)
+   // margin:responsiveHeight(1)
   },
   statusIcon: {
     height: 18,
