@@ -401,9 +401,9 @@ const NewsFeed = (props) => {
     fetchAllPosts();
   }
   async function playSound(id, soundUri, time) {
-    console.log("testtt" + parseInt(time / 1000));
+    // console.log("testtt" + parseInt(time / 1000));
 
-    setMaxTimeInSeconds(time / 1000);
+    // setMaxTimeInSeconds(time / 1000);
     setisplaying(!isplaying)
     
     if (!isplaying) {
@@ -480,6 +480,8 @@ const NewsFeed = (props) => {
     settimerStart(false);
     settimerReset(false);
   }
+
+
   async function getStatus() {
     var status = await sound.getStatusAsync();
     var percentage =
@@ -525,6 +527,9 @@ const NewsFeed = (props) => {
     const del = firebase.database().ref("user_posts/" + postid);
     del.remove();
   }
+
+ 
+
   const renderPosts = ({ item, index }) => {
     return (
       <View key={index} style={styles.cardStyle}>
@@ -590,6 +595,7 @@ const NewsFeed = (props) => {
                 resizeMode: "contain",
                 marginTop: 14,
               }}
+              // customStyles={{}}
               destructiveIndex={0}
               options={
                 firebase.auth().currentUser?.uid === item.user
