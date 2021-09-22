@@ -572,6 +572,7 @@ const NewsFeed = (props) => {
                   },
                 ]}
               >
+                
                 <Text style={[{ color: "black", fontWeight: "700" }]}>
                   {item.userName}
                 </Text>
