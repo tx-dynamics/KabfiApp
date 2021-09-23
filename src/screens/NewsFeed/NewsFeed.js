@@ -1,6 +1,8 @@
 import firebase from "firebase";
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { ProgressBar, Colors } from "react-native-paper";
+import { ProgressBar, Colors,Snackbar } from "react-native-paper";
+// import Snackbar from 'rn-snackbar-component'
+
 import {
   View,
   Text,
@@ -47,6 +49,7 @@ import {
 import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 import HeaderCenterComponent from "../../components/HeaderCenterComponent";
@@ -108,6 +111,8 @@ const NewsFeed = (props) => {
   const [sound, setsound] = useState();
   const refRBSheet = useRef();
   const [isplaying, setisplaying] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState('');
   const [timerStart, settimerStart] = useState(false);
   const [timerReset, settimerReset] = useState(false);
   const options = {
@@ -363,24 +368,34 @@ const NewsFeed = (props) => {
   }
   async function hideHandler(post_id) {
     // setRefreshing(true);
+    
+
     let filtered = posts.filter((i) => {
       return post_id !== i.id;
     });
 
     console.log("\n", post_id);
+    setMessage('This post is no longer available for you')
+    setIsVisible(!isVisible)
     setPosts(filtered);
-    alert("This post is no longer availble for you");
+    
+  
+ 
     const hiderPost = firebase
       .database()
       .ref("user_posts/" + post_id + "/Hide/");
-    hiderPost.set(uid);
+    hiderPost.set(uid)
     setShow(false);
+  
+
     console.log("post_id==>", post_id);
     // setRefreshing(false);
     // fetchAllPosts();
   }
   async function reportHandler(post_id) {
-    alert("Reported");
+    // alert("Reported");
+    setIsVisible(!isVisible)
+    setMessage('Reported')
     const reportPost = firebase.database().ref("report/" + post_id + "/");
     reportPost.set(uid);
     setShow(false);
@@ -420,7 +435,7 @@ const NewsFeed = (props) => {
       console.log("setting timout");
       setisplaying(!isplaying);
    
-    }, 2000);
+    }, 3000);
 
 // >>>>>>> 0c399b6e4f264d33f2bc88f865686658ecbcdb99
     if (!isplaying) {
@@ -498,24 +513,7 @@ const NewsFeed = (props) => {
   }
 
 
-  async function getStatus() {
-    var status = await sound.getStatusAsync();
-    var percentage =
-      (status["positionMillis"] / status["durationMillis"]) * 100;
-    var remainingTime = status["durationMillis"] - status["positionMillis"];
 
-    // For use to move the slider automatically
-    this.state.value = percentage;
-    console.log(percentage);
-
-    // Convert to mm:ss format
-    var milliseconds = remainingTime % 1000;
-    var seconds = Math.floor((remainingTime / 1000) % 60);
-    var minutes = Math.floor((remainingTime / (60 * 1000)) % 60);
-    remainingTime = minutes + ":" + seconds;
-
-    // this.setState({ position: percentage, timeLeft: remainingTime });
-  }
   async function toogleLike(id, isplaying) {
     console.log(id);
     const res = posts.map((item) => {
@@ -539,7 +537,9 @@ const NewsFeed = (props) => {
     });
     console.log("post filter", filtered, "\n", postid);
     setPosts(filtered);
-    alert("Post Deleted Successfully");
+    // alert("Post Deleted Successfully");
+    setIsVisible(!isVisible)
+    setMessage('Post Deleted Successfully')
     const del = firebase.database().ref("user_posts").child(postid);
     del.remove().then(() => console.log("Post Deleted Successfully"));
   }
@@ -623,7 +623,7 @@ const NewsFeed = (props) => {
                   :
                   <MenuOptions  optionsContainerStyle={{paddingLeft:8,height:100,width:100}}>
                   <MenuOption customStyles={{height:48,width:100}}   >
-                    <Text onPress={()=>hideHandler(item.id)} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Hide</Text>
+                    <Text onPress={()=>{hideHandler(item.id)}} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Hide</Text>
                   </MenuOption>
                   <MenuOption customStyles={{height:48,width:100}}   >
                     <Text onPress={()=>reportHandler(item.id)} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Report</Text>
@@ -635,6 +635,7 @@ const NewsFeed = (props) => {
                 }
                 
               </Menu>
+              
               </View>
             </MenuProvider>
             :
@@ -673,6 +674,9 @@ const NewsFeed = (props) => {
               }
             /> 
           }
+
+            
+
           </View>
 
           <View
@@ -785,32 +789,39 @@ const NewsFeed = (props) => {
                       //   //getTime={this.getFormattedTime}
                       // />
                       <View style={{ flexDirection: "row" }}>
-                        <Text
-                          style={{
-                            color: "white",
-                            fontSize: 12,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {(parseInt(item.time) / 1000).toFixed(0) > 59 ? (
-                            <>{(parseInt(item.time) / 1000).toFixed(0)} </>
-                          ) : (
-                            <Text>00:</Text>
-                          )}
-                        </Text>
-                        <Text
-                          style={{
-                            color: "white",
-                            fontSize: 12,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
-                            <>{(parseInt(item.time) / 1000).toFixed(0)} </>
-                          ) : (
-                            <>0{(parseInt(item.time) / 1000).toFixed(0)}</>
-                          )}
-                        </Text>
+                         <Text
+                        style={{
+                          color: "white",
+                          fontSize: 12,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
+                          <>01:</>
+                        ) : (
+                          <Text>00:</Text>
+                        )}
+                      </Text>
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: 12,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
+                          <>
+                            {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
+                              <Text>00</Text>
+                            ) : (
+                              <>{(parseInt(item.time) / 1000).toFixed(0)}</>
+                            )}
+                          </>
+                        ) : (
+                          <>0{(parseInt(item.time) / 1000).toFixed(0)}</>
+                        )}
+                      </Text>
+                    
                       </View>
                       // <Timer
                       // totalDuration={parseInt(item.time)}
@@ -993,7 +1004,24 @@ const NewsFeed = (props) => {
         rightComponent={<HeaderRight navigation={props.navigation} />}
         centerComponent={<HeaderCenterComponent name="News Feed" />}
       />
-
+      {isVisible?
+        <View style={{height:60}}>
+          <Snackbar
+            style={{backgroundColor:'#FF9900',marginLeft:8,marginRight:8,borderRadius:10}}
+            visible={isVisible}
+            action={{label:'ok'}}
+            onDismiss={() => setIsVisible(!isVisible)}
+            //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+            // )}
+            // position={'top'}
+            duration={messge.length + 1000}
+          >
+            <Text>{messge}</Text>
+          </Snackbar>
+        </View>
+      :
+      <></>
+      }
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />

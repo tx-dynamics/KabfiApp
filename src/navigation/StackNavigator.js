@@ -11,6 +11,7 @@ import TermsAndConditions from "../screens/extra/TermsAndConditions";
 import PrivacyPolicy from "../screens/extra/PrivacyPolicy";
 
 import Verify from "../screens/authentication/Verify";
+import PhoneAuth from "../screens/authentication/phoneAuth"
 import { NavigationContainer } from "@react-navigation/native";
 const Stack = createStackNavigator();
 
@@ -61,6 +62,12 @@ const StackNavigator = (props) => {
       <Stack.Screen
         name="Verify"
         component={Verify}
+        options={{ headerShown: false }}
+      />
+
+    <Stack.Screen
+        name="PhoneAuth"
+        component={PhoneAuth}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

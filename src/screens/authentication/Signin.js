@@ -223,12 +223,19 @@ const Signin = (props) => {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{ alignItems: "center", marginTop: 10 }}
             onPress={() => props.navigation.navigate("Signup")}
-          >
-            <Text style={styles.forgotPasswordText}>Dont have an account?</Text>
-          </TouchableOpacity>
+          > */}
+              <Text style={[styles.forgotPasswordText],{alignSelf:'center'}}>Don't have an account?
+                <TouchableOpacity
+                  style={{alignItems:'center'}}
+                  onPress={() => props.navigation.navigate("Signup")}
+                  > 
+                  <Text style={{fontSize:14,fontWeight:'bold',color:'#FF9900',alignSelf:'center',top:4}}> Signup</Text>
+                </TouchableOpacity>
+              </Text>
+          {/* </TouchableOpacity> */}
         </View>
       </View>
 
@@ -269,7 +276,7 @@ const styles = StyleSheet.create({
     // borderBottomColor: "black",
     paddingHorizontal: 40,
     paddingVertical: 10,
-    backgroundColor: "#FBFBFB",
+    backgroundColor: "#F9F9F9",
   },
   fieldIcon: {
     // fontSize:18,
@@ -281,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loginBtn: {
-    marginTop: 50,
+    marginTop: 40,
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 15,
@@ -292,7 +299,7 @@ const styles = StyleSheet.create({
     width: "65%",
     // flex:1,
     alignSelf: "center",
-    marginTop: 40,
+    marginTop: 30,
     // backgroundColor:'red',
     // height:300
   },
@@ -307,19 +314,20 @@ const styles = StyleSheet.create({
   },
   forgotPasswordContainer: {
     alignItems: "center",
-    marginTop: 60,
+    marginTop: 40,
   },
   forgotPasswordText: {
     fontSize: 13,
   },
   eyeIcon: {
-    fontSize: 24,
+    fontSize: 20,
+    justifyContent:"center",
     color: "#E6E6E6",
     alignSelf: "center",
   },
   eyeIconContainer: {
     position: "absolute",
-    top: 8,
+    top: 13,
     right: 13,
     width: 35,
     height: 25,

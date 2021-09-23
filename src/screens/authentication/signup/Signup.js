@@ -10,10 +10,12 @@ if (!firebase.apps.length) {
     appId: "1:676638158064:web:e01ff8bc3a12a378eee635",
   });
 }
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 // firebase.storage().ref();
 import * as Permissions from "expo-permissions";
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
+// import { getAuth, signInWithPhoneNumber } from "firebase/auth";
 import {
   View,
   Text,
@@ -73,6 +75,8 @@ const Signup = (props) => {
   const [taxiLicenseValidator, settaxiLicenseValidator] = useState(false);
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [loader, setLoader] = useState(false);
+  const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
+  const recaptchaVerifier = React.useRef(null);
 
   function AlertBadgeNumberImage() {
     Alert.alert(
@@ -221,13 +225,11 @@ const Signup = (props) => {
           };
           firebase.auth().signOut();
 
-          await firebase
-            .database()
-            .ref("users/")
-            .child(uuid)
-            .set(Details)
-            .then(() => {
-              props.SessionMaintain({ "isLogin": true })
+          const phoneProvider = new firebase.auth.PhoneAuthProvider();
+           const verificationId = await  phoneProvider.verifyPhoneNumber("+44"+mobileNo,recaptchaVerifier.current)
+           
+           if(verificationId){
+             // props.SessionMaintain({ "isLogin": true })
               // setIsLoggedIn(false);
               setFirstName("");
               setLastName("");
@@ -244,9 +246,19 @@ const Signup = (props) => {
               setbadgeNumberImageValidator(false);
               settaxiLicenseValidator(false);
               setLoader(false);
-              props.navigation.navigate("Verify");
-            });
+              // var otp = Math.floor(100000 + Math.random() * 900000);
+              var number = "+44"+mobileNo
+              props.navigation.navigate("PhoneAuth",{
+                otp:verificationId,
+                number:number,
+                detail:Details,
+                uid:uuid
+              }
+              )
+           }
+              
 
+         
           // firebase.auth().signOut();
           // props.navigation.navigate("Verify");
           // const uid = user.user.uid;
@@ -363,6 +375,10 @@ const Signup = (props) => {
     <ScrollView style={styles.root}>
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
+          <FirebaseRecaptchaVerifierModal
+            ref={recaptchaVerifier}
+            firebaseConfig={firebaseConfig}
+          />
           <Image
             source={require("../../../../assets/Kabfi-logo.png")}
             resizeMode="contain"
@@ -434,6 +450,7 @@ const Signup = (props) => {
               ]}
             >
               <Text style={styles.countryCode}>+44</Text>
+              {/* <Text style={styles.countryCode}>+92</Text> */}
               <TextInput
                 style={[styles.textFieldFull, { paddingHorizontal: 20 }]}
                 value={mobileNo}
@@ -614,6 +631,7 @@ const Signup = (props) => {
             <TouchableOpacity
               style={styles.loginBtn}
               onPress={() => userSignup()}
+              // onPress={() => props.navigation.navigate('PhoneAuth')}
             >
               {loader ? (
                 <ActivityIndicator color={"red"} size={"small"} />
