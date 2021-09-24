@@ -6,15 +6,16 @@ import firebase from "firebase";
 
 function PhoneAuth  (props)  {
 
+  const ref = useRef();
   const [pin1, setP1] = useState("");
   const [pin2, setP2] = useState("");
   const [pin3, setP3] = useState("");
   const [pin4, setP4] = useState("");
   const [pin5, setP5] = useState("");
   const [pin6, setP6] = useState("");
-  const [number, setNumber] = useState(props.route.params.number);
+  // const [number, setNumber] = useState(props.route.params.number);
   const [loader, setLoader] = useState(false);
-    const route = props.route.params;
+    // const route = props.route.params;
 
   async function CheckValidtions ()  {
       console.log("called");
@@ -111,15 +112,16 @@ function PhoneAuth  (props)  {
             
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center',marginTop:40 }}>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '15%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '12%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 2 }}>
 
                     <TextInput
                         keyboardType='decimal-pad'
                         onChangeText={(p) => setP1(p)}
                         // ref={'pin1ref'}
-                        // // placeholder='0'
+                        // placeholder='0'
                         // onChangeText={(pin1) => {
-                        //     this.setState({ pin1: pin1 }, () => {
+                        //     setP1(p),
+                        //      () => {
                         //         if (pin1 != '') {
                         //             this.refs.pin2ref.focus()
                         //         } else {
@@ -137,7 +139,7 @@ function PhoneAuth  (props)  {
                    
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '15%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '12%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 2 }}>
 
                     <TextInput
                         keyboardType='decimal-pad'
@@ -163,7 +165,7 @@ function PhoneAuth  (props)  {
 
                     </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '15%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '12%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 2 }}>
 
                     <TextInput
                         keyboardType='decimal-pad'
@@ -190,7 +192,7 @@ function PhoneAuth  (props)  {
                    
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '15%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '12%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 2 }}>
 
                     <TextInput
                         keyboardType='decimal-pad'
@@ -217,7 +219,7 @@ function PhoneAuth  (props)  {
                    
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '15%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '12%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 2 }}>
 
                     <TextInput
                         keyboardType='decimal-pad'
@@ -244,7 +246,7 @@ function PhoneAuth  (props)  {
                    
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '15%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center',justifyContent:'center', width: '12%', height: 40, borderRadius: 10,borderBottomWidth:1, margin: 2 }}>
 
                     <TextInput
                         keyboardType='decimal-pad'
@@ -283,7 +285,7 @@ function PhoneAuth  (props)  {
 
             <View style={{alignItems:'center',justifyContent:'center',marginTop:60}}>
                 <Text>Your confirmation code has been sent by SMS to this</Text>
-                <Text>Number: {number}</Text>
+                {/* <Text>Number: {number}</Text> */}
             </View>
 
             <View style={{alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:40}}>
@@ -304,7 +306,8 @@ function PhoneAuth  (props)  {
               {loader ? (
                 <ActivityIndicator color={"red"} size={"small"} />
               ) : (
-                <Text style={{ color: "white" }}>RECIEVE CODE VIA PHONE CALL</Text>
+                // <Text style={{ color: "white" }}>RECIEVE CODE VIA PHONE CALL</Text>
+                <Text style={{ color: "white" }}>VERIFY</Text>
               )}
             </TouchableOpacity>
           </View>

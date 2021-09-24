@@ -211,7 +211,7 @@ const Signup = (props) => {
 
           const phoneProvider = new firebase.auth.PhoneAuthProvider();
           const verificationId = await phoneProvider.verifyPhoneNumber(
-            "+92" + mobileNo,
+            "+44" + mobileNo,
             recaptchaVerifier.current
           );
 
@@ -234,7 +234,7 @@ const Signup = (props) => {
             settaxiLicenseValidator(false);
             setLoader(false);
             // var otp = Math.floor(100000 + Math.random() * 900000);
-            var number = "+92" + mobileNo;
+            var number = "+44" + mobileNo;
             props.navigation.navigate("PhoneAuth", {
               otp: verificationId,
               number: number,
