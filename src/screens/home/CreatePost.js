@@ -696,18 +696,27 @@ const CreatePost = (props) => {
               onPress={showMethod}
               // disabled={recording ? true : false}
             >
-              {!index ?
+              {/* {!index || showrec ? */}
+              {!index?
+              <>
+                {showrec ?
+                  <Image source={waveonn}  style={styles.media} />
+                :
                 <>
-                  {Sound === ''?
-                    <Image source={waveoff}  style={styles.media} />
-                  :
-                    <Image source={waveonn}  style={styles.media} />
-                  }  
+                  <Image source={waveoff}  style={styles.media} />
                 </>
+                }
+              </>
               :
-              <Image source={waveonn}  style={styles.media} />
+              <>
+                {Sound != ''?
+                  <Image source={waveoff}  style={styles.media} />
+                :
+                  <Image source={waveonn}  style={styles.media} />
+                }
+              </>
+                  // <Image source={waveonn}  style={styles.media} />
               }
-
               {/* <MaterialIcons
                 name="multitrack-audio"
                 size={22}
@@ -769,7 +778,7 @@ const CreatePost = (props) => {
                 },
                 text: {
                   fontSize: 20,
-                  color: "black",
+                  color: "orange",
                   alignSelf: "center",
                 },
               }}
