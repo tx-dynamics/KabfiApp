@@ -2,6 +2,7 @@ import firebase from "firebase";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 // import Snackbar from 'rn-snackbar-component'
+import { connect } from "react-redux";
 
 import {
   View,
@@ -65,27 +66,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 import CountDown from "react-native-countdown-component";
-import { color } from "react-native-reanimated";
-const useProgress = (maxTimeInSeconds = 700) => {
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (progress < 1) {
-        setElapsedTime((t) => t + 1);
-      }
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
-    setProgress(elapsedTime / maxTimeInSeconds);
-  }, [elapsedTime]);
-
-  return progress;
-};
+import { postData } from "../../Redux/Actions/Actions";
 
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
@@ -130,7 +111,7 @@ const NewsFeed = (props) => {
   };
   useEffect(() => {
     fetchAllPosts();
-    fetchLocation();
+    // fetchLocation();
     // return sound
     //   ? () => {
     //       console.log("Unloading Sound");
@@ -562,9 +543,10 @@ const NewsFeed = (props) => {
                 source={item.user_image ? { uri: item.user_image } : user}
                 // style={[styles.userImgStyle,{marginTop:-30}]}
                 style={
-                  Platform.OS == "android"
-                    ? [styles.userImgStyle, { marginTop: -30 }]
-                    : [styles.userImgStyle, {}]
+                  // Platform.OS == "android"
+                  //   ? [styles.userImgStyle, { marginTop: -30 }]
+                  //   :
+                  [styles.userImgStyle, {}]
                 }
               />
               <Text
@@ -598,7 +580,7 @@ const NewsFeed = (props) => {
               </Text>
             </View>
 
-            {Platform.OS == "android" ? (
+            {/* {Platform.OS == "android" ? (
               <MenuProvider>
                 <View style={{ height: 100 }}>
                   <Menu style={{ position: "absolute", top: 10, right: 0 }}>
@@ -679,39 +661,41 @@ const NewsFeed = (props) => {
                   </Menu>
                 </View>
               </MenuProvider>
-            ) : (
-              <OptionsMenu
-                button={more}
-                buttonStyle={{
-                  width: 30,
-                  height: 15,
-                  resizeMode: "contain",
-                  marginTop: 14,
-                }}
-                // customStyles={{}}
-                destructiveIndex={1}
-                options={
-                  firebase.auth().currentUser?.uid === item.user
-                    ? ["Delete", "Cancel"]
-                    : ["Hide", "Report", "Cancel"]
-                }
-                optionText={{ color: "green" }}
-                actions={
-                  firebase.auth().currentUser?.uid === item.user
-                    ? [
-                        () => delPost(item.user, item.id),
-                        () => console.log("cancel"),
-                      ]
-                    : [
-                        () => hideHandler(item.id),
-                        () => {
-                          reportHandler(item.id);
-                        },
-                        () => console.log("cancel"),
-                      ]
-                }
-              />
-            )}
+            ) : ( */}
+            <OptionsMenu
+              button={more}
+              buttonStyle={{
+                width: 30,
+                height: 15,
+                resizeMode: "contain",
+                marginTop: 14,
+              }}
+              // customStyles={{}}
+              destructiveIndex={
+                firebase.auth().currentUser?.uid === item.user ? 0 : 1
+              }
+              options={
+                firebase.auth().currentUser?.uid === item.user
+                  ? ["Delete", "Cancel"]
+                  : ["Hide", "Report", "Cancel"]
+              }
+              optionText={{ color: "green" }}
+              actions={
+                firebase.auth().currentUser?.uid === item.user
+                  ? [
+                      () => delPost(item.user, item.id),
+                      () => console.log("cancel"),
+                    ]
+                  : [
+                      () => hideHandler(item.id),
+                      () => {
+                        reportHandler(item.id);
+                      },
+                      () => console.log("cancel"),
+                    ]
+              }
+            />
+            {/* )} */}
           </View>
 
           <View
@@ -1275,4 +1259,14 @@ const NewsFeed = (props) => {
     </View>
   );
 };
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     dat: (data) => dispatch(postData(data)),
+//   };
+// };
+// const mapStateToProps = (state) => {
+//   const { postdata } = state.AuthReducer;
+//   return { postdata };
+// };
+// export default connect(mapStateToProps, mapDispatchToProps)(NewsFeed);
 export default NewsFeed;

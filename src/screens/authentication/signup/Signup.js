@@ -125,7 +125,7 @@ const Signup = (props) => {
         result = await ImagePicker.launchCameraAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           aspect: [4, 3],
-          quality: 0.5,
+          quality: 0,
         });
       } else {
         alert("Camera permission Denied");
@@ -134,7 +134,7 @@ const Signup = (props) => {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
-        quality: 0.5,
+        quality: 0,
       });
     }
 
@@ -151,7 +151,7 @@ const Signup = (props) => {
       result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
-        quality: 0.6,
+        quality: 0,
       });
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
@@ -206,75 +206,72 @@ const Signup = (props) => {
       }
       const badgeImage = await uploadImage(badgeNumberImage.uri);
       const taxiLicense = await uploadImage(taxiLicenseImage.uri);
-      
-          
 
-          const phoneProvider = new firebase.auth.PhoneAuthProvider();
-          const verificationId = await phoneProvider.verifyPhoneNumber(
-            "+92" + mobileNo,
-            recaptchaVerifier.current
-          );
+      const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        "+44" + mobileNo,
+        recaptchaVerifier.current
+      );
 
-          if (verificationId) {
-            // props.SessionMaintain({ "isLogin": true })
-            // setIsLoggedIn(false);
-            setFirstName("");
-            setLastName("");
-            setMobileNo("");
-            setEmail("");
-            setPassword("");
-            setTaxiLicenseImage("");
-            setBadgeNumberImage("");
-            setfNameValidator(false);
-            setlNameValidator(false);
-            setmobileNoValidator(false);
-            setEmailValidator(false);
-            setpasswordValidator(false);
-            setbadgeNumberImageValidator(false);
-            settaxiLicenseValidator(false);
-            setLoader(false);
-            // var otp = Math.floor(100000 + Math.random() * 900000);
-            var number = "+92" + mobileNo;
-            props.navigation.navigate("PhoneAuth", {
-              otp: verificationId,
-              number: number,
-              // detail: Details,
-              // uid: uuid,
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              password:password,
-              mobileNo: mobileNo,
-              badgeNumberImage: badgeImage,
-              taxiLicenseImage: taxiLicense,
-             
-            });
-          }
+      if (verificationId) {
+        // props.SessionMaintain({ "isLogin": true })
+        // setIsLoggedIn(false);
+        setFirstName("");
+        setLastName("");
+        setMobileNo("");
+        setEmail("");
+        setPassword("");
+        setTaxiLicenseImage("");
+        setBadgeNumberImage("");
+        setfNameValidator(false);
+        setlNameValidator(false);
+        setmobileNoValidator(false);
+        setEmailValidator(false);
+        setpasswordValidator(false);
+        setbadgeNumberImageValidator(false);
+        settaxiLicenseValidator(false);
+        setLoader(false);
+        // var otp = Math.floor(100000 + Math.random() * 900000);
+        var number = "+44" + mobileNo;
+        props.navigation.navigate("PhoneAuth", {
+          otp: verificationId,
+          number: number,
+          // detail: Details,
+          // uid: uuid,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+          mobileNo: mobileNo,
+          badgeNumberImage: badgeImage,
+          taxiLicenseImage: taxiLicense,
+        });
+      }
 
-          // firebase.auth().signOut();
-          // props.navigation.navigate("Verify");
-          // const uid = user.user.uid;
-          // setIsLoggedIn(false);
+      // firebase.auth().signOut();
+      // props.navigation.navigate("Verify");
+      // const uid = user.user.uid;
+      // setIsLoggedIn(false);
 
-          // console.log(Details);
-          // firebase
-          //   .database()
-          //   .ref("users/" + uid)
-          //   .set(Details)
-          //   .then(() => {
-          //     setIsLoggedIn(false);
-          //     alert(
-          //       "Thank you for your registration! Your account is now ready to use."
-          //     );
-          //   });
-          // firebase.auth().signOut();
-          // await saveData("users", user.user.uid, Details);
-        // })
-        // .catch(function (error) {
-        //   setLoader(false);
-        //   success = false;
-        //   alert(error.message);
-        // });
+      // console.log(Details);
+      // firebase
+      //   .database()
+      //   .ref("users/" + uid)
+      //   .set(Details)
+      //   .then(() => {
+      //     setIsLoggedIn(false);
+      //     alert(
+      //       "Thank you for your registration! Your account is now ready to use."
+      //     );
+      //   });
+      // firebase.auth().signOut();
+      // await saveData("users", user.user.uid, Details);
+      // })
+      // .catch(function (error) {
+      //   setLoader(false);
+      //   success = false;
+      //   alert(error.message);
+      // });
     } else {
       setLoader(false);
       if (

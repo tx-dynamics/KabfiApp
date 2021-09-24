@@ -91,24 +91,24 @@ const EditProfile = (props) => {
             if (!city == "") {
               if (Dp) {
                 console.log("OKKKK Man");
-                profileIamge = await uploadImage(Dp);
+                // profileIamge = await uploadImage(Dp);
+
+                let Details = {
+                  firstName: firstName,
+                  lastName: lastName,
+                  mobileNo: mobileNo,
+                  city: city,
+                  Dp: Dp,
+                };
+
+                const user = firebase.auth().currentUser.uid;
+                firebase
+                  .database()
+                  .ref("users/" + user)
+                  .update(Details);
+                alert("Profile Updated Successfully");
+                props.navigation.push("NewsFeed");
               }
-
-              let Details = {
-                firstName: firstName,
-                lastName: lastName,
-                mobileNo: mobileNo,
-                city: city,
-                Dp: profileIamge,
-              };
-
-              const user = await firebase.auth().currentUser.uid;
-              const data = await firebase
-                .database()
-                .ref("users/" + user)
-                .update(Details);
-              alert("Profile Updated Successfully");
-              props.navigation.push("NewsFeed");
             } else {
               setErroMessage("city name cannont be empty");
             }
@@ -135,12 +135,14 @@ const EditProfile = (props) => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
         quality: 0,
+        allowsEditing: true,
       });
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
         quality: 0,
+        allowsEditing: true,
       });
     }
     const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {
@@ -150,9 +152,11 @@ const EditProfile = (props) => {
     console.log(manipResult);
 
     if (!result.cancelled) {
-      setDp(manipResult.uri);
+      // setDp(manipResult.uri);
       console.log("OKKKK ", manipResult.uri);
-      // setDp1(true);
+      let profileIamge = await uploadImage(manipResult.uri);
+      setDp(profileIamge);
+      console.log("OKKKK ", Dp);
       // alert("Taxi License Selected");
     }
   };
