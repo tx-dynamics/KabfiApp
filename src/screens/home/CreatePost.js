@@ -17,7 +17,7 @@ import {
   Slider,
 } from "react-native";
 //import Slider from "react-native-slider";
-import { ProgressBar, Colors,Snackbar } from "react-native-paper";
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 import * as ImageManipulator from "expo-image-manipulator";
 import {
   // useSafeAreaInsets,
@@ -85,7 +85,7 @@ const CreatePost = (props) => {
   const [keyBoardHeight, setKeyBoardHeight] = useState(false);
   const [isplaying, setisplaying] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [messge, setMessage] = useState('');
+  const [messge, setMessage] = useState("");
 
   useEffect(() => {
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
@@ -192,8 +192,8 @@ const CreatePost = (props) => {
         });
         // mylike.set(userId);
         // myRef.set(Details);
-        setMessage('Post Added Successfully')
-        setIsVisible(!isVisible)
+        setMessage("Post Added Successfully");
+        setIsVisible(!isVisible);
         // alert("Post Added Successfully");
         await AsyncStorage.clear();
         setloading(false);
@@ -439,7 +439,6 @@ const CreatePost = (props) => {
   async function ondelaudio() {
     console.log("here");
     setstopwatchReset(true);
-    // setstopwatchReset(false);
     setDelTop(true);
     setontimer(false);
     setRecording(null);
@@ -464,7 +463,7 @@ const CreatePost = (props) => {
       <>
         {/* <ScrollView style={styles.scrollView}>
          */}
-      
+
         <View style={styles.contentArea}>
           <View
             style={{ justifyContent: "space-between", flexDirection: "row" }}
@@ -483,24 +482,29 @@ const CreatePost = (props) => {
               )}
             </TouchableOpacity>
           </View>
-          {isVisible?
-            <View style={{height:60}}>
-                <Snackbar
-                  style={{backgroundColor:'#FF9900',marginLeft:8,marginRight:8,borderRadius:10}}
-                  visible={isVisible}
-                  action={{label:'ok'}}
-                  onDismiss={() => setIsVisible(!isVisible)}
-                  //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
-                  // )}
-                  // position={'top'}
-                  duration={messge.length + 1000}
-                >
-                  <Text>{messge}</Text>
-                </Snackbar>
-              </View>
-            :
+          {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FF9900",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderRadius: 10,
+                }}
+                visible={isVisible}
+                action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+                // )}
+                // position={'top'}
+                duration={messge.length + 1000}
+              >
+                <Text>{messge}</Text>
+              </Snackbar>
+            </View>
+          ) : (
             <></>
-            }
+          )}
           <View style={styles.postTextContainer}>
             {postImage ? (
               <ImageBackground
@@ -693,7 +697,7 @@ const CreatePost = (props) => {
               onPress={showMethod}
               // disabled={recording ? true : false}
             >
-              <Image source={!index?waveoff:waveonn} style={styles.media} />
+              <Image source={!index ? waveoff : waveonn} style={styles.media} />
               {/* <MaterialIcons
                 name="multitrack-audio"
                 size={22}
@@ -816,8 +820,9 @@ const CreatePost = (props) => {
                   backgroundColor: "#FCB040",
                   justifyContent: "center",
                   // alignSelf: "center",
-                  marginTop:
-                  !isstopwatch?responsiveHeight(20):responsiveHeight(0)
+                  marginTop: !isstopwatch
+                    ? responsiveHeight(20)
+                    : responsiveHeight(0),
                 }}
               >
                 <Feather
