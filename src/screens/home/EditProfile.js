@@ -48,7 +48,7 @@ const EditProfile = (props) => {
       setCity(userdata.val().city);
       setCountry(userdata.val().country);
       setEmail(userdata.val().email);
-      setDp(userdata.val().Dp);
+      userdata.val().Dp ? setDp(userdata.val().Dp) : setDp("");
     });
     setLoader(false);
   }, []);
