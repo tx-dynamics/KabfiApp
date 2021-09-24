@@ -89,26 +89,26 @@ const EditProfile = (props) => {
         if (!lastName == "") {
           if (!mobileNo == "" && mobileNo.length > 10) {
             if (!city == "") {
-              if (Dp) {
-                console.log("OKKKK Man");
-                // profileIamge = await uploadImage(Dp);
+              // if (Dp) {
+              //   console.log("OKKKK Man");
+              // profileIamge = await uploadImage(Dp);
 
-                let Details = {
-                  firstName: firstName,
-                  lastName: lastName,
-                  mobileNo: mobileNo,
-                  city: city,
-                  Dp: Dp,
-                };
+              let Details = {
+                firstName: firstName,
+                lastName: lastName,
+                mobileNo: mobileNo,
+                city: city,
+                Dp: Dp,
+              };
 
-                const user = firebase.auth().currentUser.uid;
-                firebase
-                  .database()
-                  .ref("users/" + user)
-                  .update(Details);
-                alert("Profile Updated Successfully");
-                props.navigation.push("NewsFeed");
-              }
+              const user = firebase.auth().currentUser.uid;
+              firebase
+                .database()
+                .ref("users/" + user)
+                .update(Details);
+              alert("Profile Updated Successfully");
+              props.navigation.push("NewsFeed");
+              // }
             } else {
               setErroMessage("city name cannont be empty");
             }
