@@ -206,6 +206,46 @@ const Signup = (props) => {
       }
       const badgeImage = await uploadImage(badgeNumberImage.uri);
       const taxiLicense = await uploadImage(taxiLicenseImage.uri);
+      const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        "+44" + mobileNo,
+        recaptchaVerifier.current
+      );
+
+      if (verificationId) {
+        // props.SessionMaintain({ "isLogin": true })
+        // setIsLoggedIn(false);
+        setFirstName("");
+        setLastName("");
+        setMobileNo("");
+        setEmail("");
+        setPassword("");
+        setTaxiLicenseImage("");
+        setBadgeNumberImage("");
+        setfNameValidator(false);
+        setlNameValidator(false);
+        setmobileNoValidator(false);
+        setEmailValidator(false);
+        setpasswordValidator(false);
+        setbadgeNumberImageValidator(false);
+        settaxiLicenseValidator(false);
+        setLoader(false);
+        // var otp = Math.floor(100000 + Math.random() * 900000);
+        var number = "+44" + mobileNo;
+        props.navigation.navigate("PhoneAuth", {
+          otp: verificationId,
+          number: number,
+          // detail: Details,
+          // uid: uuid,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+          mobileNo: mobileNo,
+          badgeNumberImage: badgeImage,
+          taxiLicenseImage: taxiLicense,
+        });
+      }
 
       const phoneProvider = new firebase.auth.PhoneAuthProvider();
       const verificationId = await phoneProvider.verifyPhoneNumber(

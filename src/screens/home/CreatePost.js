@@ -214,7 +214,6 @@ const CreatePost = (props) => {
 
   const pickPostImage = async (val) => {
     let result = "";
-
     result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
@@ -697,7 +696,18 @@ const CreatePost = (props) => {
               onPress={showMethod}
               // disabled={recording ? true : false}
             >
-              <Image source={!index ? waveoff : waveonn} style={styles.media} />
+              {!index ?
+                <>
+                  {Sound === ''?
+                    <Image source={waveoff}  style={styles.media} />
+                  :
+                    <Image source={waveonn}  style={styles.media} />
+                  }  
+                </>
+              :
+              <Image source={waveonn}  style={styles.media} />
+              }
+
               {/* <MaterialIcons
                 name="multitrack-audio"
                 size={22}
