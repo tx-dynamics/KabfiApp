@@ -190,7 +190,7 @@ export default class HeatMap extends Component {
   };
   componentDidUpdate(prevProps) {
     if (prevProps.isFocused !== this.props.isFocused) {
-      // this.fetchLocation();
+      this.fetchLocation();
     }
   }
   componentDidMount() {
@@ -313,17 +313,17 @@ export default class HeatMap extends Component {
           });
         } catch (err) {
           // this.fetchLocation();
-          alert(err.message);
+          // alert(err.message);
         }
       }
       // }
     } catch (err) {
       // this.setState({ show: true });
-      // this.fetchLocation();
+      this.fetchLocation();
       // return;
 
       // this.props.navigation.navigate("NewsFeed");
-      alert(err.message);
+      // alert(err.message);
     }
   }
 
@@ -362,7 +362,13 @@ export default class HeatMap extends Component {
                 radius={Platform.OS === "ios" ? 150 : 50}
                 opacity={1}
                 gradient={{
-                  colors: ["black", "purple", "red", "orange", "white"],
+                  colors: [
+                    "#877FDC",
+                    "#AC6FA6",
+                    "#E55F5A",
+                    "#FAD462",
+                    "#FAD462",
+                  ],
                   startPoints:
                     Platform.OS === "ios"
                       ? [0.01, 0.04, 0.1, 0.45, 0.5]
