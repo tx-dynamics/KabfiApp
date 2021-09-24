@@ -178,8 +178,8 @@ const styles = StyleSheet.create({
 export default class HeatMap extends Component {
   state = {
     initialPosition: {
-      latitude: 51.5074,
-      longitude: 0.1278,
+      latitude: 53.74314330157041,
+      longitude: -1.6919068119555305,
       latitudeDelta: 0.09,
       longitudeDelta: 0.035,
     },
@@ -264,58 +264,58 @@ export default class HeatMap extends Component {
   // }
   async fetchLocation() {
     try {
-      let { status } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== "granted") {
-        alert("Permission to access location was denied");
-        this.props.navigation.navigate("NewsFeed");
-        return;
-      } else {
-        this.setState({ loader: true, show: false });
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        console.log("Location==>", location);
+      // let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      // if (status !== "granted") {
+      //   alert("Permission to access location was denied");
+      //   this.props.navigation.navigate("NewsFeed");
+      //   return;
+      // } else {
+      this.setState({ loader: true, show: false });
+      // let location = await Location.getCurrentPositionAsync({
+      //   accuracy: Location.Accuracy.High,
+      // });
+      // console.log("Location==>", location);
 
-        this.setState({
-          initialPosition: {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
-          },
-        });
-        // if (location) {
-        //   this.setState({
-        //     initialPosition: {
-        //       latitude: location.coords.latitude,
-        //       longitude: location.coords.longitude,
-        //       latitudeDelta: 0.015,
-        //       longitudeDelta: 0.0121,
-        //     },
-        //   });
-        try {
-          const mylocation = firebase.database().ref("locations/");
-          mylocation.once("value", (child) => {
-            const points1 = [];
-            console.log(child.key);
-            // if (child.hasChildren()) {
-            child.forEach((chill) => {
-              points1.push({
-                latitude: chill.val().latitude,
-                longitude: chill.val().longitude,
-                latitudeDelta: 0.015,
-                longitudeDelta: 0.0121,
-              });
+      // this.setState({
+      //   initialPosition: {
+      //     latitude: location.coords.latitude,
+      //     longitude: location.coords.longitude,
+      //     latitudeDelta: 0.015,
+      //     longitudeDelta: 0.0121,
+      //   },
+      // });
+      // if (location) {
+      //   this.setState({
+      //     initialPosition: {
+      //       latitude: location.coords.latitude,
+      //       longitude: location.coords.longitude,
+      //       latitudeDelta: 0.015,
+      //       longitudeDelta: 0.0121,
+      //     },
+      //   });
+      try {
+        const mylocation = firebase.database().ref("locations/");
+        mylocation.once("value", (child) => {
+          const points1 = [];
+          console.log(child.key);
+          // if (child.hasChildren()) {
+          child.forEach((chill) => {
+            points1.push({
+              latitude: chill.val().latitude,
+              longitude: chill.val().longitude,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
             });
-            // }
-            console.log("Points==>", points1);
-            this.setState({ points: points1, loader: false });
           });
-        } catch (err) {
-          // this.fetchLocation();
-          // alert(err.message);
-        }
+          // }
+          console.log("Points==>", points1);
+          this.setState({ points: points1, loader: false });
+        });
+      } catch (err) {
+        // this.fetchLocation();
+        // alert(err.message);
       }
+      // }
       // }
     } catch (err) {
       // this.setState({ show: true });

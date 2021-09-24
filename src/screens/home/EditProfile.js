@@ -152,7 +152,8 @@ const EditProfile = (props) => {
     console.log(manipResult);
 
     if (!result.cancelled) {
-      // setDp(manipResult.uri);
+      setDp(manipResult.uri);
+      setFlag(true);
       console.log("OKKKK ", manipResult.uri);
       let profileIamge = await uploadImage(manipResult.uri);
       setDp(profileIamge);
