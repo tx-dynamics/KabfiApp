@@ -1,6 +1,6 @@
 import firebase from "firebase";
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { ProgressBar, Colors,Snackbar } from "react-native-paper";
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 // import Snackbar from 'rn-snackbar-component'
 
 import {
@@ -27,8 +27,8 @@ import {
   MenuOptions,
   MenuOption,
   MenuTrigger,
-  MenuProvider
-} from 'react-native-popup-menu';
+  MenuProvider,
+} from "react-native-popup-menu";
 import * as Progress from "react-native-progress";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -112,7 +112,7 @@ const NewsFeed = (props) => {
   const refRBSheet = useRef();
   const [isplaying, setisplaying] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [messge, setMessage] = useState('');
+  const [messge, setMessage] = useState("");
   const [timerStart, settimerStart] = useState(false);
   const [timerReset, settimerReset] = useState(false);
   const options = {
@@ -229,14 +229,14 @@ const NewsFeed = (props) => {
                   firebase.auth().currentUser?.uid
               );
             //it will check the save post that user save
-            const userSave = firebase
-              .database()
-              .ref(
-                "user_posts/" +
-                  child.key +
-                  "/Save/" +
-                  firebase.auth().currentUser?.uid
-              );
+            // const userSave = firebase
+            //   .database()
+            //   .ref(
+            //     "user_posts/" +
+            //       child.key +
+            //       "/Save/" +
+            //       firebase.auth().currentUser?.uid
+            //   );
             //this will update if user change the picture
             const userImages = firebase
               .database()
@@ -368,25 +368,21 @@ const NewsFeed = (props) => {
   }
   async function hideHandler(post_id) {
     // setRefreshing(true);
-    
 
     let filtered = posts.filter((i) => {
       return post_id !== i.id;
     });
 
     console.log("\n", post_id);
-    setMessage('This post is no longer available for you')
-    setIsVisible(!isVisible)
+    setMessage("This post is no longer available for you");
+    setIsVisible(!isVisible);
     setPosts(filtered);
-    
-  
- 
+
     const hiderPost = firebase
       .database()
       .ref("user_posts/" + post_id + "/Hide/");
-    hiderPost.set(uid)
+    hiderPost.set(uid);
     setShow(false);
-  
 
     console.log("post_id==>", post_id);
     // setRefreshing(false);
@@ -394,8 +390,8 @@ const NewsFeed = (props) => {
   }
   async function reportHandler(post_id) {
     // alert("Reported");
-    setIsVisible(!isVisible)
-    setMessage('Reported')
+    setIsVisible(!isVisible);
+    setMessage("Reported");
     const reportPost = firebase.database().ref("report/" + post_id + "/");
     reportPost.set(uid);
     setShow(false);
@@ -426,18 +422,16 @@ const NewsFeed = (props) => {
   async function playSound(id, soundUri, time) {
     // console.log("testtt" + parseInt(time / 1000));
 
-// <<<<<<< HEAD
+    // <<<<<<< HEAD
     // setMaxTimeInSeconds(time / 1000);
-    
+
     setMaxTimeInSeconds(time / 1000);
     setTimeout(() => {
-
       console.log("setting timout");
       setisplaying(!isplaying);
-   
     }, 3000);
 
-// >>>>>>> 0c399b6e4f264d33f2bc88f865686658ecbcdb99
+    // >>>>>>> 0c399b6e4f264d33f2bc88f865686658ecbcdb99
     if (!isplaying) {
       try {
         // console.log("isplaying", isplaying);
@@ -512,8 +506,6 @@ const NewsFeed = (props) => {
     settimerReset(false);
   }
 
-
-
   async function toogleLike(id, isplaying) {
     console.log(id);
     const res = posts.map((item) => {
@@ -538,13 +530,11 @@ const NewsFeed = (props) => {
     console.log("post filter", filtered, "\n", postid);
     setPosts(filtered);
     // alert("Post Deleted Successfully");
-    setIsVisible(!isVisible)
-    setMessage('Post Deleted Successfully')
+    setIsVisible(!isVisible);
+    setMessage("Post Deleted Successfully");
     const del = firebase.database().ref("user_posts").child(postid);
     del.remove().then(() => console.log("Post Deleted Successfully"));
   }
-
- 
 
   const renderPosts = ({ item, index }) => {
     return (
@@ -571,7 +561,11 @@ const NewsFeed = (props) => {
               <Image
                 source={item.user_image ? { uri: item.user_image } : user}
                 // style={[styles.userImgStyle,{marginTop:-30}]}
-                style={Platform.OS == "android"?[styles.userImgStyle,{marginTop:-30}]:[styles.userImgStyle,{}]}
+                style={
+                  Platform.OS == "android"
+                    ? [styles.userImgStyle, { marginTop: -30 }]
+                    : [styles.userImgStyle, {}]
+                }
               />
               <Text
                 // numberOfLines={3}
@@ -604,79 +598,120 @@ const NewsFeed = (props) => {
               </Text>
             </View>
 
-            {Platform.OS == "android"?
-            <MenuProvider>
-              <View style={{height:100}}>
-              <Menu style={{position:'absolute',top:10,right:0}} >
-                <MenuTrigger style={{ width: 40, marginTop: 6 }} >
-                  <SimpleLineIcons name="options-vertical" size={18} color="black" />
-                </MenuTrigger>
-                { firebase.auth().currentUser?.uid === item.user?
-                  <MenuOptions  optionsContainerStyle={{height:80,width:100}}>
-                    <MenuOption customStyles={{height:48,width:100}}   >
-                      <Text onPress={()=>delPost(item.user, item.id)} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Delete</Text>
-                    </MenuOption>
-                    <MenuOption customStyles={{height:48,width:100}} >
-                      <Text style={{fontWeight:'bold',alignSelf:'center'}} >Cancel</Text>
-                    </MenuOption>
-                  </MenuOptions>
-                  :
-                  <MenuOptions  optionsContainerStyle={{paddingLeft:8,height:100,width:100}}>
-                  <MenuOption customStyles={{height:48,width:100}}   >
-                    <Text onPress={()=>{hideHandler(item.id)}} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Hide</Text>
-                  </MenuOption>
-                  <MenuOption customStyles={{height:48,width:100}}   >
-                    <Text onPress={()=>reportHandler(item.id)} style={{fontWeight:'bold',color:'red',alignSelf:'center'}} >Report</Text>
-                  </MenuOption>
-                  <MenuOption customStyles={{height:48,width:100}} >
-                    <Text style={{fontWeight:'bold',alignSelf:'center'}} >Cancel</Text>
-                  </MenuOption>
-                </MenuOptions>
+            {Platform.OS == "android" ? (
+              <MenuProvider>
+                <View style={{ height: 100 }}>
+                  <Menu style={{ position: "absolute", top: 10, right: 0 }}>
+                    <MenuTrigger style={{ width: 40, marginTop: 6 }}>
+                      <SimpleLineIcons
+                        name="options-vertical"
+                        size={18}
+                        color="black"
+                      />
+                    </MenuTrigger>
+                    {firebase.auth().currentUser?.uid === item.user ? (
+                      <MenuOptions
+                        optionsContainerStyle={{ height: 80, width: 100 }}
+                      >
+                        <MenuOption customStyles={{ height: 48, width: 100 }}>
+                          <Text
+                            onPress={() => delPost(item.user, item.id)}
+                            style={{
+                              fontWeight: "bold",
+                              color: "red",
+                              alignSelf: "center",
+                            }}
+                          >
+                            Delete
+                          </Text>
+                        </MenuOption>
+                        <MenuOption customStyles={{ height: 48, width: 100 }}>
+                          <Text
+                            style={{ fontWeight: "bold", alignSelf: "center" }}
+                          >
+                            Cancel
+                          </Text>
+                        </MenuOption>
+                      </MenuOptions>
+                    ) : (
+                      <MenuOptions
+                        optionsContainerStyle={{
+                          paddingLeft: 8,
+                          height: 100,
+                          width: 100,
+                        }}
+                      >
+                        <MenuOption customStyles={{ height: 48, width: 100 }}>
+                          <Text
+                            onPress={() => {
+                              hideHandler(item.id);
+                            }}
+                            style={{
+                              fontWeight: "bold",
+                              color: "red",
+                              alignSelf: "center",
+                            }}
+                          >
+                            Hide
+                          </Text>
+                        </MenuOption>
+                        <MenuOption customStyles={{ height: 48, width: 100 }}>
+                          <Text
+                            onPress={() => reportHandler(item.id)}
+                            style={{
+                              fontWeight: "bold",
+                              color: "red",
+                              alignSelf: "center",
+                            }}
+                          >
+                            Report
+                          </Text>
+                        </MenuOption>
+                        <MenuOption customStyles={{ height: 48, width: 100 }}>
+                          <Text
+                            style={{ fontWeight: "bold", alignSelf: "center" }}
+                          >
+                            Cancel
+                          </Text>
+                        </MenuOption>
+                      </MenuOptions>
+                    )}
+                  </Menu>
+                </View>
+              </MenuProvider>
+            ) : (
+              <OptionsMenu
+                button={more}
+                buttonStyle={{
+                  width: 30,
+                  height: 15,
+                  resizeMode: "contain",
+                  marginTop: 14,
+                }}
+                // customStyles={{}}
+                destructiveIndex={1}
+                options={
+                  firebase.auth().currentUser?.uid === item.user
+                    ? ["Delete", "Cancel"]
+                    : ["Hide", "Report", "Cancel"]
                 }
-                
-              </Menu>
-              
-              </View>
-            </MenuProvider>
-            :
-         
-            <OptionsMenu
-              button={more}
-              buttonStyle={{
-                width: 30,
-                height: 15,
-                resizeMode: "contain",
-                marginTop: 14,
-              
-              }}
-              // customStyles={{}}
-              destructiveIndex={1}
-              options={
-                firebase.auth().currentUser?.uid === item.user
-                  ? ["Delete", "Cancel"]
-                  : ["Hide", "Report", "Cancel"]
-              }
-              optionText={{color:'green'}}
-             
-              actions={
-                firebase.auth().currentUser?.uid === item.user
-                  ? [
-                      () => delPost(item.user, item.id),
-                      () => console.log("cancel"),
-                    ]
-                  : [
-                      () => hideHandler(item.id),
-                      () => {
-                        reportHandler(item.id);
-                      },
-                      () => console.log("cancel"),
-                    ]
-              }
-            /> 
-          }
-
-            
-
+                optionText={{ color: "green" }}
+                actions={
+                  firebase.auth().currentUser?.uid === item.user
+                    ? [
+                        () => delPost(item.user, item.id),
+                        () => console.log("cancel"),
+                      ]
+                    : [
+                        () => hideHandler(item.id),
+                        () => {
+                          reportHandler(item.id);
+                        },
+                        () => console.log("cancel"),
+                      ]
+                }
+              />
+            )}
           </View>
 
           <View
@@ -751,7 +786,7 @@ const NewsFeed = (props) => {
                   <>
                     {item.isShow ? (
                       <>
-                      {isplaying?
+                        {isplaying ? (
                           <CountDown
                             until={(parseInt(item.time) / 1000).toFixed(0)}
                             onChange={(e) => {
@@ -770,14 +805,13 @@ const NewsFeed = (props) => {
                             separatorStyle={{ color: "white" }}
                             // running={timerStart}
                             style={{ marginLeft: responsiveWidth(-2) }}
-                        />
-                          :
+                          />
+                        ) : (
                           <>
-                            <ActivityIndicator size={'small'} color={'white'} />
+                            <ActivityIndicator size={"small"} color={"white"} />
                           </>
-                      }
+                        )}
                       </>
-                      
                     ) : (
                       // <Timer
                       //   totalDuration={parseInt(item.time)}
@@ -789,39 +823,38 @@ const NewsFeed = (props) => {
                       //   //getTime={this.getFormattedTime}
                       // />
                       <View style={{ flexDirection: "row" }}>
-                         <Text
-                        style={{
-                          color: "white",
-                          fontSize: 12,
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
-                          <>01:</>
-                        ) : (
-                          <Text>00:</Text>
-                        )}
-                      </Text>
-                      <Text
-                        style={{
-                          color: "white",
-                          fontSize: 12,
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
-                          <>
-                            {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
-                              <Text>00</Text>
-                            ) : (
-                              <>{(parseInt(item.time) / 1000).toFixed(0)}</>
-                            )}
-                          </>
-                        ) : (
-                          <>0{(parseInt(item.time) / 1000).toFixed(0)}</>
-                        )}
-                      </Text>
-                    
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 12,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
+                            <>01:</>
+                          ) : (
+                            <Text>00:</Text>
+                          )}
+                        </Text>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 12,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
+                            <>
+                              {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
+                                <Text>00</Text>
+                              ) : (
+                                <>{(parseInt(item.time) / 1000).toFixed(0)}</>
+                              )}
+                            </>
+                          ) : (
+                            <>0{(parseInt(item.time) / 1000).toFixed(0)}</>
+                          )}
+                        </Text>
                       </View>
                       // <Timer
                       // totalDuration={parseInt(item.time)}
@@ -1004,12 +1037,17 @@ const NewsFeed = (props) => {
         rightComponent={<HeaderRight navigation={props.navigation} />}
         centerComponent={<HeaderCenterComponent name="News Feed" />}
       />
-      {isVisible?
-        <View style={{height:60}}>
+      {isVisible ? (
+        <View style={{ height: 60 }}>
           <Snackbar
-            style={{backgroundColor:'#FF9900',marginLeft:8,marginRight:8,borderRadius:10}}
+            style={{
+              backgroundColor: "#FF9900",
+              marginLeft: 8,
+              marginRight: 8,
+              borderRadius: 10,
+            }}
             visible={isVisible}
-            action={{label:'ok'}}
+            action={{ label: "ok" }}
             onDismiss={() => setIsVisible(!isVisible)}
             //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
             // )}
@@ -1019,9 +1057,9 @@ const NewsFeed = (props) => {
             <Text>{messge}</Text>
           </Snackbar>
         </View>
-      :
-      <></>
-      }
+      ) : (
+        <></>
+      )}
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />

@@ -38,8 +38,8 @@ import {
 } from "../../../../assets";
 // import { useLogin } from "../../../context/LoginProvider";
 import { responsiveHeight } from "react-native-responsive-dimensions";
-import { connect } from 'react-redux';
-import { SetSession } from '../../../Redux/Actions/Actions';
+import { connect } from "react-redux";
+import { SetSession } from "../../../Redux/Actions/Actions";
 const Signup = (props) => {
   useEffect(() => {
     // You need to restrict it at some point
@@ -75,7 +75,9 @@ const Signup = (props) => {
   const [taxiLicenseValidator, settaxiLicenseValidator] = useState(false);
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [loader, setLoader] = useState(false);
-  const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
+  const firebaseConfig = firebase.apps.length
+    ? firebase.app().options
+    : undefined;
   const recaptchaVerifier = React.useRef(null);
 
   function AlertBadgeNumberImage() {
@@ -226,39 +228,39 @@ const Signup = (props) => {
           firebase.auth().signOut();
 
           const phoneProvider = new firebase.auth.PhoneAuthProvider();
-           const verificationId = await  phoneProvider.verifyPhoneNumber("+44"+mobileNo,recaptchaVerifier.current)
-           
-           if(verificationId){
-             // props.SessionMaintain({ "isLogin": true })
-              // setIsLoggedIn(false);
-              setFirstName("");
-              setLastName("");
-              setMobileNo("");
-              setEmail("");
-              setPassword("");
-              setTaxiLicenseImage("");
-              setBadgeNumberImage("");
-              setfNameValidator(false);
-              setlNameValidator(false);
-              setmobileNoValidator(false);
-              setEmailValidator(false);
-              setpasswordValidator(false);
-              setbadgeNumberImageValidator(false);
-              settaxiLicenseValidator(false);
-              setLoader(false);
-              // var otp = Math.floor(100000 + Math.random() * 900000);
-              var number = "+44"+mobileNo
-              props.navigation.navigate("PhoneAuth",{
-                otp:verificationId,
-                number:number,
-                detail:Details,
-                uid:uuid
-              }
-              )
-           }
-              
+          const verificationId = await phoneProvider.verifyPhoneNumber(
+            "+44" + mobileNo,
+            recaptchaVerifier.current
+          );
 
-         
+          if (verificationId) {
+            // props.SessionMaintain({ "isLogin": true })
+            // setIsLoggedIn(false);
+            setFirstName("");
+            setLastName("");
+            setMobileNo("");
+            setEmail("");
+            setPassword("");
+            setTaxiLicenseImage("");
+            setBadgeNumberImage("");
+            setfNameValidator(false);
+            setlNameValidator(false);
+            setmobileNoValidator(false);
+            setEmailValidator(false);
+            setpasswordValidator(false);
+            setbadgeNumberImageValidator(false);
+            settaxiLicenseValidator(false);
+            setLoader(false);
+            // var otp = Math.floor(100000 + Math.random() * 900000);
+            var number = "+44" + mobileNo;
+            props.navigation.navigate("PhoneAuth", {
+              otp: verificationId,
+              number: number,
+              detail: Details,
+              uid: uuid,
+            });
+          }
+
           // firebase.auth().signOut();
           // props.navigation.navigate("Verify");
           // const uid = user.user.uid;
@@ -661,4 +663,3 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(null, mapDispatchToProps)(Signup);
-

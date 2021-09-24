@@ -347,7 +347,7 @@ export default class HeatMap extends Component {
             >
               <Heatmap
                 points={this.state.points}
-                radius={150}
+                radius={Platform.OS === "ios" ? 150 : 50}
                 opacity={1}
                 gradient={{
                   colors: ["black", "purple", "red", "orange", "white"],
