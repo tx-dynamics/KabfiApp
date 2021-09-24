@@ -206,30 +206,12 @@ const Signup = (props) => {
       }
       const badgeImage = await uploadImage(badgeNumberImage.uri);
       const taxiLicense = await uploadImage(taxiLicenseImage.uri);
-      await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(async (user) => {
-          const uuid = user.user?.uid;
-          let Details = {
-            id: uuid,
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            mobileNo: mobileNo,
-            badgeNumberImage: badgeImage,
-            taxiLicenseImage: taxiLicense,
-            rating: 5,
-            Dp: "",
-            city: "",
-            country: "",
-            createdAt: new Date().toISOString(),
-          };
-          firebase.auth().signOut();
+      
+          
 
           const phoneProvider = new firebase.auth.PhoneAuthProvider();
           const verificationId = await phoneProvider.verifyPhoneNumber(
-            "+44" + mobileNo,
+            "+92" + mobileNo,
             recaptchaVerifier.current
           );
 
@@ -252,12 +234,20 @@ const Signup = (props) => {
             settaxiLicenseValidator(false);
             setLoader(false);
             // var otp = Math.floor(100000 + Math.random() * 900000);
-            var number = "+44" + mobileNo;
+            var number = "+92" + mobileNo;
             props.navigation.navigate("PhoneAuth", {
               otp: verificationId,
               number: number,
-              detail: Details,
-              uid: uuid,
+              // detail: Details,
+              // uid: uuid,
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password:password,
+              mobileNo: mobileNo,
+              badgeNumberImage: badgeImage,
+              taxiLicenseImage: taxiLicense,
+             
             });
           }
 
@@ -279,12 +269,12 @@ const Signup = (props) => {
           //   });
           // firebase.auth().signOut();
           // await saveData("users", user.user.uid, Details);
-        })
-        .catch(function (error) {
-          setLoader(false);
-          success = false;
-          alert(error.message);
-        });
+        // })
+        // .catch(function (error) {
+        //   setLoader(false);
+        //   success = false;
+        //   alert(error.message);
+        // });
     } else {
       setLoader(false);
       if (
@@ -380,6 +370,7 @@ const Signup = (props) => {
           <FirebaseRecaptchaVerifierModal
             ref={recaptchaVerifier}
             firebaseConfig={firebaseConfig}
+            // attemptInvisibleVerification={true}
           />
           <Image
             source={require("../../../../assets/Kabfi-logo.png")}

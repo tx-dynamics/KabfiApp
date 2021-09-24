@@ -12,6 +12,7 @@ function PhoneAuth  (props)  {
   const [pin4, setP4] = useState("");
   const [pin5, setP5] = useState("");
   const [pin6, setP6] = useState("");
+  const [number, setNumber] = useState(props.route.params.number);
   const [loader, setLoader] = useState(false);
     const route = props.route.params;
 
@@ -23,24 +24,55 @@ function PhoneAuth  (props)  {
         var pin = pin1 + pin2 + pin3 + pin4 + pin5 + pin6;
         // console.log('otp', route)
         console.log('pin', pin)
-        var otp = route.otp
-        var Detail = route.detail
-        var uid = route.uid
+        var otp = route.otp;
+        // var number = route.number;
+        var  firstName = route.firstName;
+        var  lastName = route.lastName 
+        var  email = route.email
+        var  password = route.password
+        var  mobileNo = route.mobileNo
+        var  badgeNumberImage = route.badgeNumberImage
+        var  taxiLicenseImage = route.taxiLicenseImage
+        // setNumber(number)
+
         try {
             const credential = firebase.auth.PhoneAuthProvider.credential(
               otp,
               pin
             );
-            await firebase.auth().signInWithCredential(credential);
+            // await firebase.auth().signInWithCredential(credential);
             alert( "Phone authentication successful 👍" );
+
+            await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(async (user) => {
+          const uuid = user.user?.uid;
+          let Details = {
+            id: uuid,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            mobileNo: mobileNo,
+            badgeNumberImage: badgeNumberImage,
+            taxiLicenseImage: taxiLicenseImage,
+            rating: 5,
+            Dp: "",
+            city: "",
+            country: "",
+            createdAt: new Date().toISOString(),
+          };
+          firebase.auth().signOut();
+
              await firebase
             .database()
             .ref("users/")
-            .child(uid)
-            .set(Detail)
+            .child(uuid)
+            .set(Details)
             .then(() => {
               props.navigation.navigate("Verify");
             });
+          });
 
           } catch (err) {
             alert( "error : " + err );
@@ -251,7 +283,7 @@ function PhoneAuth  (props)  {
 
             <View style={{alignItems:'center',justifyContent:'center',marginTop:60}}>
                 <Text>Your confirmation code has been sent by SMS to this</Text>
-                <Text>Number: +3353324533</Text>
+                <Text>Number: {number}</Text>
             </View>
 
             <View style={{alignItems:'center',justifyContent:'center',flexDirection:'row',marginTop:40}}>
