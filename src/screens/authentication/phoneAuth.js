@@ -21,6 +21,7 @@ import {
 } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import firebase from "firebase";
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 
 function PhoneAuth(props) {
   const ref = useRef();
@@ -32,6 +33,8 @@ function PhoneAuth(props) {
   const [pin6, setP6] = useState("");
   const [number, setNumber] = useState(props.route.params.number);
   const [loader, setLoader] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState("");
   const route = props.route.params;
 
   async function CheckValidtions() {
@@ -44,13 +47,15 @@ function PhoneAuth(props) {
       pin5 == "" ||
       pin6 == ""
     ) {
-      alert("Please Provide Valid Pin");
+      setMessage("Please Provide Valid Pin");
+      setIsVisible(!isVisible);
+      // alert("Please Provide Valid Pin");
     } else {
       var pin = pin1 + pin2 + pin3 + pin4 + pin5 + pin6;
       // console.log('otp', route)
       console.log("pin", pin);
       var otp = route.otp;
-      // var number = route.number;
+      var number = route.number;
       var firstName = route.firstName;
       var lastName = route.lastName;
       var email = route.email;
@@ -58,12 +63,14 @@ function PhoneAuth(props) {
       var mobileNo = route.mobileNo;
       var badgeNumberImage = route.badgeNumberImage;
       var taxiLicenseImage = route.taxiLicenseImage;
-      // setNumber(number)
+      setNumber(number)
 
       try {
         const credential = firebase.auth.PhoneAuthProvider.credential(otp, pin);
         // await firebase.auth().signInWithCredential(credential);
-        alert("Phone authentication successful 👍");
+        // alert("Phone authentication successful 👍");
+        setMessage("Phone authentication successful 👍");
+        setIsVisible(!isVisible);
 
         await firebase
           .auth()
@@ -92,11 +99,15 @@ function PhoneAuth(props) {
               .child(uuid)
               .set(Details)
               .then(() => {
-                props.navigation.navigate("Verify");
+                setTimeout(() => {
+                  props.navigation.navigate("Verify");
+                }, 1500);
               });
           });
       } catch (err) {
-        alert("error : " + err);
+        setMessage("error : " + err);
+        setIsVisible(!isVisible); 
+        // alert("error : " + err);
       }
       // if (pin == route.otp) {
       //     console.log("same")
@@ -137,6 +148,29 @@ function PhoneAuth(props) {
         </View>
       </View>
       <View style={{ flex: 4.8 }}>
+        {isVisible ? (
+            <View style={{ height: 60,flex:0.2 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FF9900",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderRadius: 10,
+                }}
+                visible={isVisible}
+                action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+                // )}
+                // position={'top'}
+                duration={messge.length + 1000}
+              >
+                <Text>{messge}</Text>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+          )}
         <View
           style={{
             flexDirection: "row",
@@ -145,6 +179,7 @@ function PhoneAuth(props) {
             marginTop: 40,
           }}
         >
+         
           <View
             style={{
               flexDirection: "row",
@@ -158,6 +193,7 @@ function PhoneAuth(props) {
               margin: 2,
             }}
           >
+             
             <TextInput
               keyboardType="decimal-pad"
               onChangeText={(p) => setP1(p)}
@@ -372,7 +408,7 @@ function PhoneAuth(props) {
           }}
         >
           <Text>Your confirmation code has been sent by SMS to this</Text>
-          {/* <Text>Number: {number}</Text> */}
+          <Text>Number: {number}</Text>
         </View>
 
         <View
@@ -384,7 +420,9 @@ function PhoneAuth(props) {
           }}
         >
           <Text>Not your current number?</Text>
-          <Text style={{ color: "#FF9900" }}> Change</Text>
+          <TouchableOpacity onPress={()=> props.navigation.navigate("Signup")}>
+            <Text style={{ color: "#FF9900" }}> Change</Text>
+          </TouchableOpacity>
         </View>
 
         <View

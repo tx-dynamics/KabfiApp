@@ -372,6 +372,7 @@ export default class HeatMap extends Component {
               style={styles.map}
               region={this.state.initialPosition}
               showsUserLocation={false}
+              loadingEnabled
             >
               <Heatmap
                 points={this.state.points}
