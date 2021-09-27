@@ -295,9 +295,24 @@ export default class HeatMap extends Component {
       //   });
       try {
         const mylocation = firebase.database().ref("locations/");
+        const myRegion = firebase
+          .database()
+          .ref("locations/" + firebase.auth().currentUser?.uid);
+        myRegion.once("value", (child) => {
+          if (child.exists()) {
+            this.setState({
+              initialPosition: {
+                latitude: child.val().latitude,
+                longitude: child.val().longitude,
+                latitudeDelta: 0.015,
+                longitudeDelta: 0.0121,
+              },
+            });
+          }
+        });
         mylocation.once("value", (child) => {
           const points1 = [];
-          console.log(child.key);
+
           // if (child.hasChildren()) {
           child.forEach((chill) => {
             points1.push({
@@ -356,9 +371,9 @@ export default class HeatMap extends Component {
               ref={(map) => (this._map = map)}
               style={styles.map}
               region={this.state.initialPosition}
-              showsUserLocation={true}
+              showsUserLocation={false}
             >
-              {/* <Heatmap
+              <Heatmap
                 points={this.state.points}
                 radius={Platform.OS === "ios" ? 150 : 50}
                 opacity={1}
@@ -376,7 +391,7 @@ export default class HeatMap extends Component {
                       : [0.1, 0.25, 0.5, 0.75, 1],
                   colorMapSize: 2000,
                 }}
-              ></Heatmap> */}
+              ></Heatmap>
             </MapView>
           )}
         </View>

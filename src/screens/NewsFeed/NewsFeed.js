@@ -111,7 +111,7 @@ const NewsFeed = (props) => {
   };
   useEffect(() => {
     fetchAllPosts();
-     fetchLocation();
+    fetchLocation();
     // return sound
     //   ? () => {
     //       console.log("Unloading Sound");
@@ -156,14 +156,12 @@ const NewsFeed = (props) => {
             const id = firebase.auth().currentUser?.uid;
             const mylocation = firebase.database().ref("locations/" + id);
             mylocation.set(da);
-          } catch (err) {
-            
-          }
+          } catch (err) {}
         }
       }
     } catch (err) {
       setRefreshing(false);
-       alert(err.message);
+      alert(err.message);
     }
     setRefreshing(false);
   }
@@ -743,7 +741,7 @@ const NewsFeed = (props) => {
                 <View
                   style={{
                     backgroundColor: "#FF9900",
-                    width: responsiveWidth(48),
+                    width: responsiveWidth(50),
                     flexDirection: "row",
                     alignItems: "center",
                     padding: 2,
@@ -782,7 +780,7 @@ const NewsFeed = (props) => {
                             onFinish={() => handleTimerComplete}
                             digitStyle={{
                               backgroundColor: "transparent",
-                              width: responsiveWidth(4),
+                              width: responsiveWidth(5),
                             }}
                             digitTxtStyle={{ color: "white" }}
                             timeToShow={["M", "S"]}
