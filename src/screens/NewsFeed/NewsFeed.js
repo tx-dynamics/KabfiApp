@@ -111,7 +111,7 @@ const NewsFeed = (props) => {
   };
   useEffect(() => {
     fetchAllPosts();
-    // fetchLocation();
+     fetchLocation();
     // return sound
     //   ? () => {
     //       console.log("Unloading Sound");
@@ -156,12 +156,14 @@ const NewsFeed = (props) => {
             const id = firebase.auth().currentUser?.uid;
             const mylocation = firebase.database().ref("locations/" + id);
             mylocation.set(da);
-          } catch (err) {}
+          } catch (err) {
+            
+          }
         }
       }
     } catch (err) {
       setRefreshing(false);
-      // alert(err.message);
+       alert(err.message);
     }
     setRefreshing(false);
   }

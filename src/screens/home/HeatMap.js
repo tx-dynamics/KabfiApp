@@ -356,8 +356,9 @@ export default class HeatMap extends Component {
               ref={(map) => (this._map = map)}
               style={styles.map}
               region={this.state.initialPosition}
+              showsUserLocation={true}
             >
-              <Heatmap
+              {/* <Heatmap
                 points={this.state.points}
                 radius={Platform.OS === "ios" ? 150 : 50}
                 opacity={1}
@@ -375,7 +376,7 @@ export default class HeatMap extends Component {
                       : [0.1, 0.25, 0.5, 0.75, 1],
                   colorMapSize: 2000,
                 }}
-              ></Heatmap>
+              ></Heatmap> */}
             </MapView>
           )}
         </View>
