@@ -101,6 +101,8 @@ const NewsFeed = (props) => {
     },
   };
   useEffect(() => {
+    setRefreshing(true);
+
     fetchAllPosts();
     fetchLocation();
   }, [isFocused]);
@@ -878,6 +880,7 @@ const NewsFeed = (props) => {
               backgroundColor: "#FF9900",
               marginLeft: 8,
               marginRight: 8,
+              marginTop:8,
               borderRadius: 10,
             }}
             visible={isVisible}
@@ -891,6 +894,16 @@ const NewsFeed = (props) => {
       ) : (
         <></>
       )}
+
+    {/* {posts === null ?
+    
+    <View style={{alignSelf:'center',height:'200',alignItems:'center',justifyContent:'center'}}>
+      <ActivityIndicator color={'#FCB040'} size={'large'}/>
+    </View>
+
+
+      :   */}
+
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />
@@ -901,6 +914,7 @@ const NewsFeed = (props) => {
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
+    {/* } */}
       {/* {show && (
         <View
           style={{

@@ -23,6 +23,7 @@ import {
   FontAwesome,
   FontAwesome5,
   Ionicons,
+  Feather,
   MaterialIcons,
   Entypo,
 } from "@expo/vector-icons";
@@ -162,14 +163,24 @@ const Signin = (props) => {
             <></>
         )}
         <View style={styles.logoContainer}>
-          <Image
+        <Image
+            source={require("../../../assets/Kabfi-logo.png")}
+            resizeMode="contain"
+            style={{
+              height: 60,
+              width: 156,
+              //backgroundColor: "tomato",
+              alignSelf: "center",
+            }}
+          />
+          {/* <Image
             source={require("../../../assets/ProjectImages/logo.png")}
             style={styles.logoImage}
-          />
+          /> */}
         </View>
 
         <View style={styles.loginForm}>
-          <View style={[styles.textFieldContainer, { marginTop: 20 }]}>
+          <View style={[styles.textFieldContainer, {  }]}>
             {/* <Image
               source={require("../../../assets/ProjectImages/authentication/mail-icon.png")}
               style={styles.fieldIcon}
@@ -177,6 +188,7 @@ const Signin = (props) => {
             <TextInput
               style={styles.textField}
               value={email}
+              placeholderTextColor={'black'}
               placeholder="Email"
               onChangeText={(e) => setEmail(e)}
             />
@@ -192,9 +204,9 @@ const Signin = (props) => {
               style={styles.eyeIconContainer}
               onPress={passwordVisibility}
             >
-              <Ionicons
+              <Feather
                 name={passwordHidden ? "eye" : "eye-off"}
-                style={styles.eyeIcon}
+                style={passwordHidden ? styles.eyeIconOn : styles.eyeIcon }
               />
             </TouchableOpacity>
 
@@ -202,6 +214,7 @@ const Signin = (props) => {
               style={styles.textField}
               placeholder="Password"
               value={password}
+              placeholderTextColor={'black'}
               onChangeText={(e) => setPassword(e)}
               secureTextEntry={passwordHidden}
             />
@@ -263,7 +276,7 @@ const Signin = (props) => {
                   style={{alignItems:'center'}}
                   onPress={() => props.navigation.navigate("Signup")}
                   > 
-                  <Text style={{fontSize:14,fontWeight:'bold',color:'#FF9900',alignSelf:'center',top:4}}> Signup</Text>
+                  <Text style={{fontSize:14,fontWeight:'bold',color:'#FF9900',alignSelf:'center',top:4}}> Sign Up</Text>
                 </TouchableOpacity>
               </Text>
           {/* </TouchableOpacity> */}
@@ -291,20 +304,25 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   logoContainer: {
+    marginTop:70,
     alignItems: "center",
+    // height: 110,
+
   },
   logoImage: {
     width: 110,
     height: 110,
   },
   loginForm: {
-    marginTop: 50,
+    marginTop: 20,
     width: "100%",
   },
   textFieldContainer: {},
   textField: {
     // borderBottomWidth: 1,
     // borderBottomColor: "black",
+    height:60,
+    borderRadius:8,
     paddingHorizontal: 40,
     paddingVertical: 10,
     backgroundColor: "#F9F9F9",
@@ -323,11 +341,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 5,
   },
   socialIconsContainer: {
     flexDirection: "row",
-    width: "65%",
+    width: "60%",
     // flex:1,
     alignSelf: "center",
     marginTop: 30,
@@ -356,10 +374,16 @@ const styles = StyleSheet.create({
     color: "#E6E6E6",
     alignSelf: "center",
   },
+  eyeIconOn: {
+    fontSize: 20,
+    justifyContent:"center",
+    color: "#000",
+    alignSelf: "center",
+  },
   eyeIconContainer: {
     position: "absolute",
-    top: 13,
-    right: 13,
+    top: 19,
+    right: 17,
     width: 35,
     height: 25,
     alignItems: "center",
