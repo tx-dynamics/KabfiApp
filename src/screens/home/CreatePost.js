@@ -556,7 +556,7 @@ const CreatePost = (props) => {
             {showrec ? (
               <View
                 style={{
-                  backgroundColor: "orange",
+                  backgroundColor: "#FCB040",
                   width: responsiveWidth(51),
                   flexDirection: "row",
                   alignItems: "center",

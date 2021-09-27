@@ -627,7 +627,7 @@ const NewsFeed = (props) => {
               {item.rec ? (
                 <View
                   style={{
-                    backgroundColor: "#FF9900",
+                    backgroundColor: "#FCB040",
                     width: responsiveWidth(50),
                     flexDirection: "row",
                     alignItems: "center",
