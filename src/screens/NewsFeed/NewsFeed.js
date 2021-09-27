@@ -410,7 +410,7 @@ const NewsFeed = (props) => {
     setTimeout(() => {
       console.log("setting timout");
       setisplaying(!isplaying);
-    }, 3000);
+    }, 2000);
 
     // >>>>>>> 0c399b6e4f264d33f2bc88f865686658ecbcdb99
     if (!isplaying) {
