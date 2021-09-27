@@ -22,15 +22,6 @@ import {
   ActivityIndicator,
   Slider,
 } from "react-native";
-import {
-  MenuContext,
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-  MenuProvider,
-} from "react-native-popup-menu";
-import * as Progress from "react-native-progress";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
 import { Header, Card } from "react-native-elements";
@@ -111,20 +102,8 @@ const NewsFeed = (props) => {
   };
   useEffect(() => {
     fetchAllPosts();
-     fetchLocation();
-    // return sound
-    //   ? () => {
-    //       console.log("Unloading Sound");
-    //       sound.unloadAsync();
-    //     }
-    //   : undefined;
+    fetchLocation();
   }, [isFocused]);
-  //isFocused, sound
-  // const handleTimerComplete = () => {
-  //  console.log("Hadle complete ")
-  //   settimerStart(false)
-  //   settimerReset(false)
-  // }
 
   async function handleTimerComplete(index, time) {
     //posts[index].time= time
@@ -158,9 +137,7 @@ const NewsFeed = (props) => {
             const id = firebase.auth().currentUser?.uid;
             const mylocation = firebase.database().ref("locations/" + id);
             mylocation.set(da);
-          } catch (err) {
-            
-          }
+          } catch (err) {}
         }
       }
     } catch (err) {
@@ -547,21 +524,13 @@ const NewsFeed = (props) => {
             <View style={[{ flexDirection: "row" }]}>
               <Image
                 source={item.user_image ? { uri: item.user_image } : user}
-                // style={[styles.userImgStyle,{marginTop:-30}]}
-                style={
-                  // Platform.OS == "android"
-                  //   ? [styles.userImgStyle, { marginTop: -30 }]
-                  //   :
-                  [styles.userImgStyle, {}]
-                }
+                style={[styles.userImgStyle, {}]}
               />
               <Text
-                // numberOfLines={3}
                 style={[
                   styles.largeText,
                   {
                     marginTop: responsiveHeight(1.2),
-                    // alignSelf: "center",
                     paddingLeft: 5,
                   },
                 ]}
@@ -573,101 +542,15 @@ const NewsFeed = (props) => {
                   style={[
                     styles.mediumText,
                     {
-                      // alignSelf: 'flex-start',
-                      // marginLeft: '15.5%',
                       color: "#464646",
                       fontSize: 11,
                     },
                   ]}
-                  // @${item.userName.replace(/ /g, "")} .
                 >{`\n@${item?.userName.replace(/ /g, "")}. ${moment(
                   item.createdAt
                 ).format("ddd, HH:mm")}`}</Text>
               </Text>
             </View>
-
-            {/* {Platform.OS == "android" ? (
-              <MenuProvider>
-                <View style={{ height: 100 }}>
-                  <Menu style={{ position: "absolute", top: 10, right: 0 }}>
-                    <MenuTrigger style={{ width: 40, marginTop: 6 }}>
-                      <SimpleLineIcons
-                        name="options-vertical"
-                        size={18}
-                        color="black"
-                      />
-                    </MenuTrigger>
-                    {firebase.auth().currentUser?.uid === item.user ? (
-                      <MenuOptions
-                        optionsContainerStyle={{ height: 80, width: 100 }}
-                      >
-                        <MenuOption customStyles={{ height: 48, width: 100 }}>
-                          <Text
-                            onPress={() => delPost(item.user, item.id)}
-                            style={{
-                              fontWeight: "bold",
-                              color: "red",
-                              alignSelf: "center",
-                            }}
-                          >
-                            Delete
-                          </Text>
-                        </MenuOption>
-                        <MenuOption customStyles={{ height: 48, width: 100 }}>
-                          <Text
-                            style={{ fontWeight: "bold", alignSelf: "center" }}
-                          >
-                            Cancel
-                          </Text>
-                        </MenuOption>
-                      </MenuOptions>
-                    ) : (
-                      <MenuOptions
-                        optionsContainerStyle={{
-                          paddingLeft: 8,
-                          height: 100,
-                          width: 100,
-                        }}
-                      >
-                        <MenuOption customStyles={{ height: 48, width: 100 }}>
-                          <Text
-                            onPress={() => {
-                              hideHandler(item.id);
-                            }}
-                            style={{
-                              fontWeight: "bold",
-                              color: "red",
-                              alignSelf: "center",
-                            }}
-                          >
-                            Hide
-                          </Text>
-                        </MenuOption>
-                        <MenuOption customStyles={{ height: 48, width: 100 }}>
-                          <Text
-                            onPress={() => reportHandler(item.id)}
-                            style={{
-                              fontWeight: "bold",
-                              color: "red",
-                              alignSelf: "center",
-                            }}
-                          >
-                            Report
-                          </Text>
-                        </MenuOption>
-                        <MenuOption customStyles={{ height: 48, width: 100 }}>
-                          <Text
-                            style={{ fontWeight: "bold", alignSelf: "center" }}
-                          >
-                            Cancel
-                          </Text>
-                        </MenuOption>
-                      </MenuOptions>
-                    )}
-                  </Menu>
-                </View>
-              </MenuProvider>
-            ) : ( */}
             <OptionsMenu
               button={more}
               buttonStyle={{
@@ -676,7 +559,6 @@ const NewsFeed = (props) => {
                 resizeMode: "contain",
                 marginTop: 14,
               }}
-              // customStyles={{}}
               destructiveIndex={
                 firebase.auth().currentUser?.uid === item.user ? 0 : 1
               }
@@ -701,7 +583,6 @@ const NewsFeed = (props) => {
                     ]
               }
             />
-            {/* )} */}
           </View>
 
           <View
@@ -758,12 +639,9 @@ const NewsFeed = (props) => {
                   <TouchableOpacity
                     onPress={() => {
                       playSound(item.id, item.rec, item.time);
-                      //settimerReset(true)
                     }}
                     style={{
-                      // alignSelf: "center",
                       marginTop: 5,
-                      // right: 4,
                     }}
                   >
                     {item.isShow ? (
@@ -772,7 +650,6 @@ const NewsFeed = (props) => {
                       <Ionicons name="play" color="white" size={30} />
                     )}
                   </TouchableOpacity>
-                  {/* {item.time > 5999 ? ( */}
                   <>
                     {item.isShow ? (
                       <>
@@ -793,7 +670,6 @@ const NewsFeed = (props) => {
                             timeLabels={{ m: "", s: "" }}
                             showSeparators
                             separatorStyle={{ color: "white" }}
-                            // running={timerStart}
                             style={{ marginLeft: responsiveWidth(-2) }}
                           />
                         ) : (
@@ -803,15 +679,6 @@ const NewsFeed = (props) => {
                         )}
                       </>
                     ) : (
-                      // <Timer
-                      //   totalDuration={parseInt(item.time)}
-                      //   start={timerStart}
-                      //   reset={timerReset}
-                      //   options={options}
-                      //   handleFinish={handleTimerComplete}
-                      //   // msec
-                      //   //getTime={this.getFormattedTime}
-                      // />
                       <View style={{ flexDirection: "row" }}>
                         <Text
                           style={{
@@ -846,25 +713,8 @@ const NewsFeed = (props) => {
                           )}
                         </Text>
                       </View>
-                      // <Timer
-                      // totalDuration={parseInt(item.time)}
-                      // start={timerStart}
-                      // reset={timerReset}
-                      // options={options}
-                      // handleFinish={handleTimerComplete}
-                      //  msec
-                      //getTime={this.getFormattedTime}
-                      // />
                     )}
-                    {/* <Text style={{ color: "white" }}>
-                      {`${(item.time / 1000).toFixed(0)}:0`}
-                    </Text> */}
                   </>
-                  {/* ) : (
-                    <Text style={{ color: "white" }}>
-                      {`0:${(item.time / 1000).toFixed(0)}`}
-                    </Text>
-                  )} */}
                   <Image
                     source={bars}
                     style={{
@@ -924,7 +774,7 @@ const NewsFeed = (props) => {
                 resizeMode="contain"
                 style={{ height: 18, width: 18 }}
               />
-              {/* <Text style={styles.smallText}>{` ${item.likes_count} `}</Text> */}
+
               <Text style={styles.smallText}>{item.comm}</Text>
             </TouchableOpacity>
 
@@ -932,14 +782,7 @@ const NewsFeed = (props) => {
               disabled={true}
               onPress={() => saveHandler(item.id, item.save_count, item.save)}
               style={[styles.bottomContainer]}
-            >
-              {/* <Image
-                source={favourite}
-                resizeMode="contain"
-                style={{ height: 18, width: 18 }}
-              />
-              <Text style={styles.smallText}>{` ${item.save_count} `}</Text> */}
-            </TouchableOpacity>
+            ></TouchableOpacity>
           </View>
           {item.region ? (
             <TouchableOpacity
@@ -960,7 +803,6 @@ const NewsFeed = (props) => {
                 color={"orange"}
                 style={{ alignSelf: "center" }}
               />
-              {/* <Image source={locationImage} style={{ width: 20, height: 28 }} /> */}
             </TouchableOpacity>
           ) : (
             <View
@@ -1041,9 +883,6 @@ const NewsFeed = (props) => {
             visible={isVisible}
             action={{ label: "ok" }}
             onDismiss={() => setIsVisible(!isVisible)}
-            //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
-            // )}
-            // position={'top'}
             duration={messge.length + 1000}
           >
             <Text>{messge}</Text>
@@ -1068,7 +907,6 @@ const NewsFeed = (props) => {
             backgroundColor: "lightgray",
             width: "100%",
             alignSelf: "center",
-            // marginBottom: 15,
             position: "absolute",
             bottom: 0,
           }}
@@ -1092,9 +930,7 @@ const NewsFeed = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={{
-              // marginTop: 40,
               backgroundColor: "#FBFBFB",
-              // borderRadius: 5,
               padding: 13,
               alignItems: "center",
               width: "90%",
@@ -1128,7 +964,6 @@ const NewsFeed = (props) => {
         closeOnDragDown={true}
         closeOnPressMask={true}
         height={Dimensions.get("window").height / 1.3}
-        // openDuration={250}
         customStyles={{
           container: {
             alignItems: "center",
@@ -1195,18 +1030,6 @@ const NewsFeed = (props) => {
                 />
                 <Text style={styles.listText}>Hot spots</Text>
               </TouchableOpacity>
-              {/* 
-              <TouchableOpacity
-                style={styles.listItem}
-                onPress={() => props.navigation.navigate("savedPost")}
-              >
-                <Image
-                  source={require("../../../assets/ProjectImages/users/profile/saved-post.png")}
-                  style={styles.listIconImage}
-                />
-                <Text style={styles.listText}>Saved Post</Text>
-              </TouchableOpacity> */}
-
               <TouchableOpacity
                 style={styles.listItem}
                 onPress={() => {
@@ -1267,14 +1090,4 @@ const NewsFeed = (props) => {
     </View>
   );
 };
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     dat: (data) => dispatch(postData(data)),
-//   };
-// };
-// const mapStateToProps = (state) => {
-//   const { postdata } = state.AuthReducer;
-//   return { postdata };
-// };
-// export default connect(mapStateToProps, mapDispatchToProps)(NewsFeed);
 export default NewsFeed;
