@@ -901,7 +901,7 @@ const NewsFeed = (props) => {
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
-      {show && (
+      {/* {show && (
         <View
           style={{
             backgroundColor: "lightgray",
@@ -958,7 +958,7 @@ const NewsFeed = (props) => {
             <Text style={{ color: "skyblue" }}>Cancel</Text>
           </TouchableOpacity>
         </View>
-      )}
+      )} */}
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
