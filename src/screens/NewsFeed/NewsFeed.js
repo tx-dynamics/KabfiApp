@@ -615,14 +615,14 @@ const NewsFeed = (props) => {
                   ? {
                       flex: 5,
                       paddingLeft: responsiveHeight(1.5),
-                      marginTop: responsiveHeight(0.2),
+                      // marginTop: responsiveHeight(0.2),
                     }
                   : { flex: 20, marginTop: responsiveHeight(0.2) }
               }
             >
               <Text
                 numberOfLines={4}
-                style={{ textAlign: "justify", color: "#464646", fontSize: 13 }}
+                style={{ textAlign: "left", color: "#464646", fontSize: 13 }}
               >
                 {item.post_text}
               </Text>
@@ -738,6 +738,7 @@ const NewsFeed = (props) => {
               justifyContent: "space-between",
               marginTop: responsiveHeight(1),
               backgroundColor: "#FBFBFB",
+              // backgroundColor: "tomato",
             },
           ]}
         >
@@ -761,12 +762,13 @@ const NewsFeed = (props) => {
                   name="heart"
                   size={20}
                   color={item.like ? "red" : "black"}
+                  style={{ alignSelf: "center" }}
                 />
                 <Text style={styles.smallText}>{` ${item.likes_count} `}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
-              style={[styles.bottomContainer]}
+              style={[styles.bottomContainer, { right: 10 }]}
               onPress={() =>
                 props.navigation.navigate("CommentScreen", { id: item.id })
               }
@@ -774,7 +776,7 @@ const NewsFeed = (props) => {
               <Image
                 source={comments}
                 resizeMode="contain"
-                style={{ height: 18, width: 18 }}
+                style={{ height: 18, width: 18, alignSelf: "center" }}
               />
 
               <Text style={styles.smallText}>{item.comm}</Text>
