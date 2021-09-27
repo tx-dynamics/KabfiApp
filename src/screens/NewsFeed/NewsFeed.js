@@ -65,7 +65,7 @@ const NewsFeed = (props) => {
   const isFocused = useIsFocused();
   const [posts, setPosts] = useState(null);
   const [data, setData] = useState([]);
-  const [refreshing, setRefreshing] = React.useState(true);
+  const [refreshing, setRefreshing] = useState(true);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
   const [rate, setRate] = useState("");
@@ -901,7 +901,7 @@ const NewsFeed = (props) => {
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
-      {show && (
+      {/* {show && (
         <View
           style={{
             backgroundColor: "lightgray",
@@ -958,7 +958,7 @@ const NewsFeed = (props) => {
             <Text style={{ color: "skyblue" }}>Cancel</Text>
           </TouchableOpacity>
         </View>
-      )}
+      )} */}
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
