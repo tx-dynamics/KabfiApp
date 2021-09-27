@@ -15,6 +15,7 @@ import {
   ImageBackground,
 } from "react-native";
 import * as ImageManipulator from "expo-image-manipulator";
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 
 // import { kabfiApp, firebase } from '../../database/config';
 import firebase from "firebase";
@@ -36,6 +37,9 @@ const EditProfile = (props) => {
   const [flag, setFlag] = useState(true);
   const [loader, setLoader] = useState(false);
   const [ErroMessage, setErroMessage] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState("");
+
   useEffect(() => {
     setLoader(true);
     const user = firebase.auth().currentUser?.uid;
@@ -106,8 +110,14 @@ const EditProfile = (props) => {
                 .database()
                 .ref("users/" + user)
                 .update(Details);
-              alert("Profile Updated Successfully");
-              props.navigation.push("NewsFeed");
+                  setMessage("Profile Updated Successfully");
+                  setIsVisible(!isVisible);  
+                
+              // alert("Profile Updated Successfully");
+              setTimeout(() => {
+                props.navigation.push("NewsFeed");
+            }, 2000);
+
               // }
             } else {
               setErroMessage("city name cannont be empty");
@@ -125,7 +135,9 @@ const EditProfile = (props) => {
       }
       setLoader(false);
     } catch (error) {
-      alert(error.message);
+      setMessage(error.message);
+      setIsVisible(!isVisible);
+      // alert(error.message);
     }
   }
   const pickTaxiLicenseImage = async (val) => {
@@ -245,6 +257,31 @@ const EditProfile = (props) => {
         {/* {loader ? (
           <ActivityIndicator color={"blue"} size={"small"} />
           ) : ( */}
+
+        {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FF9900",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderRadius: 10,
+                }}
+                visible={isVisible}
+                action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+                // )}
+                // position={'top'}
+                duration={messge.length + 1000}
+              >
+                <Text>{messge}</Text>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+          )} 
+
         <View style={styles.contentArea}>
           <TouchableOpacity
             style={[styles.imageContainer, { alignSelf: "center" }]}

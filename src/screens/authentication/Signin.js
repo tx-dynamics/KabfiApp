@@ -2,6 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import React, { useState, useEffect, useRef } from "react";
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
+
 import {
   View,
   Text,
@@ -48,6 +50,8 @@ const Signin = (props) => {
   const [password, setPassword] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [loader, setLoader] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState("");
   const notificationListener = useRef();
   const responseListener = useRef();
   // const { setIsLoggedIn } = useLogin();
@@ -110,14 +114,18 @@ const Signin = (props) => {
         setLoader(false);
       })
       .catch((error) => {
-        alert(error.message);
+        setMessage(error.message);
+        setIsVisible(!isVisible);
+        // alert(error.message);
         setLoader(false);
       });
   }
   async function fetchLocation() {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
-      alert("Permission to access location was denied");
+      setMessage("Permission to access location was denied");
+      setIsVisible(!isVisible);
+      // alert("Permission to access location was denied");
       return;
     }
   }
@@ -128,8 +136,31 @@ const Signin = (props) => {
     >
       {/* <SafeAreaView style={styles.root}> */}
       <StatusBar style="dark" />
-
+      
       <View style={styles.contentArea}>
+      {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FF9900",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderRadius: 10,
+                }}
+                visible={isVisible}
+                action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+                // )}
+                // position={'top'}
+                duration={messge.length + 1000}
+              >
+                <Text>{messge}</Text>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+        )}
         <View style={styles.logoContainer}>
           <Image
             source={require("../../../assets/ProjectImages/logo.png")}
@@ -356,13 +387,17 @@ async function registerForPushNotificationsAsync() {
         finalStatus = status;
       }
       if (finalStatus !== "granted") {
-        alert("Failed to get push token for push notification!");
+        setMessage("Failed to get push token for push notification!");
+        setIsVisible(!isVisible);
+        // alert("Failed to get push token for push notification!");
         return;
       }
       token = (await Notifications.getExpoPushTokenAsync()).data;
       console.log(token);
     } else {
-      alert("Must use physical device for Push Notifications");
+      setMessage("Must use physical device for Push Notifications");
+        setIsVisible(!isVisible);
+      // alert("Must use physical device for Push Notifications");
     }
 
     if (Platform.OS === "android") {

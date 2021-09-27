@@ -12,6 +12,7 @@ if (!firebase.apps.length) {
 }
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 // firebase.storage().ref();
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 import * as Permissions from "expo-permissions";
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
@@ -79,6 +80,8 @@ const Signup = (props) => {
     ? firebase.app().options
     : undefined;
   const recaptchaVerifier = React.useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState("");
 
   function AlertBadgeNumberImage() {
     Alert.alert(
@@ -128,7 +131,9 @@ const Signup = (props) => {
           quality: 0,
         });
       } else {
-        alert("Camera permission Denied");
+        setMessage("Camera permission Denied");
+        setIsVisible(!isVisible);
+        // alert("Camera permission Denied");
       }
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
@@ -193,13 +198,17 @@ const Signup = (props) => {
       taxiLicenseImage !== null
     ) {
       if (mobileNo.length < 10) {
-        alert("Phone number should be 11 digit only .");
+        setMessage("Phone number should be 11 digit only .");
+        setIsVisible(!isVisible);
+        // alert("Phone number should be 11 digit only .");
         setLoader(false);
         setmobileNoValidator(true);
         return false;
       }
       if (password.length < 8) {
-        alert("Password must be at least 8 characters");
+        setMessage("Password must be at least 8 characters");
+        setIsVisible(!isVisible);
+        // alert("Password must be at least 8 characters");
         setpasswordValidator(true);
         setLoader(false);
         return false;
@@ -387,7 +396,29 @@ const Signup = (props) => {
             CREATE AN ACCOUNT
           </Text>
         </View>
-
+        {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FF9900",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderRadius: 10,
+                }}
+                visible={isVisible}
+                action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+                // )}
+                // position={'top'}
+                duration={messge.length + 1000}
+              >
+                <Text>{messge}</Text>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+          )}
         <View style={styles.form}>
           <View style={styles.formField}>
             <Text style={[styles.label, { fontWeight: "bold" }]}>Name</Text>

@@ -139,7 +139,9 @@ const NewsFeed = (props) => {
     try {
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
       if (status !== "granted") {
-        alert("Permission to access location was denied");
+        setMessage("Permission to access location was denied");
+        setIsVisible(!isVisible);
+        // alert("Permission to access location was denied");
         return;
       } else {
         let location = await Location.getCurrentPositionAsync({
@@ -163,7 +165,9 @@ const NewsFeed = (props) => {
       }
     } catch (err) {
       setRefreshing(false);
-       alert(err.message);
+      setMessage(err.message);
+      setIsVisible(!isVisible);
+      //  alert(err.message);
     }
     setRefreshing(false);
   }
@@ -782,7 +786,7 @@ const NewsFeed = (props) => {
                             onFinish={() => handleTimerComplete}
                             digitStyle={{
                               backgroundColor: "transparent",
-                              width: responsiveWidth(4),
+                              width: responsiveWidth(5),
                             }}
                             digitTxtStyle={{ color: "white" }}
                             timeToShow={["M", "S"]}
@@ -975,7 +979,9 @@ const NewsFeed = (props) => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
+          setMessage("Modal has been closed.");
+          setIsVisible(!isVisible);
+          // Alert.alert("Modal has been closed.");
         }}
       >
         <View style={styles.centeredView}>

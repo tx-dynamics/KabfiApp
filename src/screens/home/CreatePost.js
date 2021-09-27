@@ -208,7 +208,9 @@ const CreatePost = (props) => {
       }
     } catch (error) {
       setloading(false);
-      alert(error.message);
+      setMessage(error.message);
+      setIsVisible(!isVisible);
+      // alert(error.message);
     }
   }
 
@@ -351,7 +353,9 @@ const CreatePost = (props) => {
       setshow(false);
       setstopwatchReset(true);
       setstopwatchReset(false);
-      alert(err.message);
+      setMessage(err.message);
+      setIsVisible(!isVisible);
+      // alert(err.message);
       console.error("Failed to start recording", err);
     }
   }
