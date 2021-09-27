@@ -553,7 +553,7 @@ const CreatePost = (props) => {
               <View
                 style={{
                   backgroundColor: "orange",
-                  width: responsiveWidth(50),
+                  width: responsiveWidth(51),
                   flexDirection: "row",
                   alignItems: "center",
                   padding: 2,
@@ -670,7 +670,7 @@ const CreatePost = (props) => {
                   resizeMode="contain"
                 />
                 <TouchableOpacity
-                  styles={{ right: 30 }}
+                  styles={{ right: 20 }}
                   onPress={() => {
                     setshowrec(false), setRecording("");
                   }}
