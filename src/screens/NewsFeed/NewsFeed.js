@@ -65,7 +65,7 @@ const NewsFeed = (props) => {
   const isFocused = useIsFocused();
   const [posts, setPosts] = useState(null);
   const [data, setData] = useState([]);
-  const [refreshing, setRefreshing] = React.useState(true);
+  const [refreshing, setRefreshing] = useState(true);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
   const [rate, setRate] = useState("");
