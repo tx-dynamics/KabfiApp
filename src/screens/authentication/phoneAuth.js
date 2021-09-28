@@ -137,7 +137,7 @@ function PhoneAuth(props) {
         }}
       >
         <View style={{ flex: 0.3, marginTop: 15 }}>
-          <TouchableOpacity onPress={() => props.navigation.getBack()}>
+          <TouchableOpacity onPress={() => props.navigation.goBack()}>
             <Entypo name="chevron-small-left" size={40} color="black" />
           </TouchableOpacity>
         </View>
@@ -163,7 +163,7 @@ function PhoneAuth(props) {
                 //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
                 // )}
                 // position={'top'}
-                duration={messge.length + 1000}
+                duration={messge.length + 2000}
               >
                 <Text>{messge}</Text>
               </Snackbar>

@@ -411,7 +411,7 @@ const Signup = (props) => {
                 //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
                 // )}
                 // position={'top'}
-                duration={messge.length + 1000}
+                duration={messge.length + 2000}
               >
                 <Text>{messge}</Text>
               </Snackbar>

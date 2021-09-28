@@ -334,14 +334,17 @@ const NewsFeed = (props) => {
   }
   async function hideHandler(post_id) {
     // setRefreshing(true);
-
+    setTimeout(() => {
+      setMessage("This post is no longer available for you");
+      setIsVisible(!isVisible);  
+    }, 200);
+    
     let filtered = posts.filter((i) => {
       return post_id !== i.id;
     });
 
     console.log("\n", post_id);
-    setMessage("This post is no longer available for you");
-    setIsVisible(!isVisible);
+    
     setPosts(filtered);
 
     const hiderPost = firebase
@@ -489,15 +492,20 @@ const NewsFeed = (props) => {
     // console.log(res);
     setPosts(res);
   }
-  async function delPost(index, postid) {
+  async function delPost(postid) {
+    console.log('calling del')
+    setTimeout(() => {
+      setMessage("Post Deleted Successfully");
+      setIsVisible(!isVisible);
+    }, 200);
+    
     let filtered = posts.filter((i) => {
       return postid !== i.id;
     });
-    console.log("post filter", filtered, "\n", postid);
+    // console.log("post filter", filtered, "\n", postid);
     setPosts(filtered);
     // alert("Post Deleted Successfully");
-    setIsVisible(!isVisible);
-    setMessage("Post Deleted Successfully");
+    
     const del = firebase.database().ref("user_posts").child(postid);
     del.remove().then(() => console.log("Post Deleted Successfully"));
   }
@@ -573,7 +581,9 @@ const NewsFeed = (props) => {
               actions={
                 firebase.auth().currentUser?.uid === item.user
                   ? [
-                      () => delPost(item.user, item.id),
+                      () => {
+                        delPost(item.id)
+                      },
                       () => console.log("cancel"),
                     ]
                   : [
@@ -644,12 +654,13 @@ const NewsFeed = (props) => {
                     }}
                     style={{
                       marginTop: 5,
+                      marginBottom:5
                     }}
                   >
                     {item.isShow ? (
-                      <Ionicons name="pause" color="white" size={30} />
+                      <Ionicons name="pause" color="white" size={26} />
                     ) : (
-                      <Ionicons name="play" color="white" size={30} />
+                      <Ionicons name="play" color="white" size={26} />
                     )}
                   </TouchableOpacity>
                   <>
@@ -888,7 +899,7 @@ const NewsFeed = (props) => {
             visible={isVisible}
             action={{ label: "ok" }}
             onDismiss={() => setIsVisible(!isVisible)}
-            duration={messge.length + 1000}
+            duration={messge.length + 2000}
           >
             <Text>{messge}</Text>
           </Snackbar>

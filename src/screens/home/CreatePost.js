@@ -500,7 +500,7 @@ const CreatePost = (props) => {
                 //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
                 // )}
                 // position={'top'}
-                duration={messge.length + 1000}
+                duration={messge.length + 2000}
               >
                 <Text>{messge}</Text>
               </Snackbar>
@@ -572,13 +572,14 @@ const CreatePost = (props) => {
                   style={{
                     // alignSelf: "center",
                     marginTop: 5,
+                    marginBottom:5,
                     // right: 4,
                   }}
                 >
                   {isplay ? (
-                    <Ionicons name="pause" color="white" size={30} />
+                    <Ionicons name="pause" color="white" size={26} />
                   ) : (
-                    <Ionicons name="play" color="white" size={30} />
+                    <Ionicons name="play" color="white" size={26} />
                   )}
                 </TouchableOpacity>
 
