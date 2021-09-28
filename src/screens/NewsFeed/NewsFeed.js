@@ -687,9 +687,9 @@ const NewsFeed = (props) => {
                             digitTxtStyle={{ color: "white" }}
                             timeToShow={["M", "S"]}
                             timeLabels={{ m: "", s: "" }}
-                            showSeparators
+                            showSeparator
                             separatorStyle={{ color: "white" }}
-                            style={{ marginLeft: responsiveWidth(-2) }}
+                            // style={{ marginLeft: responsiveWidth(-2) }}
                           />
                         ) : (
                           <>
