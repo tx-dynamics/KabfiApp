@@ -404,7 +404,13 @@ const NewsFeed = (props) => {
     if (!isplaying) {
       try {
         // console.log("isplaying", isplaying);
-        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+        await Audio.setAudioModeAsync({ 
+          playsInSilentModeIOS: true,
+          staysActiveInBackground: false,
+          playThroughEarpieceAndroid: false,
+          interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+          interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX
+        });
         toogleLike(id);
         // console.log("Loading Sound", soundUri);
         const { sound: playbackObject } = await Audio.Sound.createAsync(

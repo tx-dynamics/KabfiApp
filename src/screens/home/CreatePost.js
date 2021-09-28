@@ -201,7 +201,9 @@ const CreatePost = (props) => {
         setPostImage("");
         setUserId(""), setUserName("");
         setDp("");
-        props.navigation.navigate("NewsFeed");
+        setTimeout(() => {
+          props.navigation.navigate("NewsFeed");
+        }, 2000);
       } else {
         setloading(false);
         // alert("Upload data to post");
@@ -362,7 +364,14 @@ const CreatePost = (props) => {
   async function playSound() {
     console.log("Loading Sound");
     // setisplay(true);
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true, 
+      staysActiveInBackground: false,
+      playThroughEarpieceAndroid: false,
+      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX
+    
+    });
     if (!isplaying) {
       const { sound: playbackObject } = await Audio.Sound.createAsync(
         {
