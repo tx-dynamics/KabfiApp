@@ -10,7 +10,7 @@ if (!firebase.apps.length) {
     appId: "1:676638158064:web:e01ff8bc3a12a378eee635",
   });
 }
-import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import { FirebaseRecaptchaVerifierModal,FirebaseRecaptcha,FirebaseRecaptchaBanner } from "expo-firebase-recaptcha";
 // firebase.storage().ref();
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 import * as Permissions from "expo-permissions";
@@ -26,6 +26,8 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  AsyncStorage,
+  KeyboardAvoidingView
 } from "react-native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -42,12 +44,7 @@ import { responsiveHeight } from "react-native-responsive-dimensions";
 import { connect } from "react-redux";
 import { SetSession } from "../../../Redux/Actions/Actions";
 const Signup = (props) => {
-  useEffect(() => {
-    // You need to restrict it at some point
-    // This is just dummy code and should be replaced by actual
-
-    getPermission();
-  }, []);
+  
 
   const getPermission = async () => {
     const { granted } = await Permissions.askAsync(Permissions.CAMERA);
@@ -55,6 +52,7 @@ const Signup = (props) => {
     setGrandted(granted);
     setGrandted1(granted1);
   };
+  const [isInit, setisInit] = useState(false)
   const [granted, setGrandted] = useState("");
   const [granted1, setGrandted1] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -82,6 +80,36 @@ const Signup = (props) => {
   const recaptchaVerifier = React.useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   const [messge, setMessage] = useState("");
+
+  useEffect( () => {
+    setTimeout(function () {
+      setisInit(true)
+    }, 2000)
+    // props.navigation.addListener("focus", () => {
+    //   if(props.route.params.number === undefined ){
+
+    //   }else{
+    //     getUser()
+
+    //   }
+    // })
+    // You need to restrict it at some point
+    // This is just dummy code and should be replaced by actual
+
+    getPermission();
+  }, []);
+
+  async function getUser(){
+    let number = props.route.params.number
+    console.log(number);
+
+    if(number === undefined){
+      console.log(number);
+    }else{
+      setMobileNo("")
+    }
+
+  }
 
   function AlertBadgeNumberImage() {
     Alert.alert(
@@ -179,6 +207,14 @@ const Signup = (props) => {
   }
 
   async function userSignup() {
+
+    // await AsyncStorage.setItem('fname',firstName)
+    // await AsyncStorage.setItem('lname',lastName)
+    // await AsyncStorage.setItem('number',JSON.stringify(mobileNo) )
+    // await AsyncStorage.setItem('email',email)
+    // await AsyncStorage.setItem('taxiLicenseImage',JSON.stringify(taxiLicenseImage))
+    // await AsyncStorage.setItem('password',password)
+
     let success = true;
     setLoader(true);
     setfNameValidator(false);
@@ -215,29 +251,26 @@ const Signup = (props) => {
       }
       const badgeImage = await uploadImage(badgeNumberImage.uri);
       const taxiLicense = await uploadImage(taxiLicenseImage.uri);
+      // firebase.auth().settings.appVerificationDisabledForTesting = true
+      // console.log("recaptcha : " +recaptchaVerifier.current)
+      setTimeout(async() => {
+        
       const phoneProvider = new firebase.auth.PhoneAuthProvider();
       const verificationId = await phoneProvider.verifyPhoneNumber(
         "+44" + mobileNo,
         recaptchaVerifier.current
       );
-
+      console.log(verificationId);
       if (verificationId) {
         // props.SessionMaintain({ "isLogin": true })
         // setIsLoggedIn(false);
-        setFirstName("");
-        setLastName("");
-        setMobileNo("");
-        setEmail("");
-        setPassword("");
-        setTaxiLicenseImage("");
-        setBadgeNumberImage("");
-        setfNameValidator(false);
-        setlNameValidator(false);
-        setmobileNoValidator(false);
-        setEmailValidator(false);
-        setpasswordValidator(false);
-        setbadgeNumberImageValidator(false);
-        settaxiLicenseValidator(false);
+        // setFirstName("");
+        // setLastName("");
+        // setMobileNo("");
+        // setEmail("");
+        // setPassword("");
+        // setTaxiLicenseImage("");
+        // setBadgeNumberImage("");
         setLoader(false);
         // var otp = Math.floor(100000 + Math.random() * 900000);
         var number = "+44" + mobileNo;
@@ -255,6 +288,7 @@ const Signup = (props) => {
           taxiLicenseImage: taxiLicense,
         });
       }
+    }, 4000);
 
       // firebase.auth().signOut();
       // props.navigation.navigate("Verify");
@@ -368,15 +402,14 @@ const Signup = (props) => {
       });
   }
 
+  const attemptInvisibleVerification = true;
+
   return (
     <ScrollView style={styles.root}>
+      <KeyboardAvoidingView>
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
-          <FirebaseRecaptchaVerifierModal
-            ref={recaptchaVerifier}
-            firebaseConfig={firebaseConfig}
-            // attemptInvisibleVerification={true}
-          />
+          
           <Image
             source={require("../../../../assets/Kabfi-logo.png")}
             resizeMode="contain"
@@ -419,6 +452,14 @@ const Signup = (props) => {
           ) : (
             <></>
           )}
+        {isInit && (
+        <FirebaseRecaptchaVerifierModal
+          ref={recaptchaVerifier}
+          firebaseConfig={firebaseConfig}
+          // attemptInvisibleVerification={attemptInvisibleVerification}
+          // appVerificationDisabledForTesting={__DEV__}
+        />
+      )}
         <View style={styles.form}>
           <View style={styles.formField}>
             <Text style={[styles.label, { fontWeight: "bold" }]}>Name</Text>
@@ -669,8 +710,15 @@ const Signup = (props) => {
               Already have an account?
             </Text>
           </TouchableOpacity>
+          
+        {attemptInvisibleVerification?
+         <FirebaseRecaptchaBanner />
+        :
+        <></>}
+
         </View>
       </View>
+      </KeyboardAvoidingView>
     </ScrollView>
   );
 };

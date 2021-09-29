@@ -20,18 +20,19 @@ import {
   Entypo,
 } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import firebase from "firebase";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
+import { connect } from "react-redux";
+import { SetSession } from "../../Redux/Actions/Actions";
 
-function PhoneAuth(props) {
+function PhoneAuth (props) {
   const ref = useRef();
-  const [pin1, setP1] = useState("");
-  const [pin2, setP2] = useState("");
-  const [pin3, setP3] = useState("");
-  const [pin4, setP4] = useState("");
-  const [pin5, setP5] = useState("");
-  const [pin6, setP6] = useState("");
-  const [number, setNumber] = useState(props.route.params.number);
+  const [pin, setPin] = useState("");
+  // const [otp, setotp] = useState("");
+ 
+  // const [number, setNumber] = useState(props.route.params.number);
+  const [number, setNumber] = useState('');
   const [loader, setLoader] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [messge, setMessage] = useState("");
@@ -40,22 +41,17 @@ function PhoneAuth(props) {
   async function CheckValidtions() {
     console.log("called");
     if (
-      pin1 == "" ||
-      pin2 == "" ||
-      pin3 == "" ||
-      pin4 == "" ||
-      pin5 == "" ||
-      pin6 == ""
+      pin == "" 
     ) {
       setMessage("Please Provide Valid Pin");
       setIsVisible(!isVisible);
       // alert("Please Provide Valid Pin");
     } else {
-      var pin = pin1 + pin2 + pin3 + pin4 + pin5 + pin6;
+      // var pin = pin1 + pin2 + pin3 + pin4 + pin5 + pin6;
       // console.log('otp', route)
       console.log("pin", pin);
       var otp = route.otp;
-      var number = route.number;
+      // var number = route.number;
       var firstName = route.firstName;
       var lastName = route.lastName;
       var email = route.email;
@@ -63,7 +59,7 @@ function PhoneAuth(props) {
       var mobileNo = route.mobileNo;
       var badgeNumberImage = route.badgeNumberImage;
       var taxiLicenseImage = route.taxiLicenseImage;
-      setNumber(number)
+      // setNumber(number)
 
       try {
         const credential = firebase.auth.PhoneAuthProvider.credential(otp, pin);
@@ -71,7 +67,6 @@ function PhoneAuth(props) {
         // alert("Phone authentication successful 👍");
         setMessage("Phone authentication successful 👍");
         setIsVisible(!isVisible);
-
         await firebase
           .auth()
           .createUserWithEmailAndPassword(email, password)
@@ -109,16 +104,14 @@ function PhoneAuth(props) {
         setIsVisible(!isVisible); 
         // alert("error : " + err);
       }
-      // if (pin == route.otp) {
-      //     console.log("same")
-
-      //     // this.signup_request()
-      //     // this.props.navigation.navigate('Signup', { 'phone': this.props.route.params.phone })
-      // }
-      // else {
-      //     console.log('ghalt pin entered')
-      // }
+     
     }
+  }
+
+  async function changeNumber (){
+    console.log('changing')
+     await AsyncStorage.setItem('number',"")
+    props.navigation.navigate("Signup",{number:true})
   }
 
   return (
@@ -149,7 +142,7 @@ function PhoneAuth(props) {
       </View>
       <View style={{ flex: 4.8 }}>
         {isVisible ? (
-            <View style={{ height: 60,flex:0.2 }}>
+            <View style={{ height: 60,flex:0.2,top:20 }}>
               <Snackbar
                 style={{
                   backgroundColor: "#FF9900",
@@ -179,225 +172,22 @@ function PhoneAuth(props) {
             marginTop: 40,
           }}
         >
-         
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              alignSelf: "center",
-              justifyContent: "center",
-              width: "12%",
-              height: 40,
-              borderRadius: 10,
-              borderBottomWidth: 1,
-              margin: 2,
-            }}
-          >
-             
-            <TextInput
-              keyboardType="decimal-pad"
-              onChangeText={(p) => setP1(p)}
-              // ref={'pin1ref'}
-              // placeholder='0'
-              // onChangeText={(pin1) => {
-              //     setP1(p),
-              //      () => {
-              //         if (pin1 != '') {
-              //             this.refs.pin2ref.focus()
-              //         } else {
-              //             this.refs.pin1ref.focus()
-              //         }
-              //     })
-              // }}
-              autoFocus={true}
-              maxLength={1}
-              keyboardType={"number-pad"}
-              placeholderTextColor={"#8c8c8c"}
-              style={styles.input}
-            />
-          </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              alignSelf: "center",
-              justifyContent: "center",
-              width: "12%",
-              height: 40,
-              borderRadius: 10,
-              borderBottomWidth: 1,
-              margin: 2,
-            }}
-          >
-            <TextInput
-              keyboardType="decimal-pad"
-              onChangeText={(p) => setP2(p)}
-              // ref={'pin1ref'}
-              // // placeholder='0'
-              // onChangeText={(pin1) => {
-              //     this.setState({ pin1: pin1 }, () => {
-              //         if (pin1 != '') {
-              //             this.refs.pin2ref.focus()
-              //         } else {
-              //             this.refs.pin1ref.focus()
-              //         }
-              //     })
-              // }}
-              autoFocus={true}
-              maxLength={1}
-              keyboardType={"number-pad"}
-              placeholderTextColor={"#8c8c8c"}
-              style={styles.input}
-            />
-          </View>
+      <SmoothPinCodeInput
+      codeLength={6}
+      onFulfill={CheckValidtions}
+        cellStyle={{
+          borderBottomWidth: 2,
+          borderColor: 'gray',
+        }}
+        cellStyleFocused={{
+          borderColor: '#FF9900',
+        }}
+        value={pin}
+        onTextChange={code => setPin(code)}
+        />
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              alignSelf: "center",
-              justifyContent: "center",
-              width: "12%",
-              height: 40,
-              borderRadius: 10,
-              borderBottomWidth: 1,
-              margin: 2,
-            }}
-          >
-            <TextInput
-              keyboardType="decimal-pad"
-              onChangeText={(p) => setP3(p)}
-              // ref={'pin1ref'}
-              // // placeholder='0'
-              // onChangeText={(pin1) => {
-              //     this.setState({ pin1: pin1 }, () => {
-              //         if (pin1 != '') {
-              //             this.refs.pin2ref.focus()
-              //         } else {
-              //             this.refs.pin1ref.focus()
-              //         }
-              //     })
-              // }}
-              autoFocus={true}
-              maxLength={1}
-              keyboardType={"number-pad"}
-              placeholderTextColor={"#8c8c8c"}
-              style={styles.input}
-            />
-          </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              alignSelf: "center",
-              justifyContent: "center",
-              width: "12%",
-              height: 40,
-              borderRadius: 10,
-              borderBottomWidth: 1,
-              margin: 2,
-            }}
-          >
-            <TextInput
-              keyboardType="decimal-pad"
-              onChangeText={(p) => setP4(p)}
-              // ref={'pin1ref'}
-              // // placeholder='0'
-              // onChangeText={(pin1) => {
-              //     this.setState({ pin1: pin1 }, () => {
-              //         if (pin1 != '') {
-              //             this.refs.pin2ref.focus()
-              //         } else {
-              //             this.refs.pin1ref.focus()
-              //         }
-              //     })
-              // }}
-              autoFocus={true}
-              maxLength={1}
-              keyboardType={"number-pad"}
-              placeholderTextColor={"#8c8c8c"}
-              style={styles.input}
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              alignSelf: "center",
-              justifyContent: "center",
-              width: "12%",
-              height: 40,
-              borderRadius: 10,
-              borderBottomWidth: 1,
-              margin: 2,
-            }}
-          >
-            <TextInput
-              keyboardType="decimal-pad"
-              onChangeText={(p) => setP5(p)}
-              // ref={'pin1ref'}
-              // // placeholder='0'
-              // onChangeText={(pin1) => {
-              //     this.setState({ pin1: pin1 }, () => {
-              //         if (pin1 != '') {
-              //             this.refs.pin2ref.focus()
-              //         } else {
-              //             this.refs.pin1ref.focus()
-              //         }
-              //     })
-              // }}
-              autoFocus={true}
-              maxLength={1}
-              keyboardType={"number-pad"}
-              placeholderTextColor={"#8c8c8c"}
-              style={styles.input}
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              alignSelf: "center",
-              justifyContent: "center",
-              width: "12%",
-              height: 40,
-              borderRadius: 10,
-              borderBottomWidth: 1,
-              margin: 2,
-            }}
-          >
-            <TextInput
-              keyboardType="decimal-pad"
-              onChangeText={(p) => {
-                setP6(p),
-                  () => {
-                    if (p != "") {
-                      CheckValidtions();
-                    }
-                  };
-              }}
-              // ref={'pin1ref'}
-              // // placeholder='0'
-              // onChangeText={(pin1) => {
-              //     this.setState({ pin1: pin1 }, () => {
-              //         if (pin1 != '') {
-              //             this.refs.pin2ref.focus()
-              //         } else {
-              //             this.refs.pin1ref.focus()
-              //         }
-              //     })
-              // }}
-              autoFocus={true}
-              maxLength={1}
-              keyboardType={"number-pad"}
-              placeholderTextColor={"#8c8c8c"}
-              style={styles.input}
-            />
-          </View>
         </View>
 
         <View
@@ -408,7 +198,7 @@ function PhoneAuth(props) {
           }}
         >
           <Text>Your confirmation code has been sent by SMS to this</Text>
-          <Text>Number: {number}</Text>
+          {/* <Text>Number: {number}</Text> */}
         </View>
 
         <View
@@ -420,7 +210,7 @@ function PhoneAuth(props) {
           }}
         >
           <Text>Not your current number?</Text>
-          <TouchableOpacity onPress={()=> props.navigation.navigate("Signup")}>
+          <TouchableOpacity onPress={()=>changeNumber()}>
             <Text style={{ color: "#FF9900" }}> Change</Text>
           </TouchableOpacity>
         </View>
@@ -450,73 +240,7 @@ function PhoneAuth(props) {
           </TouchableOpacity>
         </View>
 
-        {/*{this.state.err ?
-                <Text style={{ color: 'red', alignSelf: 'center' }}>Invalid pin entered</Text>
-                :
-                null
-            }
-
-            <Text style={{ textAlign: "center", color: "orange", marginTop: 10 }}>
-                {this.state.error_message}
-            </Text>
-
-
-            <View style={{ justifyContent: "flex-end", alignItems: 'center', marginTop: 20 }}>
-                {this.state.isLoading ? (
-                    <View style={{ justifyContent: 'center' }}>
-                        <View style={{ ...styles._LOGIN_Button_Style_android }}>
-                            <ActivityIndicator size="large" color="#0A0A1A" />
-                        </View>
-                    </View>
-                ) : (
-                    <View style={{ flexDirection: 'row' }}>
-                        {Platform.OS != "android" ? (
-                            <TouchableOpacity
-                                onPress={() => this.login()}
-                                style={{ ...styles._LOGIN_Button_Style_IOS, backgroundColor: '#F165A8' }}
-                            >
-                                <Text style={styles._Touchable_Text_Colors}>Verify</Text>
-                            </TouchableOpacity>
-                        ) : (
-                            <TouchableNativeFeedback onPress={() => this.login()}>
-                                <View style={{ ...styles._LOGIN_Button_Style_android, backgroundColor: '#F165A8' }}>
-                                    <Text style={styles._Touchable_Text_Colors}>Verify</Text>
-                                </View>
-                            </TouchableNativeFeedback>
-                        )}
-                    </View>
-                )}
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                {this.state.timer ?
-                    
-                    <>
-                        <Text style={{ color: '#a9a9a9' }}>Will recieve code in </Text>
-
-                        <CountDown
-                            size={18}
-                            until={60}
-                            onFinish={() => this.setState({ btnstate: !this.state.btnstate, timer: false, err: false })}
-                            digitStyle={{ backgroundColor: '#FFF', borderWidth: 2, borderColor: '#0f76de' }}
-                            digitTxtStyle={{ color: '#a9a9a9' }}
-                            timeToShow={['S']}
-                            timeLabels={{ m: null, s: null }}
-                        />
-                    </>
-
-                    :
-                    <>
-                        <Text style={{ color: '#a9a9a9' }}>Didn't recieve code</Text>
-                        <TouchableOpacity onPress={() => this.resendCode()} >
-                            <Text style={{ color: '#28ABFE', fontWeight: 'bold' }}> Resend</Text>
-                        </TouchableOpacity>
-                    </>
-
-                }
-
-            </View>
-     */}
+     
       </View>
     </View>
     // </View >
@@ -623,4 +347,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PhoneAuth;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    SessionMaintain: () => dispatch(SetSession()),
+  };
+};
+  export default connect(null, mapDispatchToProps) (PhoneAuth);
