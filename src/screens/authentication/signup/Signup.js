@@ -251,17 +251,59 @@ const Signup = (props) => {
       }
       const badgeImage = await uploadImage(badgeNumberImage.uri);
       const taxiLicense = await uploadImage(taxiLicenseImage.uri);
+
+      try{
+      await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(async (user) => {
+        const uuid = user.user?.uid;
+        let Details = {
+          id: uuid,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          mobileNo: mobileNo,
+          badgeNumberImage: badgeImage,
+          taxiLicenseImage: taxiLicense,
+          rating: 5,
+          Dp: "",
+          city: "",
+          country: "",
+          createdAt: new Date().toISOString(),
+        };
+        firebase.auth().signOut();
+
+        await firebase
+          .database()
+          .ref("users/")
+          .child(uuid)
+          .set(Details)
+          .then(() => {
+            setMessage("User Registration is Successful.");
+            setIsVisible(!isVisible);
+            setTimeout(() => {
+              props.navigation.navigate("Verify");
+            }, 2000);
+          });
+      });
+  } catch (err) {
+    setMessage("error : " + err);
+    setIsVisible(!isVisible); 
+  }
+  setLoader(false);
+
       // firebase.auth().settings.appVerificationDisabledForTesting = true
       // console.log("recaptcha : " +recaptchaVerifier.current)
-      setTimeout(async() => {
+      // setTimeout(async() => {
         
-      const phoneProvider = new firebase.auth.PhoneAuthProvider();
-      const verificationId = await phoneProvider.verifyPhoneNumber(
-        "+44" + mobileNo,
-        recaptchaVerifier.current
-      );
-      console.log(verificationId);
-      if (verificationId) {
+      // const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      // const verificationId = await phoneProvider.verifyPhoneNumber(
+      //   "+44" + mobileNo,
+      //   recaptchaVerifier.current
+      // );
+      // console.log(verificationId);
+      // if (verificationId) {
         // props.SessionMaintain({ "isLogin": true })
         // setIsLoggedIn(false);
         // setFirstName("");
@@ -271,24 +313,24 @@ const Signup = (props) => {
         // setPassword("");
         // setTaxiLicenseImage("");
         // setBadgeNumberImage("");
-        setLoader(false);
+        // setLoader(false);
         // var otp = Math.floor(100000 + Math.random() * 900000);
-        var number = "+44" + mobileNo;
-        props.navigation.navigate("PhoneAuth", {
-          otp: verificationId,
-          number: number,
-          // detail: Details,
-          // uid: uuid,
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-          mobileNo: mobileNo,
-          badgeNumberImage: badgeImage,
-          taxiLicenseImage: taxiLicense,
-        });
-      }
-    }, 4000);
+        // var number = "+44" + mobileNo;
+        // props.navigation.navigate("PhoneAuth", {
+        //   otp: verificationId,
+        //   number: number,
+        //   // detail: Details,
+        //   // uid: uuid,
+        //   firstName: firstName,
+        //   lastName: lastName,
+        //   email: email,
+        //   password: password,
+        //   mobileNo: mobileNo,
+        //   badgeNumberImage: badgeImage,
+        //   taxiLicenseImage: taxiLicense,
+        // });
+    //   }
+    // }, 4000);
 
       // firebase.auth().signOut();
       // props.navigation.navigate("Verify");
@@ -711,10 +753,10 @@ const Signup = (props) => {
             </Text>
           </TouchableOpacity>
           
-        {attemptInvisibleVerification?
+        {/* {attemptInvisibleVerification?
          <FirebaseRecaptchaBanner />
         :
-        <></>}
+        <></>} */}
 
         </View>
       </View>
