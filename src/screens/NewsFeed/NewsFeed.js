@@ -188,12 +188,7 @@ const NewsFeed = (props) => {
             //it will check user hide the post or not
             const hideuser = firebase
               .database()
-              .ref(
-                "user_posts/" +
-                  child.key +
-                  "/Hide/" +
-                  firebase.auth().currentUser?.uid
-              );
+              .ref("user_posts/" + child.key + "/Hide");
             //it will check the save post that user save
             // const userSave = firebase
             //   .database()
@@ -216,6 +211,7 @@ const NewsFeed = (props) => {
                     if (chil.exists()) {
                       //it will check if user exist in current post or not to change heart color
                       hideuser.on("value", (ishide) => {
+                        // console.log(ishide.val());
                         //it will check and bypass post if current user hide the post
                         if (!ishide.exists()) {
                           setData({ ...data });
@@ -254,6 +250,11 @@ const NewsFeed = (props) => {
                       });
                     } else {
                       hideuser.on("value", (ishide) => {
+                        console.log(
+                          "ishide.exists()",
+                          ishide.exists(),
+                          child.key
+                        );
                         if (!ishide.exists()) {
                           setData({ ...data });
                           arr.push({
@@ -336,15 +337,15 @@ const NewsFeed = (props) => {
     // setRefreshing(true);
     setTimeout(() => {
       setMessage("This post is no longer available for you");
-      setIsVisible(!isVisible);  
+      setIsVisible(!isVisible);
     }, 200);
-    
+
     let filtered = posts.filter((i) => {
       return post_id !== i.id;
     });
 
     console.log("\n", post_id);
-    
+
     setPosts(filtered);
 
     const hiderPost = firebase
@@ -404,12 +405,12 @@ const NewsFeed = (props) => {
     if (!isplaying) {
       try {
         // console.log("isplaying", isplaying);
-        await Audio.setAudioModeAsync({ 
+        await Audio.setAudioModeAsync({
           playsInSilentModeIOS: true,
           staysActiveInBackground: false,
           playThroughEarpieceAndroid: false,
           interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-          interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX
+          interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
         });
         toogleLike(id);
         // console.log("Loading Sound", soundUri);
@@ -499,19 +500,19 @@ const NewsFeed = (props) => {
     setPosts(res);
   }
   async function delPost(postid) {
-    console.log('calling del')
+    console.log("calling del");
     setTimeout(() => {
       setMessage("Post Deleted Successfully");
       setIsVisible(!isVisible);
     }, 200);
-    
+
     let filtered = posts.filter((i) => {
       return postid !== i.id;
     });
     // console.log("post filter", filtered, "\n", postid);
     setPosts(filtered);
     // alert("Post Deleted Successfully");
-    
+
     const del = firebase.database().ref("user_posts").child(postid);
     del.remove().then(() => console.log("Post Deleted Successfully"));
   }
@@ -588,7 +589,7 @@ const NewsFeed = (props) => {
                 firebase.auth().currentUser?.uid === item.user
                   ? [
                       () => {
-                        delPost(item.id)
+                        delPost(item.id);
                       },
                       () => console.log("cancel"),
                     ]
@@ -660,7 +661,7 @@ const NewsFeed = (props) => {
                     }}
                     style={{
                       marginTop: 5,
-                      marginBottom:5
+                      marginBottom: 5,
                     }}
                   >
                     {item.isShow ? (
@@ -899,7 +900,7 @@ const NewsFeed = (props) => {
               backgroundColor: "#FF9900",
               marginLeft: 8,
               marginRight: 8,
-              marginTop:8,
+              marginTop: 8,
               borderRadius: 10,
             }}
             visible={isVisible}
@@ -914,7 +915,7 @@ const NewsFeed = (props) => {
         <></>
       )}
 
-    {/* {posts === null ?
+      {/* {posts === null ?
     
     <View style={{alignSelf:'center',height:'200',alignItems:'center',justifyContent:'center'}}>
       <ActivityIndicator color={'#FCB040'} size={'large'}/>
@@ -933,7 +934,7 @@ const NewsFeed = (props) => {
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
-    {/* } */}
+      {/* } */}
       {/* {show && (
         <View
           style={{
