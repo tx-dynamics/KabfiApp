@@ -213,7 +213,8 @@ const NewsFeed = (props) => {
                       hideuser.on("value", (ishide) => {
                         // console.log(ishide.val());
                         //it will check and bypass post if current user hide the post
-                        if (!ishide.exists()) {
+
+                        if (ishide.val() !== firebase.auth().currentUser.uid) {
                           setData({ ...data });
                           arr.push({
                             id: child.key,
@@ -246,16 +247,15 @@ const NewsFeed = (props) => {
                             time: child.val().time,
                             // isplaying: false,
                           });
+                        } else {
+                          return;
                         }
                       });
                     } else {
                       hideuser.on("value", (ishide) => {
-                        console.log(
-                          "ishide.exists()",
-                          ishide.exists(),
-                          child.key
-                        );
-                        if (!ishide.exists()) {
+                        console.log("Hide", ishide.val());
+
+                        if (ishide.val() !== firebase.auth().currentUser.uid) {
                           setData({ ...data });
                           arr.push({
                             id: child.key,
