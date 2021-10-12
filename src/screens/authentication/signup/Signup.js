@@ -10,10 +10,13 @@ if (!firebase.apps.length) {
     appId: "1:676638158064:web:e01ff8bc3a12a378eee635",
   });
 }
+import { FirebaseRecaptchaVerifierModal,FirebaseRecaptcha,FirebaseRecaptchaBanner } from "expo-firebase-recaptcha";
 // firebase.storage().ref();
-
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
+import * as Permissions from "expo-permissions";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+// import { getAuth, signInWithPhoneNumber } from "firebase/auth";
 import {
   View,
   Text,
@@ -23,6 +26,8 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  AsyncStorage,
+  KeyboardAvoidingView
 } from "react-native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -34,9 +39,22 @@ import {
   exclamation_mark,
   logoName,
 } from "../../../../assets";
-import { useLogin } from "../../../context/LoginProvider";
+// import { useLogin } from "../../../context/LoginProvider";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import { connect } from "react-redux";
+import { SetSession } from "../../../Redux/Actions/Actions";
 const Signup = (props) => {
+  
+
+  const getPermission = async () => {
+    const { granted } = await Permissions.askAsync(Permissions.CAMERA);
+    const { granted1 } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    setGrandted(granted);
+    setGrandted1(granted1);
+  };
+  const [isInit, setisInit] = useState(false)
+  const [granted, setGrandted] = useState("");
+  const [granted1, setGrandted1] = useState("");
   const [firstName, setFirstName] = useState("");
   const [fNameValidator, setfNameValidator] = useState(false);
   const [lastName, setLastName] = useState("");
@@ -47,7 +65,7 @@ const Signup = (props) => {
   const [mobileNoValidator, setmobileNoValidator] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordValidator, setpasswordValidator] = useState(false);
-  const { setIsLoggedIn } = useLogin();
+  // const { setIsLoggedIn } = useLogin();
   const [badgeNumberImage, setBadgeNumberImage] = useState(null);
   const [badgeNumberImageValidator, setbadgeNumberImageValidator] =
     useState(false);
@@ -55,8 +73,43 @@ const Signup = (props) => {
   const [taxiLicenseImage, setTaxiLicenseImage] = useState(null);
   const [taxiLicenseValidator, settaxiLicenseValidator] = useState(false);
   const [passwordHidden, setPasswordHidden] = useState(true);
-
   const [loader, setLoader] = useState(false);
+  const firebaseConfig = firebase.apps.length
+    ? firebase.app().options
+    : undefined;
+  const recaptchaVerifier = React.useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState("");
+
+  useEffect( () => {
+    setTimeout(function () {
+      setisInit(true)
+    }, 2000)
+    // props.navigation.addListener("focus", () => {
+    //   if(props.route.params.number === undefined ){
+
+    //   }else{
+    //     getUser()
+
+    //   }
+    // })
+    // You need to restrict it at some point
+    // This is just dummy code and should be replaced by actual
+
+    getPermission();
+  }, []);
+
+  async function getUser(){
+    let number = props.route.params.number
+    console.log(number);
+
+    if(number === undefined){
+      console.log(number);
+    }else{
+      setMobileNo("")
+    }
+
+  }
 
   function AlertBadgeNumberImage() {
     Alert.alert(
@@ -99,16 +152,22 @@ const Signup = (props) => {
   const pickBadgeNumberImage = async (val) => {
     let result = "";
     if (val === 1) {
-      result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        aspect: [4, 3],
-        quality: 1,
-      });
+      if (granted || granted1) {
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          aspect: [4, 3],
+          quality: 0,
+        });
+      } else {
+        setMessage("Camera permission Denied");
+        setIsVisible(!isVisible);
+        // alert("Camera permission Denied");
+      }
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0,
       });
     }
 
@@ -123,15 +182,15 @@ const Signup = (props) => {
     let result = "";
     if (val === 1) {
       result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0,
       });
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.5,
       });
     }
 
@@ -148,6 +207,14 @@ const Signup = (props) => {
   }
 
   async function userSignup() {
+
+    // await AsyncStorage.setItem('fname',firstName)
+    // await AsyncStorage.setItem('lname',lastName)
+    // await AsyncStorage.setItem('number',JSON.stringify(mobileNo) )
+    // await AsyncStorage.setItem('email',email)
+    // await AsyncStorage.setItem('taxiLicenseImage',JSON.stringify(taxiLicenseImage))
+    // await AsyncStorage.setItem('password',password)
+
     let success = true;
     setLoader(true);
     setfNameValidator(false);
@@ -166,87 +233,129 @@ const Signup = (props) => {
       badgeNumberImage !== null &&
       taxiLicenseImage !== null
     ) {
-      if (!/^[0-9]+$/.test(mobileNo)) {
-        alert("Phone number should be numeric only.");
+      if (mobileNo.length < 10) {
+        setMessage("Phone number should be 11 digit only .");
+        setIsVisible(!isVisible);
+        // alert("Phone number should be 11 digit only .");
+        setLoader(false);
+        setmobileNoValidator(true);
         return false;
       }
       if (password.length < 8) {
-        alert("Password Must be atleast 8 characters");
+        setMessage("Password must be at least 8 characters");
+        setIsVisible(!isVisible);
+        // alert("Password must be at least 8 characters");
+        setpasswordValidator(true);
         setLoader(false);
         return false;
       }
       const badgeImage = await uploadImage(badgeNumberImage.uri);
       const taxiLicense = await uploadImage(taxiLicenseImage.uri);
+
+      try{
       await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(async (user) => {
-          const uuid = user.user?.uid;
-          let Details = {
-            id: uuid,
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            mobileNo: mobileNo,
-            badgeNumberImage: badgeImage,
-            taxiLicenseImage: taxiLicense,
-            rating: 5,
-            Dp: "",
-            city: "",
-            country: "",
-            createdAt: new Date().toISOString(),
-          };
-          firebase.auth().signOut();
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(async (user) => {
+        const uuid = user.user?.uid;
+        let Details = {
+          id: uuid,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          mobileNo: mobileNo,
+          badgeNumberImage: badgeImage,
+          taxiLicenseImage: taxiLicense,
+          rating: 5,
+          Dp: "",
+          city: "",
+          country: "",
+          createdAt: new Date().toISOString(),
+        };
+        firebase.auth().signOut();
 
-          await firebase
-            .database()
-            .ref("users/")
-            .child(uuid)
-            .set(Details)
-            .then(() => {
-              setIsLoggedIn(false);
-              setFirstName("");
-              setLastName("");
-              setMobileNo("");
-              setEmail("");
-              setPassword("");
-              setTaxiLicenseImage("");
-              setBadgeNumberImage("");
-              setfNameValidator(false);
-              setlNameValidator(false);
-              setmobileNoValidator(false);
-              setEmailValidator(false);
-              setpasswordValidator(false);
-              setbadgeNumberImageValidator(false);
-              settaxiLicenseValidator(false);
-              setLoader(false);
+        await firebase
+          .database()
+          .ref("users/")
+          .child(uuid)
+          .set(Details)
+          .then(() => {
+            setMessage("User Registration is Successful.");
+            setIsVisible(!isVisible);
+            setTimeout(() => {
               props.navigation.navigate("Verify");
-            });
+            }, 2000);
+          });
+      });
+  } catch (err) {
+    setMessage("error : " + err);
+    setIsVisible(!isVisible); 
+  }
+  setLoader(false);
 
-          // firebase.auth().signOut();
-          // props.navigation.navigate("Verify");
-          // const uid = user.user.uid;
-          // setIsLoggedIn(false);
+      // firebase.auth().settings.appVerificationDisabledForTesting = true
+      // console.log("recaptcha : " +recaptchaVerifier.current)
+      // setTimeout(async() => {
+        
+      // const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      // const verificationId = await phoneProvider.verifyPhoneNumber(
+      //   "+44" + mobileNo,
+      //   recaptchaVerifier.current
+      // );
+      // console.log(verificationId);
+      // if (verificationId) {
+        // props.SessionMaintain({ "isLogin": true })
+        // setIsLoggedIn(false);
+        // setFirstName("");
+        // setLastName("");
+        // setMobileNo("");
+        // setEmail("");
+        // setPassword("");
+        // setTaxiLicenseImage("");
+        // setBadgeNumberImage("");
+        // setLoader(false);
+        // var otp = Math.floor(100000 + Math.random() * 900000);
+        // var number = "+44" + mobileNo;
+        // props.navigation.navigate("PhoneAuth", {
+        //   otp: verificationId,
+        //   number: number,
+        //   // detail: Details,
+        //   // uid: uuid,
+        //   firstName: firstName,
+        //   lastName: lastName,
+        //   email: email,
+        //   password: password,
+        //   mobileNo: mobileNo,
+        //   badgeNumberImage: badgeImage,
+        //   taxiLicenseImage: taxiLicense,
+        // });
+    //   }
+    // }, 4000);
 
-          // console.log(Details);
-          // firebase
-          //   .database()
-          //   .ref("users/" + uid)
-          //   .set(Details)
-          //   .then(() => {
-          //     setIsLoggedIn(false);
-          //     alert(
-          //       "Thank you for your registration! Your account is now ready to use."
-          //     );
-          //   });
-          // firebase.auth().signOut();
-          // await saveData("users", user.user.uid, Details);
-        })
-        .catch(function (error) {
-          setLoader(false);
-          success = false;
-          alert(error.code + ":: " + error.message);
-        });
+      // firebase.auth().signOut();
+      // props.navigation.navigate("Verify");
+      // const uid = user.user.uid;
+      // setIsLoggedIn(false);
+
+      // console.log(Details);
+      // firebase
+      //   .database()
+      //   .ref("users/" + uid)
+      //   .set(Details)
+      //   .then(() => {
+      //     setIsLoggedIn(false);
+      //     alert(
+      //       "Thank you for your registration! Your account is now ready to use."
+      //     );
+      //   });
+      // firebase.auth().signOut();
+      // await saveData("users", user.user.uid, Details);
+      // })
+      // .catch(function (error) {
+      //   setLoader(false);
+      //   success = false;
+      //   alert(error.message);
+      // });
     } else {
       setLoader(false);
       if (
@@ -272,7 +381,7 @@ const Signup = (props) => {
       if (lastName === "") {
         setlNameValidator(true);
       }
-      if (mobileNo === "") {
+      if (mobileNo === "" || mobileNo.length < 10) {
         setmobileNoValidator(true);
       }
       if (email === "") {
@@ -335,12 +444,16 @@ const Signup = (props) => {
       });
   }
 
+  const attemptInvisibleVerification = true;
+
   return (
     <ScrollView style={styles.root}>
+      <KeyboardAvoidingView>
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
+          
           <Image
-            source={logoName}
+            source={require("../../../../assets/Kabfi-logo.png")}
             resizeMode="contain"
             style={{
               height: 50,
@@ -358,7 +471,37 @@ const Signup = (props) => {
             CREATE AN ACCOUNT
           </Text>
         </View>
-
+        {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FF9900",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderRadius: 10,
+                }}
+                visible={isVisible}
+                action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+                // )}
+                // position={'top'}
+                duration={messge.length + 2000}
+              >
+                <Text>{messge}</Text>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+          )}
+        {isInit && (
+        <FirebaseRecaptchaVerifierModal
+          ref={recaptchaVerifier}
+          firebaseConfig={firebaseConfig}
+          // attemptInvisibleVerification={attemptInvisibleVerification}
+          // appVerificationDisabledForTesting={__DEV__}
+        />
+      )}
         <View style={styles.form}>
           <View style={styles.formField}>
             <Text style={[styles.label, { fontWeight: "bold" }]}>Name</Text>
@@ -376,7 +519,7 @@ const Signup = (props) => {
                   placeholder="First Name"
                 />
                 <Image
-                  source={firstName.length > 2 ? checkImage : null}
+                  source={firstName.length >= 2 ? tickImage : null}
                   style={styles.checkImageIcon}
                 />
               </View>
@@ -393,7 +536,7 @@ const Signup = (props) => {
                   placeholder="Last Name"
                 />
                 <Image
-                  source={lastName.length > 2 ? checkImage : null}
+                  source={lastName.length >= 2 ? tickImage : null}
                   style={styles.checkImageIcon}
                 />
               </View>
@@ -410,6 +553,7 @@ const Signup = (props) => {
               ]}
             >
               <Text style={styles.countryCode}>+44</Text>
+              {/* <Text style={styles.countryCode}>+92</Text> */}
               <TextInput
                 style={[styles.textFieldFull, { paddingHorizontal: 20 }]}
                 value={mobileNo}
@@ -419,7 +563,7 @@ const Signup = (props) => {
                 maxLength={10}
               />
               <Image
-                source={mobileNo.length > 9 ? checkImage : null}
+                source={mobileNo.length > 9 ? tickImage : null}
                 style={[styles.checkImageIcon, { marginRight: 15 }]}
               />
             </View>
@@ -436,13 +580,13 @@ const Signup = (props) => {
               <TextInput
                 style={styles.textFieldFull}
                 value={email}
-                onChangeText={(e) => setEmail(e)}
+                onChangeText={(e) => setEmail(e.trim())}
                 placeholder="name@example.com"
               />
               <Image
                 source={
                   /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
-                    ? checkImage
+                    ? tickImage
                     : null
                 }
                 style={[styles.checkImageIcon, { marginRight: 15 }]}
@@ -450,9 +594,12 @@ const Signup = (props) => {
             </View>
           </View>
 
-          <View style={styles.formField}>
-            <View style={styles.textFieldHalfContainer}>
-              <View style={styles.uploadImageFieldsContainer}>
+          <View style={[styles.formField, { width: "100%" }]}>
+            <View style={[styles.textFieldHalfContainer, { width: "100%" }]}>
+              <TouchableOpacity
+                onPress={AlertTaxiLicenseImage}
+                style={styles.uploadImageFieldsContainer}
+              >
                 <Text
                   style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
                 >
@@ -465,23 +612,34 @@ const Signup = (props) => {
                     justifyContent: "space-between",
                     borderWidth: 1,
                     borderColor: badgeNumberImageValidator ? "red" : "#E6E6E6",
+                    width: "100%",
                   }}
                   onPress={AlertBadgeNumberImage}
                 >
-                  <TextInput
-                    style={styles.uploadImageFields}
-                    placeholder={
-                      !badgeNumberImage ? "Upload Image" : "Image Uploaded"
-                    }
-                    editable={false}
-                  />
+                  <View style={styles.uploadImageFields}>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        marginLeft: responsiveHeight(1),
+                        opacity: 0.3,
+                      }}
+                    >
+                      {" "}
+                      {!badgeNumberImage
+                        ? "Upload Image"
+                        : "Image is uploaded"}{" "}
+                    </Text>
+                  </View>
                   <Image
                     source={!badgeNumberImage ? galleryImage : tickImage}
                     style={styles.uploadIMageIcon}
                   />
                 </TouchableOpacity>
-              </View>
-              <View style={styles.uploadImageFieldsContainer}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={AlertTaxiLicenseImage}
+                style={styles.uploadImageFieldsContainer}
+              >
                 <Text
                   style={[styles.uploadImageFieldLabel, { fontWeight: "bold" }]}
                 >
@@ -497,19 +655,27 @@ const Signup = (props) => {
                   }}
                   onPress={AlertTaxiLicenseImage}
                 >
-                  <TextInput
-                    style={styles.uploadImageFields}
-                    placeholder={
-                      !taxiLicenseImage ? "Upload Image" : "Image Uploaded"
-                    }
-                    editable={false}
-                  />
+                  <View style={styles.uploadImageFields}>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        marginLeft: responsiveHeight(1),
+                        opacity: 0.3,
+                      }}
+                    >
+                      {" "}
+                      {!taxiLicenseImage
+                        ? "Upload Image"
+                        : "Image is uploaded"}{" "}
+                    </Text>
+                  </View>
+
                   <Image
                     source={!taxiLicenseImage ? galleryImage : tickImage}
                     style={styles.uploadIMageIcon}
                   />
                 </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -568,11 +734,12 @@ const Signup = (props) => {
             <TouchableOpacity
               style={styles.loginBtn}
               onPress={() => userSignup()}
+              // onPress={() => props.navigation.navigate('PhoneAuth')}
             >
               {loader ? (
                 <ActivityIndicator color={"red"} size={"small"} />
               ) : (
-                <Text style={{ color: "white" }}>SIGN UP</Text>
+                <Text style={{ color: "white" }}>SUBMIT</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -585,10 +752,22 @@ const Signup = (props) => {
               Already have an account?
             </Text>
           </TouchableOpacity>
+          
+        {/* {attemptInvisibleVerification?
+         <FirebaseRecaptchaBanner />
+        :
+        <></>} */}
+
         </View>
       </View>
+      </KeyboardAvoidingView>
     </ScrollView>
   );
 };
+const mapDispatchToProps = (dispatch) => {
+  return {
+    SessionMaintain: (data) => dispatch(SetSession(data)),
+  };
+};
 
-export default Signup;
+export default connect(null, mapDispatchToProps)(Signup);

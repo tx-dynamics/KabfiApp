@@ -19,7 +19,7 @@ const HeaderLeftComponent = ({ navigation, icon }) => {
       style={styles.container}
       onPress={() => navigation.goBack()}
     >
-      <Image style={styles.image} source={back} />
+       <Ionicons name="chevron-back-outline" size={30} />
     </TouchableOpacity>
   );
 };

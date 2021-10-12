@@ -9,15 +9,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentArea: {
-    width: "100%",
+    width: "99%",
     height: "100%",
     marginTop: "5%",
     paddingHorizontal: 20,
     paddingVertical: 1,
+    alignSelf: "center",
   },
   logoContainer: {
     alignItems: "center",
-    marginTop:responsiveHeight(4)
+    marginTop: responsiveHeight(4),
   },
   logoImage: {
     width: 140,
@@ -55,6 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   textFieldHalf: {
+    height: 50,
     borderWidth: 1,
     borderColor: "#E6E6E6",
     paddingHorizontal: 20,
@@ -72,6 +74,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: "left",
     width: "80%",
+    height: 50,
   },
   countryCode: {
     alignSelf: "center",
@@ -83,9 +86,9 @@ const styles = StyleSheet.create({
     width: "48.5%",
   },
   uploadImageFields: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    justifyContent: "center",
     fontSize: 13,
+    height: 50,
   },
   uploadImageFieldLabel: {
     marginBottom: 5,
@@ -110,7 +113,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     backgroundColor: "#FAB040",
     alignItems: "center",
-    padding: 12,
+    padding: 15,
     width: "95%",
     alignSelf: "center",
     borderRadius: 10,

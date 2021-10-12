@@ -9,14 +9,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { useLogin } from "../../context/LoginProvider";
+// import { useLogin } from "../../context/LoginProvider";
 import { Header } from "react-native-elements";
 import HeaderCenterComponent from "../../components/Settings/HeaderCenterComponent";
 // import HeaderRight from "../../components/Settings/HeaderRight";
 import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
 
 const Legal = (props) => {
-  const { setIsLoggedIn } = useLogin();
+  // const { setIsLoggedIn } = useLogin();
 
   return (
     <View style={styles.root}>

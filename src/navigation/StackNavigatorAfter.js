@@ -21,12 +21,18 @@ import feedback3 from "../screens/extra/feedback3";
 import feedback4 from "../screens/extra/feedback4";
 import feedback5 from "../screens/extra/feedback5";
 import feedback6 from "../screens/extra/feedback6";
+import AudioRecording from "../screens//home/AudioRecording"
 const Stack = createStackNavigator();
 
 const StackNavigatorAfter = (props) => {
   return (
     // <NavigationContainer>
     <Stack.Navigator initialRouteName="NewsFeed">
+      <Stack.Screen
+        name="AudioRecording"
+        component={AudioRecording}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="feedback1"
         component={feedback1}

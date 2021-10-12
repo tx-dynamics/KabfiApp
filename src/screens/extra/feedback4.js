@@ -47,11 +47,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setease(true),
-            setapp(false),
-            setother(false),
-            settechnical(false),
-            setusefull(false);
+          setease(!ease);
         }}
         style={{
           backgroundColor: ease ? "orange" : "white",
@@ -78,11 +74,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setease(false),
-            setapp(false),
-            setother(false),
-            settechnical(false),
-            setusefull(true);
+          setusefull(!usefull);
         }}
         style={{
           backgroundColor: usefull ? "orange" : "white",
@@ -109,11 +101,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setease(false),
-            setapp(false),
-            setother(false),
-            settechnical(true),
-            setusefull(false);
+          settechnical(!technical);
         }}
         style={{
           backgroundColor: technical ? "orange" : "white",
@@ -140,11 +128,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setease(false),
-            setapp(true),
-            setother(false),
-            settechnical(false),
-            setusefull(false);
+          setapp(!app);
         }}
         style={{
           backgroundColor: app ? "orange" : "white",
@@ -171,11 +155,7 @@ const feedback4 = (props) => {
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity
         onPress={() => {
-          setease(false),
-            setapp(false),
-            setother(true),
-            settechnical(false),
-            setusefull(false);
+          setother(!other);
         }}
         style={{
           backgroundColor: other ? "orange" : "white",
@@ -209,7 +189,7 @@ const feedback4 = (props) => {
         }}
       >
         <TouchableOpacity
-          onPress={() => props.navigation.navigate("feedback3")}
+          onPress={() => props.navigation.navigate("feedback1")}
           style={{
             flexDirection: "row",
             borderRadius: 30,
@@ -239,7 +219,16 @@ const feedback4 = (props) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => props.navigation.navigate("feedback5")}
+          onPress={() =>
+            props.navigation.navigate("feedback5", {
+              screen: " What made you unhappy?",
+              ease,
+              usefull,
+              app,
+              technical,
+              other,
+            })
+          }
           style={{
             flexDirection: "row",
             borderRadius: 30,

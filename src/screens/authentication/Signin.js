@@ -1,5 +1,9 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useRef, useEffect } from "react";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import React, { useState, useEffect, useRef } from "react";
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
+
 import {
   View,
   Text,
@@ -12,21 +16,31 @@ import {
   Linking,
   ActivityIndicator,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   AntDesign,
   FontAwesome,
   FontAwesome5,
   Ionicons,
+  Feather,
   MaterialIcons,
   Entypo,
 } from "@expo/vector-icons";
-import { useLogin } from "../../context/LoginProvider";
+// import { useLogin } from "../../context/LoginProvider";
 import firebase from "firebase";
 import { useIsFocused } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import * as Permissions from "expo-permissions";
-
+import { connect } from "react-redux";
+import { SetSession } from "../../Redux/Actions/Actions";
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -37,21 +51,41 @@ const Signin = (props) => {
   const [password, setPassword] = useState("");
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [loader, setLoader] = useState(false);
-
-  const { setIsLoggedIn } = useLogin();
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState("");
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  // const { setIsLoggedIn } = useLogin();
   useEffect(() => {
     if (isFocused) {
       console.log("TETS", firebase.auth().currentUser);
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
           // fetchLocation();
-          setIsLoggedIn(true);
+          registerForPushNotificationsAsync().then((token) =>
+            firebase
+              .database()
+              .ref("users/" + firebase.auth().currentUser?.uid + "/")
+              .update({
+                pushToken: token,
+                userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
+              })
+          );
+          // setIsLoggedIn(true);
         } else {
           // fetchLocation();
-          setIsLoggedIn(false);
+          // setIsLoggedIn(false);
         }
       });
     }
+    // Notifications.addNotificationReceivedListener((response) => {
+    //   console.log(response);
+    // });
+
+    // return () => {
+    //   Notifications.removeNotificationSubscription();
+    //   Notifications.removeNotificationSubscription(responseListener.current);
+    // };
   }, [props, isFocused]);
 
   function passwordVisibility() {
@@ -60,25 +94,39 @@ const Signin = (props) => {
       : setPasswordHidden(true);
   }
 
-  function userSignin() {
+  async function userSignin() {
     setLoader(true);
     // fetchLocation();
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        setIsLoggedIn(true);
+        registerForPushNotificationsAsync().then((token) =>
+          firebase
+            .database()
+            .ref("users/" + firebase.auth().currentUser?.uid + "/")
+            .update({
+              pushToken: token,
+              userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
+            })
+        );
+        props.SessionMaintain({ isLogin: true });
+        // setIsLoggedIn(true);
         setLoader(false);
       })
       .catch((error) => {
-        alert(error.message);
+        setMessage(error.message);
+        setIsVisible(!isVisible);
+        // alert(error.message);
         setLoader(false);
       });
   }
   async function fetchLocation() {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
-      alert("Permission to access location was denied");
+      setMessage("Permission to access location was denied");
+      setIsVisible(!isVisible);
+      // alert("Permission to access location was denied");
       return;
     }
   }
@@ -89,42 +137,76 @@ const Signin = (props) => {
     >
       {/* <SafeAreaView style={styles.root}> */}
       <StatusBar style="dark" />
-
+      
       <View style={styles.contentArea}>
+      {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FF9900",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderRadius: 10,
+                }}
+                visible={isVisible}
+                action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+                // )}
+                // position={'top'}
+                duration={messge.length + 2000}
+              >
+                <Text>{messge}</Text>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+        )}
         <View style={styles.logoContainer}>
-          <Image
+        <Image
+            source={require("../../../assets/Kabfi-logo.png")}
+            resizeMode="contain"
+            style={{
+              height: 60,
+              width: 156,
+              //backgroundColor: "tomato",
+              alignSelf: "center",
+            }}
+          />
+          {/* <Image
             source={require("../../../assets/ProjectImages/logo.png")}
             style={styles.logoImage}
-          />
+          /> */}
         </View>
 
         <View style={styles.loginForm}>
-          <View style={[styles.textFieldContainer, { marginTop: 20 }]}>
-            <Image
+          <View style={[styles.textFieldContainer, {  }]}>
+            {/* <Image
               source={require("../../../assets/ProjectImages/authentication/mail-icon.png")}
               style={styles.fieldIcon}
-            />
+            /> */}
             <TextInput
               style={styles.textField}
               value={email}
+              placeholderTextColor={'black'}
               placeholder="Email"
               onChangeText={(e) => setEmail(e)}
             />
           </View>
 
-          <View style={[styles.textFieldContainer, { marginTop: 20 }]}>
-            <Image
+          <View style={[styles.textFieldContainer, { marginTop: 26 }]}>
+            {/* <Image
               source={require("../../../assets/ProjectImages/authentication/password-icon.png")}
               style={styles.fieldIcon}
-            />
+            /> */}
 
             <TouchableOpacity
               style={styles.eyeIconContainer}
               onPress={passwordVisibility}
             >
-              <Ionicons
+              <Feather
                 name={passwordHidden ? "eye" : "eye-off"}
-                style={styles.eyeIcon}
+                style={passwordHidden ? styles.eyeIconOn : styles.eyeIcon }
               />
             </TouchableOpacity>
 
@@ -132,6 +214,7 @@ const Signin = (props) => {
               style={styles.textField}
               placeholder="Password"
               value={password}
+              placeholderTextColor={'black'}
               onChangeText={(e) => setPassword(e)}
               secureTextEntry={passwordHidden}
             />
@@ -184,12 +267,19 @@ const Signin = (props) => {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{ alignItems: "center", marginTop: 10 }}
             onPress={() => props.navigation.navigate("Signup")}
-          >
-            <Text style={styles.forgotPasswordText}>Dont have an account?</Text>
-          </TouchableOpacity>
+          > */}
+              <Text style={[styles.forgotPasswordText],{alignSelf:'center'}}>Don't have an account?
+                <TouchableOpacity
+                  style={{alignItems:'center'}}
+                  onPress={() => props.navigation.navigate("Signup")}
+                  > 
+                  <Text style={{fontSize:14,fontWeight:'bold',color:'#FF9900',alignSelf:'center',top:4}}> Sign Up</Text>
+                </TouchableOpacity>
+              </Text>
+          {/* </TouchableOpacity> */}
         </View>
       </View>
 
@@ -214,22 +304,28 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   logoContainer: {
+    marginTop:70,
     alignItems: "center",
+    // height: 110,
+
   },
   logoImage: {
     width: 110,
     height: 110,
   },
   loginForm: {
-    marginTop: 50,
+    marginTop: 20,
     width: "100%",
   },
   textFieldContainer: {},
   textField: {
-    borderBottomWidth: 1,
-    borderBottomColor: "black",
+    // borderBottomWidth: 1,
+    // borderBottomColor: "black",
+    height:60,
+    borderRadius:8,
     paddingHorizontal: 40,
     paddingVertical: 10,
+    backgroundColor: "#F9F9F9",
   },
   fieldIcon: {
     // fontSize:18,
@@ -237,21 +333,22 @@ const styles = StyleSheet.create({
     width: 15,
     height: 13,
     position: "absolute",
-    top: 18,
+    top: 12,
+    alignItems: "center",
   },
   loginBtn: {
-    marginTop: 50,
+    marginTop: 40,
     backgroundColor: "#FAB040",
     alignItems: "center",
-    padding: 12,
-    borderRadius: 10,
+    padding: 15,
+    borderRadius: 5,
   },
   socialIconsContainer: {
     flexDirection: "row",
-    width: "65%",
+    width: "60%",
     // flex:1,
     alignSelf: "center",
-    marginTop: 80,
+    marginTop: 30,
     // backgroundColor:'red',
     // height:300
   },
@@ -266,19 +363,27 @@ const styles = StyleSheet.create({
   },
   forgotPasswordContainer: {
     alignItems: "center",
-    marginTop: 60,
+    marginTop: 40,
   },
   forgotPasswordText: {
-    fontSize: 12,
+    fontSize: 13,
   },
   eyeIcon: {
-    fontSize: 24,
+    fontSize: 20,
+    justifyContent:"center",
     color: "#E6E6E6",
+    alignSelf: "center",
+  },
+  eyeIconOn: {
+    fontSize: 20,
+    justifyContent:"center",
+    color: "#000",
+    alignSelf: "center",
   },
   eyeIconContainer: {
     position: "absolute",
-    top: 13,
-    right: 13,
+    top: 19,
+    right: 17,
     width: 35,
     height: 25,
     alignItems: "center",
@@ -286,4 +391,50 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Signin;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    SessionMaintain: (data) => dispatch(SetSession(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Signin);
+async function registerForPushNotificationsAsync() {
+  try {
+    let token;
+
+    if (Constants.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        setMessage("Failed to get push token for push notification!");
+        setIsVisible(!isVisible);
+        // alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      setMessage("Must use physical device for Push Notifications");
+        setIsVisible(!isVisible);
+      // alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return token;
+  } catch (e) {
+    console.log("error", e);
+  }
+}

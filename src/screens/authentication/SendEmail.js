@@ -11,12 +11,15 @@ const SendEmail = (props) => {
 
                 <View style={styles.textContainer}>
                     <Text style={styles.textHeading}>Check your email</Text>
-                    <Text style={styles.textSimple}>We have sent a password recover</Text>
-                    <Text style={styles.textSimple}> instructions to your email</Text>
+                    <Text style={styles.textSimple}>We have sent password recovery 
+                    instructions to your email, 
+                    this should have arrived to your Inbox or Junk folder.</Text>
+                    {/* <Text style={styles.textSimple}> instructions to your email</Text> */}
                 </View>
 
                 <View style={styles.buttonsContainer}>
-                    <TouchableOpacity style={styles.btn2} onPress={() => props.navigation.navigate('Signin')}>
+                    <TouchableOpacity style={styles.btn2} 
+                    onPress={() => props.navigation.navigate('Signin')}>
                         <Text style={styles.btn2Text}>Back</Text>
                     </TouchableOpacity>  
                 </View>
@@ -58,9 +61,10 @@ const styles = StyleSheet.create({
     textSimple:{
         marginTop:8,
         textAlign:'center',
-        color:'#696969',
-        fontSize:13,
-        lineHeight:12
+        color:'#464646',
+        fontSize:15,
+        lineHeight:20,
+        width:"80%"
     },
     buttonsContainer:{
         marginTop:20

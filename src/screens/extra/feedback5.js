@@ -1,41 +1,107 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Image,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import styles from "./styles";
 import { StatusBar } from "expo-status-bar";
 import { Header } from "react-native-elements";
 import { star, sad, ok, smile, smiley } from "../../../assets";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import firebase from "firebase";
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from "react-native-responsive-dimensions";
 const feedback5 = (props) => {
   const [isSmile, setisSmile] = useState(false);
   const [tell, settell] = useState("");
   const [phone, setphone] = useState("");
+  const [screen, setscreen] = useState("");
+  const [ease, setease] = useState(false);
+  const [usefull, setusefull] = useState(false);
+  const [technical, settechnical] = useState(false);
+  const [app, setapp] = useState(false);
+  const [other, setother] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
+  const [validphone, setvalidphone] = useState(false);
+  const [validtell, setvalidtell] = useState(false);
+  useEffect(() => {
+    const params = props.route.params;
+    console.log(params?.ease);
+    setapp(params?.app);
+    setease(params?.ease);
+    setother(params?.other);
+    settechnical(params?.technical);
+    setusefull(params?.usefull);
+    setscreen(params?.screen);
+  }, []);
+  async function onsubmit() {
+    setvalidphone(false);
+    setvalidtell(false);
+    setisLoading(true);
+    // if (phone !== "" && tell !== "") {
+    const submitFeedback = await firebase
+      .database()
+      .ref("Feedback/" + firebase.auth().currentUser?.uid);
+    const data = {
+      ease,
+      app,
+      usefull,
+      other,
+      technical,
+      screen,
+      phone,
+      feedback: tell,
+    };
+    submitFeedback.push(data);
+    setisLoading(false);
+    props.navigation.navigate("feedback6");
+    // } else {
+    //   setisLoading(false);
+    //   if (phone === "" && tell === "") {
+    //     setvalidphone(true);
+    //     setvalidtell(true);
+    //   }
+    //   if (phone === "") {
+    //     setvalidphone(true);
+    //   }
+    //   if (tell === "") {
+    //     setvalidtell(true);
+    //   }
+    // }
+  }
   return (
-    <View style={styles.main}>
-      <StatusBar style="dark" />
-      <Header
-        backgroundColor="white"
-        containerStyle={{ marginTop: 0, borderBottomWidth: 0 }}
-      />
-      <ScrollView
-        style={{ flex: 0.9, backgroundColor: "white" }}
-        keyboardShouldPersistTaps="handled"
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "white", flexGrow: 1 }}
+      // keyboardShouldPersistTaps="always"
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, backgroundColor: "white" }}
+        // keyboardShouldPersistTaps="handled"
       >
+        <StatusBar style="dark" />
+        <Header
+          backgroundColor="white"
+          containerStyle={{ marginTop: 0, borderBottomWidth: 0 }}
+        />
+
         <Text style={{ marginTop: 15 }}></Text>
         <Text style={[styles.happytxt, { alignSelf: "center", width: "80%" }]}>
           Share your feedback
         </Text>
         <Text
           style={[
-            styles.largetxt,
-            { alignSelf: "center", width: "80%", marginTop: 5 },
+            { alignSelf: "center", width: "80%", marginTop: 5, fontSize: 14 },
           ]}
         >
           How you satisfied are you with KABFI?
@@ -54,21 +120,21 @@ const feedback5 = (props) => {
           style={{
             width: "80%",
             alignSelf: "center",
-            height: 250,
-            backgroundColor: "#FBFBFB",
-            paddingHorizontal: 10,
-            borderTopRightRadius: 20,
-            borderBottomRightRadius: 20,
-            borderBottomLeftRadius: 20,
+            height: 200,
+            backgroundColor: "#FFFFFF",
+            paddingHorizontal: 15,
             marginTop: 10,
             fontSize: 16,
             fontWeight: "400",
-            paddingVertical: 8,
+            paddingVertical: responsiveHeight(2),
+            borderWidth: 1,
+            borderColor: "#D5D5D5",
+            borderRadius: 20,
           }}
           textAlignVertical="top"
           onChangeText={(text) => settell(text)}
           value={tell}
-          placeholderTextColor={"lightgray"}
+          placeholderTextColor={"black"}
           underlineColorAndroid="transparent"
         />
         <TextInput
@@ -77,19 +143,20 @@ const feedback5 = (props) => {
             width: "80%",
             alignSelf: "center",
             paddingHorizontal: 15,
-            backgroundColor: "white",
+            backgroundColor: "#FFFFFF",
             marginTop: 20,
             fontSize: 14,
             // fontWeight: "400",
             borderWidth: 2,
             borderRadius: 20,
-            borderColor: "#FBFBFB",
+            borderColor: "#D5D5D5",
             paddingVertical: 7,
+            borderWidth: 1,
           }}
           onChangeText={(text) => setphone(text)}
           value={phone}
           keyboardType="phone-pad"
-          placeholderTextColor={"lightgray"}
+          placeholderTextColor={"black"}
           underlineColorAndroid="transparent"
         />
         <Text style={{ marginTop: 10 }}></Text>
@@ -99,11 +166,11 @@ const feedback5 = (props) => {
             width: "80%",
             alignSelf: "center",
             justifyContent: "space-between",
-            marginTop: 30,
+            marginTop: responsiveHeight(24),
           }}
         >
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("feedback4")}
+            onPress={() => props.navigation.goBack()}
             style={{
               flexDirection: "row",
               borderRadius: 30,
@@ -133,7 +200,8 @@ const feedback5 = (props) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("feedback6")}
+            onPress={onsubmit}
+            // onPress={() => props.navigation.navigate("feedback6")}
             style={{
               flexDirection: "row",
               borderRadius: 30,
@@ -146,17 +214,21 @@ const feedback5 = (props) => {
               backgroundColor: "orange",
             }}
           >
-            <Text
-              style={[
-                {
-                  color: "white",
-                  textAlign: "center",
-                  alignSelf: "center",
-                },
-              ]}
-            >
-              SUBMIT
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator color={"white"} size={"small"} />
+            ) : (
+              <Text
+                style={[
+                  {
+                    color: "white",
+                    textAlign: "center",
+                    alignSelf: "center",
+                  },
+                ]}
+              >
+                SUBMIT
+              </Text>
+            )}
             <Ionicons
               name={"chevron-forward-outline"}
               color="white"
@@ -165,8 +237,8 @@ const feedback5 = (props) => {
             />
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </View>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 export default feedback5;

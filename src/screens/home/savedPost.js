@@ -241,7 +241,7 @@ const savedPost = (props) => {
               >{`\n@${item.userName} .23s`}</Text>
             </Text>
           </View>
-          <OptionsMenu
+          {/* <OptionsMenu
             button={more}
             buttonStyle={{
               width: 30,
@@ -260,7 +260,7 @@ const savedPost = (props) => {
                 alert("Deleted");
               },
             ]}
-          />
+          /> */}
         </View>
 
         <View

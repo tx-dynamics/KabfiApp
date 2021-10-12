@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
@@ -69,19 +70,18 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   input: {
-    marginTop: 7,
-    // marginLeft: 10,
     backgroundColor: "white",
-    paddingLeft: 15,
+    //paddingLeft: 15,
     borderRadius: 30,
-    width: "85%",
-    // fontFamily: "geometriaBold",
-    // alignSelf: 'center',
-    // textAlign: 'center',
+    width: "75%",
+    height:responsiveHeight(4),
     borderColor: "lightgray",
     borderWidth: 1,
-    // justifyContent:'center',
-    // alignItems:'center'
+    paddingLeft: responsiveHeight(2),
+    paddingTop:responsiveHeight(1),
+    alignSelf:'center',
+    marginTop:responsiveHeight(1.5)
+   // margin:responsiveHeight(1)
   },
   statusIcon: {
     height: 18,
@@ -96,16 +96,14 @@ const styles = StyleSheet.create({
     // alignSelf: "center",
   },
   largeText: {
-    // fontFamily: Fonts.RobotoMedium,
     fontSize: 16,
-
-    color: "lightgray",
+    color: "black",
   },
   userImgStyle: {
-    height: 50,
-    width: 50,
-    borderRadius: 70,
-    alignSelf: "center",
+    height: 30,
+    width: 30,
+    borderRadius: 35,
+    // alignSelf: "center",
     margin: 5,
   },
   iconsStyle: {
@@ -124,20 +122,23 @@ const styles = StyleSheet.create({
   },
   cardStyle: {
     flex: 1,
-    margin: 10,
-    padding: 15,
+    // margin: 10,
     backgroundColor: "white",
-    elevation: 10,
-    shadowColor: "#BDBDBD",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowRadius: 5,
-    shadowOpacity: 1.0,
+    // elevation: 10,
+    // shadowColor: "#BDBDBD",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 1,
+    // },
+    // shadowRadius: 5,
+    // shadowOpacity: 1.0,
     // borderWidth: 1,
     borderColor: "lightgray",
-    borderRadius: 10,
+    // borderRadius: 10,
+    justifyContent: "center",
+    // padding: 10,
+    width: "95%",
+    alignSelf: "center",
   },
 });
 

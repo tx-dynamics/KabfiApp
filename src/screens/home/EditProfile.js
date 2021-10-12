@@ -14,6 +14,9 @@ import {
   ActivityIndicator,
   ImageBackground,
 } from "react-native";
+import * as ImageManipulator from "expo-image-manipulator";
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
+
 // import { kabfiApp, firebase } from '../../database/config';
 import firebase from "firebase";
 import { Header } from "react-native-elements";
@@ -21,6 +24,7 @@ import { user2, user, edit } from "../../../assets";
 import * as ImagePicker from "expo-image-picker";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { responsiveHeight } from "react-native-responsive-dimensions";
+import { setNotificationChannelGroupAsync } from "expo-notifications";
 
 const EditProfile = (props) => {
   const [firstName, setFirstName] = useState("");
@@ -30,20 +34,25 @@ const EditProfile = (props) => {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("United Kingdom");
   const [Dp, setDp] = useState("");
+  const [flag, setFlag] = useState(true);
   const [loader, setLoader] = useState(false);
   const [ErroMessage, setErroMessage] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState("");
+
   useEffect(() => {
     setLoader(true);
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users/" + user);
     data.on("value", (userdata) => {
+      userdata.val().Dp ? setFlag(true) : setFlag(false);
       setFirstName(userdata.val().firstName);
       setLastName(userdata.val().lastName);
       setMobileNo(userdata.val().mobileNo);
       setCity(userdata.val().city);
       setCountry(userdata.val().country);
       setEmail(userdata.val().email);
-      setDp(userdata.val().Dp);
+      userdata.val().Dp ? setDp(userdata.val().Dp) : setDp("");
     });
     setLoader(false);
   }, []);
@@ -82,33 +91,39 @@ const EditProfile = (props) => {
       let profileIamge;
       if (!firstName == "") {
         if (!lastName == "") {
-          if (!mobileNo == "") {
+          if (!mobileNo == "" && mobileNo.length > 10) {
             if (!city == "") {
-              if (Dp) {
-                console.log("OKKKK Man");
-                profileIamge = await uploadImage(Dp);
-              }
+              // if (Dp) {
+              //   console.log("OKKKK Man");
+              // profileIamge = await uploadImage(Dp);
 
               let Details = {
                 firstName: firstName,
                 lastName: lastName,
                 mobileNo: mobileNo,
                 city: city,
-                Dp: profileIamge,
+                Dp: Dp,
               };
 
-              const user = await firebase.auth().currentUser.uid;
-              const data = await firebase
+              const user = firebase.auth().currentUser.uid;
+              firebase
                 .database()
                 .ref("users/" + user)
                 .update(Details);
-              alert("Data Updated Succsessfully");
-              props.navigation.navigate("NewsFeed");
+                  setMessage("Profile Updated Successfully");
+                  setIsVisible(!isVisible);  
+                
+              // alert("Profile Updated Successfully");
+              setTimeout(() => {
+                props.navigation.push("NewsFeed");
+            }, 2000);
+
+              // }
             } else {
               setErroMessage("city name cannont be empty");
             }
           } else {
-            setErroMessage("Phone number cannont be empty");
+            setErroMessage("Phone number cannot be empty and 11 characters");
           }
         } else {
           console.log("1!");
@@ -120,29 +135,41 @@ const EditProfile = (props) => {
       }
       setLoader(false);
     } catch (error) {
-      alert(error.message);
+      setMessage(error.message);
+      setIsVisible(!isVisible);
+      // alert(error.message);
     }
   }
   const pickTaxiLicenseImage = async (val) => {
     let result = "";
     if (val === 1) {
       result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0,
+        allowsEditing: true,
       });
     } else if (val === 2) {
       result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0,
+        allowsEditing: true,
       });
     }
+    const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {
+      compress: 0,
+      format: ImageManipulator.SaveFormat.PNG,
+    });
+    console.log(manipResult);
 
     if (!result.cancelled) {
-      setDp(result.uri);
-      console.log("OKKKK ", result.uri);
-      // setDp1(true);
+      setDp(manipResult.uri);
+      setFlag(true);
+      console.log("OKKKK ", manipResult.uri);
+      let profileIamge = await uploadImage(manipResult.uri);
+      setDp(profileIamge);
+      console.log("OKKKK ", Dp);
       // alert("Taxi License Selected");
     }
   };
@@ -194,26 +221,75 @@ const EditProfile = (props) => {
           }}
           leftComponent={
             <TouchableOpacity onPress={() => props.navigation.goBack()}>
-              <Text style={{ color: "#368AFF", fontSize: 18 }}>Back</Text>
+              <Text
+                style={{
+                  color: "#FCB040",
+                  fontSize: 17,
+                  letterSpacing: 1,
+                }}
+              >
+                Back
+              </Text>
             </TouchableOpacity>
           }
-          centerComponent={<Text style={{ fontSize: 18 }}>Edit Profile</Text>}
+          centerComponent={
+            <Text style={{ fontSize: 17, color: "#000000" }}>Edit Profile</Text>
+          }
           rightComponent={
             <TouchableOpacity onPress={() => editProfileHandler()}>
-              <Text style={{ fontSize: 18, color: "#A9A9A9" }}>Save</Text>
+              {loader ? (
+                <ActivityIndicator color={"blue"} size={"small"} />
+              ) : (
+                <Text
+                  style={{
+                    fontSize: 17,
+                    color: "#727272",
+                    fontWeight: "700",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Save
+                </Text>
+              )}
             </TouchableOpacity>
           }
         />
-        {loader ? (
+        {/* {loader ? (
           <ActivityIndicator color={"blue"} size={"small"} />
-        ) : (
-          <View style={styles.contentArea}>
-            <TouchableOpacity
-              style={[styles.imageContainer, { alignSelf: "center" }]}
-              onPress={AlertTaxiLicenseImage}
-            >
+          ) : ( */}
+
+        {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FF9900",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  borderRadius: 10,
+                }}
+                visible={isVisible}
+                action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
+                // )}
+                // position={'top'}
+                duration={messge.length + 2000}
+              >
+                <Text>{messge}</Text>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+          )} 
+
+        <View style={styles.contentArea}>
+          <TouchableOpacity
+            style={[styles.imageContainer, { alignSelf: "center" }]}
+            onPress={AlertTaxiLicenseImage}
+          >
+            {flag ? (
               <ImageBackground
-                source={Dp ? { uri: Dp } : user}
+                source={{ uri: Dp }}
                 borderRadius={50}
                 style={[styles.image, { alignItems: "flex-end" }]}
               >
@@ -222,9 +298,21 @@ const EditProfile = (props) => {
                   style={{ height: 20, width: 20, marginTop: 10 }}
                 />
               </ImageBackground>
-            </TouchableOpacity>
+            ) : (
+              <ImageBackground
+                source={user}
+                borderRadius={50}
+                style={[styles.image, { alignItems: "flex-end" }]}
+              >
+                <Image
+                  source={edit}
+                  style={{ height: 20, width: 20, marginTop: 10 }}
+                />
+              </ImageBackground>
+            )}
+          </TouchableOpacity>
 
-            {/* <TouchableOpacity onPress={pickDpImage}>
+          {/* <TouchableOpacity onPress={pickDpImage}>
                   <TextInput
                     style={styles.uploadImageFields}
                     placeholder="Upload Image"
@@ -232,104 +320,104 @@ const EditProfile = (props) => {
                   />
                 </TouchableOpacity>     */}
 
-            <View style={styles.fieldContainer}>
-              {/* <View style={styles.iconContainer}  >
+          <View style={styles.fieldContainer}>
+            {/* <View style={styles.iconContainer}  >
                         <Image source={require('../../../assets/ProjectImages/users/profile/pencil-icon.png')} style={styles.icon}  />
                     </View> */}
 
-              <Text style={styles.label}>First Name</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#D7D7D7",
-                }}
-              >
-                <TextInput
-                  value={firstName}
-                  onChangeText={(e) => setFirstName(e)}
-                  style={{
-                    marginTop: 5,
-                    paddingHorizontal: 10,
-                    paddingVertical: 5,
-                  }}
-                />
-                <AntDesign
-                  name="edit"
-                  color="#D7D7D7"
-                  size={18}
-                  style={{
-                    alignSelf: "center",
-                  }}
-                />
-              </View>
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>First Name</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                borderBottomWidth: 1,
+                borderBottomColor: "#D7D7D7",
+              }}
+            >
               <TextInput
-                value={lastName}
-                onChangeText={(e) => setLastName(e)}
-                style={styles.textField}
+                value={firstName}
+                onChangeText={(e) => setFirstName(e)}
+                style={{
+                  marginTop: 5,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                }}
+              />
+              <AntDesign
+                name="edit"
+                color="#D7D7D7"
+                size={18}
+                style={{
+                  alignSelf: "center",
+                }}
               />
             </View>
+          </View>
 
-            {/* <View style={styles.fieldContainer}>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Last Name</Text>
+            <TextInput
+              value={lastName}
+              onChangeText={(e) => setLastName(e)}
+              style={styles.textField}
+            />
+          </View>
+
+          {/* <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Password</Text>
                     <TextInput value="12345678" style={styles.textField} secureTextEntry={true}/>
                 </View>  */}
 
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Phone Number</Text>
-              <TextInput
-                value={mobileNo}
-                style={styles.textField}
-                onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
-                keyboardType="number-pad"
-                placeholder="7711111111"
-                maxLength={11}
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                value={email}
-                style={styles.textField}
-                editable={false}
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>City, State</Text>
-              <TextInput
-                value={city}
-                onChangeText={(e) => setCity(e)}
-                style={styles.textField}
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Country</Text>
-              <TextInput
-                value={"United Kingdom"}
-                // onChangeText={(e) => setCountry(e)}
-                style={styles.textField}
-                editable={false}
-              />
-            </View>
-            <Text
-              style={{
-                color: "red",
-                alignSelf: "center",
-                marginTop: responsiveHeight(2),
-              }}
-            >
-              {ErroMessage}
-            </Text>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Phone Number</Text>
+            <TextInput
+              value={mobileNo}
+              style={styles.textField}
+              onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
+              keyboardType="number-pad"
+              placeholder="7711111111"
+              maxLength={11}
+            />
           </View>
-        )}
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              value={email}
+              style={styles.textField}
+              editable={false}
+            />
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>City, State</Text>
+            <TextInput
+              value={city}
+              onChangeText={(e) => setCity(e)}
+              style={styles.textField}
+            />
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Country</Text>
+            <TextInput
+              value={"United Kingdom"}
+              // onChangeText={(e) => setCountry(e)}
+              style={styles.textField}
+              editable={false}
+            />
+          </View>
+          <Text
+            style={{
+              color: "red",
+              alignSelf: "center",
+              marginTop: responsiveHeight(2),
+            }}
+          >
+            {ErroMessage}
+          </Text>
+        </View>
+        {/* )}  */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

@@ -13,7 +13,7 @@ import { Header } from "react-native-elements";
 import { star, sad, ok, smile, smiley } from "../../../assets";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 const feedback1 = (props) => {
-  const [isSmile, setisSmile] = useState(true);
+  const [isSmile, setisSmile] = useState(false);
   return (
     <View style={styles.main}>
       <StatusBar style="dark" />
@@ -50,7 +50,7 @@ const feedback1 = (props) => {
         <TouchableOpacity
           onPress={() => {
             // setisSmile(!isSmile),
-            props.navigation.navigate("feedback2");
+            props.navigation.navigate("feedback4");
           }}
         >
           <Image
@@ -62,7 +62,7 @@ const feedback1 = (props) => {
         <TouchableOpacity
           onPress={() => {
             // setisSmile(!isSmile),
-            props.navigation.navigate("feedback2");
+            props.navigation.navigate("feedback3");
           }}
         >
           <Image
