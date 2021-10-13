@@ -37,6 +37,7 @@ import {
   cross,
   soundpic,
 } from "../../../assets";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import {
   responsiveWidth,
   responsiveHeight,
@@ -497,22 +498,23 @@ const CreatePost = (props) => {
           {isVisible ? (
             <View style={{ height: 60 }}>
               <Snackbar
-                style={{
-                  backgroundColor: "#FF9900",
-                  marginLeft: 8,
-                  marginRight: 8,
-                  borderRadius: 10,
-                }}
-                visible={isVisible}
-                action={{ label: "ok" }}
-                onDismiss={() => setIsVisible(!isVisible)}
-                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
-                // )}
-                // position={'top'}
-                duration={messge.length + 2000}
-              >
-                <Text>{messge}</Text>
-              </Snackbar>
+                  style={{
+                    backgroundColor: "#FFF1DB",
+                    marginLeft: 8,
+                    marginRight: 8,
+                    marginTop: 8,
+                    borderRadius: 30,
+                  }}
+                  visible={isVisible}
+                  // action={{ label: "ok" }}
+                  onDismiss={() => setIsVisible(!isVisible)}
+                  duration={messge.length + 2000}
+                >
+                  <View style={{flexDirection:'row',alignItems:'center',height:'auto'}}>
+                  <AntDesign name="checkcircle" size={24} color="#FCB040" />
+                    <Text  style={{color:'black',alignSelf:'center',left:8,fontSize:14,fontWeight:'600',color:'grey',width:300}}>{messge}</Text>
+                  </View>
+                </Snackbar>
             </View>
           ) : (
             <></>

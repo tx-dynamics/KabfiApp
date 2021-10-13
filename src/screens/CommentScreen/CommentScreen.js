@@ -29,7 +29,7 @@ import firebase from "firebase";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { Audio } from "expo-av";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { responsiveHeight } from "react-native-responsive-dimensions";
+import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 const CommentScreen = ({ route, navigation }) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -167,6 +167,14 @@ const CommentScreen = ({ route, navigation }) => {
               paddingBottom: 15,
             }}
           >
+            {!item.image?
+            <ActivityIndicator
+              // animating={onimage}
+              size="small"
+              color="#FFD700"
+              style={{ left: responsiveWidth(1),marginRight:10 }}
+              />:
+              <></>}
             <Image
               source={item.image ? { uri: item.image } : user}
               style={styles.userImgStyle}
