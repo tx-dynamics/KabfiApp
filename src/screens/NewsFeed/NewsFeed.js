@@ -87,6 +87,8 @@ const NewsFeed = (props) => {
   const [messge, setMessage] = useState("");
   const [timerStart, settimerStart] = useState(false);
   const [timerReset, settimerReset] = useState(false);
+  const [onstart, setonstart] = useState(false);
+  const [onimage, setonimage] = useState(false);
   const options = {
     container: {
       //backgroundColor: '#000',
@@ -539,10 +541,24 @@ const NewsFeed = (props) => {
             ]}
           >
             <View style={[{ flexDirection: "row" }]}>
-              <Image
-                source={item.user_image ? { uri: item.user_image } : user}
-                style={[styles.userImgStyle, {}]}
-              />
+              <View>
+                <Image
+                  // loadingIndicatorSource={
+                  //   item.user_image ? { uri: item.user_image } : user
+                  // }
+                  // onLoadStart={() => setonstart(true)}
+                  // onLoadEnd={() => setonstart(false)}
+                  source={item.user_image ? { uri: item.user_image } : user}
+                  style={[styles.userImgStyle, {}]}
+                />
+                {onstart && (
+                  <ActivityIndicator
+                    size="small"
+                    color="#FFD700"
+                    style={{ bottom: responsiveHeight(5) }}
+                  />
+                )}
+              </View>
               <Text
                 style={[
                   styles.largeText,
@@ -621,7 +637,11 @@ const NewsFeed = (props) => {
                 style={{ flex: 2 }}
               >
                 <Image
-                  style={{ width: 80, height: 80, alignSelf: "flex-end" }}
+                  loadingIndicatorSource={{
+                    width: 80,
+                    height: 80,
+                    alignSelf: "flex-end",
+                  }}
                   source={{ uri: item.post_image }}
                 />
               </TouchableOpacity>
@@ -852,7 +872,7 @@ const NewsFeed = (props) => {
           <View style={styles.modalView}>
             <Image
               style={{ width: "100%", height: "98%" }}
-              source={{ uri: largImage }}
+              loadingIndicatorSource={{ uri: largImage }}
               resizeMode="contain"
             />
             <TouchableHighlight
@@ -1012,9 +1032,18 @@ const NewsFeed = (props) => {
             <View style={styles.userInfoContainer}>
               <View style={styles.userInfo1}>
                 <Image
+                  onLoadStart={() => setonimage(true)}
+                  onLoadEnd={() => setonimage(false)}
                   source={Dp ? { uri: Dp } : user}
                   style={styles.smallImage}
                 />
+                {onimage && (
+                  <ActivityIndicator
+                    size="small"
+                    color="#FFD700"
+                    style={{ bottom: responsiveHeight(5) }}
+                  />
+                )}
               </View>
               <View style={styles.userInfo2}>
                 <Text style={styles.userName}>{name}</Text>
