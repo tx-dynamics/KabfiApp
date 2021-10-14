@@ -143,7 +143,7 @@ const Signin = (props) => {
             <View style={{ height: 60 }}>
               <Snackbar
                 style={{
-                  backgroundColor: "#FFF1DB",
+                  backgroundColor: "#FFF4E3",
                   marginLeft: 8,
                   marginRight: 8,
                   marginTop: 8,
@@ -229,7 +229,7 @@ const Signin = (props) => {
               {loader ? (
                 <ActivityIndicator color={"red"} size={"small"} />
               ) : (
-                <Text style={{ color: "white" }}>LOGIN</Text>
+                <Text style={{ color: "white",fontWeight:'700' }}>LOGIN</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     // borderBottomWidth: 1,
     // borderBottomColor: "black",
     height:60,
-    borderRadius:8,
+    borderRadius:25,
     paddingHorizontal: 40,
     paddingVertical: 10,
     backgroundColor: "#F9F9F9",
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 25,
   },
   socialIconsContainer: {
     flexDirection: "row",

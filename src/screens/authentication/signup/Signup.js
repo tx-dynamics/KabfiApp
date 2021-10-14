@@ -475,7 +475,7 @@ const Signup = (props) => {
             <View style={{ height: 60 }}>
               <Snackbar
                 style={{
-                  backgroundColor: "#FFF1DB",
+                  backgroundColor: "#FFF4E3",
                   marginLeft: 8,
                   marginRight: 8,
                   marginTop: 8,

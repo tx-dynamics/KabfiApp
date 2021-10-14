@@ -107,7 +107,12 @@ const NewsFeed = (props) => {
   };
   useEffect(() => {
     setRefreshing(true);
-
+    console.log(props?.route?.params?.created);
+    var created = props?.route?.params?.created
+    if(created != undefined){
+        setMessage(created);
+        setIsVisible(!isVisible)
+    }
     fetchAllPosts();
     // fetchLocation();
   }, [isFocused]);
@@ -712,7 +717,7 @@ const NewsFeed = (props) => {
                   onLoadStart={() => postimageloader(item.id)}
                   onLoadEnd={() => postimageloader(item.id)}
                   source={{ uri: item.post_image }}
-                  style={{ width: 50, height: 50, top: responsiveHeight(2) }}
+                  style={{ width: 65, height:65 }}
                 />
                 {/* {item.loadpostimage ? */}
                 <ActivityIndicator
@@ -739,18 +744,21 @@ const NewsFeed = (props) => {
                 numberOfLines={4}
                 style={{ textAlign: "left", color: "#464646", fontSize: 13 }}
               >
-                {item.post_text}
+                {item.post_text.length > 75 ? item.post_text.substring(0, 74) + "..." : item.post_text}
+                {/* {item.post_text} */}
               </Text>
               {item.rec ? (
                 <View
                   style={{
-                    backgroundColor: "#FCB040",
+                    // backgroundColor: "#FCB040",
                     width: responsiveWidth(50),
                     flexDirection: "row",
                     alignItems: "center",
-                    padding: 2,
+                    padding: 5,
                     marginTop: 3,
-                    borderRadius: 20,
+                    borderRadius: 100,
+                    borderWidth:1,
+                    borderColor:'#EFEFEF'
                   }}
                 >
                   <TouchableOpacity
@@ -763,9 +771,9 @@ const NewsFeed = (props) => {
                     }}
                   >
                     {item.isShow ? (
-                      <Ionicons name="pause" color="white" size={26} />
+                      <Ionicons name="pause" color="#979797" size={24} />
                     ) : (
-                      <Ionicons name="play" color="white" size={26} />
+                      <Ionicons name="play" color="#979797" size={24} />
                     )}
                   </TouchableOpacity>
                   <>
@@ -777,22 +785,22 @@ const NewsFeed = (props) => {
                             onChange={(e) => {
                               console.log(e);
                             }}
-                            size={12}
+                            size={14}
                             onFinish={() => handleTimerComplete}
                             digitStyle={{
                               backgroundColor: "transparent",
                               width: responsiveWidth(5),
                             }}
-                            digitTxtStyle={{ color: "white" }}
+                            digitTxtStyle={{ color: "#979797" }}
                             timeToShow={["M", "S"]}
                             timeLabels={{ m: "", s: "" }}
                             showSeparator
-                            separatorStyle={{ color: "white" }}
+                            separatorStyle={{ color: "#979797" }}
                             // style={{ marginLeft: responsiveWidth(-2) }}
                           />
                         ) : (
                           <>
-                            <ActivityIndicator size={"small"} color={"white"} />
+                            <ActivityIndicator size={"small"} color={"#979797"} />
                           </>
                         )}
                       </>
@@ -800,9 +808,9 @@ const NewsFeed = (props) => {
                       <View style={{ flexDirection: "row" }}>
                         <Text
                           style={{
-                            color: "white",
-                            fontSize: 12,
-                            fontWeight: "bold",
+                            color: "#979797",
+                            fontSize: 14,
+                            // fontWeight: "bold",
                           }}
                         >
                           {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
@@ -813,9 +821,9 @@ const NewsFeed = (props) => {
                         </Text>
                         <Text
                           style={{
-                            color: "white",
-                            fontSize: 12,
-                            fontWeight: "bold",
+                            color: "#979797",
+                            fontSize: 14,
+                            // fontWeight: "bold",
                           }}
                         >
                           {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
@@ -836,6 +844,7 @@ const NewsFeed = (props) => {
                   <Image
                     source={bars}
                     style={{
+                      tintColor:'#979797',
                       height: 30,
                       width: responsiveWidth(30),
                     }}
@@ -1016,7 +1025,7 @@ const NewsFeed = (props) => {
         <View style={{ height: 60 }}>
           <Snackbar
             style={{
-              backgroundColor: "#FFF1DB",
+              backgroundColor: "#FFF4E3",
               marginLeft: 8,
               marginRight: 8,
               marginTop: 8,

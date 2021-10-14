@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     padding: 15,
     width: "95%",
     alignSelf: "center",
-    borderRadius: 10,
+    borderRadius: 25,
   },
   eyeIcon: {
     fontSize: 24,

@@ -195,7 +195,7 @@ const CommentScreen = ({ route, navigation }) => {
             <ActivityIndicator
               animating={item.loadcommentimage}
               size="small"
-              color="black"
+              color="orange"
               style={{ left: responsiveWidth(5) }}
             />
             {/* :<></>} */}

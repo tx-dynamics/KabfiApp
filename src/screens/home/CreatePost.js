@@ -200,8 +200,8 @@ const CreatePost = (props) => {
         });
         mylike.set(userId);
         myRef.set(Details);
-        setMessage("Post Added Successfully");
-        setIsVisible(!isVisible);
+        // setMessage("Post Added Successfully");
+        // setIsVisible(!isVisible);
         // alert("Post Added Successfully");
         await AsyncStorage.clear();
         setloading(false);
@@ -210,7 +210,7 @@ const CreatePost = (props) => {
         setUserId(""), setUserName("");
         setDp("");
         setTimeout(() => {
-          props.navigation.navigate("NewsFeed");
+          props.navigation.navigate("NewsFeed",{created:"Post Added Successfully"});
         }, 2000);
       } else {
         setloading(false);
@@ -505,7 +505,7 @@ const CreatePost = (props) => {
             <View style={{ height: 60 }}>
               <Snackbar
                 style={{
-                  backgroundColor: "#FFF1DB",
+                  backgroundColor: "#FFF4E3",
                   marginLeft: 8,
                   marginRight: 8,
                   marginTop: 8,
