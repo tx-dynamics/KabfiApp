@@ -83,6 +83,7 @@ const CommentScreen = ({ route, navigation }) => {
           text: child.val().comments,
           createdAt: child.val().createdAt,
           user: child.val().user,
+          loadcommentimage:false
         });
       });
       console.log("LI==>", li);
@@ -105,6 +106,29 @@ const CommentScreen = ({ route, navigation }) => {
       alert("You can only delete your comments. Thanks");
     }
   }
+
+  async function postimageloader(id){
+  
+    const res=  posts.map((item) => {
+        if (item.id === id) {
+          console.log('Item-image==>',item.loadcommentimage)
+          return {
+            ...item,
+            loadcommentimage:!item.loadcommentimage,
+          };
+        } else {
+          return {
+            ...item,
+            // loadimage: false,
+          };
+        }
+      });
+   
+    setPosts(res);
+  
+
+  }
+
   const renderPosts = ({ item, index }) => {
     return (
       <Swipeout
@@ -167,17 +191,19 @@ const CommentScreen = ({ route, navigation }) => {
               paddingBottom: 15,
             }}
           >
-            {!item.image?
+            {/* {!(item.image || user)? */}
             <ActivityIndicator
-              // animating={onimage}
+              animating={item.loadcommentimage}
               size="small"
-              color="#FFD700"
-              style={{ left: responsiveWidth(1),marginRight:10 }}
-              />:
-              <></>}
+              color="black"
+              style={{ left: responsiveWidth(5)}}
+              />
+              {/* :<></>} */}
             <Image
+              onLoadStart={()=> postimageloader(item.id) }
+              onLoadEnd={()=> postimageloader(item.id) }
               source={item.image ? { uri: item.image } : user}
-              style={styles.userImgStyle}
+              style={[styles.userImgStyle,{}]}
             />
             <View style={{ width: "85%", marginTop: 3, marginLeft: 3 }}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>

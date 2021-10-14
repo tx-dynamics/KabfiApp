@@ -110,6 +110,74 @@ const NewsFeed = (props) => {
     fetchLocation();
   }, [isFocused]);
 
+  async function imageloaderStart(id){
+  
+    // setonstart(true)
+
+    
+    const res=  posts.map((item) => {
+        if (item.id === id) {
+          // console.log('Item-image==>',item.loadimage)
+          return {
+            ...item,
+            loadimage: true,
+          };
+        } else {
+          return {
+            ...item,
+            // loadimage: false,
+          };
+        }
+      });
+   
+    setPosts(res);
+  
+
+  }
+
+  async function imageloaderEnd(id){
+  
+    const res=  posts.map((item) => {
+        if (item.id === id) {
+          // console.log('Item-image==>',item.loadimage)
+          return {
+            ...item,
+            loadimage:false,
+          };
+        } else {
+          return {
+            ...item,
+            // loadimage: false,
+          };
+        }
+      });
+   
+    setPosts(res);
+  
+  }
+
+  async function postimageloader(id){
+  
+    const res=  posts.map((item) => {
+        if (item.id === id) {
+          console.log('Item-image==>',item.loadpostimage)
+          return {
+            ...item,
+            loadpostimage:!item.loadpostimage,
+          };
+        } else {
+          return {
+            ...item,
+            // loadimage: false,
+          };
+        }
+      });
+   
+    setPosts(res);
+  
+
+  }
+
   async function handleTimerComplete(index, time) {
     //posts[index].time= time
     //fetchAllPosts()
@@ -211,8 +279,8 @@ const NewsFeed = (props) => {
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
                   userImages.on("value", (updateImage) => {
-                    setonstart(true)
-                    setpostonimage(true)
+                    // setonstart(true)
+                    // setpostonimage(true)
                     if (chil.exists()) {
                       //it will check if user exist in current post or not to change heart color
                       hideuser.on("value", (ishide) => {
@@ -250,7 +318,8 @@ const NewsFeed = (props) => {
                                 ? child.val().location
                                 : null,
                             time: child.val().time,
-                            // isplaying: false,
+                            loadimage:false,
+                            loadpostimage: false,
                           });
                         } else {
                           return;
@@ -292,6 +361,8 @@ const NewsFeed = (props) => {
                                 ? child.val().location
                                 : null,
                             isShow: false,
+                            loadimage:false,
+                            loadpostimage:false,
                           });
                         }
                       });
@@ -306,6 +377,8 @@ const NewsFeed = (props) => {
     setPosts(arr);
     // console.log("posts", ik);
     setRefreshing(false);
+    // imageloader()
+
   }
 
   async function likeHandler(post_id, likes_count, islike, index) {
@@ -504,6 +577,9 @@ const NewsFeed = (props) => {
     // console.log(res);
     setPosts(res);
   }
+
+
+
   async function delPost(postid) {
     console.log("calling del");
     setTimeout(() => {
@@ -545,23 +621,29 @@ const NewsFeed = (props) => {
           >
             <View style={[{ flexDirection: "row" }]}>
               <View>
-                <Image
-                  // loadingIndicatorSource={
-                  //   item.user_image ? { uri: item.user_image } : user
-                  // }
-                  onLoadStart={() => setonstart(true)}
-                  onLoadEnd={() => setonstart(false)}
-                  source={item.user_image ? { uri: item.user_image } : user}
-                  style={[styles.userImgStyle, {}]}
-                />
-                {/* {onstart && ( */}
-                  <ActivityIndicator
-                    animating={onstart}
+                  
+                  
+                  <Image
+                    
+                    onLoadStart={() => imageloaderStart(item.id)}
+                    onLoadEnd={() => imageloaderEnd(item.id)}
+                    
+                    source={item.user_image ? { uri: item.user_image } : user}
+                    style={[styles.userImgStyle, {}]}
+                  />
+              {/* {item.loadimage ?  */}
+              <ActivityIndicator
+                   animating={item.loadimage}
+                    // animating={onstart}
                     size="small"
-                    color="#FFD700"
+                    color="orange"
                     style={{ bottom: responsiveHeight(5) }}
                   />
-                {/* )} */}
+                  {/* :null
+                  } */}
+                
+                
+                  
               </View>
               <Text
                 style={[
@@ -638,27 +720,24 @@ const NewsFeed = (props) => {
                   setModalVisible(true);
                   setRefreshingModal(true);
                 }}
-                style={{ flex: 2 }}
+                style={{ flex: 2,alignItems:'center' }}
               >
                 
                 <Image
-                  // loadingIndicatorSource={{
-                  //   width: 80,
-                  //   height: 80,
-                  //   alignSelf: "flex-end",
-                  // }}
-                  onLoadStart={()=> setpostonimage(true) }
-                  onLoadEnd={()=> setpostonimage(false) }
+                  
+                  onLoadStart={()=> postimageloader(item.id) }
+                  onLoadEnd={()=> postimageloader(item.id) }
                   source={{ uri: item.post_image }}
+                  style={{width:50,height:50,top:responsiveHeight(2)}}
                 />
-                {/* {onpostimage &&( */}
+                {/* {item.loadpostimage ? */}
                 <ActivityIndicator
-                  animating={onpostimage}
+                  animating={item.loadpostimage}
                   size="large"
-                  color="#FFD700"
-                  style={{ top: responsiveHeight(3) }}
+                  color="orange"
+                  style={{ bottom: responsiveHeight(3) }}
                   />
-                  {/* )} */}
+                  {/* :null}  */}
               </TouchableOpacity>
             ) : null}
             <View
