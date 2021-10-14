@@ -41,4 +41,4 @@ export const exclamation_mark = require("./ProjectImages/authentication/exclamat
 export const soundpic = require("./ProjectImages/radio-wave.png");
 export const waveoff = require("./ProjectImages/radio-waves.png");
 export const waveonn = require("./ProjectImages/radio-waveson.png");
-export const noti = require("./ProjectImages/notification-settings.png");
+export const noti = require("./ProjectImages/userSettings/notification-settings.png");

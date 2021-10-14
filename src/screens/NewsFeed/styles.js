@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     padding: 10,
-    //  backgroundColor: "#FBFBFB",
+    backgroundColor: "#FBFBFB",
     // elevation: 2,
     shadowColor: "#fdfdfd",
     shadowOffset: {

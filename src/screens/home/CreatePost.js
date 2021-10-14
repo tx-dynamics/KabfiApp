@@ -186,13 +186,20 @@ const CreatePost = (props) => {
         };
         let like = { userId };
         console.log("Notification test ", userName);
+        var notification = firebase
+          .database()
+          .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
+        let addNoti = {
+          message: `${userName} upload new post.`,
+        };
+        notification.push(addNoti);
         myRef.set(Details).then(() => {
           tokens.length > 0
             ? tokens.map((item) => RequestPushMsg(item, userName, postText))
             : console.log("No One");
         });
-        // mylike.set(userId);
-        // myRef.set(Details);
+        mylike.set(userId);
+        myRef.set(Details);
         setMessage("Post Added Successfully");
         setIsVisible(!isVisible);
         // alert("Post Added Successfully");
@@ -366,12 +373,11 @@ const CreatePost = (props) => {
     console.log("Loading Sound");
     // setisplay(true);
     await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true, 
+      playsInSilentModeIOS: true,
       staysActiveInBackground: false,
       playThroughEarpieceAndroid: false,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX
-    
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
     });
     if (!isplaying) {
       const { sound: playbackObject } = await Audio.Sound.createAsync(
@@ -498,23 +504,41 @@ const CreatePost = (props) => {
           {isVisible ? (
             <View style={{ height: 60 }}>
               <Snackbar
+                style={{
+                  backgroundColor: "#FFF1DB",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  marginTop: 8,
+                  borderRadius: 30,
+                }}
+                visible={isVisible}
+                // action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                duration={messge.length + 2000}
+              >
+                <View
                   style={{
-                    backgroundColor: "#FFF1DB",
-                    marginLeft: 8,
-                    marginRight: 8,
-                    marginTop: 8,
-                    borderRadius: 30,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    height: "auto",
                   }}
-                  visible={isVisible}
-                  // action={{ label: "ok" }}
-                  onDismiss={() => setIsVisible(!isVisible)}
-                  duration={messge.length + 2000}
                 >
-                  <View style={{flexDirection:'row',alignItems:'center',height:'auto'}}>
                   <AntDesign name="checkcircle" size={24} color="#FCB040" />
-                    <Text  style={{color:'black',alignSelf:'center',left:8,fontSize:14,fontWeight:'600',color:'grey',width:300}}>{messge}</Text>
-                  </View>
-                </Snackbar>
+                  <Text
+                    style={{
+                      color: "black",
+                      alignSelf: "center",
+                      left: 8,
+                      fontSize: 14,
+                      fontWeight: "600",
+                      color: "grey",
+                      width: 300,
+                    }}
+                  >
+                    {messge}
+                  </Text>
+                </View>
+              </Snackbar>
             </View>
           ) : (
             <></>
@@ -583,7 +607,7 @@ const CreatePost = (props) => {
                   style={{
                     // alignSelf: "center",
                     marginTop: 5,
-                    marginBottom:5,
+                    marginBottom: 5,
                     // right: 4,
                   }}
                 >
@@ -713,25 +737,27 @@ const CreatePost = (props) => {
               // disabled={recording ? true : false}
             >
               {/* {!index || showrec ? */}
-              {!index?
-              <>
-                {showrec ?
-                  <Image source={waveonn}  style={styles.media} />
-                :
-                <>
-                  <Image source={waveoff}  style={styles.media} />
-                </>
-                }
-              </>
-              :
-              <>
-                {Sound != ''?
-                  <Image source={waveoff}  style={styles.media} />
-                :
-                  <Image source={waveonn}  style={styles.media} />
-                }
-              </>
-                  // <Image source={waveonn}  style={styles.media} />
+              {
+                !index ? (
+                  <>
+                    {showrec ? (
+                      <Image source={waveonn} style={styles.media} />
+                    ) : (
+                      <>
+                        <Image source={waveoff} style={styles.media} />
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {Sound != "" ? (
+                      <Image source={waveoff} style={styles.media} />
+                    ) : (
+                      <Image source={waveonn} style={styles.media} />
+                    )}
+                  </>
+                )
+                // <Image source={waveonn}  style={styles.media} />
               }
               {/* <MaterialIcons
                 name="multitrack-audio"

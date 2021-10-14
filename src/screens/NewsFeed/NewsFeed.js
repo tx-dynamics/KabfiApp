@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 // import Snackbar from 'rn-snackbar-component'
 import { connect } from "react-redux";
-
 import {
   View,
   Text,
@@ -21,6 +20,7 @@ import {
   TouchableHighlight,
   ActivityIndicator,
   Slider,
+  ImageBackground,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -37,6 +37,8 @@ import {
   locationImage,
   menu,
   bars,
+  noti,
+  bar,
 } from "../../../assets";
 import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
@@ -107,7 +109,7 @@ const NewsFeed = (props) => {
     setRefreshing(true);
 
     fetchAllPosts();
-    fetchLocation();
+    // fetchLocation();
   }, [isFocused]);
 
   async function handleTimerComplete(index, time) {
@@ -211,8 +213,8 @@ const NewsFeed = (props) => {
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
                   userImages.on("value", (updateImage) => {
-                    setonstart(true)
-                    setpostonimage(true)
+                    setonstart(true);
+                    setpostonimage(true);
                     if (chil.exists()) {
                       //it will check if user exist in current post or not to change heart color
                       hideuser.on("value", (ishide) => {
@@ -529,6 +531,8 @@ const NewsFeed = (props) => {
           style={[
             {
               backgroundColor: "#FBFBFB",
+              borderTopLeftRadius: 15,
+              borderTopRightRadius: 15,
             },
           ]}
         >
@@ -540,6 +544,7 @@ const NewsFeed = (props) => {
                 width: "95%",
                 alignSelf: "center",
                 backgroundColor: "#FBFBFB",
+                marginTop: responsiveHeight(0.5),
               },
             ]}
           >
@@ -555,12 +560,12 @@ const NewsFeed = (props) => {
                   style={[styles.userImgStyle, {}]}
                 />
                 {/* {onstart && ( */}
-                  <ActivityIndicator
-                    animating={onstart}
-                    size="small"
-                    color="#FFD700"
-                    style={{ bottom: responsiveHeight(5) }}
-                  />
+                <ActivityIndicator
+                  animating={onstart}
+                  size="small"
+                  color="#FFD700"
+                  style={{ bottom: responsiveHeight(5) }}
+                />
                 {/* )} */}
               </View>
               <Text
@@ -640,15 +645,14 @@ const NewsFeed = (props) => {
                 }}
                 style={{ flex: 2 }}
               >
-                
                 <Image
                   // loadingIndicatorSource={{
                   //   width: 80,
                   //   height: 80,
                   //   alignSelf: "flex-end",
                   // }}
-                  onLoadStart={()=> setpostonimage(true) }
-                  onLoadEnd={()=> setpostonimage(false) }
+                  onLoadStart={() => setpostonimage(true)}
+                  onLoadEnd={() => setpostonimage(false)}
                   source={{ uri: item.post_image }}
                 />
                 {/* {onpostimage &&( */}
@@ -657,8 +661,8 @@ const NewsFeed = (props) => {
                   size="large"
                   color="#FFD700"
                   style={{ top: responsiveHeight(3) }}
-                  />
-                  {/* )} */}
+                />
+                {/* )} */}
               </TouchableOpacity>
             ) : null}
             <View
@@ -789,8 +793,11 @@ const NewsFeed = (props) => {
               flexDirection: "row",
               width: "100%",
               justifyContent: "space-between",
-              marginTop: responsiveHeight(1),
-              backgroundColor: "#FBFBFB",
+              // marginTop: responsiveHeight(1),
+              backgroundColor: "#F1F1F1",
+              paddingVertical: 5,
+              borderBottomLeftRadius: 15,
+              borderBottomRightRadius: 15,
               // backgroundColor: "tomato",
             },
           ]}
@@ -925,7 +932,25 @@ const NewsFeed = (props) => {
             />
           </TouchableWithoutFeedback>
         }
-        rightComponent={<HeaderRight navigation={props.navigation} />}
+        rightComponent={
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("Notifications")}
+            style={{ alignItems: "center" }}
+          >
+            <ImageBackground
+              source={noti}
+              resizeMode={"contain"}
+              style={{
+                height: 25,
+                width: 25,
+                // alignItems: "flex-end",
+                // alignSelf: "center",
+                marginTop: 15,
+                // backgroundColor: 'tomato',
+              }}
+            ></ImageBackground>
+          </TouchableOpacity>
+        }
         centerComponent={<HeaderCenterComponent name="News Feed" />}
       />
       {isVisible ? (
@@ -943,9 +968,27 @@ const NewsFeed = (props) => {
             onDismiss={() => setIsVisible(!isVisible)}
             duration={messge.length + 2000}
           >
-            <View style={{flexDirection:'row',alignItems:'center',height:'auto'}}>
-            <AntDesign name="checkcircle" size={24} color="#FCB040" />
-              <Text  style={{color:'black',alignSelf:'center',left:8,fontSize:14,fontWeight:'600',color:'grey',width:300}}>{messge}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                height: "auto",
+              }}
+            >
+              <AntDesign name="checkcircle" size={24} color="#FCB040" />
+              <Text
+                style={{
+                  color: "black",
+                  alignSelf: "center",
+                  left: 8,
+                  fontSize: 14,
+                  fontWeight: "600",
+                  color: "grey",
+                  width: 300,
+                }}
+              >
+                {messge}
+              </Text>
             </View>
           </Snackbar>
         </View>
@@ -1056,12 +1099,12 @@ const NewsFeed = (props) => {
                   style={styles.smallImage}
                 />
                 {/* {onimage && ( */}
-                  <ActivityIndicator
-                    animating={onimage}
-                    size="small"
-                    color="#FFD700"
-                    style={{ bottom: responsiveHeight(5) }}
-                  />
+                <ActivityIndicator
+                  animating={onimage}
+                  size="small"
+                  color="#FFD700"
+                  style={{ bottom: responsiveHeight(5) }}
+                />
                 {/* )} */}
               </View>
               <View style={styles.userInfo2}>
@@ -1169,6 +1212,25 @@ const NewsFeed = (props) => {
           </ScrollView>
         </View>
       </RBSheet>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate("CreatePost")}
+        style={{
+          alignItems: "flex-end",
+          width: "90%",
+          bottom: 20,
+          backgroundColor: "transparent",
+          position: "absolute",
+        }}
+      >
+        <ImageBackground
+          source={bar}
+          resizeMode={"contain"}
+          style={{
+            height: 50,
+            width: 50,
+          }}
+        ></ImageBackground>
+      </TouchableOpacity>
     </View>
   );
 };
