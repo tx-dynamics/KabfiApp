@@ -89,6 +89,7 @@ const NewsFeed = (props) => {
   const [timerReset, settimerReset] = useState(false);
   const [onstart, setonstart] = useState(false);
   const [onimage, setonimage] = useState(false);
+  const [onpostimage, setpostonimage] = useState(false);
   const options = {
     container: {
       //backgroundColor: '#000',
@@ -210,6 +211,8 @@ const NewsFeed = (props) => {
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
                   userImages.on("value", (updateImage) => {
+                    setonstart(true)
+                    setpostonimage(true)
                     if (chil.exists()) {
                       //it will check if user exist in current post or not to change heart color
                       hideuser.on("value", (ishide) => {
@@ -546,18 +549,19 @@ const NewsFeed = (props) => {
                   // loadingIndicatorSource={
                   //   item.user_image ? { uri: item.user_image } : user
                   // }
-                  // onLoadStart={() => setonstart(true)}
-                  // onLoadEnd={() => setonstart(false)}
+                  onLoadStart={() => setonstart(true)}
+                  onLoadEnd={() => setonstart(false)}
                   source={item.user_image ? { uri: item.user_image } : user}
                   style={[styles.userImgStyle, {}]}
                 />
-                {onstart && (
+                {/* {onstart && ( */}
                   <ActivityIndicator
+                    animating={onstart}
                     size="small"
                     color="#FFD700"
                     style={{ bottom: responsiveHeight(5) }}
                   />
-                )}
+                {/* )} */}
               </View>
               <Text
                 style={[
@@ -636,14 +640,25 @@ const NewsFeed = (props) => {
                 }}
                 style={{ flex: 2 }}
               >
+                
                 <Image
-                  loadingIndicatorSource={{
-                    width: 80,
-                    height: 80,
-                    alignSelf: "flex-end",
-                  }}
+                  // loadingIndicatorSource={{
+                  //   width: 80,
+                  //   height: 80,
+                  //   alignSelf: "flex-end",
+                  // }}
+                  onLoadStart={()=> setpostonimage(true) }
+                  onLoadEnd={()=> setpostonimage(false) }
                   source={{ uri: item.post_image }}
                 />
+                {/* {onpostimage &&( */}
+                <ActivityIndicator
+                  animating={onpostimage}
+                  size="large"
+                  color="#FFD700"
+                  style={{ top: responsiveHeight(3) }}
+                  />
+                  {/* )} */}
               </TouchableOpacity>
             ) : null}
             <View
@@ -917,18 +932,21 @@ const NewsFeed = (props) => {
         <View style={{ height: 60 }}>
           <Snackbar
             style={{
-              backgroundColor: "#FF9900",
+              backgroundColor: "#FFF1DB",
               marginLeft: 8,
               marginRight: 8,
               marginTop: 8,
-              borderRadius: 10,
+              borderRadius: 30,
             }}
             visible={isVisible}
-            action={{ label: "ok" }}
+            // action={{ label: "ok" }}
             onDismiss={() => setIsVisible(!isVisible)}
             duration={messge.length + 2000}
           >
-            <Text>{messge}</Text>
+            <View style={{flexDirection:'row',alignItems:'center',height:'auto'}}>
+            <AntDesign name="checkcircle" size={24} color="#FCB040" />
+              <Text  style={{color:'black',alignSelf:'center',left:8,fontSize:14,fontWeight:'600',color:'grey',width:300}}>{messge}</Text>
+            </View>
           </Snackbar>
         </View>
       ) : (
@@ -1037,13 +1055,14 @@ const NewsFeed = (props) => {
                   source={Dp ? { uri: Dp } : user}
                   style={styles.smallImage}
                 />
-                {onimage && (
+                {/* {onimage && ( */}
                   <ActivityIndicator
+                    animating={onimage}
                     size="small"
                     color="#FFD700"
                     style={{ bottom: responsiveHeight(5) }}
                   />
-                )}
+                {/* )} */}
               </View>
               <View style={styles.userInfo2}>
                 <Text style={styles.userName}>{name}</Text>
