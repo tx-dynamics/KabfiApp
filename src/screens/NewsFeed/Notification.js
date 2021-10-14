@@ -105,8 +105,6 @@ const Notifications = (props) => {
     },
   };
   useEffect(() => {
-    setRefreshing(true);
-
     fetchAllNoti();
     // fetchLocation();
   }, [isFocused]);

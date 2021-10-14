@@ -29,7 +29,10 @@ import firebase from "firebase";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { Audio } from "expo-av";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
+import {
+  responsiveHeight,
+  responsiveWidth,
+} from "react-native-responsive-dimensions";
 const CommentScreen = ({ route, navigation }) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -83,7 +86,7 @@ const CommentScreen = ({ route, navigation }) => {
           text: child.val().comments,
           createdAt: child.val().createdAt,
           user: child.val().user,
-          loadcommentimage:false
+          loadcommentimage: false,
         });
       });
       console.log("LI==>", li);
@@ -107,26 +110,23 @@ const CommentScreen = ({ route, navigation }) => {
     }
   }
 
-  async function postimageloader(id){
-  
-    const res=  posts.map((item) => {
-        if (item.id === id) {
-          console.log('Item-image==>',item.loadcommentimage)
-          return {
-            ...item,
-            loadcommentimage:!item.loadcommentimage,
-          };
-        } else {
-          return {
-            ...item,
-            // loadimage: false,
-          };
-        }
-      });
-   
-    setPosts(res);
-  
+  async function postimageloader(id) {
+    const res = posts.map((item) => {
+      if (item.id === id) {
+        console.log("Item-image==>", item.loadcommentimage);
+        return {
+          ...item,
+          loadcommentimage: !item.loadcommentimage,
+        };
+      } else {
+        return {
+          ...item,
+          // loadimage: false,
+        };
+      }
+    });
 
+    setPosts(res);
   }
 
   const renderPosts = ({ item, index }) => {
@@ -196,14 +196,14 @@ const CommentScreen = ({ route, navigation }) => {
               animating={item.loadcommentimage}
               size="small"
               color="black"
-              style={{ left: responsiveWidth(5)}}
-              />
-              {/* :<></>} */}
+              style={{ left: responsiveWidth(5) }}
+            />
+            {/* :<></>} */}
             <Image
-              onLoadStart={()=> postimageloader(item.id) }
-              onLoadEnd={()=> postimageloader(item.id) }
+              onLoadStart={() => postimageloader(item.id)}
+              onLoadEnd={() => postimageloader(item.id)}
               source={item.image ? { uri: item.image } : user}
-              style={[styles.userImgStyle,{}]}
+              style={[styles.userImgStyle, {}]}
             />
             <View style={{ width: "85%", marginTop: 3, marginLeft: 3 }}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -359,8 +359,8 @@ const CommentScreen = ({ route, navigation }) => {
               width: "100%",
               //alignSelf: "center",
               alignItems: "center",
-              borderTopWidth:0.5,
-              borderColor:'#E3E3E3',
+              borderTopWidth: 0.5,
+              borderColor: "#E3E3E3",
             },
           ]}
         >
@@ -387,8 +387,8 @@ const CommentScreen = ({ route, navigation }) => {
             style={{
               justifyContent: "center",
               alignSelf: "center",
-              marginRight:responsiveHeight(1.5),
-              marginTop:responsiveHeight(1.5)
+              marginRight: responsiveHeight(1.5),
+              marginTop: responsiveHeight(1.5),
             }}
           >
             {isloading ? (
