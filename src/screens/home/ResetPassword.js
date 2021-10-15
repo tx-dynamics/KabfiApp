@@ -11,16 +11,25 @@ import {
   ActivityIndicator,
 } from "react-native";
 // import { kabfiApp, firebase } from '../../database/config';
-
+import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 import firebase from "firebase";
 import { returnImage } from "../../../assets";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import {
+  AntDesign,
+  FontAwesome,
+  FontAwesome5,
+  Ionicons,
+  Feather,
+  MaterialIcons,
+  Entypo,
+} from "@expo/vector-icons";
 const ResetPassword = (props) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loader, setLoader] = useState(false);
-
+  const [isVisible, setIsVisible] = useState(false);
+  const [messge, setMessage] = useState("");
   const [oldpasswordHidden, setOldPasswordHidden] = useState(true);
   const [newpasswordHidden, setNewPasswordHidden] = useState(true);
   const [confirmpasswordHidden, setConfirmPasswordHidden] = useState(true);
@@ -109,7 +118,9 @@ const ResetPassword = (props) => {
           user
             .updatePassword(newPassword)
             .then(() => {
-              alert("Password Updated Successfully");
+              // alert("Password Updated Successfully");
+              setMessage("Password Updated Successfully");
+              setIsVisible(!isVisible);
               setOldPassword("");
               setNewPassword("");
               setLoader(false);
@@ -117,12 +128,16 @@ const ResetPassword = (props) => {
             })
             .catch((error) => {
               setLoader(false);
-              alert(error.message);
+              // alert(error.message);
+              setMessage(error.message);
+              setIsVisible(!isVisible);
             });
         })
         .catch((error) => {
           setLoader(false);
-          alert("The current password is invalid");
+          // alert("The current password is invalid");
+          setMessage("The current password is invalid");
+          setIsVisible(!isVisible);
           setLoader(false);
         });
     } else {
@@ -136,6 +151,7 @@ const ResetPassword = (props) => {
   return (
     <ScrollView style={styles.root} keyboardShouldPersistTaps="handled">
       <View style={styles.contentArea}>
+        
         <TouchableOpacity
           style={[styles.backContainer, { width: "100%" }]}
           onPress={() => props.navigation.navigate("Settings")}
@@ -143,6 +159,31 @@ const ResetPassword = (props) => {
           <Ionicons name="chevron-back-outline" size={30} />
           {/* <Text style={{ marginLeft: 10,alignSelf:'center' }}>Back</Text> */}
         </TouchableOpacity>
+
+        {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
+                style={{
+                  backgroundColor: "#FFF4E3",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  marginTop: 8,
+                  borderRadius: 30,
+                }}
+                visible={isVisible}
+                // action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                duration={messge.length + 2000}
+              >
+                <View style={{flexDirection:'row',alignItems:'center',height:'auto'}}>
+                <AntDesign name="checkcircle" size={24} color="#FCB040" />
+                  <Text  style={{color:'black',alignSelf:'center',left:8,fontSize:14,fontWeight:'600',color:'grey',width:300}}>{messge}</Text>
+                </View>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+        )}
 
         <View style={styles.textContainer}>
           <Text style={styles.textHeading}>Create New Password</Text>
@@ -286,6 +327,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   emailInput: {
+    borderRadius:25,
     backgroundColor: "#FBFBFB",
     // borderRadius: 50,
     padding: 13,
@@ -302,7 +344,7 @@ const styles = StyleSheet.create({
   btn2: {
     marginTop: 40,
     backgroundColor: "#FAB040",
-    borderRadius: 5,
+    borderRadius: 25,
     padding: 15,
     alignItems: "center",
     width: "95%",
