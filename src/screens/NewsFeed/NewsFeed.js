@@ -481,6 +481,7 @@ const NewsFeed = (props) => {
       try {
         // console.log("isplaying", isplaying);
         await Audio.setAudioModeAsync({
+          allowsRecordingIOS:false,
           playsInSilentModeIOS: true,
           staysActiveInBackground: false,
           playThroughEarpieceAndroid: false,

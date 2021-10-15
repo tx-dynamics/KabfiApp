@@ -381,6 +381,7 @@ const CreatePost = (props) => {
     console.log("Loading Sound");
     // setisplay(true);
     await Audio.setAudioModeAsync({
+      allowsRecordingIOS:false,
       playsInSilentModeIOS: true,
       staysActiveInBackground: false,
       playThroughEarpieceAndroid: false,
