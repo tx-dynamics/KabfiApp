@@ -20,8 +20,8 @@ import firebase from "firebase";
 
 // import HeaderRight from "../../components/Settings/HeaderRight";
 import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
-import { connect } from 'react-redux';
-import { SetSession } from '../../Redux/Actions/Actions';
+import { connect } from "react-redux";
+import { SetSession } from "../../Redux/Actions/Actions";
 
 const Settings = (props) => {
   // const { setIsLoggedIn } = useLogin();
@@ -48,15 +48,21 @@ const Settings = (props) => {
 
   async function userLogout() {
     setLoader(true);
+    const data = {
+      isLogin: false,
+    };
+    firebase
+      .database()
+      .ref("users/" + firebase.auth().currentUser?.uid)
+      .update(data);
     firebase
       .auth()
       .signOut()
       .then(() => {
-        setLoader(false),
-          props.navigation.navigate("Signin")
-        props.SessionMaintain({"isLogin": false})
+        setLoader(false), props.navigation.navigate("Signin");
+        props.SessionMaintain({ isLogin: false });
 
-          // setIsLoggedIn(false);
+        // setIsLoggedIn(false);
       });
     setLoader(false);
   }
@@ -171,4 +177,3 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(null, mapDispatchToProps)(Settings);
-

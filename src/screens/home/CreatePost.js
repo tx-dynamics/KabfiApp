@@ -59,6 +59,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import AudioView from "./AudioRecording";
 import { Feather } from "@expo/vector-icons";
 import { set } from "react-native-reanimated";
+import { connect } from "react-redux";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -89,6 +90,7 @@ const CreatePost = (props) => {
   const [messge, setMessage] = useState("");
 
   useEffect(() => {
+    console.log(props.isLogin);
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
     setRecording(null);
@@ -129,7 +131,11 @@ const CreatePost = (props) => {
     data.on("value", (userdata) => {
       {
         userdata.forEach((child) => {
-          if (child.val()?.isEnabled === true && child.key !== user) {
+          if (
+            child.val()?.isEnabled === true &&
+            child.key !== user &&
+            child?.val()?.isLogin
+          ) {
             arr.push(child.val()?.pushToken);
           }
         });
@@ -210,7 +216,9 @@ const CreatePost = (props) => {
         setUserId(""), setUserName("");
         setDp("");
         setTimeout(() => {
-          props.navigation.navigate("NewsFeed",{created:"Post Added Successfully"});
+          props.navigation.navigate("NewsFeed", {
+            created: "Post Added Successfully",
+          });
         }, 2000);
       } else {
         setloading(false);
@@ -1030,5 +1038,8 @@ const styles = StyleSheet.create({
     height: 25,
   },
 });
-
-export default CreatePost;
+const mapStateToProps = (state) => {
+  const { isLogin } = state.AuthReducer;
+  return { isLogin };
+};
+export default connect(mapStateToProps)(CreatePost);
