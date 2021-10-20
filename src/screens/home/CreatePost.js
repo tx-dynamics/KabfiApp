@@ -196,7 +196,9 @@ const CreatePost = (props) => {
           .database()
           .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
         let addNoti = {
-          message: `${userName} upload new post.`,
+          image:Dp,
+          name:userName,
+          message: `upload new post.`,
         };
         notification.push(addNoti);
         myRef.set(Details).then(() => {

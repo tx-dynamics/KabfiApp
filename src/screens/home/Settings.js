@@ -159,8 +159,11 @@ const styles = StyleSheet.create({
     width: "90%",
     flexDirection: "row",
     alignItems: "center",
+    // backgroundColor:'red'
   },
   listIconImage: {
+    // backgroundColor:'orange',
+    alignSelf:'center',
     width: 20,
     height: 22,
   },

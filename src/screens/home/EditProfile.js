@@ -213,11 +213,13 @@ const EditProfile = (props) => {
     >
       <ScrollView>
         <Header
-          backgroundColor="#FBFBFB"
+          backgroundColor="#F8F8F7"
           containerStyle={{
             // marginTop: 15,
             // paddingHorizontal: 20,
-            backgroundColor: "#FBFBFB",
+            backgroundColor: "#F8F8F7",
+            borderBottomWidth:0.5,
+            borderBottomColor:'#AEB2B1'
           }}
           leftComponent={
             <TouchableOpacity onPress={() => props.navigation.goBack()}>

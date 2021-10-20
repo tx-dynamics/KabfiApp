@@ -612,7 +612,7 @@ const Signup = (props) => {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     borderWidth: 1,
-                    borderRadius:25,
+                    borderRadius:26,
                     borderColor: badgeNumberImageValidator ? "red" : "#E6E6E6",
                     width: "100%",
                   }}
@@ -653,7 +653,7 @@ const Signup = (props) => {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     borderWidth: 1,
-                    borderRadius:25,
+                    borderRadius:26,
                     borderColor: taxiLicenseValidator ? "red" : "#E6E6E6",
                   }}
                   onPress={AlertTaxiLicenseImage}

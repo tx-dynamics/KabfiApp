@@ -22,40 +22,40 @@ const feedback6 = (props) => {
       />
       <Text style={{ flex: 0.07 }}></Text>
       <Text
-        style={[styles.largetxt, { alignSelf: "center", fontWeight: "700" }]}
+        style={[styles.largetxt, { fontFamily:'System',color:'#3E4143',alignSelf: "center", fontWeight: "700" }]}
       >
         Happiness Meter
       </Text>
-      <Text style={{ flex: 0.05 }}></Text>
+      <Text style={{ flex: 0.15 }}></Text>
       <Image
         source={star}
         resizeMode="contain"
         style={{ height: 120, width: 120, alignSelf: "center" }}
       />
-      <Text style={{ flex: 0.05 }}></Text>
-      <Text style={[{ alignSelf: "center", fontSize: 24, fontWeight: "bold" }]}>
+      <Text style={{ flex: 0.1 }}></Text>
+      <Text style={[{ color:'#3E4143',alignSelf: "center", fontSize: 24, fontWeight: "bold" }]}>
         THANK YOU
       </Text>
       <Text
-        style={[styles.largetxt, { alignSelf: "center", fontWeight: "700" }]}
+        style={[styles.largetxt, { color:'#3E4143',alignSelf: "center", fontWeight: "500" }]}
       >
         FOR
       </Text>
       <Text
-        style={[styles.largetxt, { alignSelf: "center", fontWeight: "700" }]}
+        style={[styles.largetxt, { alignSelf: "center", fontWeight: "500" }]}
       >
         KEEPING KABFI GREAT!
       </Text>
       <Text style={{ flex: 0.09 }}></Text>
       <Text
-        style={[styles.largetxt, { alignSelf: "center", fontWeight: "700" }]}
+        style={[styles.largetxt, { color:'#3E4143',alignSelf: "center", fontWeight: "500" }]}
       >
         Find out more on
       </Text>
       <Text
         style={[
           styles.largetxt,
-          { alignSelf: "center", color: "orange", fontWeight: "700" },
+          { alignSelf: "center", color: "#FCB040", fontWeight: "700" },
         ]}
       >
         kabfi.com
@@ -66,13 +66,13 @@ const feedback6 = (props) => {
           props.navigation.navigate("NewsFeed");
         }}
         style={{
-          backgroundColor: "orange",
+          backgroundColor: "#FCB040",
           padding: 13,
           width: "80%",
           alignSelf: "center",
           borderRadius: 30,
           borderWidth: 2,
-          borderColor: "orange",
+          borderColor: "#FCB040",
         }}
       >
         <Text

@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Image,
   RefreshControl,
 } from "react-native";
 import styles from "./styles";
@@ -13,7 +14,21 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
-
+import {
+  user,
+  more,
+  postImage,
+  reload,
+  comments,
+  favourite,
+  heartImage,
+  locationImage,
+  drawer,
+  menu,
+  bars,
+  noti,
+  bar,
+} from "../../../assets";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 
 const Notifications = (props) => {
@@ -51,7 +66,9 @@ const Notifications = (props) => {
               if (!hideId.exists()) {
                 notis.push({
                   id: child.key,
+                  image: data.val().image,
                   message: data.val().message,
+                  name: data.val().name,
                   postid: data.key,
                 });
               }
@@ -60,7 +77,7 @@ const Notifications = (props) => {
         }
       });
     });
-    // console.log("Noti Data==>", notis);
+    console.log("Noti Data==>", notis);
     setnotis(notis);
     setRefreshing(false);
   }
@@ -85,7 +102,7 @@ const Notifications = (props) => {
           flex: 1,
           width: "95%",
 
-          //   backgroundColor: "tomato",
+            // backgroundColor: "tomato",
           // elevation: 2,
           borderRadius: 10,
           alignSelf: "center",
@@ -97,12 +114,16 @@ const Notifications = (props) => {
             flexDirection: "row",
             alignItems: "center",
             padding: 10,
-            backgroundColor: "#FFF4E3",
+            // backgroundColor: "#FFF4E3",
             borderRadius: 20,
             width: "100%",
           }}
         >
-          <AntDesign name="checkcircle" size={24} color="#FCB040" />
+          {/* <AntDesign name="checkcircle" size={24} color="#FCB040" /> */}
+          <Image
+            source={item.image?{uri:item.image}:user}
+            style={{width:50,height:50,borderRadius:70}}
+          />
           <Text
             style={{
               color: "black",
@@ -114,6 +135,7 @@ const Notifications = (props) => {
               width: 300,
             }}
           >
+            <Text style={{color:'black',fontSize:16,fontWeight:'bold'}}>@{item.name} </Text>
             {item.message}
           </Text>
         </View>

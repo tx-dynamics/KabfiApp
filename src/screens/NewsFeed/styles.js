@@ -28,9 +28,10 @@ const styles = StyleSheet.create({
   smallLine: {
     height: 2,
     width: 20,
+    right:8,
     backgroundColor: "#D6D6D6",
     alignSelf: "center",
-    marginTop: 10,
+    marginTop: 25,
   },
   userInfoContainer: {
     flexDirection: "row",
@@ -138,8 +139,11 @@ const styles = StyleSheet.create({
   },
   cardStyle: {
     flex: 1,
+    // width:360,
+    // height:186,
     margin: 10,
     padding: 10,
+    // backgroundColor: "orange",
     backgroundColor: "#FBFBFB",
     // elevation: 2,
     shadowColor: "#fdfdfd",

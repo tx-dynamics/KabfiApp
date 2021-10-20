@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     // borderBottomWidth: 1,
     // borderBottomColor: "black",
     height: 60,
-    borderRadius: 25,
+    borderRadius: 26,
     paddingHorizontal: 40,
     paddingVertical: 10,
     backgroundColor: "#F9F9F9",
@@ -369,6 +369,7 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: 40,
+    height:48,
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 15,

@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   textFieldFullContainer: {
     marginTop: 5,
     flexDirection: "row",
-    borderRadius:25,
+    borderRadius:26,
     borderWidth: 1,
     borderColor: "#E6E6E6",
     justifyContent: "space-between",
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     width: "48.5%",
-    borderRadius:25,
+    borderRadius:26,
     justifyContent: "space-between",
     flexDirection: "row",
   },
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: 40,
+    height:48,
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 15,

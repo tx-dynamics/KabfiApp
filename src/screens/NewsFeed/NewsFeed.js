@@ -35,6 +35,7 @@ import {
   favourite,
   heartImage,
   locationImage,
+  drawer,
   menu,
   bars,
   noti,
@@ -600,9 +601,11 @@ const NewsFeed = (props) => {
         <View
           style={[
             {
+              // backgroundColor: "orange",
               backgroundColor: "#FBFBFB",
-              borderTopLeftRadius: 15,
-              borderTopRightRadius: 15,
+              height:186,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
             },
           ]}
         >
@@ -646,7 +649,7 @@ const NewsFeed = (props) => {
                   },
                 ]}
               >
-                <Text style={[{ color: "black", fontWeight: "700" }]}>
+                <Text style={[{ color: "#464646", fontWeight: "700" }]}>
                   {item.userName}
                 </Text>
                 <Text
@@ -861,12 +864,14 @@ const NewsFeed = (props) => {
             {
               flexDirection: "row",
               width: "100%",
+              height:52,
               justifyContent: "space-between",
               // marginTop: responsiveHeight(1),
               backgroundColor: "#F1F1F1",
+              // backgroundColor: "red",
               paddingVertical: 5,
-              borderBottomLeftRadius: 15,
-              borderBottomRightRadius: 15,
+              borderBottomLeftRadius: 20,
+              borderBottomRightRadius: 20,
               // backgroundColor: "tomato",
             },
           ]}
@@ -1149,7 +1154,11 @@ const NewsFeed = (props) => {
         closeOnPressMask={true}
         height={Dimensions.get("window").height / 1.3}
         customStyles={{
+          draggableIcon:{
+            // width:'100%'
+          },
           container: {
+            
             alignItems: "center",
             backgroundColor: "transparent",
           },

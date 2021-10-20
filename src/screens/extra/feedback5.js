@@ -96,23 +96,23 @@ const feedback5 = (props) => {
         />
 
         <Text style={{ marginTop: 15 }}></Text>
-        <Text style={[styles.happytxt, { alignSelf: "center", width: "80%" }]}>
+        <Text style={[styles.happytxt, { color:'#3E4143',alignSelf: "center", width: "80%" }]}>
           Share your feedback
         </Text>
         <Text
           style={[
-            { alignSelf: "center", width: "80%", marginTop: 5, fontSize: 14 },
+            { alignSelf: "center",color:'#3E4143', width: "80%", marginTop: 5, fontSize: 14 },
           ]}
         >
           How you satisfied are you with KABFI?
         </Text>
-        <Text style={{ marginTop: 20 }}></Text>
+        <Text style={{ marginTop: 25 }}></Text>
         <Image
           source={star}
           resizeMode="contain"
           style={{ height: 100, width: 100, alignSelf: "center" }}
         />
-        <Text style={{ flex: 0.05 }}></Text>
+        <Text style={{ marginTop:25 }}></Text>
         <TextInput
           multiline={true}
           numberOfLines={4}
@@ -127,14 +127,14 @@ const feedback5 = (props) => {
             fontSize: 16,
             fontWeight: "400",
             paddingVertical: responsiveHeight(2),
-            borderWidth: 1,
-            borderColor: "#D5D5D5",
+            borderWidth: 1.5,
+            borderColor: "#CCCDCC",
             borderRadius: 20,
           }}
           textAlignVertical="top"
           onChangeText={(text) => settell(text)}
           value={tell}
-          placeholderTextColor={"black"}
+          placeholderTextColor={"#3E4143"}
           underlineColorAndroid="transparent"
         />
         <TextInput
@@ -149,14 +149,14 @@ const feedback5 = (props) => {
             // fontWeight: "400",
             borderWidth: 2,
             borderRadius: 20,
-            borderColor: "#D5D5D5",
+            borderColor: "#CCCDCC",
             paddingVertical: 7,
-            borderWidth: 1,
+            borderWidth: 1.5,
           }}
           onChangeText={(text) => setphone(text)}
           value={phone}
           keyboardType="phone-pad"
-          placeholderTextColor={"black"}
+          placeholderTextColor={"#3E4143"}
           underlineColorAndroid="transparent"
         />
         <Text style={{ marginTop: 10 }}></Text>
@@ -166,7 +166,7 @@ const feedback5 = (props) => {
             width: "80%",
             alignSelf: "center",
             justifyContent: "space-between",
-            marginTop: responsiveHeight(24),
+            marginTop: responsiveHeight(10),
           }}
         >
           <TouchableOpacity
