@@ -108,6 +108,7 @@ const Signin = (props) => {
             .update({
               pushToken: token,
               userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
+              isLogin: true,
             })
         );
         props.SessionMaintain({ isLogin: true });
@@ -137,33 +138,52 @@ const Signin = (props) => {
     >
       {/* <SafeAreaView style={styles.root}> */}
       <StatusBar style="dark" />
-      
+
       <View style={styles.contentArea}>
-      {isVisible ? (
-            <View style={{ height: 60 }}>
-              <Snackbar
+        {isVisible ? (
+          <View style={{ height: 60 }}>
+            <Snackbar
+              style={{
+                backgroundColor: "#FFF4E3",
+                marginLeft: 8,
+                marginRight: 8,
+                marginTop: 8,
+                borderRadius: 30,
+              }}
+              visible={isVisible}
+              // action={{ label: "ok" }}
+              onDismiss={() => setIsVisible(!isVisible)}
+              duration={messge.length + 2000}
+            >
+              <View
                 style={{
-                  backgroundColor: "#FF9900",
-                  marginLeft: 8,
-                  marginRight: 8,
-                  borderRadius: 10,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  height: "auto",
                 }}
-                visible={isVisible}
-                action={{ label: "ok" }}
-                onDismiss={() => setIsVisible(!isVisible)}
-                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
-                // )}
-                // position={'top'}
-                duration={messge.length + 2000}
               >
-                <Text>{messge}</Text>
-              </Snackbar>
-            </View>
-          ) : (
-            <></>
+                <AntDesign name="checkcircle" size={24} color="#FCB040" />
+                <Text
+                  style={{
+                    color: "black",
+                    alignSelf: "center",
+                    left: 8,
+                    fontSize: 14,
+                    fontWeight: "600",
+                    color: "grey",
+                    width: 300,
+                  }}
+                >
+                  {messge}
+                </Text>
+              </View>
+            </Snackbar>
+          </View>
+        ) : (
+          <></>
         )}
         <View style={styles.logoContainer}>
-        <Image
+          <Image
             source={require("../../../assets/Kabfi-logo.png")}
             resizeMode="contain"
             style={{
@@ -180,7 +200,7 @@ const Signin = (props) => {
         </View>
 
         <View style={styles.loginForm}>
-          <View style={[styles.textFieldContainer, {  }]}>
+          <View style={[styles.textFieldContainer, {}]}>
             {/* <Image
               source={require("../../../assets/ProjectImages/authentication/mail-icon.png")}
               style={styles.fieldIcon}
@@ -188,7 +208,7 @@ const Signin = (props) => {
             <TextInput
               style={styles.textField}
               value={email}
-              placeholderTextColor={'black'}
+              placeholderTextColor={"black"}
               placeholder="Email"
               onChangeText={(e) => setEmail(e)}
             />
@@ -206,7 +226,7 @@ const Signin = (props) => {
             >
               <Feather
                 name={passwordHidden ? "eye" : "eye-off"}
-                style={passwordHidden ? styles.eyeIconOn : styles.eyeIcon }
+                style={passwordHidden ? styles.eyeIconOn : styles.eyeIcon}
               />
             </TouchableOpacity>
 
@@ -214,7 +234,7 @@ const Signin = (props) => {
               style={styles.textField}
               placeholder="Password"
               value={password}
-              placeholderTextColor={'black'}
+              placeholderTextColor={"black"}
               onChangeText={(e) => setPassword(e)}
               secureTextEntry={passwordHidden}
             />
@@ -228,7 +248,7 @@ const Signin = (props) => {
               {loader ? (
                 <ActivityIndicator color={"red"} size={"small"} />
               ) : (
-                <Text style={{ color: "white" }}>LOGIN</Text>
+                <Text style={{ color: "white", fontWeight: "700" }}>LOGIN</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -271,14 +291,26 @@ const Signin = (props) => {
             style={{ alignItems: "center", marginTop: 10 }}
             onPress={() => props.navigation.navigate("Signup")}
           > */}
-              <Text style={[styles.forgotPasswordText],{alignSelf:'center'}}>Don't have an account?
-                <TouchableOpacity
-                  style={{alignItems:'center'}}
-                  onPress={() => props.navigation.navigate("Signup")}
-                  > 
-                  <Text style={{fontSize:14,fontWeight:'bold',color:'#FF9900',alignSelf:'center',top:4}}> Sign Up</Text>
-                </TouchableOpacity>
+          <Text style={([styles.forgotPasswordText], { alignSelf: "center" })}>
+            Don't have an account?
+            <TouchableOpacity
+              style={{ alignItems: "center" }}
+              onPress={() => props.navigation.navigate("Signup")}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  color: "#FF9900",
+                  alignSelf: "center",
+                  top: 4,
+                }}
+              >
+                {" "}
+                Sign Up
               </Text>
+            </TouchableOpacity>
+          </Text>
           {/* </TouchableOpacity> */}
         </View>
       </View>
@@ -304,10 +336,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   logoContainer: {
-    marginTop:70,
+    marginTop: 70,
     alignItems: "center",
     // height: 110,
-
   },
   logoImage: {
     width: 110,
@@ -321,8 +352,8 @@ const styles = StyleSheet.create({
   textField: {
     // borderBottomWidth: 1,
     // borderBottomColor: "black",
-    height:60,
-    borderRadius:8,
+    height: 60,
+    borderRadius: 25,
     paddingHorizontal: 40,
     paddingVertical: 10,
     backgroundColor: "#F9F9F9",
@@ -341,7 +372,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 25,
   },
   socialIconsContainer: {
     flexDirection: "row",
@@ -370,13 +401,13 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     fontSize: 20,
-    justifyContent:"center",
+    justifyContent: "center",
     color: "#E6E6E6",
     alignSelf: "center",
   },
   eyeIconOn: {
     fontSize: 20,
-    justifyContent:"center",
+    justifyContent: "center",
     color: "#000",
     alignSelf: "center",
   },
@@ -420,7 +451,7 @@ async function registerForPushNotificationsAsync() {
       console.log(token);
     } else {
       setMessage("Must use physical device for Push Notifications");
-        setIsVisible(!isVisible);
+      setIsVisible(!isVisible);
       // alert("Must use physical device for Push Notifications");
     }
 

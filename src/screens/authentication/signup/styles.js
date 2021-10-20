@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   textFieldFullContainer: {
     marginTop: 5,
     flexDirection: "row",
+    borderRadius:25,
     borderWidth: 1,
     borderColor: "#E6E6E6",
     justifyContent: "space-between",
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     width: "48.5%",
+    borderRadius:25,
     justifyContent: "space-between",
     flexDirection: "row",
   },
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
     padding: 15,
     width: "95%",
     alignSelf: "center",
-    borderRadius: 10,
+    borderRadius: 25,
   },
   eyeIcon: {
     fontSize: 24,

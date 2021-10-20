@@ -21,7 +21,8 @@ import feedback3 from "../screens/extra/feedback3";
 import feedback4 from "../screens/extra/feedback4";
 import feedback5 from "../screens/extra/feedback5";
 import feedback6 from "../screens/extra/feedback6";
-import AudioRecording from "../screens//home/AudioRecording"
+import AudioRecording from "../screens//home/AudioRecording";
+import Notifications from "../screens/NewsFeed/Notification";
 const Stack = createStackNavigator();
 
 const StackNavigatorAfter = (props) => {
@@ -31,6 +32,11 @@ const StackNavigatorAfter = (props) => {
       <Stack.Screen
         name="AudioRecording"
         component={AudioRecording}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Notifications"
+        component={Notifications}
         options={{ headerShown: false }}
       />
       <Stack.Screen

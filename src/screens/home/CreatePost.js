@@ -37,6 +37,7 @@ import {
   cross,
   soundpic,
 } from "../../../assets";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import {
   responsiveWidth,
   responsiveHeight,
@@ -58,6 +59,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import AudioView from "./AudioRecording";
 import { Feather } from "@expo/vector-icons";
 import { set } from "react-native-reanimated";
+import { connect } from "react-redux";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -88,6 +90,7 @@ const CreatePost = (props) => {
   const [messge, setMessage] = useState("");
 
   useEffect(() => {
+    console.log(props.isLogin);
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
     setRecording(null);
@@ -128,7 +131,11 @@ const CreatePost = (props) => {
     data.on("value", (userdata) => {
       {
         userdata.forEach((child) => {
-          if (child.val()?.isEnabled === true && child.key !== user) {
+          if (
+            child.val()?.isEnabled === true &&
+            child.key !== user &&
+            child?.val()?.isLogin
+          ) {
             arr.push(child.val()?.pushToken);
           }
         });
@@ -185,15 +192,22 @@ const CreatePost = (props) => {
         };
         let like = { userId };
         console.log("Notification test ", userName);
+        var notification = firebase
+          .database()
+          .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
+        let addNoti = {
+          message: `${userName} upload new post.`,
+        };
+        notification.push(addNoti);
         myRef.set(Details).then(() => {
           tokens.length > 0
             ? tokens.map((item) => RequestPushMsg(item, userName, postText))
             : console.log("No One");
         });
-        // mylike.set(userId);
-        // myRef.set(Details);
-        setMessage("Post Added Successfully");
-        setIsVisible(!isVisible);
+        mylike.set(userId);
+        myRef.set(Details);
+        // setMessage("Post Added Successfully");
+        // setIsVisible(!isVisible);
         // alert("Post Added Successfully");
         await AsyncStorage.clear();
         setloading(false);
@@ -202,7 +216,9 @@ const CreatePost = (props) => {
         setUserId(""), setUserName("");
         setDp("");
         setTimeout(() => {
-          props.navigation.navigate("NewsFeed");
+          props.navigation.navigate("NewsFeed", {
+            created: "Post Added Successfully",
+          });
         }, 2000);
       } else {
         setloading(false);
@@ -365,12 +381,12 @@ const CreatePost = (props) => {
     console.log("Loading Sound");
     // setisplay(true);
     await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true, 
+      allowsRecordingIOS:false,
+      playsInSilentModeIOS: true,
       staysActiveInBackground: false,
       playThroughEarpieceAndroid: false,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX
-    
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
     });
     if (!isplaying) {
       const { sound: playbackObject } = await Audio.Sound.createAsync(
@@ -498,20 +514,39 @@ const CreatePost = (props) => {
             <View style={{ height: 60 }}>
               <Snackbar
                 style={{
-                  backgroundColor: "#FF9900",
+                  backgroundColor: "#FFF4E3",
                   marginLeft: 8,
                   marginRight: 8,
-                  borderRadius: 10,
+                  marginTop: 8,
+                  borderRadius: 30,
                 }}
                 visible={isVisible}
-                action={{ label: "ok" }}
+                // action={{ label: "ok" }}
                 onDismiss={() => setIsVisible(!isVisible)}
-                //   <AntDesign style={{marginLeft:10}} name="checkcircleo" size={24} color="white" />
-                // )}
-                // position={'top'}
                 duration={messge.length + 2000}
               >
-                <Text>{messge}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    height: "auto",
+                  }}
+                >
+                  <AntDesign name="checkcircle" size={24} color="#FCB040" />
+                  <Text
+                    style={{
+                      color: "black",
+                      alignSelf: "center",
+                      left: 8,
+                      fontSize: 14,
+                      fontWeight: "600",
+                      color: "grey",
+                      width: 300,
+                    }}
+                  >
+                    {messge}
+                  </Text>
+                </View>
               </Snackbar>
             </View>
           ) : (
@@ -581,7 +616,7 @@ const CreatePost = (props) => {
                   style={{
                     // alignSelf: "center",
                     marginTop: 5,
-                    marginBottom:5,
+                    marginBottom: 5,
                     // right: 4,
                   }}
                 >
@@ -711,25 +746,27 @@ const CreatePost = (props) => {
               // disabled={recording ? true : false}
             >
               {/* {!index || showrec ? */}
-              {!index?
-              <>
-                {showrec ?
-                  <Image source={waveonn}  style={styles.media} />
-                :
-                <>
-                  <Image source={waveoff}  style={styles.media} />
-                </>
-                }
-              </>
-              :
-              <>
-                {Sound != ''?
-                  <Image source={waveoff}  style={styles.media} />
-                :
-                  <Image source={waveonn}  style={styles.media} />
-                }
-              </>
-                  // <Image source={waveonn}  style={styles.media} />
+              {
+                !index ? (
+                  <>
+                    {showrec ? (
+                      <Image source={waveonn} style={styles.media} />
+                    ) : (
+                      <>
+                        <Image source={waveoff} style={styles.media} />
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {Sound != "" ? (
+                      <Image source={waveoff} style={styles.media} />
+                    ) : (
+                      <Image source={waveonn} style={styles.media} />
+                    )}
+                  </>
+                )
+                // <Image source={waveonn}  style={styles.media} />
               }
               {/* <MaterialIcons
                 name="multitrack-audio"
@@ -1002,5 +1039,8 @@ const styles = StyleSheet.create({
     height: 25,
   },
 });
-
-export default CreatePost;
+const mapStateToProps = (state) => {
+  const { isLogin } = state.AuthReducer;
+  return { isLogin };
+};
+export default connect(mapStateToProps)(CreatePost);

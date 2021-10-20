@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 // import Snackbar from 'rn-snackbar-component'
 import { connect } from "react-redux";
-
 import {
   View,
   Text,
@@ -21,6 +20,7 @@ import {
   TouchableHighlight,
   ActivityIndicator,
   Slider,
+  ImageBackground,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -37,6 +37,8 @@ import {
   locationImage,
   menu,
   bars,
+  noti,
+  bar,
 } from "../../../assets";
 import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
@@ -87,6 +89,9 @@ const NewsFeed = (props) => {
   const [messge, setMessage] = useState("");
   const [timerStart, settimerStart] = useState(false);
   const [timerReset, settimerReset] = useState(false);
+  const [onstart, setonstart] = useState(false);
+  const [onimage, setonimage] = useState(false);
+  const [onpostimage, setpostonimage] = useState(false);
   const options = {
     container: {
       //backgroundColor: '#000',
@@ -102,10 +107,74 @@ const NewsFeed = (props) => {
   };
   useEffect(() => {
     setRefreshing(true);
-
+    console.log(props?.route?.params?.created);
+    var created = props?.route?.params?.created
+    if(created != undefined){
+        setMessage(created);
+        setIsVisible(!isVisible)
+    }
     fetchAllPosts();
-    fetchLocation();
+    // fetchLocation();
   }, [isFocused]);
+
+  async function imageloaderStart(id) {
+    // setonstart(true)
+
+    const res = posts.map((item) => {
+      if (item.id === id) {
+        // console.log('Item-image==>',item.loadimage)
+        return {
+          ...item,
+          loadimage: true,
+        };
+      } else {
+        return {
+          ...item,
+          // loadimage: false,
+        };
+      }
+    });
+
+    setPosts(res);
+  }
+
+  async function imageloaderEnd(id) {
+    const res = posts.map((item) => {
+      if (item.id === id) {
+        // console.log('Item-image==>',item.loadimage)
+        return {
+          ...item,
+          loadimage: false,
+        };
+      } else {
+        return {
+          ...item,
+          // loadimage: false,
+        };
+      }
+    });
+
+    setPosts(res);
+  }
+
+  async function postimageloader(id) {
+    const res = posts.map((item) => {
+      if (item.id === id) {
+        console.log("Item-image==>", item.loadpostimage);
+        return {
+          ...item,
+          loadpostimage: !item.loadpostimage,
+        };
+      } else {
+        return {
+          ...item,
+          // loadimage: false,
+        };
+      }
+    });
+
+    setPosts(res);
+  }
 
   async function handleTimerComplete(index, time) {
     //posts[index].time= time
@@ -208,6 +277,8 @@ const NewsFeed = (props) => {
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
                   userImages.on("value", (updateImage) => {
+                    // setonstart(true)
+                    // setpostonimage(true)
                     if (chil.exists()) {
                       //it will check if user exist in current post or not to change heart color
                       hideuser.on("value", (ishide) => {
@@ -245,7 +316,8 @@ const NewsFeed = (props) => {
                                 ? child.val().location
                                 : null,
                             time: child.val().time,
-                            // isplaying: false,
+                            loadimage: false,
+                            loadpostimage: false,
                           });
                         } else {
                           return;
@@ -287,6 +359,8 @@ const NewsFeed = (props) => {
                                 ? child.val().location
                                 : null,
                             isShow: false,
+                            loadimage: false,
+                            loadpostimage: false,
                           });
                         }
                       });
@@ -301,6 +375,7 @@ const NewsFeed = (props) => {
     setPosts(arr);
     // console.log("posts", ik);
     setRefreshing(false);
+    // imageloader()
   }
 
   async function likeHandler(post_id, likes_count, islike, index) {
@@ -406,6 +481,7 @@ const NewsFeed = (props) => {
       try {
         // console.log("isplaying", isplaying);
         await Audio.setAudioModeAsync({
+          allowsRecordingIOS:false,
           playsInSilentModeIOS: true,
           staysActiveInBackground: false,
           playThroughEarpieceAndroid: false,
@@ -499,6 +575,7 @@ const NewsFeed = (props) => {
     // console.log(res);
     setPosts(res);
   }
+
   async function delPost(postid) {
     console.log("calling del");
     setTimeout(() => {
@@ -524,6 +601,8 @@ const NewsFeed = (props) => {
           style={[
             {
               backgroundColor: "#FBFBFB",
+              borderTopLeftRadius: 15,
+              borderTopRightRadius: 15,
             },
           ]}
         >
@@ -535,14 +614,29 @@ const NewsFeed = (props) => {
                 width: "95%",
                 alignSelf: "center",
                 backgroundColor: "#FBFBFB",
+                marginTop: responsiveHeight(0.5),
               },
             ]}
           >
             <View style={[{ flexDirection: "row" }]}>
-              <Image
-                source={item.user_image ? { uri: item.user_image } : user}
-                style={[styles.userImgStyle, {}]}
-              />
+              <View>
+                <Image
+                  onLoadStart={() => imageloaderStart(item.id)}
+                  onLoadEnd={() => imageloaderEnd(item.id)}
+                  source={item.user_image ? { uri: item.user_image } : user}
+                  style={[styles.userImgStyle, {}]}
+                />
+                {/* {item.loadimage ?  */}
+                <ActivityIndicator
+                  animating={item.loadimage}
+                  // animating={onstart}
+                  size="small"
+                  color="orange"
+                  style={{ bottom: responsiveHeight(5) }}
+                />
+                {/* :null
+                  } */}
+              </View>
               <Text
                 style={[
                   styles.largeText,
@@ -618,12 +712,22 @@ const NewsFeed = (props) => {
                   setModalVisible(true);
                   setRefreshingModal(true);
                 }}
-                style={{ flex: 2 }}
+                style={{ flex: 2, alignItems: "center" }}
               >
                 <Image
-                  style={{ width: 80, height: 80, alignSelf: "flex-end" }}
+                  onLoadStart={() => postimageloader(item.id)}
+                  onLoadEnd={() => postimageloader(item.id)}
                   source={{ uri: item.post_image }}
+                  style={{ width: 65, height:65 }}
                 />
+                {/* {item.loadpostimage ? */}
+                <ActivityIndicator
+                  animating={item.loadpostimage}
+                  size="large"
+                  color="orange"
+                  style={{ bottom: responsiveHeight(3) }}
+                />
+                {/* :null}  */}
               </TouchableOpacity>
             ) : null}
             <View
@@ -641,18 +745,21 @@ const NewsFeed = (props) => {
                 numberOfLines={4}
                 style={{ textAlign: "left", color: "#464646", fontSize: 13 }}
               >
-                {item.post_text}
+                {item.post_text.length > 75 ? item.post_text.substring(0, 74) + "..." : item.post_text}
+                {/* {item.post_text} */}
               </Text>
               {item.rec ? (
                 <View
                   style={{
-                    backgroundColor: "#FCB040",
+                    // backgroundColor: "#FCB040",
                     width: responsiveWidth(50),
                     flexDirection: "row",
                     alignItems: "center",
-                    padding: 2,
+                    padding: 5,
                     marginTop: 3,
-                    borderRadius: 20,
+                    borderRadius: 100,
+                    borderWidth:1,
+                    borderColor:'#EFEFEF'
                   }}
                 >
                   <TouchableOpacity
@@ -665,9 +772,9 @@ const NewsFeed = (props) => {
                     }}
                   >
                     {item.isShow ? (
-                      <Ionicons name="pause" color="white" size={26} />
+                      <Ionicons name="pause" color="#979797" size={24} />
                     ) : (
-                      <Ionicons name="play" color="white" size={26} />
+                      <Ionicons name="play" color="#979797" size={24} />
                     )}
                   </TouchableOpacity>
                   <>
@@ -679,22 +786,22 @@ const NewsFeed = (props) => {
                             onChange={(e) => {
                               console.log(e);
                             }}
-                            size={12}
+                            size={14}
                             onFinish={() => handleTimerComplete}
                             digitStyle={{
                               backgroundColor: "transparent",
                               width: responsiveWidth(5),
                             }}
-                            digitTxtStyle={{ color: "white" }}
+                            digitTxtStyle={{ color: "#979797" }}
                             timeToShow={["M", "S"]}
                             timeLabels={{ m: "", s: "" }}
                             showSeparator
-                            separatorStyle={{ color: "white" }}
+                            separatorStyle={{ color: "#979797" }}
                             // style={{ marginLeft: responsiveWidth(-2) }}
                           />
                         ) : (
                           <>
-                            <ActivityIndicator size={"small"} color={"white"} />
+                            <ActivityIndicator size={"small"} color={"#979797"} />
                           </>
                         )}
                       </>
@@ -702,9 +809,9 @@ const NewsFeed = (props) => {
                       <View style={{ flexDirection: "row" }}>
                         <Text
                           style={{
-                            color: "white",
-                            fontSize: 12,
-                            fontWeight: "bold",
+                            color: "#979797",
+                            fontSize: 14,
+                            // fontWeight: "bold",
                           }}
                         >
                           {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
@@ -715,9 +822,9 @@ const NewsFeed = (props) => {
                         </Text>
                         <Text
                           style={{
-                            color: "white",
-                            fontSize: 12,
-                            fontWeight: "bold",
+                            color: "#979797",
+                            fontSize: 14,
+                            // fontWeight: "bold",
                           }}
                         >
                           {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
@@ -738,6 +845,7 @@ const NewsFeed = (props) => {
                   <Image
                     source={bars}
                     style={{
+                      tintColor:'#979797',
                       height: 30,
                       width: responsiveWidth(30),
                     }}
@@ -754,8 +862,11 @@ const NewsFeed = (props) => {
               flexDirection: "row",
               width: "100%",
               justifyContent: "space-between",
-              marginTop: responsiveHeight(1),
-              backgroundColor: "#FBFBFB",
+              // marginTop: responsiveHeight(1),
+              backgroundColor: "#F1F1F1",
+              paddingVertical: 5,
+              borderBottomLeftRadius: 15,
+              borderBottomRightRadius: 15,
               // backgroundColor: "tomato",
             },
           ]}
@@ -852,7 +963,7 @@ const NewsFeed = (props) => {
           <View style={styles.modalView}>
             <Image
               style={{ width: "100%", height: "98%" }}
-              source={{ uri: largImage }}
+              loadingIndicatorSource={{ uri: largImage }}
               resizeMode="contain"
             />
             <TouchableHighlight
@@ -890,25 +1001,64 @@ const NewsFeed = (props) => {
             />
           </TouchableWithoutFeedback>
         }
-        rightComponent={<HeaderRight navigation={props.navigation} />}
+        rightComponent={
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("Notifications")}
+            style={{ alignItems: "center" }}
+          >
+            <ImageBackground
+              source={noti}
+              resizeMode={"contain"}
+              style={{
+                height: 25,
+                width: 25,
+                // alignItems: "flex-end",
+                // alignSelf: "center",
+                marginTop: 15,
+                // backgroundColor: 'tomato',
+              }}
+            ></ImageBackground>
+          </TouchableOpacity>
+        }
         centerComponent={<HeaderCenterComponent name="News Feed" />}
       />
       {isVisible ? (
         <View style={{ height: 60 }}>
           <Snackbar
             style={{
-              backgroundColor: "#FF9900",
+              backgroundColor: "#FFF4E3",
               marginLeft: 8,
               marginRight: 8,
               marginTop: 8,
-              borderRadius: 10,
+              borderRadius: 30,
             }}
             visible={isVisible}
-            action={{ label: "ok" }}
+            // action={{ label: "ok" }}
             onDismiss={() => setIsVisible(!isVisible)}
             duration={messge.length + 2000}
           >
-            <Text>{messge}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                height: "auto",
+              }}
+            >
+              <AntDesign name="checkcircle" size={24} color="#FCB040" />
+              <Text
+                style={{
+                  color: "black",
+                  alignSelf: "center",
+                  left: 8,
+                  fontSize: 14,
+                  fontWeight: "600",
+                  color: "grey",
+                  width: 300,
+                }}
+              >
+                {messge}
+              </Text>
+            </View>
           </Snackbar>
         </View>
       ) : (
@@ -1012,9 +1162,19 @@ const NewsFeed = (props) => {
             <View style={styles.userInfoContainer}>
               <View style={styles.userInfo1}>
                 <Image
+                  onLoadStart={() => setonimage(true)}
+                  onLoadEnd={() => setonimage(false)}
                   source={Dp ? { uri: Dp } : user}
                   style={styles.smallImage}
                 />
+                {/* {onimage && ( */}
+                <ActivityIndicator
+                  animating={onimage}
+                  size="small"
+                  color="#FFD700"
+                  style={{ bottom: responsiveHeight(5) }}
+                />
+                {/* )} */}
               </View>
               <View style={styles.userInfo2}>
                 <Text style={styles.userName}>{name}</Text>
@@ -1121,6 +1281,25 @@ const NewsFeed = (props) => {
           </ScrollView>
         </View>
       </RBSheet>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate("CreatePost")}
+        style={{
+          alignItems: "flex-end",
+          width: "90%",
+          bottom: 20,
+          backgroundColor: "transparent",
+          position: "absolute",
+        }}
+      >
+        <ImageBackground
+          source={bar}
+          resizeMode={"contain"}
+          style={{
+            height: 50,
+            width: 50,
+          }}
+        ></ImageBackground>
+      </TouchableOpacity>
     </View>
   );
 };
