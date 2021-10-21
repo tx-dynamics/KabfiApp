@@ -96,12 +96,12 @@ const feedback5 = (props) => {
         />
 
         <Text style={{ marginTop: 15 }}></Text>
-        <Text style={[styles.happytxt, { color:'#3E4143',alignSelf: "center", width: "80%" }]}>
+        <Text style={[styles.happytxt, { fontWeight:'normal',color:'#3E4143',fontFamily:'Sf-pro-display-medium',alignSelf: "center", width: "80%" }]}>
           Share your feedback
         </Text>
         <Text
           style={[
-            { alignSelf: "center",color:'#3E4143', width: "80%", marginTop: 5, fontSize: 14 },
+            { alignSelf: "center",color:'#3E4143',fontFamily:'Sf-pro-display', width: "80%", marginTop: 5, fontSize: 14 },
           ]}
         >
           How you satisfied are you with KABFI?

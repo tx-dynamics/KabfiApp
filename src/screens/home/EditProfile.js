@@ -225,8 +225,10 @@ const EditProfile = (props) => {
             <TouchableOpacity onPress={() => props.navigation.goBack()}>
               <Text
                 style={{
+                  left:5,
                   color: "#FCB040",
-                  fontSize: 17,
+                  fontSize: 14,
+                  fontFamily:'Sf-pro-display',
                   letterSpacing: 1,
                 }}
               >
@@ -235,7 +237,7 @@ const EditProfile = (props) => {
             </TouchableOpacity>
           }
           centerComponent={
-            <Text style={{ fontSize: 17, color: "#000000" }}>Edit Profile</Text>
+            <Text style={{ fontSize: 17, color: "#000000",fontFamily:'Sf-pro-display-medium',fontWeight:'600' }}>Edit Profile</Text>
           }
           rightComponent={
             <TouchableOpacity onPress={() => editProfileHandler()}>
@@ -244,9 +246,11 @@ const EditProfile = (props) => {
               ) : (
                 <Text
                   style={{
-                    fontSize: 17,
-                    color: "#727272",
-                    fontWeight: "700",
+                    fontSize: 14,
+                    right:5,
+                    color: "#666A6A",
+                    fontFamily:"Sf-pro-display-bold",
+                    // fontWeight: "700",
                     letterSpacing: 1,
                   }}
                 >

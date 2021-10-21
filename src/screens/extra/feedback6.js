@@ -22,7 +22,7 @@ const feedback6 = (props) => {
       />
       <Text style={{ flex: 0.07 }}></Text>
       <Text
-        style={[styles.largetxt, { fontFamily:'System',color:'#3E4143',alignSelf: "center", fontWeight: "700" }]}
+        style={[styles.largetxt, { fontFamily:'System',color:'#3E4143',alignSelf: "center", fontFamily:'Sf-pro-display-medium' }]}
       >
         Happiness Meter
       </Text>
@@ -33,32 +33,32 @@ const feedback6 = (props) => {
         style={{ height: 120, width: 120, alignSelf: "center" }}
       />
       <Text style={{ flex: 0.1 }}></Text>
-      <Text style={[{ color:'#3E4143',alignSelf: "center", fontSize: 24, fontWeight: "bold" }]}>
+      <Text style={[{ color:'#3E4143',alignSelf: "center", fontSize: 24, fontFamily:'Sf-pro-display-bold' }]}>
         THANK YOU
       </Text>
       <Text
-        style={[styles.largetxt, { color:'#3E4143',alignSelf: "center", fontWeight: "500" }]}
+        style={[styles.largetxt, { color:'#3E4143',alignSelf: "center", fontFamily:'Sf-pro-display-medium' }]}
       >
         FOR
       </Text>
       <Text
-        style={[styles.largetxt, { alignSelf: "center", fontWeight: "500" }]}
+        style={[styles.largetxt, { alignSelf: "center", fontWeight: "500",fontFamily:'Sf-pro-display-medium' }]}
       >
         KEEPING KABFI GREAT!
       </Text>
       <Text style={{ flex: 0.09 }}></Text>
       <Text
-        style={[styles.largetxt, { color:'#3E4143',alignSelf: "center", fontWeight: "500" }]}
+        style={[styles.largetxt, { color:'#3E4143',alignSelf: "center", fontWeight: "500",fontFamily:'Sf-pro-display-medium'}]}
       >
         Find out more on
       </Text>
       <Text
         style={[
           styles.largetxt,
-          { alignSelf: "center", color: "#FCB040", fontWeight: "700" },
+          { alignSelf: "center", color: "#FCB040", fontWeight: "700",fontFamily:'Sf-pro-display-medium' },
         ]}
       >
-        kabfi.com
+        Kabfi.com
       </Text>
       <Text style={{ flex: 0.05 }}></Text>
       <TouchableOpacity

@@ -3185,7 +3185,7 @@
   dependencies:
     "expo-firebase-core" "~3.1.0"
 
-"expo-font@~9.2.1":
+"expo-font@^9.2.1", "expo-font@~9.2.1":
   "integrity" "sha512-sT9nm2Dt1nTLz+Ir1fSpyzqH40eJX324Wu5sPyvT2Ivnmu2rw2rxt3gNa8Kvdb8BPRz4qrRvHR/E+YKMqa6ZgQ=="
   "resolved" "https://registry.npmjs.org/expo-font/-/expo-font-9.2.1.tgz"
   "version" "9.2.1"
@@ -5869,7 +5869,7 @@
     "escape-string-regexp" "2.0.0"
     "invariant" "2.2.4"
 
-"react-native@*", "react-native@https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz":
+"react-native@https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz":
   "integrity" "sha512-qWR6pcG4yDu/Rthm+DvAS017rL38LbZFnJv/k4HL4ZUH/WhKuqC+stD7TlpaOBb3N2bkydm9s+GCa14T41MLEg=="
   "resolved" "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz"
   dependencies:

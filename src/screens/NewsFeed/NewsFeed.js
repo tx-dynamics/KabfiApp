@@ -2,6 +2,7 @@ import firebase from "firebase";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 // import Snackbar from 'rn-snackbar-component'
+import * as Font from 'expo-font';
 import { connect } from "react-redux";
 import {
   View,
@@ -82,7 +83,7 @@ const NewsFeed = (props) => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [progress, setProgress] = useState(0);
   const [progressPlay, setProgressPlay] = useState(0);
-  const [maxTimeInSeconds, setMaxTimeInSeconds] = useState(0);
+  const [fontsLoaded, setfontsLoaded] = useState(false);
   const [sound, setsound] = useState();
   const refRBSheet = useRef();
   const [isplaying, setisplaying] = useState(false);
@@ -115,8 +116,31 @@ const NewsFeed = (props) => {
         setIsVisible(!isVisible)
     }
     fetchAllPosts();
+    loadFonts()
     // fetchLocation();
   }, [isFocused]);
+
+  async function  loadFonts() {
+    await Font.loadAsync({
+      // Load a font `Montserrat` from a static resource
+      // Montserrat: require('./assets/fonts/Montserrat.ttf'),
+
+      // Any string can be used as the fontFamily name. Here we use an object to provide more control
+      'Sf-pro-display': {
+        uri: require('../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Light.ttf'),
+        display: Font.FontDisplay.FALLBACK,
+      },
+      'Sf-pro-display-bold': {
+        uri: require('../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Bold.ttf'),
+        display: Font.FontDisplay.FALLBACK,
+      },
+      'Sf-pro-display-medium': {
+        uri: require('../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Medium.ttf'),
+        display: Font.FontDisplay.FALLBACK,
+      },
+    });
+    setfontsLoaded(true)
+  }
 
   async function imageloaderStart(id) {
     // setonstart(true)
@@ -644,12 +668,13 @@ const NewsFeed = (props) => {
                 style={[
                   styles.largeText,
                   {
+                    
                     marginTop: responsiveHeight(1.2),
                     paddingLeft: 5,
                   },
                 ]}
               >
-                <Text style={[{ color: "#464646", fontWeight: "700" }]}>
+                <Text style={[{fontFamily:'Sf-pro-display-bold', color: "#464646", fontWeight: "700" }]}>
                   {item.userName}
                 </Text>
                 <Text
@@ -1186,11 +1211,11 @@ const NewsFeed = (props) => {
                 {/* )} */}
               </View>
               <View style={styles.userInfo2}>
-                <Text style={styles.userName}>{name}</Text>
+                <Text style={styles.userName,{fontFamily:'Sf-pro-display-bold',color:'#394143'}}>{name}</Text>
               </View>
               <View style={styles.userInfo3}>
                 <Text
-                  style={[styles.info3Text, { fontWeight: "500" }]}
+                  style={[styles.info3Text, {fontFamily:'Sf-pro-display', fontWeight: "500" }]}
                 >{`Member since ${
                   date ? moment(date).format("YYYY") : ""
                 }`}</Text>
