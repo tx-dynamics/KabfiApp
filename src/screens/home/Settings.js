@@ -51,6 +51,12 @@ const Settings = (props) => {
     const data = {
       isLogin: false,
     };
+
+    const del = firebase
+      .database()
+      .ref("locations")
+      .child(firebase.auth().currentUser?.uid);
+    del.remove();
     firebase
       .database()
       .ref("users/" + firebase.auth().currentUser?.uid)
