@@ -101,7 +101,7 @@ const NewsFeed = (props) => {
   const [onstart, setonstart] = useState(false);
   const [onimage, setonimage] = useState(false);
   const [onpostimage, setpostonimage] = useState(false);
-  const [tokens, setTokens] = useState([]);
+  const [maxTimeInSeconds, setMaxTimeInSeconds] = useState([]);
 
   const options = {
     container: {
@@ -140,7 +140,6 @@ const NewsFeed = (props) => {
       console.log("Is connected?", state.isConnected,state.isInternetReachable);
       //if (Platform.OS === "android") {
         if (state.isConnected) {
-          setMessage('');
         } else {
           setRefreshing(false);
           setMessage('Network error has occurred');
@@ -786,8 +785,8 @@ const NewsFeed = (props) => {
           <View
             style={{
               flexDirection: "row",
-              // paddingLeft: 10,
-              right:5,
+              paddingLeft: 10,
+              // right:5,
               paddingVertical: 10,
             }}
           >
@@ -798,7 +797,7 @@ const NewsFeed = (props) => {
                   setModalVisible(true);
                   setRefreshingModal(true);
                 }}
-                style={{ flex: 2, alignItems: "center" }}
+                style={{ flex: 1.2,marginLeft:responsiveWidth(1) }}
               >
                 <Image
                   onLoadStart={() => postimageloader(item.id)}
@@ -811,7 +810,7 @@ const NewsFeed = (props) => {
                   animating={item.loadpostimage}
                   size="large"
                   color="orange"
-                  style={{ bottom: responsiveHeight(3) }}
+                  style={{ bottom: responsiveHeight(6) }}
                 />
                 {/* :null}  */}
               </TouchableOpacity>
@@ -968,7 +967,7 @@ const NewsFeed = (props) => {
               },
             ]}
           >
-            <View style={[styles.bottomContainer,{left:responsiveWidth(2.3)}]}>
+            <View style={[styles.bottomContainer,{left:responsiveWidth(2.5)}]}>
               <TouchableOpacity
                 style={{ flexDirection: "row" }}
                 onPress={() =>
