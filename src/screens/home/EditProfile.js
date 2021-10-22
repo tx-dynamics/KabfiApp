@@ -388,14 +388,18 @@ const EditProfile = (props) => {
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Phone Number</Text>
-            <TextInput
-              value={mobileNo}
-              style={styles.textField}
-              onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
-              keyboardType="number-pad"
-              placeholder="7711111111"
-              maxLength={11}
-            />
+            <View style={{flexDirection:'row'}}>
+              <Text style={{alignSelf:'center',left:5,top:2}}>+44</Text>
+              <TextInput
+                value={mobileNo}
+                style={[styles.textField,{left:7,width:'90%'}]}
+                onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
+                keyboardType="number-pad"
+                placeholder="7711111111"
+                maxLength={11}
+              />
+            </View>
+            
           </View>
 
           <View style={styles.fieldContainer}>
@@ -410,9 +414,10 @@ const EditProfile = (props) => {
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>City, State</Text>
             <TextInput
-              value={city}
-              onChangeText={(e) => setCity(e)}
+              value={'Lodon'}
+              // onChangeText={(e) => setCity(e)}
               style={styles.textField}
+              editable={false}
             />
           </View>
 

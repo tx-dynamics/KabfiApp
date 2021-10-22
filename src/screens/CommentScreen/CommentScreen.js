@@ -243,12 +243,25 @@ const CommentScreen = ({ route, navigation }) => {
         user: user?.uid,
       };
       myRef.push(data).then(() => setisloading(false));
+
       setPosts(null);
     });
     setCmnt("");
     // setPosts([]);
     getData(id);
     console.log("here");
+    console.log(img +" "+name);
+    userData.on("value", async (data) => {
+    var notification = firebase
+    .database()
+      .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
+      let addNoti = {
+        image:data.val().Dp,
+        name:data.val().firstName + " " + data.val().lastName ,
+        message: `commented : ${cmnt}`,
+      };
+      notification.push(addNoti);
+    })
     setisloading(false);
   }
   async function startRecording() {

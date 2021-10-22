@@ -219,6 +219,7 @@ const CreatePost = (props) => {
         setDp("");
         setTimeout(() => {
           props.navigation.navigate("NewsFeed", {
+            screen:'post',
             created: "Post Added Successfully",
           });
         }, 2000);

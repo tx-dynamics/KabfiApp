@@ -29,6 +29,7 @@ import {
   AsyncStorage,
   KeyboardAvoidingView
 } from "react-native";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import styles from "./styles";
@@ -447,8 +448,8 @@ const Signup = (props) => {
   const attemptInvisibleVerification = true;
 
   return (
-    <ScrollView style={styles.root}>
-      <KeyboardAvoidingView>
+    <KeyboardAwareScrollView style={styles.root}>
+      {/* <KeyboardAvoidingView> */}
       <View style={styles.contentArea}>
         <View style={styles.logoContainer}>
           
@@ -763,8 +764,8 @@ const Signup = (props) => {
 
         </View>
       </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+      {/* </KeyboardAvoidingView> */}
+    </KeyboardAwareScrollView>
   );
 };
 const mapDispatchToProps = (dispatch) => {

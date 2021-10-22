@@ -3,6 +3,7 @@ import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import React, { useState, useEffect, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {
   View,
@@ -132,191 +133,193 @@ const Signin = (props) => {
     }
   }
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.root}
-    >
-      {/* <SafeAreaView style={styles.root}> */}
-      <StatusBar style="dark" />
+    <KeyboardAwareScrollView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.root}
+      >
+        {/* <SafeAreaView style={styles.root}> */}
+        <StatusBar style="dark" />
 
-      <View style={styles.contentArea}>
-        {isVisible ? (
-          <View style={{ height: 60 }}>
-            <Snackbar
-              style={{
-                backgroundColor: "#FFF4E3",
-                marginLeft: 8,
-                marginRight: 8,
-                marginTop: 8,
-                borderRadius: 30,
-              }}
-              visible={isVisible}
-              // action={{ label: "ok" }}
-              onDismiss={() => setIsVisible(!isVisible)}
-              duration={messge.length + 2000}
-            >
-              <View
+        <View style={styles.contentArea}>
+          {isVisible ? (
+            <View style={{ height: 60 }}>
+              <Snackbar
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  height: "auto",
+                  backgroundColor: "#FFF4E3",
+                  marginLeft: 8,
+                  marginRight: 8,
+                  marginTop: 8,
+                  borderRadius: 30,
                 }}
+                visible={isVisible}
+                // action={{ label: "ok" }}
+                onDismiss={() => setIsVisible(!isVisible)}
+                duration={messge.length + 2000}
               >
-                <AntDesign name="checkcircle" size={24} color="#FCB040" />
-                <Text
+                <View
                   style={{
-                    color: "black",
-                    alignSelf: "center",
-                    left: 8,
-                    fontSize: 14,
-                    fontWeight: "600",
-                    color: "grey",
-                    width: 300,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    height: "auto",
                   }}
                 >
-                  {messge}
-                </Text>
-              </View>
-            </Snackbar>
-          </View>
-        ) : (
-          <></>
-        )}
-        <View style={styles.logoContainer}>
-          <Image
-            source={require("../../../assets/Kabfi-logo.png")}
-            resizeMode="contain"
-            style={{
-              height: 60,
-              width: 156,
-              //backgroundColor: "tomato",
-              alignSelf: "center",
-            }}
-          />
-          {/* <Image
-            source={require("../../../assets/ProjectImages/logo.png")}
-            style={styles.logoImage}
-          /> */}
-        </View>
-
-        <View style={styles.loginForm}>
-          <View style={[styles.textFieldContainer, {}]}>
-            {/* <Image
-              source={require("../../../assets/ProjectImages/authentication/mail-icon.png")}
-              style={styles.fieldIcon}
-            /> */}
-            <TextInput
-              style={styles.textField}
-              value={email}
-              placeholderTextColor={"black"}
-              placeholder="Email"
-              onChangeText={(e) => setEmail(e)}
+                  <AntDesign name="checkcircle" size={24} color="#FCB040" />
+                  <Text
+                    style={{
+                      color: "black",
+                      alignSelf: "center",
+                      left: 8,
+                      fontSize: 14,
+                      fontWeight: "600",
+                      color: "grey",
+                      width: 300,
+                    }}
+                  >
+                    {messge}
+                  </Text>
+                </View>
+              </Snackbar>
+            </View>
+          ) : (
+            <></>
+          )}
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../../assets/Kabfi-logo.png")}
+              resizeMode="contain"
+              style={{
+                height: 60,
+                width: 156,
+                //backgroundColor: "tomato",
+                alignSelf: "center",
+              }}
             />
+            {/* <Image
+              source={require("../../../assets/ProjectImages/logo.png")}
+              style={styles.logoImage}
+            /> */}
           </View>
 
-          <View style={[styles.textFieldContainer, { marginTop: 26 }]}>
-            {/* <Image
-              source={require("../../../assets/ProjectImages/authentication/password-icon.png")}
-              style={styles.fieldIcon}
-            /> */}
-
-            <TouchableOpacity
-              style={styles.eyeIconContainer}
-              onPress={passwordVisibility}
-            >
-              <Feather
-                name={passwordHidden ? "eye" : "eye-off"}
-                style={passwordHidden ? styles.eyeIconOn : styles.eyeIcon}
+          <View style={styles.loginForm}>
+            <View style={[styles.textFieldContainer, {}]}>
+              {/* <Image
+                source={require("../../../assets/ProjectImages/authentication/mail-icon.png")}
+                style={styles.fieldIcon}
+              /> */}
+              <TextInput
+                style={styles.textField}
+                value={email}
+                placeholderTextColor={"black"}
+                placeholder="Email"
+                onChangeText={(e) => setEmail(e.trim())}
               />
-            </TouchableOpacity>
+            </View>
 
-            <TextInput
-              style={styles.textField}
-              placeholder="Password"
-              value={password}
-              placeholderTextColor={"black"}
-              onChangeText={(e) => setPassword(e)}
-              secureTextEntry={passwordHidden}
-            />
-          </View>
+            <View style={[styles.textFieldContainer, { marginTop: 26 }]}>
+              {/* <Image
+                source={require("../../../assets/ProjectImages/authentication/password-icon.png")}
+                style={styles.fieldIcon}
+              /> */}
 
-          <View>
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={() => userSignin()}
-            >
-              {loader ? (
-                <ActivityIndicator color={"red"} size={"small"} />
-              ) : (
-                <Text style={{ color: "white", fontWeight: "700" }}>LOGIN</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.socialIconsContainer}>
-            <TouchableOpacity
-              style={styles.socialIconsContainerSingle}
-              onPress={() =>
-                Linking.openURL("https://www.facebook.com/kabfiglobal")
-              }
-            >
-              <FontAwesome name="facebook" style={styles.socialIcon} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.socialIconsContainerSingle}
-              onPress={() => Linking.openURL("https://twitter.com/kabfiglobal")}
-            >
-              <Entypo name="twitter" style={styles.socialIcon} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.socialIconsContainerSingle}
-              onPress={() =>
-                Linking.openURL("https://www.instagram.com/kabfiglobal/")
-              }
-            >
-              <AntDesign name="instagram" style={styles.socialIcon} />
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity
-            style={styles.forgotPasswordContainer}
-            onPress={() => props.navigation.navigate("ForgotPassword")}
-          >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity
-            style={{ alignItems: "center", marginTop: 10 }}
-            onPress={() => props.navigation.navigate("Signup")}
-          > */}
-          <Text style={([styles.forgotPasswordText], { alignSelf: "center" })}>
-            Don't have an account?
-            <TouchableOpacity
-              style={{ alignItems: "center" }}
-              onPress={() => props.navigation.navigate("Signup")}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "bold",
-                  color: "#FF9900",
-                  alignSelf: "center",
-                  top: 4,
-                }}
+              <TouchableOpacity
+                style={styles.eyeIconContainer}
+                onPress={passwordVisibility}
               >
-                {" "}
-                Sign Up
-              </Text>
-            </TouchableOpacity>
-          </Text>
-          {/* </TouchableOpacity> */}
-        </View>
-      </View>
+                <Feather
+                  name={passwordHidden ? "eye" : "eye-off"}
+                  style={passwordHidden ? styles.eyeIconOn : styles.eyeIcon}
+                />
+              </TouchableOpacity>
 
-      {/* </SafeAreaView> */}
-    </KeyboardAvoidingView>
+              <TextInput
+                style={styles.textField}
+                placeholder="Password"
+                value={password}
+                placeholderTextColor={"black"}
+                onChangeText={(e) => setPassword(e)}
+                secureTextEntry={passwordHidden}
+              />
+            </View>
+
+            <View>
+              <TouchableOpacity
+                style={styles.loginBtn}
+                onPress={() => userSignin()}
+              >
+                {loader ? (
+                  <ActivityIndicator color={"red"} size={"small"} />
+                ) : (
+                  <Text style={{ color: "white", fontWeight: "700" }}>LOGIN</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.socialIconsContainer}>
+              <TouchableOpacity
+                style={styles.socialIconsContainerSingle}
+                onPress={() =>
+                  Linking.openURL("https://www.facebook.com/kabfiglobal")
+                }
+              >
+                <FontAwesome name="facebook" style={styles.socialIcon} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.socialIconsContainerSingle}
+                onPress={() => Linking.openURL("https://twitter.com/kabfiglobal")}
+              >
+                <Entypo name="twitter" style={styles.socialIcon} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.socialIconsContainerSingle}
+                onPress={() =>
+                  Linking.openURL("https://www.instagram.com/kabfiglobal/")
+                }
+              >
+                <AntDesign name="instagram" style={styles.socialIcon} />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.forgotPasswordContainer}
+              onPress={() => props.navigation.navigate("ForgotPassword")}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            {/* <TouchableOpacity
+              style={{ alignItems: "center", marginTop: 10 }}
+              onPress={() => props.navigation.navigate("Signup")}
+            > */}
+            <Text style={([styles.forgotPasswordText], { alignSelf: "center" })}>
+              Don't have an account?
+              <TouchableOpacity
+                style={{ alignItems: "center" }}
+                onPress={() => props.navigation.navigate("Signup")}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "bold",
+                    color: "#FF9900",
+                    alignSelf: "center",
+                    top: 4,
+                  }}
+                >
+                  {" "}
+                  Sign Up
+                </Text>
+              </TouchableOpacity>
+            </Text>
+            {/* </TouchableOpacity> */}
+          </View>
+        </View>
+
+        {/* </SafeAreaView> */}
+      </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 

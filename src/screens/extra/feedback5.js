@@ -13,7 +13,7 @@ import {
 import styles from "./styles";
 import { StatusBar } from "expo-status-bar";
 import { Header } from "react-native-elements";
-import { star, sad, ok, smile, smiley } from "../../../assets";
+import { star,fstar, sad, ok, smile, smiley } from "../../../assets";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import firebase from "firebase";
 import {
@@ -108,7 +108,7 @@ const feedback5 = (props) => {
         </Text>
         <Text style={{ marginTop: 25 }}></Text>
         <Image
-          source={star}
+          source={fstar}
           resizeMode="contain"
           style={{ height: 100, width: 100, alignSelf: "center" }}
         />
@@ -129,7 +129,7 @@ const feedback5 = (props) => {
             paddingVertical: responsiveHeight(2),
             borderWidth: 1.5,
             borderColor: "#CCCDCC",
-            borderRadius: 20,
+            borderRadius: 26,
           }}
           textAlignVertical="top"
           onChangeText={(text) => settell(text)}
@@ -148,7 +148,7 @@ const feedback5 = (props) => {
             fontSize: 14,
             // fontWeight: "400",
             borderWidth: 2,
-            borderRadius: 20,
+            borderRadius: 26,
             borderColor: "#CCCDCC",
             paddingVertical: 7,
             borderWidth: 1.5,

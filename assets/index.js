@@ -42,4 +42,10 @@ export const soundpic = require("./ProjectImages/radio-wave.png");
 export const waveoff = require("./ProjectImages/radio-waves.png");
 export const waveonn = require("./ProjectImages/radio-waveson.png");
 export const noti = require("./ProjectImages/userSettings/notification-settings.png");
-export const drawer = require("./ProjectImages/users/drawer.png");
+
+export const drawer = require("./menu.png");
+export const hearth = require("./Hearth.png");
+export const heartf = require("./Heart.png");
+export const loc = require("./placeholder.png");
+export const fstar = require("./star.png");
+export const logo = require("./logo.png");

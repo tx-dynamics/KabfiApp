@@ -116,7 +116,7 @@ const Settings = (props) => {
             style={[styles.listItem, { marginTop: 15 }]}
           >
             <Image
-              source={require("../../../assets/ProjectImages/locationImage.png")}
+              source={require("../../../assets/placeholder.png")}
               style={styles.listIconImage}
               resizeMode="contain"
             />

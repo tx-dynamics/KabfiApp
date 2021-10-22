@@ -2,12 +2,14 @@ import firebase from "firebase";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 // import Snackbar from 'rn-snackbar-component'
+import NetInfo from "@react-native-community/netinfo";
 import * as Font from 'expo-font';
 import { connect } from "react-redux";
 import {
   View,
   Text,
   StyleSheet,
+  Platform,
   Dimensions,
   ScrollView,
   Image,
@@ -37,10 +39,14 @@ import {
   heartImage,
   locationImage,
   drawer,
+  hearth,
+  heartf,
+  loc,
   menu,
   bars,
   noti,
   bar,
+  
 } from "../../../assets";
 import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
@@ -109,16 +115,63 @@ const NewsFeed = (props) => {
   };
   useEffect(() => {
     setRefreshing(true);
-    console.log(props?.route?.params?.created);
+    console.log(props?.route?.params?.screen);
+    var screen = props?.route?.params?.screen
     var created = props?.route?.params?.created
-    if(created != undefined){
-        setMessage(created);
-        setIsVisible(!isVisible)
+    if(screen ==='post'){
+      if(created != undefined){
+          setMessage(created);
+          setIsVisible(!isVisible)
+      }
     }
-    fetchAllPosts();
     loadFonts()
+    fetchAllPosts();
+
     // fetchLocation();
   }, [isFocused]);
+
+  function CheckConnectivity  ()  {
+    // For Android devices
+    NetInfo.fetch().then((state) => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+      if (Platform.OS != "android") {
+        if (state.isConnected && state.isInternetReachable) {
+
+        } else {
+          setRefreshing(false);
+
+          setMessage('Network error has occurred');
+          setIsVisible(!isVisible)
+
+        }
+      } else {
+        if (state.isConnected && state.isInternetReachable) {
+          // this.login_request();
+          // alert('online')
+          // fetchAllPosts();
+        } else {
+          setRefreshing(false);
+          setMessage("Network error has occurred");
+          setIsVisible(!isVisible)
+        }
+      }
+    });
+  };
+
+  // function handleFirstConnectivityChange (isConnected) {
+  //   state.isConnected.removeEventListener(
+  //     "connectionChange",
+  //     // this.handleFirstConnectivityChange
+  //   );
+
+  //   if (state.isConnected === false) {
+  //     Alert.alert("Network error. Trying to connect to internet");
+  //   } else {
+  //     // Alert.alert("You are online!");
+  //     fetchAllPosts();
+  //   }
+  // };
 
   async function  loadFonts() {
     await Font.loadAsync({
@@ -247,6 +300,7 @@ const NewsFeed = (props) => {
 
   async function fetchAllPosts() {
     setRefreshing(true);
+    CheckConnectivity()
     const uid = firebase.auth().currentUser?.uid;
     const userdataNAme = firebase.database().ref("users/" + uid);
     userdataNAme.on("value", (userdata) => {
@@ -431,6 +485,20 @@ const NewsFeed = (props) => {
     }
     const data = firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
+
+    if(!islike){
+      var notification = firebase
+      .database()
+      .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
+      let addNoti = {
+        image:Dp,
+        name:name,
+        message: `liked your post.`,
+      };
+      notification.push(addNoti);
+    }
+    
+
     fetchAllPosts();
   }
   async function hideHandler(post_id) {
@@ -917,12 +985,23 @@ const NewsFeed = (props) => {
                   likeHandler(item.id, item.likes_count, item.like, index)
                 }
               >
-                <Ionicons
+                {item.like?
+                  <Image
+                    source={heartf}
+                    style={{width:18,height:16,alignSelf:'center'}}
+                  />
+                  :
+                  <Image
+                    source={hearth}
+                    style={{width:18,height:16,alignSelf:'center'}}
+                  />
+                }
+                {/* <Ionicons
                   name="heart"
                   size={20}
-                  color={item.like ? "red" : "black"}
+                  color={item.like ? "green" : "black"}
                   style={{ alignSelf: "center" }}
-                />
+                /> */}
                 <Text style={styles.smallText}>{` ${item.likes_count} `}</Text>
               </TouchableOpacity>
             </View>
@@ -1025,7 +1104,7 @@ const NewsFeed = (props) => {
             onPress={() => refRBSheet.current.open()}
           >
             <Image
-              source={menu}
+              source={drawer}
               resizeMode={"contain"}
               style={{ marginTop: 15, height: 25, width: 25 }}
             />
