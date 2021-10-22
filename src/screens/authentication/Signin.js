@@ -186,7 +186,7 @@ const Signin = (props) => {
           )}
           <View style={styles.logoContainer}>
             <Image
-              source={require("../../../assets/Kabfi-logo.png")}
+              source={require("../../../assets/logo.png")}
               resizeMode="contain"
               style={{
                 height: 60,
