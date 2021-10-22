@@ -14,6 +14,7 @@ import {
   Keyboard,
 } from "react-native";
 import Swipeout from "react-native-swipeout";
+import { RequestPushMsg } from "../../components/RequestPushMsg";
 import { user, send } from "../../../assets";
 import {
   useSafeAreaInsets,
@@ -38,6 +39,7 @@ const CommentScreen = ({ route, navigation }) => {
   const [Sound, setSound] = useState("");
   const isFocused = useIsFocused();
   const [id, setId] = useState("");
+  const [owner_id, setowner_id] = useState("");
   const [cmnt, setCmnt] = useState("");
   const [posts, setPosts] = useState(null);
   const [name, setName] = useState("");
@@ -48,9 +50,14 @@ const CommentScreen = ({ route, navigation }) => {
   const [Close, setClose] = useState(true);
   const [keyBoardHeight, setKeyBoardHeight] = useState(false);
   const [valueforBorrom, setValueforBorrom] = useState(false);
+  const [tokens, setTokens] = useState([]);
+
   useEffect(() => {
     // console.log("posts", posts);
     const id = route.params.id;
+    const owner_id = route.params.owner_id;
+    setowner_id(owner_id)
+    // console.log(id +" "+ owner_id);
     if (id) {
       setId(id);
       getData(id);
@@ -250,7 +257,28 @@ const CommentScreen = ({ route, navigation }) => {
     // setPosts([]);
     getData(id);
     console.log("here");
-    console.log(img +" "+name);
+    // console.log(img +" "+name);
+
+    // const dataN = firebase.database().ref("users");
+
+    // const arr = [];
+
+    // dataN.on("value", (userdata) => {
+    //   {
+    //     userdata.forEach((child) => {
+    //       if (
+    //         child.val()?.isEnabled === true &&
+    //         child.key !== user &&
+    //         child?.val()?.isLogin
+    //       ) {
+    //         arr.push(child.val()?.pushToken);
+    //       }
+    //     });
+    //   }
+    // });
+
+    // setTokens(arr);
+
     userData.on("value", async (data) => {
     var notification = firebase
     .database()
@@ -261,6 +289,12 @@ const CommentScreen = ({ route, navigation }) => {
         message: `commented : ${cmnt}`,
       };
       notification.push(addNoti);
+      if(owner_id != firebase?.auth()?.currentUser?.uid){
+          RequestPushMsg(owner_id, name, `commented : ${cmnt}`)
+      }
+      // tokens.length > 0
+      //     ? tokens.map((item) => RequestPushMsg(item, name, `commented : ${cmnt}`))
+      //     : console.log("No One");
     })
     setisloading(false);
   }

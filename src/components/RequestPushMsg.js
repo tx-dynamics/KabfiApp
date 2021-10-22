@@ -1,4 +1,4 @@
-export function RequestPushMsg(token, name,image, msg) {
+export function RequestPushMsg(token, name, msg) {
   console.log("param=>", token, msg);
   fetch("https://exp.host/--/api/v2/push/send", {
     method: "POST",

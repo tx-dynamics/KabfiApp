@@ -4,6 +4,7 @@ import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 // import Snackbar from 'rn-snackbar-component'
 import NetInfo from "@react-native-community/netinfo";
 import * as Font from 'expo-font';
+import { RequestPushMsg } from "../../components/RequestPushMsg";
 import { connect } from "react-redux";
 import {
   View,
@@ -100,6 +101,8 @@ const NewsFeed = (props) => {
   const [onstart, setonstart] = useState(false);
   const [onimage, setonimage] = useState(false);
   const [onpostimage, setpostonimage] = useState(false);
+  const [tokens, setTokens] = useState([]);
+
   const options = {
     container: {
       //backgroundColor: '#000',
@@ -134,44 +137,21 @@ const NewsFeed = (props) => {
     // For Android devices
     NetInfo.fetch().then((state) => {
       console.log("Connection type", state.type);
-      console.log("Is connected?", state.isConnected);
-      if (Platform.OS != "android") {
-        if (state.isConnected && state.isInternetReachable) {
-
+      console.log("Is connected?", state.isConnected,state.isInternetReachable);
+      //if (Platform.OS === "android") {
+        if (state.isConnected) {
+          setMessage('');
         } else {
           setRefreshing(false);
-
           setMessage('Network error has occurred');
           setIsVisible(!isVisible)
 
         }
-      } else {
-        if (state.isConnected && state.isInternetReachable) {
-          // this.login_request();
-          // alert('online')
-          // fetchAllPosts();
-        } else {
-          setRefreshing(false);
-          setMessage("Network error has occurred");
-          setIsVisible(!isVisible)
-        }
-      }
+      
     });
   };
 
-  // function handleFirstConnectivityChange (isConnected) {
-  //   state.isConnected.removeEventListener(
-  //     "connectionChange",
-  //     // this.handleFirstConnectivityChange
-  //   );
-
-  //   if (state.isConnected === false) {
-  //     Alert.alert("Network error. Trying to connect to internet");
-  //   } else {
-  //     // Alert.alert("You are online!");
-  //     fetchAllPosts();
-  //   }
-  // };
+  
 
   async function  loadFonts() {
     await Font.loadAsync({
@@ -457,8 +437,11 @@ const NewsFeed = (props) => {
     // imageloader()
   }
 
-  async function likeHandler(post_id, likes_count, islike, index) {
-    console.log(index);
+  async function likeHandler(post_id,post_user, likes_count, islike, index) {
+    
+
+
+    // console.log(uid +"******************"+ post_user);
     console.log("Like handler before", !islike);
     const Details = {
       likes_count: islike ? likes_count - 1 : likes_count + 1,
@@ -496,8 +479,14 @@ const NewsFeed = (props) => {
         message: `liked your post.`,
       };
       notification.push(addNoti);
+      if(uid != post_user){
+        RequestPushMsg(post_user, name, 'liked your post.')
+      }
+        // tokens.length > 0
+        //   ? tokens.map((item) => RequestPushMsg(item, name, 'liked your post.'))
+        //   : console.log("No One");
     }
-    
+   
 
     fetchAllPosts();
   }
@@ -797,8 +786,9 @@ const NewsFeed = (props) => {
           <View
             style={{
               flexDirection: "row",
-              paddingLeft: 10,
-              paddingVertical: 20,
+              // paddingLeft: 10,
+              right:5,
+              paddingVertical: 10,
             }}
           >
             {item.post_image ? (
@@ -978,11 +968,11 @@ const NewsFeed = (props) => {
               },
             ]}
           >
-            <View style={[styles.bottomContainer]}>
+            <View style={[styles.bottomContainer,{left:responsiveWidth(2.3)}]}>
               <TouchableOpacity
                 style={{ flexDirection: "row" }}
                 onPress={() =>
-                  likeHandler(item.id, item.likes_count, item.like, index)
+                  likeHandler(item.id,item.user, item.likes_count, item.like, index)
                 }
               >
                 {item.like?
@@ -1008,7 +998,7 @@ const NewsFeed = (props) => {
             <TouchableOpacity
               style={[styles.bottomContainer, { right: 10 }]}
               onPress={() =>
-                props.navigation.navigate("CommentScreen", { id: item.id })
+                props.navigation.navigate("CommentScreen", { id: item.id,owner_id:item.user })
               }
             >
               <Image
