@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   textField: {
     // borderBottomWidth: 1,
     // borderBottomColor: "black",
-    height: 60,
+    height: 48,
     borderRadius: 26,
     paddingHorizontal: 40,
     paddingVertical: 10,

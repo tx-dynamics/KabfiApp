@@ -92,7 +92,7 @@ const EditProfile = (props) => {
       if (!firstName == "") {
         if (!lastName == "") {
           if (!mobileNo == "" && mobileNo.length > 10) {
-            if (!city == "") {
+            // if (!city == "") {
               // if (Dp) {
               //   console.log("OKKKK Man");
               // profileIamge = await uploadImage(Dp);
@@ -119,9 +119,9 @@ const EditProfile = (props) => {
             }, 2000);
 
               // }
-            } else {
-              setErroMessage("city name cannont be empty");
-            }
+            // } else {
+            //   setErroMessage("city name cannot be empty");
+            // }
           } else {
             setErroMessage("Phone number cannot be empty and 11 characters");
           }
@@ -388,17 +388,17 @@ const EditProfile = (props) => {
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Phone Number</Text>
-            <View style={{flexDirection:'row'}}>
-              <Text style={{alignSelf:'center',left:5,top:2}}>+44</Text>
+            {/* <View style={{flexDirection:'row'}}>
+              <Text style={{alignSelf:'center',left:5,top:2}}>+44</Text> */}
               <TextInput
                 value={mobileNo}
-                style={[styles.textField,{left:7,width:'90%'}]}
+                style={[styles.textField,{}]}
                 onChangeText={(e) => setMobileNo(e.replace(/[^0-9]/g, ""))}
                 keyboardType="number-pad"
-                placeholder="7711111111"
+                placeholder="07894252624"
                 maxLength={11}
               />
-            </View>
+            {/* </View> */}
             
           </View>
 
@@ -414,7 +414,7 @@ const EditProfile = (props) => {
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>City, State</Text>
             <TextInput
-              value={'Lodon'}
+              value={'London'}
               // onChangeText={(e) => setCity(e)}
               style={styles.textField}
               editable={false}

@@ -41,7 +41,7 @@ import {
   logoName,
 } from "../../../../assets";
 // import { useLogin } from "../../../context/LoginProvider";
-import { responsiveHeight } from "react-native-responsive-dimensions";
+import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 import { connect } from "react-redux";
 import { SetSession } from "../../../Redux/Actions/Actions";
 const Signup = (props) => {
@@ -454,7 +454,7 @@ const Signup = (props) => {
         <View style={styles.logoContainer}>
           
           <Image
-            source={require("../../../../assets/Kabfi-logo.png")}
+            source={require("../../../../assets/logo.png")}
             resizeMode="contain"
             style={{
               height: 50,
@@ -554,7 +554,7 @@ const Signup = (props) => {
                 { borderColor: mobileNoValidator ? "red" : "#E6E6E6" },
               ]}
             >
-              <Text style={styles.countryCode}>+44</Text>
+              <Text style={[styles.countryCode,{paddingLeft:responsiveWidth(4.6)}]}>+44</Text>
               {/* <Text style={styles.countryCode}>+92</Text> */}
               <TextInput
                 style={[styles.textFieldFull, { paddingHorizontal: 20 }]}
@@ -580,7 +580,7 @@ const Signup = (props) => {
               ]}
             >
               <TextInput
-                style={styles.textFieldFull}
+                style={[styles.textFieldFull,{paddingLeft:responsiveWidth(4.6)}]}
                 value={email}
                 onChangeText={(e) => setEmail(e.trim())}
                 placeholder="name@example.com"
@@ -597,7 +597,7 @@ const Signup = (props) => {
           </View>
 
           <View style={[styles.formField, { width: "100%" }]}>
-            <View style={[styles.textFieldHalfContainer, { width: "100%" }]}>
+            <View style={[styles.textFieldHalfContainer, {  }]}>
               <TouchableOpacity
                 onPress={AlertTaxiLicenseImage}
                 style={styles.uploadImageFieldsContainer}
@@ -623,7 +623,7 @@ const Signup = (props) => {
                     <Text
                       style={{
                         textAlign: "center",
-                        marginLeft: responsiveHeight(1),
+                        marginLeft: responsiveWidth(4),
                         opacity: 0.3,
                       }}
                     >
@@ -663,7 +663,7 @@ const Signup = (props) => {
                     <Text
                       style={{
                         textAlign: "center",
-                        marginLeft: responsiveHeight(1),
+                        marginLeft: responsiveWidth(4),
                         opacity: 0.3,
                       }}
                     >
@@ -694,7 +694,7 @@ const Signup = (props) => {
               {/* start */}
 
               <TextInput
-                style={styles.textFieldFull}
+                style={[styles.textFieldFull,{marginLeft:responsiveWidth(2.2)}]}
                 value={password}
                 onChangeText={(e) => setPassword(e)}
                 secureTextEntry={passwordHidden}

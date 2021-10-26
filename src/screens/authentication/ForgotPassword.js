@@ -148,15 +148,17 @@ const styles = StyleSheet.create({
   },
   emailInput: {
     backgroundColor: "#FBFBFB",
-    borderRadius: 20,
+    borderRadius: 26,
     padding: 13,
+    height:48,
     textAlign: "center",
   },
 
   btn2: {
     marginTop: 30,
+    height:48,
     backgroundColor: "#FAB040",
-    borderRadius: 5,
+    borderRadius: 26,
     padding: 15,
     alignItems: "center",
   },
