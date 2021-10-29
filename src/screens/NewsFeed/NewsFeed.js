@@ -66,9 +66,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 import CountDown from "react-native-countdown-component";
-import { postData } from "../../Redux/Actions/Actions";
 
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
@@ -79,17 +77,11 @@ const NewsFeed = (props) => {
   const [refreshing, setRefreshing] = useState(true);
   const [show, setShow] = useState(false);
   const [uid, setUid] = useState("");
-  const [rate, setRate] = useState("");
   const [date, setDate] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [refreshingModal, setRefreshingModal] = useState(true);
   const [largImage, setLargeImage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [itemid, setitemid] = useState("");
-  const [timer, settimer] = useState(0);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [progressPlay, setProgressPlay] = useState(0);
   const [fontsLoaded, setfontsLoaded] = useState(false);
   const [sound, setsound] = useState();
   const refRBSheet = useRef();
@@ -98,24 +90,9 @@ const NewsFeed = (props) => {
   const [messge, setMessage] = useState("");
   const [timerStart, settimerStart] = useState(false);
   const [timerReset, settimerReset] = useState(false);
-  const [onstart, setonstart] = useState(false);
   const [onimage, setonimage] = useState(false);
-  const [onpostimage, setpostonimage] = useState(false);
   const [maxTimeInSeconds, setMaxTimeInSeconds] = useState([]);
 
-  const options = {
-    container: {
-      //backgroundColor: '#000',
-      //padding: 5,
-      borderRadius: 5,
-      //width: 220,
-    },
-    text: {
-      fontSize: 12,
-      color: "#FFF",
-      marginLeft: -7,
-    },
-  };
   useEffect(() => {
     setRefreshing(true);
     console.log(props?.route?.params?.screen);
@@ -295,7 +272,7 @@ const NewsFeed = (props) => {
     let arr = [];
     //.orderByChild("createdAt")
     setUid(uid);
-    await firebase
+    firebase
       .database()
       .ref("user_posts")
       .orderByChild("createdAt")
@@ -316,16 +293,6 @@ const NewsFeed = (props) => {
             const hideuser = firebase
               .database()
               .ref("user_posts/" + child.key + "/Hide");
-            //it will check the save post that user save
-            // const userSave = firebase
-            //   .database()
-            //   .ref(
-            //     "user_posts/" +
-            //       child.key +
-            //       "/Save/" +
-            //       firebase.auth().currentUser?.uid
-            //   );
-            //this will update if user change the picture
             const userImages = firebase
               .database()
               .ref("users/" + child.val().user);
@@ -335,13 +302,10 @@ const NewsFeed = (props) => {
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
                   userImages.on("value", (updateImage) => {
-                    // setonstart(true)
-                    // setpostonimage(true)
+                   
                     if (chil.exists()) {
                       //it will check if user exist in current post or not to change heart color
                       hideuser.on("value", (ishide) => {
-                        // console.log(ishide.val());
-                        //it will check and bypass post if current user hide the post
 
                         if (ishide.val() !== firebase.auth().currentUser.uid) {
                           setData({ ...data });
@@ -383,7 +347,6 @@ const NewsFeed = (props) => {
                       });
                     } else {
                       hideuser.on("value", (ishide) => {
-                        console.log("Hide", ishide.val());
 
                         if (ishide.val() !== firebase.auth().currentUser.uid) {
                           setData({ ...data });
@@ -437,20 +400,45 @@ const NewsFeed = (props) => {
   }
 
   async function likeHandler(post_id,post_user, likes_count, islike, index) {
-    
-
-
-    // console.log(uid +"******************"+ post_user);
-    console.log("Like handler before", !islike);
+    console.log('Notifications check',islike)
+    let userName = firebase.database().ref("users/" + post_user);
+    let arr = '';
+    //getting user push notification token
+    userName.on("value", (userdata) => {
+      if (
+            userdata.val()?.isEnabled === true &&
+            userdata.key !== user &&
+            userdata?.val()?.isLogin
+          ) {
+           arr=userdata.val()?.pushToken;
+           console.log(arr);
+          }
+          else{
+            console.log('Notifications else',userdata.val()?.isEnabled,userdata?.val()?.isLogin)
+            console.log(arr)
+          }
+    });
+    if(!islike){
+      var notification = firebase
+      .database()
+      .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
+      let addNoti = {
+        image:Dp,
+        name:name,
+        message: `liked your post.`,
+      };
+      notification.push(addNoti);
+      console.log(arr,'\n','Name',name);
+      if(uid != post_user && arr!==''){
+      RequestPushMsg(arr, name, 'liked your post.','liked your post.')
+    }
+    }
     const Details = {
       likes_count: islike ? likes_count - 1 : likes_count + 1,
     };
     posts[index].likes_count = Details.likes_count;
     posts[index].like = !islike;
     setSelectedId(post_id + likes_count);
-    setPosts(posts);
-
-    console.log("Like handler", posts[index].like);
     const delUser = firebase
       .database()
       .ref("user_posts/" + post_id + "/Like/")
@@ -467,26 +455,6 @@ const NewsFeed = (props) => {
     }
     const data = firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
-
-    if(!islike){
-      var notification = firebase
-      .database()
-      .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
-      let addNoti = {
-        image:Dp,
-        name:name,
-        message: `liked your post.`,
-      };
-      notification.push(addNoti);
-      if(uid != post_user){
-        RequestPushMsg(post_user, name, 'liked your post.')
-      }
-        // tokens.length > 0
-        //   ? tokens.map((item) => RequestPushMsg(item, name, 'liked your post.'))
-        //   : console.log("No One");
-    }
-   
-
     fetchAllPosts();
   }
   async function hideHandler(post_id) {

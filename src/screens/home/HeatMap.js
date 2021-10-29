@@ -368,10 +368,10 @@ export default class HeatMap extends Component {
           ) : (
             <MapView
               provider={PROVIDER_GOOGLE}
+              showsUserLocation={false}
               ref={(map) => (this._map = map)}
               style={styles.map}
               region={this.state.initialPosition}
-              showsUserLocation={false}
               loadingEnabled
             >
               <Heatmap

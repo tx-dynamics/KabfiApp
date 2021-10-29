@@ -203,7 +203,7 @@ const CreatePost = (props) => {
         notification.push(addNoti);
         myRef.set(Details).then(() => {
           tokens.length > 0
-            ? tokens.map((item) => RequestPushMsg(item, userName, postText))
+            ? tokens.map((item) => RequestPushMsg(item, userName, postText,'created a new post.'))
             : console.log("No One");
         });
         mylike.set(userId);

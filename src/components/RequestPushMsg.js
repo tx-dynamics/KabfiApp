@@ -1,4 +1,4 @@
-export function RequestPushMsg(token, name, msg) {
+export function RequestPushMsg(token, name, msg,posts) {
   console.log("param=>", token, msg);
   fetch("https://exp.host/--/api/v2/push/send", {
     method: "POST",
@@ -11,7 +11,7 @@ export function RequestPushMsg(token, name, msg) {
     body: JSON.stringify({
       to: token,
      // title: `${name} created a new post.`,
-      body: `${name} created a new post.`,
+      body: `${name} ${posts} `,
       // image:image,
       data: { msg: msg, title: "Kabfi Notification" },
       priority: "high",
