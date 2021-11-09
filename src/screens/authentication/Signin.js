@@ -28,7 +28,6 @@ import {
   MaterialIcons,
   Entypo,
 } from "@expo/vector-icons";
-// import { useLogin } from "../../context/LoginProvider";
 import firebase from "firebase";
 import { useIsFocused } from "@react-navigation/native";
 import { ScrollView } from "react-native";
@@ -56,7 +55,6 @@ const Signin = (props) => {
   const [messge, setMessage] = useState("");
   const notificationListener = useRef();
   const responseListener = useRef();
-  // const { setIsLoggedIn } = useLogin();
   useEffect(() => {
     if (isFocused) {
       console.log("TETS", firebase.auth().currentUser);

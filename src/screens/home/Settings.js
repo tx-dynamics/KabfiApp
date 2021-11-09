@@ -13,7 +13,6 @@ import {
   Linking,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-// import { useLogin } from "../../context/LoginProvider";
 import { Header } from "react-native-elements";
 import HeaderCenterComponent from "../../components/Settings/HeaderCenterComponent";
 import firebase from "firebase";
@@ -24,7 +23,6 @@ import { connect } from "react-redux";
 import { SetSession } from "../../Redux/Actions/Actions";
 
 const Settings = (props) => {
-  // const { setIsLoggedIn } = useLogin();
   const [loader, setLoader] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   useEffect(() => {
@@ -65,7 +63,7 @@ const Settings = (props) => {
       .auth()
       .signOut()
       .then(() => {
-        setLoader(false), props.navigation.navigate("Signin");
+        setLoader(false),
         props.SessionMaintain({ isLogin: false });
 
         // setIsLoggedIn(false);

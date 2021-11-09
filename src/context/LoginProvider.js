@@ -27,7 +27,6 @@ const LoginProvider = (props) => {
   );
 };
 
-// export const useLogin = () => useContext(LoginContext);
 
 // export default LoginProvider;
 const mapStateToProps = (state) => {

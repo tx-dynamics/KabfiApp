@@ -40,7 +40,6 @@ import {
   exclamation_mark,
   logoName,
 } from "../../../../assets";
-// import { useLogin } from "../../../context/LoginProvider";
 import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 import { connect } from "react-redux";
 import { SetSession } from "../../../Redux/Actions/Actions";
@@ -66,7 +65,6 @@ const Signup = (props) => {
   const [mobileNoValidator, setmobileNoValidator] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordValidator, setpasswordValidator] = useState(false);
-  // const { setIsLoggedIn } = useLogin();
   const [badgeNumberImage, setBadgeNumberImage] = useState(null);
   const [badgeNumberImageValidator, setbadgeNumberImageValidator] =
     useState(false);
