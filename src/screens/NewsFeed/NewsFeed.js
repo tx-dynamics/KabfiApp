@@ -106,8 +106,8 @@ const NewsFeed = (props) => {
     }
     loadFonts()
     fetchAllPosts();
-
-    // fetchLocation();
+    
+   fetchLocation();
   }, [isFocused]);
 
   function CheckConnectivity  ()  {

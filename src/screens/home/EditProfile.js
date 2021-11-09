@@ -414,9 +414,10 @@ const EditProfile = (props) => {
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>City, State</Text>
             <TextInput
-              value={city}
+              value={'London'}
               onChangeText={(e) => setCity(e)}
               style={styles.textField}
+              editable={false}
               // editable={false}
             />
           </View>
