@@ -198,7 +198,7 @@ const CreatePost = (props) => {
         let addNoti = {
           image:Dp,
           name:userName,
-          message: `upload new post.`,
+          message: `upload new post.${postText}`,
           createdAt: new Date().toISOString()
         };
         notification.push(addNoti);

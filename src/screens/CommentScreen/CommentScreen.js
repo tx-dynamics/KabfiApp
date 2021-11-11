@@ -280,7 +280,7 @@ const CommentScreen = ({ route, navigation }) => {
       let addNoti = {
         image:data.val().Dp,
         name:data.val().firstName + " " + data.val().lastName ,
-        message: `commented :${name}`,
+        message: `commented :${cmnt}`,
         createdAt: new Date().toISOString()
       };
       if(owner_id != firebase?.auth()?.currentUser?.uid){

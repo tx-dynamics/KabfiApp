@@ -95,9 +95,9 @@ const Notifications = (props) => {
           });
         })
       })
-    Array.prototype.push.apply(notis,arr);
-    setnotis(notis);
-    console.log("Noti Data==>", notis);
+    Array.prototype.push.apply(arr,notis);
+    setnotis(arr);
+    console.log("Noti Data==>", arr);
     setRefreshing(false);
   }
 
@@ -156,8 +156,12 @@ const Notifications = (props) => {
             }}
           >
             <Text style={{color:'black',fontSize:16,fontWeight:'500'}}>@{item.name} </Text>
-            {`${item.message} ${moment(item.time).fromNow()}`}
+            {`${item.message}.`}
+            <Text style={{color:'black',fontSize:16,fontWeight:'500'}}>
+            {` ${moment(item.time).fromNow()}`}
           </Text> 
+          </Text>
+         
         </View>
       </TouchableOpacity>
     );
