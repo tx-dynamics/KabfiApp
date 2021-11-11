@@ -71,7 +71,8 @@ const Notifications = (props) => {
                   message: data.val().message,
                   name: data.val().name,
                   postid: data.key,
-                  time:moment(data?.val()?.createdAt)- new Date().getTime()
+                  //time:moment(data?.val()?.createdAt)- new Date().getTime()
+                  time:data?.val()?.createdAt
                 });
               }
             });
@@ -155,7 +156,7 @@ const Notifications = (props) => {
             }}
           >
             <Text style={{color:'black',fontSize:16,fontWeight:'500'}}>@{item.name} </Text>
-            {`${item.message} ${moment(item.time).format('mm')}m`}
+            {`${item.message} ${moment(item.time).fromNow()}`}
           </Text> 
         </View>
       </TouchableOpacity>
