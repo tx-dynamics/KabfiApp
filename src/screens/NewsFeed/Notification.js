@@ -61,7 +61,7 @@ const Notifications = (props) => {
               );
 
             hideNoti.on("value", (hideId) => {
-              console.log("users=>", hideId.exists());
+              // console.log("users=>", hideId.exists());
               //   console.log(hideId.key);
               if (!hideId.exists()) {
                 notis.push({
@@ -77,8 +77,24 @@ const Notifications = (props) => {
         }
       });
     });
-    console.log("Noti Data==>", notis);
+      let arr=[];
+    var notification = firebase
+      .database()
+      .ref("Likes/" + uid);
+      notification.on('value',(child)=>{
+        console.log(child.val())
+        child.forEach(item=>{
+          arr.push({
+            id: item.key,
+            image: item.val().image,
+            message: item.val().message,
+            name: item.val().name,
+          });
+        })
+      })
+    Array.prototype.push.apply(notis,arr);
     setnotis(notis);
+    console.log("Noti Data==>", notis);
     setRefreshing(false);
   }
 
@@ -96,6 +112,7 @@ const Notifications = (props) => {
   const renderPosts = ({ item, index }) => {
     return (
       <TouchableOpacity
+      disabled={item?.postid?false:true}
         onPress={() => hideHandler(item.postid)}
         key={index}
         style={{

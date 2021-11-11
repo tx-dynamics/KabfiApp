@@ -123,7 +123,7 @@ const EditProfile = (props) => {
             //   setErroMessage("city name cannot be empty");
             // }
           } else {
-            setErroMessage("Phone number cannot be empty and 11 characters");
+            setErroMessage("Phone number cannot be empty and should be 11 characters long");
           }
         } else {
           console.log("1!");

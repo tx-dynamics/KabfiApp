@@ -57,7 +57,7 @@ const CommentScreen = ({ route, navigation }) => {
     const id = route.params.id;
     const owner_id = route.params.owner_id;
     setowner_id(owner_id)
-    // console.log(id +" "+ owner_id);
+    console.log(id +" "+ owner_id);
     if (id) {
       setId(id);
       getData(id);
@@ -240,7 +240,7 @@ const CommentScreen = ({ route, navigation }) => {
     userData.on("value", async (data) => {
       console.log("Data==>", data.val().firstName + " " + data.val().lastName);
       setImg(data.val().Dp);
-      setName(data.val().firstName + "" + data.val().lastName);
+      setName(data.val().firstName + " " + data.val().lastName);
       var myRef = firebase.database().ref("comments/" + id + "/");
       var data = {
         comments: cmnt,
@@ -254,122 +254,44 @@ const CommentScreen = ({ route, navigation }) => {
       setPosts(null);
     });
     setCmnt("");
-    // setPosts([]);
     getData(id);
     console.log("here");
-    // console.log(img +" "+name);
-
-    // const dataN = firebase.database().ref("users");
-
-    // const arr = [];
-
-    // dataN.on("value", (userdata) => {
-    //   {
-    //     userdata.forEach((child) => {
-    //       if (
-    //         child.val()?.isEnabled === true &&
-    //         child.key !== user &&
-    //         child?.val()?.isLogin
-    //       ) {
-    //         arr.push(child.val()?.pushToken);
-    //       }
-    //     });
-    //   }
-    // });
-
-    // setTokens(arr);
+    let userName = firebase.database().ref("users/" + owner_id);
+    let arr = '';
+    //getting user push notification token
+    userName.on("value", (userdata) => {
+      if (
+            userdata.val()?.isEnabled === true &&
+            userdata.key !== user &&
+            userdata?.val()?.isLogin
+          ) {
+           arr=userdata.val()?.pushToken;
+           console.log(arr);
+          }
+          else{
+            console.log('Notifications else',userdata.val()?.isEnabled,userdata?.val()?.isLogin)
+            console.log(arr)
+          }
+    });
 
     userData.on("value", async (data) => {
-    var notification = firebase
-    .database()
-      .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
+    var notification =  firebase.database()
+    .ref("Likes/" + owner_id);
       let addNoti = {
         image:data.val().Dp,
         name:data.val().firstName + " " + data.val().lastName ,
-        message: `commented : ${cmnt}`,
+        message: `commented :${name}`,
       };
-      notification.push(addNoti);
       if(owner_id != firebase?.auth()?.currentUser?.uid){
-          RequestPushMsg(owner_id, name, `commented : ${cmnt}`)
+        notification.push(addNoti);
+        RequestPushMsg(arr, name, `commented : ${cmnt},`,`commented : ${cmnt}`);
       }
-      // tokens.length > 0
-      //     ? tokens.map((item) => RequestPushMsg(item, name, `commented : ${cmnt}`))
-      //     : console.log("No One");
     })
     setisloading(false);
   }
-  async function startRecording() {
-    try {
-      console.log("Requesting permissions..");
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
-      ToastAndroid.show("Starting recording..", ToastAndroid.SHORT);
-      console.log("Starting recording..");
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-      );
-      setRecording(recording);
-      console.log("Recording started");
-    } catch (err) {
-      console.error("Failed to start recording", err);
-    }
-  }
-  async function playSound(uri) {
-    console.log("Loading Sound");
-    ToastAndroid.show("Loading Sound..", ToastAndroid.SHORT);
-    const { sound: playbackObject } = await Audio.Sound.createAsync(
-      { uri: uri },
-      { shouldPlay: true }
-    );
-    // setSound(sound);
 
-    console.log("Playing Sound", sound);
-    ToastAndroid.show("Playing Sound..", ToastAndroid.SHORT);
-    await playbackObject.playAsync();
-  }
-  async function stopRecording() {
-    console.log("Stopping recording..");
-    setRecording(undefined);
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    console.log("Recording stopped and stored at", recording._uri);
-    setSound(recording._uri);
-    ToastAndroid.show("Recording Saved..", ToastAndroid.SHORT);
-    // playSound(recording._uri);
-  }
-  const uploadImage = async (uri) => {
-    try {
-      // setLoader(true);
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      var timestamp = new Date().getTime();
-      var ref = firebase.storage().ref().child(`images/${timestamp}`);
-      const task = ref.put(blob);
-
-      return new Promise((resolve, reject) => {
-        task.on(
-          "state_changed",
-          () => {},
-          (err) => {
-            reject(err);
-          },
-          async () => {
-            const url = await task.snapshot.ref.getDownloadURL();
-            resolve(url);
-            // setLoader(false);
-          }
-        );
-      });
-    } catch (err) {
-      console.log("uploadImage error: " + err.message);
-    }
-  };
   return (
     <View
-      // behavior={Platform.OS === "ios" ? "padding" : null}
       style={{ flex: 1, backgroundColor: "white" }}
     >
       <Header

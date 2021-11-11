@@ -106,7 +106,6 @@ const NewsFeed = (props) => {
     }
     loadFonts()
     fetchAllPosts();
-    
    fetchLocation();
   }, [isFocused]);
 
@@ -421,11 +420,11 @@ const NewsFeed = (props) => {
     if(!islike){
       var notification = firebase
       .database()
-      .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
+      .ref("Likes/" + post_user);
       let addNoti = {
         image:Dp,
         name:name,
-        message: `liked your post.`,
+        message: `${name} liked your post.`,
       };
       notification.push(addNoti);
       console.log(arr,'\n','Name',name);
@@ -1231,12 +1230,17 @@ const NewsFeed = (props) => {
 
             <View style={styles.userInfoContainer}>
               <View style={styles.userInfo1}>
-                <Image
+               {Dp ? <Image
                   onLoadStart={() => setonimage(true)}
                   onLoadEnd={() => setonimage(false)}
                   source={Dp ? { uri: Dp } : user}
                   style={styles.smallImage}
-                />
+                />: <Image
+                onLoadStart={() => setonimage(true)}
+                onLoadEnd={() => setonimage(false)}
+                source={Dp ? { uri: Dp } : user}
+                style={styles.smallImage}/>
+                }
                 {/* {onimage && ( */}
                 <ActivityIndicator
                   animating={onimage}
