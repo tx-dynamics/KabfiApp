@@ -25,6 +25,7 @@ import {
   ActivityIndicator,
   Slider,
   ImageBackground,
+  Keyboard,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -95,13 +96,15 @@ const NewsFeed = (props) => {
 
   useEffect(() => {
     setRefreshing(true);
+    Keyboard.dismiss();
     console.log(props?.route?.params?.screen);
     var screen = props?.route?.params?.screen
     var created = props?.route?.params?.created
     if(screen ==='post'){
       if(created != undefined){
           setMessage(created);
-          setIsVisible(!isVisible)
+          setIsVisible(!isVisible);
+         props.navigation.setParams({screen: '', created: ''});
       }
     }
     loadFonts()
@@ -239,7 +242,7 @@ const NewsFeed = (props) => {
         if (location) {
           try {
             const id = firebase.auth().currentUser?.uid;
-            const mylocation = firebase.database().ref("locations/" + id);
+            const mylocation = firebase.database().ref("locations/" + firebase.auth().currentUser?.uid);
             mylocation.set(da);
           } catch (err) {}
         }
@@ -425,6 +428,7 @@ const NewsFeed = (props) => {
         image:Dp,
         name:name,
         message: `${name} liked your post.`,
+        createdAt: new Date().toISOString()
       };
       notification.push(addNoti);
       console.log(arr,'\n','Name',name);

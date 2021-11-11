@@ -281,10 +281,11 @@ const CommentScreen = ({ route, navigation }) => {
         image:data.val().Dp,
         name:data.val().firstName + " " + data.val().lastName ,
         message: `commented :${name}`,
+        createdAt: new Date().toISOString()
       };
       if(owner_id != firebase?.auth()?.currentUser?.uid){
         notification.push(addNoti);
-        RequestPushMsg(arr, name, `commented : ${cmnt},`,`commented : ${cmnt}`);
+        RequestPushMsg(arr, name, `commented ${cmnt},`,`commented ${cmnt}`);
       }
     })
     setisloading(false);

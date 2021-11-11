@@ -30,6 +30,7 @@ import {
   bar,
 } from "../../../assets";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
+import moment from "moment";
 
 const Notifications = (props) => {
   const [Dp, setDp] = useState("");
@@ -70,6 +71,7 @@ const Notifications = (props) => {
                   message: data.val().message,
                   name: data.val().name,
                   postid: data.key,
+                  time:moment(data?.val()?.createdAt)- new Date().getTime()
                 });
               }
             });
@@ -152,9 +154,9 @@ const Notifications = (props) => {
               width: 300,
             }}
           >
-            <Text style={{color:'black',fontSize:16,fontWeight:'bold'}}>@{item.name} </Text>
-            {item.message}
-          </Text>
+            <Text style={{color:'black',fontSize:16,fontWeight:'500'}}>@{item.name} </Text>
+            {`${item.message} ${moment(item.time).format('mm')}m`}
+          </Text> 
         </View>
       </TouchableOpacity>
     );

@@ -199,6 +199,7 @@ const CreatePost = (props) => {
           image:Dp,
           name:userName,
           message: `upload new post.`,
+          createdAt: new Date().toISOString()
         };
         notification.push(addNoti);
         myRef.set(Details).then(() => {
@@ -207,7 +208,7 @@ const CreatePost = (props) => {
             : console.log("No One");
         });
         mylike.set(userId);
-        myRef.set(Details);
+        // myRef.set(Details);
         // setMessage("Post Added Successfully");
         // setIsVisible(!isVisible);
         // alert("Post Added Successfully");
@@ -222,7 +223,7 @@ const CreatePost = (props) => {
             screen:'post',
             created: "Post Added Successfully",
           });
-        }, 2000);
+        }, 1000);
       } else {
         setloading(false);
         // alert("Upload data to post");
