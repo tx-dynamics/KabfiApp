@@ -5,7 +5,6 @@ import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 import NetInfo from "@react-native-community/netinfo";
 import * as Font from 'expo-font';
 import { RequestPushMsg } from "../../components/RequestPushMsg";
-import { connect } from "react-redux";
 import {
   View,
   Text,
@@ -801,7 +800,8 @@ const NewsFeed = (props) => {
                 numberOfLines={4}
                 style={{ textAlign: "left", color: "#464646", fontSize: 13 }}
               >
-                {item.post_text.length > 75 ? item.post_text.substring(0, 74) + "..." : item.post_text}
+                {item?.post_text?.length > 75 ? item?.post_text?.substring(0, 74) + "..." :
+                 item?.post_text}
                 {/* {item.post_text} */}
               </Text>
               {item.rec ? (

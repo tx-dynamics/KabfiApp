@@ -4,7 +4,6 @@ import Constants from "expo-constants";
 import React, { useState, useEffect, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
 import {
   View,
   Text,
@@ -56,27 +55,27 @@ const Signin = (props) => {
   const notificationListener = useRef();
   const responseListener = useRef();
   useEffect(() => {
-    if (isFocused) {
-      console.log("TETS", firebase.auth().currentUser);
-      firebase.auth().onAuthStateChanged(function (user) {
-        if (user) {
-          // fetchLocation();
-          registerForPushNotificationsAsync().then((token) =>
-            firebase
-              .database()
-              .ref("users/" + firebase.auth().currentUser?.uid + "/")
-              .update({
-                pushToken: token,
-                userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
-              })
-          );
-          // setIsLoggedIn(true);
-        } else {
-          // fetchLocation();
-          // setIsLoggedIn(false);
-        }
-      });
-    }
+    // if (isFocused) {
+    //   console.log("TETS", firebase.auth().currentUser);
+    //   firebase.auth().onAuthStateChanged( function (user) {
+    //     if (user) {
+    //       // fetchLocation();
+    //         registerForPushNotificationsAsync().then(async(token) =>
+    //           firebase
+    //           .database()
+    //           .ref("users/" + firebase.auth().currentUser?.uid + "/")
+    //           .update({
+    //             pushToken: token,
+    //             userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
+    //           })
+    //       );
+    //       // setIsLoggedIn(true);
+    //     } else {
+    //       // fetchLocation();
+    //       // setIsLoggedIn(false);
+    //     }
+    //   });
+    // }
     // Notifications.addNotificationReceivedListener((response) => {
     //   console.log(response);
     // });
@@ -85,7 +84,7 @@ const Signin = (props) => {
     //   Notifications.removeNotificationSubscription();
     //   Notifications.removeNotificationSubscription(responseListener.current);
     // };
-  }, [props, isFocused]);
+  }, []);
 
   function passwordVisibility() {
     passwordHidden === true
@@ -101,6 +100,7 @@ const Signin = (props) => {
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         registerForPushNotificationsAsync().then((token) =>
+      {  console.log('Token',token);
           firebase
             .database()
             .ref("users/" + firebase.auth().currentUser?.uid + "/")
@@ -108,7 +108,7 @@ const Signin = (props) => {
               pushToken: token,
               userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
               isLogin: true,
-            })
+            })}
         );
         props.SessionMaintain({ isLogin: true });
         // setIsLoggedIn(true);

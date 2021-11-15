@@ -94,7 +94,7 @@ const CreatePost = (props) => {
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
     setRecording(null);
-    getLocation();
+    // getLocation();
     setshow(false);
     inputRef.current.focus();
     return sound

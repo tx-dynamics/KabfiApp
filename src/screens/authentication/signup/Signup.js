@@ -83,18 +83,7 @@ const Signup = (props) => {
   useEffect( () => {
     setTimeout(function () {
       setisInit(true)
-    }, 2000)
-    // props.navigation.addListener("focus", () => {
-    //   if(props.route.params.number === undefined ){
-
-    //   }else{
-    //     getUser()
-
-    //   }
-    // })
-    // You need to restrict it at some point
-    // This is just dummy code and should be replaced by actual
-
+    }, 2000);
     getPermission();
   }, []);
 

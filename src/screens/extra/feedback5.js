@@ -104,7 +104,7 @@ const feedback5 = (props) => {
             { alignSelf: "center",color:'#3E4143',fontFamily:'Sf-pro-display', width: "80%", marginTop: 5, fontSize: 14 },
           ]}
         >
-          How you satisfied are you with KABFI?
+          How satisfied are you with KABFI?
         </Text>
         <Text style={{ marginTop: 25 }}></Text>
         <Image
