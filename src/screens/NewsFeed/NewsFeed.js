@@ -426,12 +426,12 @@ const NewsFeed = (props) => {
       let addNoti = {
         image:Dp,
         name:name,
-        message: `${name} liked your post.`,
+        message: ` liked your post.`,
         createdAt: new Date().toISOString()
       };
-      notification.push(addNoti);
       console.log(arr,'\n','Name',name);
       if(uid != post_user && arr!==''){
+      notification.push(addNoti);
       RequestPushMsg(arr, name, 'liked your post.','liked your post.')
     }
     }
@@ -1362,11 +1362,9 @@ const NewsFeed = (props) => {
       <TouchableOpacity
         onPress={() => props.navigation.navigate("CreatePost")}
         style={{
-          alignItems: "flex-end",
-          width: "90%",
+          alignSelf: "flex-end",
           bottom: 20,
-          backgroundColor: "transparent",
-          position: "absolute",
+          position: "absolute",right:20
         }}
       >
         <ImageBackground
