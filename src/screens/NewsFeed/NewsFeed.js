@@ -312,7 +312,7 @@ const NewsFeed = (props) => {
                           setData({ ...data });
                           arr.push({
                             id: child.key,
-                            likes_count: child.val().likes_count,
+                            likes_count: child.val()?.likes_count,
                             save_count: child.val().save_count
                               ? child.val().save_count
                               : 0,
@@ -354,7 +354,7 @@ const NewsFeed = (props) => {
                           arr.push({
                             id: child.key,
                             time: child.val().time,
-                            likes_count: child.val().likes_count,
+                            likes_count: child.val()?.likes_count,
                             save_count: child.val().save_count
                               ? child.val().save_count
                               : 0,
@@ -942,7 +942,7 @@ const NewsFeed = (props) => {
               <TouchableOpacity
                 style={{ flexDirection: "row" }}
                 onPress={() =>
-                  likeHandler(item.id,item.user, item.likes_count, item.like, index)
+                  likeHandler(item.id,item.user, item?.likes_count, item.like, index)
                 }
               >
                 {item.like?
@@ -962,7 +962,7 @@ const NewsFeed = (props) => {
                   color={item.like ? "green" : "black"}
                   style={{ alignSelf: "center" }}
                 /> */}
-                <Text style={styles.smallText}>{` ${item.likes_count} `}</Text>
+                <Text style={styles.smallText}>{` ${item?.likes_count} `}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity

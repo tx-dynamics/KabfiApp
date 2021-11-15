@@ -94,7 +94,7 @@ const CreatePost = (props) => {
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
     setRecording(null);
-    // getLocation();
+    getLocation();
     setshow(false);
     inputRef.current.focus();
     return sound
@@ -151,6 +151,7 @@ const CreatePost = (props) => {
   }
 
   async function savePost() {
+    console.log(Dp,userName);
     setloading(true);
     console.log(time, "here-=>");
     let post_Image;
@@ -207,7 +208,7 @@ const CreatePost = (props) => {
             ? tokens.map((item) => RequestPushMsg(item, userName, postText,'created a new post.'))
             : console.log("No One");
         });
-        mylike.set(userId);
+        // mylike.set(userId);
         // myRef.set(Details);
         // setMessage("Post Added Successfully");
         // setIsVisible(!isVisible);
