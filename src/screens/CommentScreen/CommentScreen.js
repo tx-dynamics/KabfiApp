@@ -285,7 +285,7 @@ const CommentScreen = ({ route, navigation }) => {
       };
       if(owner_id != firebase?.auth()?.currentUser?.uid){
         notification.push(addNoti);
-        RequestPushMsg(arr, name, `commented ${cmnt},`,`commented ${cmnt}`);
+        RequestPushMsg(arr, data.val().firstName + " " + data.val().lastName, `commented ${cmnt},`,`commented ${cmnt}`);
       }
     })
     setisloading(false);
