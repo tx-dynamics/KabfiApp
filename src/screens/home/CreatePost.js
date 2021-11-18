@@ -1015,6 +1015,8 @@ const styles = StyleSheet.create({
     //height: "100%",
     fontSize: 17,
     color: "#464646",
+    height: '100%',
+    width:'100%',
     //padding: responsiveHeight(2),
     marginTop: responsiveHeight(1),
   },

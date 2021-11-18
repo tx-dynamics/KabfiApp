@@ -31,7 +31,7 @@ const Map = ({ route, navigation }) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    fetchLocation();
+   // fetchLocation();
   }, [isFocused]);
   async function fetchLocation() {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);

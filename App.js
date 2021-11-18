@@ -1,8 +1,11 @@
-import { StatusBar } from "expo-status-bar";
+
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import LoginProvider from "./src/context/LoginProvider";
+import StackNavigatorAfter from './src/navigation/StackNavigatorAfter'
+import StackNavigator from './src/navigation/StackNavigator'
 console.disableYellowBox = true;
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Provider } from 'react-redux';
 import { store, persistor } from './src/Redux/Store';
 import { PersistGate } from 'redux-persist/integration/react';

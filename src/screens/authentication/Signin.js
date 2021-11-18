@@ -28,6 +28,7 @@ import {
   Entypo,
 } from "@expo/vector-icons";
 import firebase from "firebase";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import * as Permissions from "expo-permissions";
@@ -98,7 +99,7 @@ const Signin = (props) => {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(() => {
+      .then(async user => {
         registerForPushNotificationsAsync().then((token) =>
       {  console.log('Token',token);
           firebase
@@ -110,8 +111,11 @@ const Signin = (props) => {
               isLogin: true,
             })}
         );
+        console.log("me user id hi",user.user.uid)
+         await AsyncStorage.setItem('userId', user.user.uid)
         props.SessionMaintain({ isLogin: true });
-        // setIsLoggedIn(true);
+        
+         //setIsLoggedIn(true);
         setLoader(false);
       })
       .catch((error) => {
@@ -121,15 +125,15 @@ const Signin = (props) => {
         setLoader(false);
       });
   }
-  async function fetchLocation() {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== "granted") {
-      setMessage("Permission to access location was denied");
-      setIsVisible(!isVisible);
-      // alert("Permission to access location was denied");
-      return;
-    }
-  }
+  // async function fetchLocation() {
+  //   let { status } = await Permissions.askAsync(Permissions.LOCATION);
+  //   if (status !== "granted") {
+  //     setMessage("Permission to access location was denied");
+  //     setIsVisible(!isVisible);
+  //     // alert("Permission to access location was denied");
+  //     return;
+  //   }
+  // }
   return (
     <KeyboardAwareScrollView>
       <KeyboardAvoidingView

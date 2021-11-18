@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext,useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import StackNavigator from "../navigation/StackNavigator";
 import StackNavigatorAfter from "../navigation/StackNavigatorAfter";
@@ -8,6 +8,20 @@ import { connect } from 'react-redux'
 
 const LoginProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    async function fetchMyAPI() {
+      let id=  await AsyncStorage.getItem('userId')
+if(id){
+  setIsLoggedIn(true)
+  console.log("PAkistan me ho na",isLoggedIn)
+}
+else{
+  setIsLoggedIn(false)
+}
+   
+}
+    fetchMyAPI()
+  }, [])
 
   return (
     <NavigationContainer>
@@ -15,7 +29,8 @@ const LoginProvider = (props) => {
         {children}
       </LoginContext.Provider> */}
 
-      {props.isLogin ?
+      
+      {  props.isLogin?
         <StackNavigatorAfter />
 
         :
@@ -28,7 +43,7 @@ const LoginProvider = (props) => {
 };
 
 
-// export default LoginProvider;
+ //export default LoginProvider;
 const mapStateToProps = (state) => {
   return {
     isLogin: state.AuthReducer.isLogin

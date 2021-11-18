@@ -65,6 +65,7 @@ const Notifications = (props) => {
               // console.log("users=>", hideId.exists());
               //   console.log(hideId.key);
               if (!hideId.exists()) {
+               
                 notis.push({
                   id: child.key,
                   image: data.val().image,

@@ -9,9 +9,9 @@ import {
   TouchableOpacity,
   Switch,
   ActivityIndicator,
-  AsyncStorage,
   Linking,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
 import { Header } from "react-native-elements";
 import HeaderCenterComponent from "../../components/Settings/HeaderCenterComponent";
@@ -50,12 +50,12 @@ const Settings = (props) => {
       isLogin: false,
     };
 
-    const del = firebase
+    const del =  firebase
       .database()
       .ref("locations")
       .child(firebase.auth().currentUser?.uid);
     del.remove();
-    firebase
+     firebase
       .database()
       .ref("users/" + firebase.auth().currentUser?.uid)
       .update(data);
@@ -64,8 +64,8 @@ const Settings = (props) => {
       .signOut()
       .then(() => {
         setLoader(false),
+        AsyncStorage.removeItem('userId')
         props.SessionMaintain({ isLogin: false });
-
         // setIsLoggedIn(false);
       });
     setLoader(false);

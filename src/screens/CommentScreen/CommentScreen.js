@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Keyboard,
 } from "react-native";
+
 import Swipeout from "react-native-swipeout";
 import { RequestPushMsg } from "../../components/RequestPushMsg";
 import { user, send } from "../../../assets";
@@ -224,7 +225,7 @@ const CommentScreen = ({ route, navigation }) => {
                   {moment(item.createdAt).format("ddd, HH:mm")}
                 </Text>
               </View>
-              <Text numberOfLines={2} style={{ color: "black", fontSize: 13 }}>
+              <Text style={{ color: "black", fontSize: 13,marginRight:responsiveWidth(2.3),textAlign:'justify' }}>
                 {item.text}
               </Text>
             </View>
@@ -280,7 +281,7 @@ const CommentScreen = ({ route, navigation }) => {
       let addNoti = {
         image:data.val().Dp,
         name:data.val().firstName + " " + data.val().lastName ,
-        message: `commented :${cmnt}`,
+        message: `commented: ${cmnt}`,
         createdAt: new Date().toISOString()
       };
       if(owner_id != firebase?.auth()?.currentUser?.uid){
@@ -292,7 +293,8 @@ const CommentScreen = ({ route, navigation }) => {
   }
 
   return (
-    <View
+    <>
+    <KeyboardAwareScrollView
       style={{ flex: 1, backgroundColor: "white" }}
     >
       <Header
@@ -308,16 +310,19 @@ const CommentScreen = ({ route, navigation }) => {
       />
 
       <FlatList data={posts} renderItem={renderPosts} />
+      </KeyboardAwareScrollView>
       <View
         style={{
           backgroundColor: "#FFF",
           width: "100%",
-          position: "absolute",
-          bottom: valueforBorrom
-            ? keyBoardHeight -
-              initialWindowMetrics.insets.bottom +
-              responsiveHeight(1)
-            : 0,
+         position: "absolute",
+         bottom: 
+         valueforBorrom
+           ? keyBoardHeight -
+             initialWindowMetrics.insets.bottom +
+             responsiveHeight(1)
+           : 0,
+         
           paddingVertical: 8,
         }}
       >
@@ -358,7 +363,7 @@ const CommentScreen = ({ route, navigation }) => {
               justifyContent: "center",
               alignSelf: "center",
               marginRight: responsiveHeight(1.5),
-              marginTop: responsiveHeight(1.5),
+              marginTop: responsiveHeight(2),
             }}
           >
             {isloading ? (
@@ -374,7 +379,7 @@ const CommentScreen = ({ route, navigation }) => {
         </View>
       </View>
       {/* </KeyboardAvoidingView> */}
-    </View>
+    </>
   );
 };
 export default CommentScreen;

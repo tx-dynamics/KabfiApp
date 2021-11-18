@@ -92,13 +92,15 @@ const NewsFeed = (props) => {
   const [timerReset, settimerReset] = useState(false);
   const [onimage, setonimage] = useState(false);
   const [maxTimeInSeconds, setMaxTimeInSeconds] = useState([]);
-
+   
   useEffect(() => {
     setRefreshing(true);
-    Keyboard.dismiss();
-    console.log(props?.route?.params?.screen);
+    //Keyboard.dismiss();
+    //console.log(props?.route?.params?.screen);
     var screen = props?.route?.params?.screen
     var created = props?.route?.params?.created
+    const id =  firebase.auth().currentUser?.uid;
+        console.log("I ma testing LOC",id)
     if(screen ==='post'){
       if(created != undefined){
           setMessage(created);
@@ -109,8 +111,13 @@ const NewsFeed = (props) => {
     loadFonts()
     fetchAllPosts();
    fetchLocation();
+   ()=>{
+    Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+   }
   }, [isFocused]);
-
+  const _keyboardDidHide = () => {
+    console.log("Keyboard Hidden");
+  };
   function CheckConnectivity  ()  {
     // For Android devices
     NetInfo.fetch().then((state) => {
@@ -237,13 +244,23 @@ const NewsFeed = (props) => {
           longitude: location.coords.longitude,
           latitudeDelta: 0.015,
           longitudeDelta: 0.0121,
+         
         };
         if (location) {
           try {
-            const id = firebase.auth().currentUser?.uid;
-            const mylocation = firebase.database().ref("locations/" + firebase.auth().currentUser?.uid);
+            
+            const id = await firebase.auth().currentUser?.uid;
+            //console.log("I ma testing LOC",id)
+            if(id){
+            const mylocation = 
+            firebase.database().
+            ref("locations/" + 
+            id);
             mylocation.set(da);
-          } catch (err) {}
+            }
+          } catch (err) {
+            
+          }
         }
       }
     } catch (err) {

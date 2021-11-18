@@ -21,6 +21,7 @@ import {
   responsiveHeight,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 const feedback5 = (props) => {
   const [isSmile, setisSmile] = useState(false);
   const [tell, settell] = useState("");
@@ -80,15 +81,8 @@ const feedback5 = (props) => {
     // }
   }
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: "white", flexGrow: 1 }}
-      // keyboardShouldPersistTaps="always"
-    >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1, backgroundColor: "white" }}
-        // keyboardShouldPersistTaps="handled"
-      >
+    <KeyboardAwareScrollView  style={{ flex: 1, backgroundColor: "white", flexGrow: 1 }}>
+  
         <StatusBar style="dark" />
         <Header
           backgroundColor="white"
@@ -237,8 +231,7 @@ const feedback5 = (props) => {
             />
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+        </KeyboardAwareScrollView>
   );
 };
 export default feedback5;

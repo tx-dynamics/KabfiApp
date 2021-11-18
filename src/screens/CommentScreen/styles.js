@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     paddingLeft: responsiveHeight(2),
     paddingTop:responsiveHeight(1),
     alignSelf:'center',
-    marginTop:responsiveHeight(1.5)
+    marginTop:responsiveHeight(2)
    // margin:responsiveHeight(1)
   },
   statusIcon: {
