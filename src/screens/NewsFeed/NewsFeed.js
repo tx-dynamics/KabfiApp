@@ -67,6 +67,7 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import CountDown from "react-native-countdown-component";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
@@ -92,11 +93,9 @@ const NewsFeed = (props) => {
   const [timerReset, settimerReset] = useState(false);
   const [onimage, setonimage] = useState(false);
   const [maxTimeInSeconds, setMaxTimeInSeconds] = useState([]);
+  const[nots,setnots]=useState();
    
   useEffect(() => {
-    setRefreshing(true);
-    //Keyboard.dismiss();
-    //console.log(props?.route?.params?.screen);
     var screen = props?.route?.params?.screen
     var created = props?.route?.params?.created
     const id =  firebase.auth().currentUser?.uid;
@@ -108,13 +107,78 @@ const NewsFeed = (props) => {
          props.navigation.setParams({screen: '', created: ''});
       }
     }
-    loadFonts()
+    fetchAllNoti();
+    loadFonts();
     fetchAllPosts();
    fetchLocation();
    ()=>{
     Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
    }
   }, [isFocused]);
+  async function fetchAllNoti() {
+    const uid = firebase.auth().currentUser?.uid;
+    const userNoti = firebase.database().ref("Notifications/");
+    let notis = [];
+    userNoti.on("value", (userdata) => {
+      userdata.forEach((child) => {
+        if (child.key !== uid) {
+          child.forEach((data) => {
+            const hideNoti = firebase
+              .database()
+              .ref(
+                "users/" +
+                  firebase.auth().currentUser?.uid +
+                  "/hide/" +
+                  data.key
+              );
+
+            hideNoti.on("value", (hideId) => {
+              // console.log("users=>", hideId.exists());
+              //   console.log(hideId.key);
+              if (!hideId.exists()) {
+               
+                notis.push({
+                  id: child.key,
+                  image: data.val().image,
+                  message: data.val().message,
+                  name: data.val().name,
+                  postid: data.key,
+                  //time:moment(data?.val()?.createdAt)- new Date().getTime()
+                  time:data?.val()?.createdAt
+                });
+              }
+            });
+          });
+        }
+      });
+    });
+      let arr=[];
+    var notification = firebase
+      .database()
+      .ref("Likes/" + uid);
+      notification.on('value',(child)=>{
+        console.log(child.val())
+        child.forEach(item=>{
+          arr.push({
+            id: item.key,
+            image: item.val().image,
+            message: item.val().message,
+            name: item.val().name,
+          });
+        })
+      })
+    Array.prototype.push.apply(arr,notis);
+    console.log("Noti Data==>", arr);
+    
+    const num=await AsyncStorage.getItem('num');
+    
+    console.log('notis',num);
+    if(Number (num)>0){
+      // alert('here')
+      setnots(arr.length-Number(num));
+      console.log('notis',arr.length-Number(num));
+    }
+  }
   const _keyboardDidHide = () => {
     console.log("Keyboard Hidden");
   };
@@ -274,7 +338,7 @@ const NewsFeed = (props) => {
 
   async function fetchAllPosts() {
     setRefreshing(true);
-    CheckConnectivity()
+    CheckConnectivity();
     const uid = firebase.auth().currentUser?.uid;
     const userdataNAme = firebase.database().ref("users/" + uid);
     userdataNAme.on("value", (userdata) => {
@@ -1098,12 +1162,14 @@ const NewsFeed = (props) => {
               style={{
                 height: 25,
                 width: 25,
-                // alignItems: "flex-end",
+                alignItems: "flex-end",
                 // alignSelf: "center",
                 marginTop: 15,
                 // backgroundColor: 'tomato',
               }}
-            ></ImageBackground>
+            >
+             {nots>0&& <Text style={{height:10,width:10,borderRadius:5,backgroundColor:'tomato'}}></Text>}
+            </ImageBackground>
           </TouchableOpacity>
         }
         centerComponent={<HeaderCenterComponent name="News Feed" />}

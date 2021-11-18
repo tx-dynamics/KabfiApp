@@ -49,7 +49,7 @@ const Settings = (props) => {
     const data = {
       isLogin: false,
     };
-
+AsyncStorage.removeItem('num');
     const del =  firebase
       .database()
       .ref("locations")

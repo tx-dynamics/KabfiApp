@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  RefreshControl,
+  RefreshControl,AsyncStorage
 } from "react-native";
 import styles from "./styles";
 import { Header, Card } from "react-native-elements";
@@ -16,18 +16,6 @@ import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
 import {
   user,
-  more,
-  postImage,
-  reload,
-  comments,
-  favourite,
-  heartImage,
-  locationImage,
-  drawer,
-  menu,
-  bars,
-  noti,
-  bar,
 } from "../../../assets";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import moment from "moment";
@@ -97,6 +85,7 @@ const Notifications = (props) => {
         })
       })
     Array.prototype.push.apply(arr,notis);
+    AsyncStorage.setItem('num',JSON.stringify( arr.length));
     setnotis(arr);
     console.log("Noti Data==>", arr);
     setRefreshing(false);
