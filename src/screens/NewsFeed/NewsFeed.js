@@ -20,7 +20,7 @@ import {
   KeyboardAvoidingView,
   Modal,
   Linking,
-  TouchableHighlight,
+  Share,
   ActivityIndicator,
   Slider,
   ImageBackground,
@@ -31,7 +31,7 @@ import styles from "./styles";
 import { Header, Card } from "react-native-elements";
 import RBSheet from "react-native-raw-bottom-sheet";
 import {
-  user,
+  user,gmap,
   more,
   postImage,
   reload,
@@ -46,15 +46,15 @@ import {
   menu,
   bars,
   noti,
-  bar,
+  bar,b10,b20,b30,brst,pst,
   
 } from "../../../assets";
 import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-
+import Entypo from "react-native-vector-icons/Entypo";
+import Feather from "react-native-vector-icons/Feather";
 import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import HeaderRight from "../../components/HeaderRight";
 import { useIsFocused } from "@react-navigation/native";
@@ -64,11 +64,13 @@ import * as Location from "expo-location";
 import moment from "moment";
 import {
   responsiveHeight,
+  responsiveScreenHeight,
+  responsiveScreenWidth,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import CountDown from "react-native-countdown-component";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import ActionButton from 'react-native-action-button';
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -94,11 +96,19 @@ const NewsFeed = (props) => {
   const [onimage, setonimage] = useState(false);
   const [maxTimeInSeconds, setMaxTimeInSeconds] = useState([]);
   const[nots,setnots]=useState();
-   
+  const[modeltxt,setmodeltxt]=useState();
+  const[modelname,setmodelname]=useState();
+  const[modeltime,setmodeltime]=useState();
+  const[modelUsername,setmodelUsername]=useState();
+  const[modeluserImage,setmodeluserImage]=useState();
+  const [burstModel, setburstModel] = useState(false);
+  const[burstvalue,setburstvalue]=useState('');
+  const [loading, setloading] = useState(false);
   useEffect(() => {
     var screen = props?.route?.params?.screen
     var created = props?.route?.params?.created
     const id =  firebase.auth().currentUser?.uid;
+    setburstvalue('');
         console.log("I ma testing LOC",id)
     if(screen ==='post'){
       if(created != undefined){
@@ -198,8 +208,6 @@ const NewsFeed = (props) => {
       
     });
   };
-
-  
 
   async function  loadFonts() {
     await Font.loadAsync({
@@ -313,8 +321,9 @@ const NewsFeed = (props) => {
         if (location) {
           try {
             
-            const id = await firebase.auth().currentUser?.uid;
-            //console.log("I ma testing LOC",id)
+            const id =  firebase.auth().currentUser?.uid;
+            console.log("I ma testing LOC",location)
+
             if(id){
             const mylocation = 
             firebase.database().
@@ -335,7 +344,85 @@ const NewsFeed = (props) => {
     }
     setRefreshing(false);
   }
-
+  async function savePost() {
+    // setloading(true);
+    let post_Image;
+    let sound;
+    try {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== "granted") {
+        setMessage("Permission to access location was denied");
+        setIsVisible(!isVisible);
+        setModalVisible(false);
+        setloading(false);
+        setburstModel(false);
+        setburstvalue('');
+        // alert("Permission to access location was denied");
+        return;
+      } else {
+        let location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+        var da = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+         
+        };
+        if (location && burstvalue) {
+          try {
+            
+        const id =  firebase.auth().currentUser?.uid;
+        console.log("I ma testing LOC",location);
+        var myRef = firebase.database().ref("user_posts").push();
+        var key = myRef.getKey();
+        let Details = {
+          post_id: key,
+          user: firebase.auth().currentUser.uid,
+          userName: name,
+          user_image: Dp,
+          likes_count: 0,
+          likes_user: [],
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,burstvalue,
+          createdAt: new Date().toISOString(),
+          
+        };
+   
+        myRef.set(Details);
+        setloading(false);
+        setburstModel(false);
+        setburstvalue('');
+        fetchAllPosts();
+        return;
+          } catch (error) {
+            console.log("error.message", error.message);
+            setloading(false);
+      setMessage(error.message);
+      setIsVisible(!isVisible);
+      setModalVisible(false);
+      setburstModel(false);
+      setburstvalue('');
+          }
+        }
+      }
+    
+    } catch (error) {
+      setloading(false);
+      setMessage(error.message);
+      setIsVisible(!isVisible);
+      setModalVisible(false);
+      setburstModel(false);
+      setburstvalue('');
+      // alert(error.message);
+    }
+  }
+ const openGps = (lat, lng) => {
+    var scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
+    var url = scheme + `${lat},${lng}`;
+    Linking.openURL(url);
+  }
   async function fetchAllPosts() {
     setRefreshing(true);
     CheckConnectivity();
@@ -422,6 +509,9 @@ const NewsFeed = (props) => {
                             time: child.val().time,
                             loadimage: false,
                             loadpostimage: false,
+                            latitude: child.val()?.latitude,
+                            longitude: child.val()?.longitude,
+                            burstvalue:child.val()?.burstvalue,
                           });
                         } else {
                           return;
@@ -463,7 +553,9 @@ const NewsFeed = (props) => {
                                 : null,
                             isShow: false,
                             loadimage: false,
-                            loadpostimage: false,
+                            loadpostimage: false, latitude: child.val()?.latitude,
+                            longitude: child.val()?.longitude,
+                            burstvalue:child.val()?.burstvalue,
                           });
                         }
                       });
@@ -476,7 +568,7 @@ const NewsFeed = (props) => {
       });
     const ik = arr.reverse();
     setPosts(arr);
-    // console.log("posts", ik);
+    console.log("posts", ik);
     setRefreshing(false);
     // imageloader()
   }
@@ -752,7 +844,7 @@ const NewsFeed = (props) => {
               },
             ]}
           >
-            <View style={[{ flexDirection: "row" }]}>
+            <View style={[{ flexDirection: "row", }]}>
               <View>
                 <Image
                   onLoadStart={() => imageloaderStart(item.id)}
@@ -796,6 +888,13 @@ const NewsFeed = (props) => {
                   item.createdAt
                 ).format("ddd, HH:mm")}`}</Text>
               </Text>
+            { item?.burstvalue&& <View>
+              <Image
+                  source={item?.burstvalue==='30+'?b30:item?.burstvalue==='20+'?b20:b10}
+                  style={[ {height:30,width:30,top:10,left:5}]}
+                  resizeMode='contain'
+                />
+              </View>}
             </View>
             <OptionsMenu
               button={more}
@@ -833,6 +932,19 @@ const NewsFeed = (props) => {
             />
           </View>
 
+        {item?.burstvalue?
+        <TouchableOpacity
+        onPress={()=>openGps(item?.latitude,item?.longitude)}
+            style={{
+            
+            }}
+          >
+            <Image
+                  source={gmap}
+                  style={{ width: '100%', height:responsiveScreenHeight(13) }}
+                  resizeMode='cover'
+                />
+          </TouchableOpacity>:
           <View
             style={{
               flexDirection: "row",
@@ -844,9 +956,13 @@ const NewsFeed = (props) => {
             {item.post_image ? (
               <TouchableOpacity
                 onPress={() => {
+                  setmodelUsername(item?.userName);
+                  setmodeltime( item.createdAt);
                   setLargeImage(item.post_image);
+                  setmodeltxt(item?.post_text);
                   setModalVisible(true);
                   setRefreshingModal(true);
+                  setmodeluserImage(item?.user_image);
                 }}
                 style={{ flex: 1.2,marginLeft:responsiveWidth(1) }}
               >
@@ -991,7 +1107,7 @@ const NewsFeed = (props) => {
                 </View>
               ) : null}
             </View>
-          </View>
+          </View>}
         </View>
         <View
           style={[
@@ -1037,12 +1153,6 @@ const NewsFeed = (props) => {
                     style={{width:18,height:16,alignSelf:'center'}}
                   />
                 }
-                {/* <Ionicons
-                  name="heart"
-                  size={20}
-                  color={item.like ? "green" : "black"}
-                  style={{ alignSelf: "center" }}
-                /> */}
                 <Text style={styles.smallText}>{` ${item?.likes_count} `}</Text>
               </TouchableOpacity>
             </View>
@@ -1096,7 +1206,27 @@ const NewsFeed = (props) => {
       </View>
     );
   };
-
+  const onShare = async () => {
+   
+    try {
+      const result = await Share.share({
+        message: modeltxt,
+        url:largImage,
+        title:modeltxt
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
   return (
     <View style={styles.main}>
       <Modal
@@ -1109,26 +1239,154 @@ const NewsFeed = (props) => {
           // Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Image
-              style={{ width: "100%", height: "98%" }}
-              loadingIndicatorSource={{ uri: largImage }}
-              resizeMode="contain"
-            />
-            <TouchableHighlight
-              style={{
-                backgroundColor: "#FCB040",
-                width: "100%",
-                height: "5%",
-                justifyContent: "center",
-              }}
-              onPress={() => {
+        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',flex:1,backgroundColor:'black',opacity:0.7}}>
+        <View style={{flexDirection:'row',width:'70%',justifyContent:'flex-end',alignSelf:'center'}}>
+        <TouchableOpacity style={{marginRight:10}} onPress={onShare}>
+      <Feather name='share' size={30} color={'white'} />
+      </TouchableOpacity>
+      <TouchableOpacity  onPress={() => {
                 setModalVisible(!modalVisible);
-              }}
-            >
-              <Text style={styles.textStyle}>Hide Image</Text>
-            </TouchableHighlight>
+              }}>
+        <Entypo name='cross' size={30} color={'white'} />
+        </TouchableOpacity>
+        </View>
+          <View style={{
+                  backgroundColor:'white',
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    elevation: 5,
+    width: '70%',borderBottomRightRadius:20,borderBottomLeftRadius:20,alignSelf:'center',
+    height:responsiveScreenHeight (30),}}>
+      
+            <Image
+              style={{ width: "100%", height: "50%" }}
+              source={{ uri: largImage }}
+              // resizeMode=''
+            />
+             <View style={[{ flexDirection: "row",backgroundColor:'white',width:'100%',height:'50%',
+             borderBottomRightRadius:20,borderBottomLeftRadius:20}]}>
+                <Image
+                  source={modeluserImage ? { uri: modeluserImage } : user}
+                  style={ {
+                    height: 50,
+                    width: 50,
+                    borderRadius: 25,
+                    margin: 5,
+                  //  bottom:10
+                  }}
+                />
+              <View>
+              <Text
+                style={[
+                  {
+                    marginTop: responsiveHeight(1.2),
+                  },
+                ]}
+              >
+               
+                <Text style={[{fontFamily:'Sf-pro-display-bold', color: "#464646", fontWeight: "700" }]}>
+                  {modelUsername}
+                </Text>
+                <Text
+                  style={[
+                    styles.mediumText,
+                    {
+                      color: "#464646",
+                      fontSize: 11,
+                    },
+                  ]}
+                >{`\n@${modelUsername}. ${moment(
+                  modeltime
+                ).format("ddd, HH:mm")}`}</Text>
+              </Text>
+              <Text
+                numberOfLines={2}
+                style={{ textAlign: "left", color: "#464646", fontSize: 13,
+                top:responsiveScreenHeight(1),width:'35%'}}
+              >
+                {modeltxt}
+              </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={burstModel}
+        onRequestClose={() => {
+          setMessage("Modal has been closed.");
+          setIsVisible(!isVisible);
+          // Alert.alert("Modal has been closed.");
+        }}
+      >
+        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',flex:1,backgroundColor:'black',opacity:0.8}}>
+          <View style={{
+                  backgroundColor:'white',
+                    alignItems: "center",
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                    width: '80%',borderRadius:30,alignSelf:'center',
+                    height:responsiveScreenHeight (40),
+    }}>
+      <View style={{backgroundColor:'white',height:'80%',width:'100%',borderRadius:30}}>
+        <View style={{marginTop:responsiveScreenHeight(3),alignSelf:'center'}}>
+        <Text style={{fontSize:18,fontWeight:'bold'}}>Demand indicator</Text>
+        </View>
+        <TouchableOpacity
+        onPress={()=>setburstvalue('10+')}
+        style={{marginTop:responsiveScreenHeight(3),
+        alignSelf:'center',width:'80%',
+        backgroundColor:'lightgreen',
+        paddingVertical:10,borderRadius:20
+        }}>
+        <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>10+</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+         onPress={()=>setburstvalue('20+')}
+        style={{marginTop:responsiveScreenHeight(3),
+        alignSelf:'center',width:'80%',
+        backgroundColor:'skyblue',
+        paddingVertical:10,borderRadius:20
+        }}>
+        <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>20+</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+        onPress={()=>{setburstvalue('30+'),console.log(burstvalue)}}
+        style={{marginTop:responsiveScreenHeight(3),
+        alignSelf:'center',width:'80%',
+        backgroundColor:'pink',
+        paddingVertical:10,borderRadius:20
+        }}>
+        <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>30+</Text>
+        </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+        disabled={burstvalue===''?true:false}
+         onPress={()=>{savePost(),setRefreshing(true),setburstModel(false)}}
+        style={{marginTop:responsiveScreenHeight(3),
+        alignSelf:'center',width:'80%',
+        // backgroundColor:'pink',
+        paddingVertical:10,borderRadius:20
+        }}>
+          {loading ? (
+                <ActivityIndicator animating color={"red"} size={'large'} style={{bottom:10}}/>
+              ) : (
+        <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>BURST IT</Text>)}
+        </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -1216,16 +1474,6 @@ const NewsFeed = (props) => {
       ) : (
         <></>
       )}
-
-      {/* {posts === null ?
-    
-    <View style={{alignSelf:'center',height:'200',alignItems:'center',justifyContent:'center'}}>
-      <ActivityIndicator color={'#FCB040'} size={'large'}/>
-    </View>
-
-
-      :   */}
-
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />
@@ -1236,65 +1484,7 @@ const NewsFeed = (props) => {
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
-      {/* } */}
-      {/* {show && (
-        <View
-          style={{
-            backgroundColor: "lightgray",
-            width: "100%",
-            alignSelf: "center",
-            position: "absolute",
-            bottom: 0,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              marginTop: 10,
-              backgroundColor: "#FBFBFB",
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              padding: 13,
-              alignItems: "center",
-              width: "90%",
-              alignSelf: "center",
-              borderBottomWidth: 0.5,
-              borderColor: "lightgray",
-            }}
-            onPress={() => hideHandler(itemid)}
-          >
-            <Text style={{ color: "skyblue" }}>Hide</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#FBFBFB",
-              padding: 13,
-              alignItems: "center",
-              width: "90%",
-              alignSelf: "center",
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
-            }}
-            onPress={() => reportHandler(itemid)}
-          >
-            <Text style={{ color: "red" }}>Report</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              marginTop: 30,
-              backgroundColor: "#FBFBFB",
-              borderRadius: 5,
-              padding: 13,
-              alignItems: "center",
-              width: "90%",
-              alignSelf: "center",
-              marginBottom: 5,
-            }}
-            onPress={() => setShow(false)}
-          >
-            <Text style={{ color: "skyblue" }}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      )} */}
+  
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
@@ -1442,7 +1632,7 @@ const NewsFeed = (props) => {
           </ScrollView>
         </View>
       </RBSheet>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => props.navigation.navigate("CreatePost")}
         style={{
           alignSelf: "flex-end",
@@ -1458,7 +1648,34 @@ const NewsFeed = (props) => {
             width: 50,
           }}
         ></ImageBackground>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+  <ActionButton buttonColor="orange" position="right"   >
+              
+                <ActionButton.Item buttonColor="transparent"
+                    size={34}
+                    // title="Book Resource"
+                    onPress={() => props.navigation.navigate("CreatePost")}>
+                    <ImageBackground
+                    source={pst} resizeMode={"contain"}
+                    style={{
+                    height: 50,
+                    width: 50,top:2
+          }}
+        ></ImageBackground>
+                </ActionButton.Item>
+                <ActionButton.Item buttonColor="transparent"
+                    size={34}
+                    // title="Book Resource"
+                    onPress={() => setburstModel(true)}>
+                    <ImageBackground
+                    source={brst} resizeMode={"contain"}
+                    style={{
+                    height: 50,
+                    width: 50,top:2
+          }}
+        ></ImageBackground>
+                </ActionButton.Item>
+            </ActionButton>
     </View>
   );
 };

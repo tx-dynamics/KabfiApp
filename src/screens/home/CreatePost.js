@@ -48,17 +48,11 @@ import firebase from "firebase";
 import { Audio } from "expo-av";
 import Entypo from "react-native-vector-icons/Entypo";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useIsFocused } from "@react-navigation/native";
 import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-import { RequestPushMsg } from "../../components/RequestPushMsg";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import AudioView from "./AudioRecording";
 import { Feather } from "@expo/vector-icons";
-import { set } from "react-native-reanimated";
 import { connect } from "react-redux";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
@@ -174,9 +168,6 @@ const CreatePost = (props) => {
         console.log("postImage", postImage);
         var myRef = firebase.database().ref("user_posts").push();
         var key = myRef.getKey();
-        var mylike = firebase
-          .database()
-          .ref("user_posts/" + key + "/Like/" + userId);
         let Details = {
           post_id: key,
           user: userId,
@@ -248,12 +239,11 @@ const CreatePost = (props) => {
       compress: 0,
       format: ImageManipulator.SaveFormat.PNG,
     });
-    console.log("result", manipResult);
+    console.log("result", manipResult,'\n',result.uri);
 
-    if (!result.cancelled) {
-      setPostImage(manipResult.uri);
+   
       uploadImage(manipResult.uri);
-    }
+      setPostImage(manipResult.uri);
   };
 
   const uploadImage = async (uri) => {
@@ -276,6 +266,7 @@ const CreatePost = (props) => {
             const url = await task.snapshot.ref.getDownloadURL();
             resolve(url);
             setPostImage(url);
+            console.log('firebase',url);
             // setLoader(false);
           }
         );

@@ -25,6 +25,12 @@ export const loadad = require("./ProjectImages/users/loadad.png");
 export const cross = require("./ProjectImages/users/close.png");
 export const sendd = require("./ProjectImages/users/send.png");
 export const dell = require("./ProjectImages/users/dell.png");
+export const b10 = require("./ProjectImages/b10.png");
+export const b20 = require("./ProjectImages/b20.png");
+export const b30 = require("./ProjectImages/b30.png");
+export const brst = require("./ProjectImages/brst.png");
+export const pst = require("./ProjectImages/post.png");
+export const gmap = require("./ProjectImages/gmap.jpg");
 //others
 export const galleryImage = require("./ProjectImages/authentication/PhotoIcon.png");
 export const tickImage = require("./ProjectImages/authentication/tick.png");
