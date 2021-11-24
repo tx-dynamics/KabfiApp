@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     color: "#474747",
   },
   main: {
+    
     flex: 1,
     backgroundColor: "white",
     //height:Dimensions.get("window").height-100

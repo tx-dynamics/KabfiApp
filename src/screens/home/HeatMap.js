@@ -373,6 +373,7 @@ export default class HeatMap extends Component {
               style={styles.map}
               region={this.state.initialPosition}
               loadingEnabled
+              maxZoomLevel={14} 
             >
               <Heatmap
                 points={this.state.points}

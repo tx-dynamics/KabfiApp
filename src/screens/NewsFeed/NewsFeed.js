@@ -102,7 +102,7 @@ const NewsFeed = (props) => {
   const[modelUsername,setmodelUsername]=useState();
   const[modeluserImage,setmodeluserImage]=useState();
   const [burstModel, setburstModel] = useState(false);
-  const[burstvalue,setburstvalue]=useState('');
+  const[burstvalue,setburstvalue]=useState('10+');
   const [loading, setloading] = useState(false);
   useEffect(() => {
     var screen = props?.route?.params?.screen
@@ -1229,7 +1229,7 @@ const NewsFeed = (props) => {
     }
   };
   return (
-    <View style={styles.main}>
+    <View style={[styles.main,{opacity:burstModel||modalVisible?0.4:1}]}>
       <Modal
         animationType="slide"
         transparent={true}
@@ -1240,15 +1240,17 @@ const NewsFeed = (props) => {
           // Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',flex:1,backgroundColor:'#000',opacity:1}}>
-        <View style={{flexDirection:'row',width:'70%',justifyContent:'flex-end',alignSelf:'center'}}>
+        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',
+        flex:1}}>
+        <View style={{flexDirection:'row',width:'70%',
+        justifyContent:'flex-end',alignSelf:'center'}}>
         <TouchableOpacity style={{marginRight:10}} onPress={onShare}>
-      <Feather name='share' size={30} color={'white'} />
+      <Feather name='share' size={30} color={'black'} />
       </TouchableOpacity>
       <TouchableOpacity  onPress={() => {
                 setModalVisible(!modalVisible);
               }}>
-        <Entypo name='cross' size={30} color={'white'} />
+        <Entypo name='cross' size={30} color={'black'} />
         </TouchableOpacity>
         </View>
           <View style={{
@@ -1328,7 +1330,13 @@ const NewsFeed = (props) => {
           // Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',flex:1,backgroundColor:'black',opacity:1}}>
+        <View style={{width:'100%',
+        alignSelf:'center',
+        justifyContent:'center',
+        flex:1,
+        //backgroundColor:'transparent',
+        opacity:1
+        }}>
         <TouchableOpacity
         style={{
          
@@ -1338,7 +1346,7 @@ const NewsFeed = (props) => {
         onPress={() => {
                 setburstModel(false);
               }}>
-        <Entypo name='cross' size={30} color={'white'} />
+        <Entypo name='cross' size={30} color={'black'} />
         </TouchableOpacity>
           <View style={{
                   backgroundColor:'white',
@@ -1663,7 +1671,10 @@ const NewsFeed = (props) => {
                 <ActionButton.Item buttonColor="transparent"
                     size={34}
                     // title="Book Resource"
-                    onPress={() => setburstModel(true)}>
+                    onPress={() => {setburstModel(true)
+                    ,
+                    setburstvalue('10+')
+                    }}>
                     <ImageBackground
                     source={brst} resizeMode={"contain"}
                     style={{
