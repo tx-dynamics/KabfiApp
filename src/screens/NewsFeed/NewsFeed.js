@@ -1335,7 +1335,7 @@ const NewsFeed = (props) => {
         alignSelf:'center',
         justifyContent:'center',
         flex:1,
-        //backgroundColor:'transparent',
+        // backgroundColor:'lightgrey',
         opacity:1
         }}>
         <TouchableOpacity
@@ -1350,12 +1350,12 @@ const NewsFeed = (props) => {
         <Entypo name='cross' size={30} color={'black'} />
         </TouchableOpacity>
           <View style={{
-                  backgroundColor:'white',
+                  backgroundColor:'lightgrey',
                     alignItems: "center",
                     width: '80%',borderRadius:30,alignSelf:'center',
                     height:responsiveScreenHeight (40),
     }}>
-      <View style={{backgroundColor:'white',height:'80%',width:'100%',borderRadius:30}}>
+      <View style={{backgroundColor:'white',height:'80%',width:'100%',borderTopLeftRadius:30,borderTopRightRadius:30}}>
         <View style={{marginTop:responsiveScreenHeight(3),alignSelf:'center'}}>
         <Text style={{fontSize:18,fontWeight:'bold'}}>Demand indicator</Text>
         </View>
@@ -1392,8 +1392,9 @@ const NewsFeed = (props) => {
          onPress={()=>{savePost(),setRefreshing(true),setburstModel(false)}}
         style={{marginTop:responsiveScreenHeight(3),
         alignSelf:'center',width:'80%',
-        // backgroundColor:'pink',
-        paddingVertical:10,borderRadius:20
+        backgroundColor:'lightgrey',
+        paddingVertical:10,
+        // borderBottomLeftRadius:20
         }}>
           {loading ? (
                 <ActivityIndicator animating color={"red"} size={'large'} style={{bottom:10}}/>
