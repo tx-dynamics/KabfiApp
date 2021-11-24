@@ -39,6 +39,7 @@ const Notifications = (props) => {
     userNoti.on("value", (userdata) => {
       userdata.forEach((child) => {
         if (child.key !== uid) {
+         
           child.forEach((data) => {
             const hideNoti = firebase
               .database()
@@ -48,7 +49,10 @@ const Notifications = (props) => {
                   "/hide/" +
                   data.key
               );
-
+              const userImages = firebase
+              .database()
+              .ref("users/" + data.val()?.userId);
+          userImages.on("value", (updateImage) => {
             hideNoti.on("value", (hideId) => {
               // console.log("users=>", hideId.exists());
               //   console.log(hideId.key);
@@ -56,9 +60,16 @@ const Notifications = (props) => {
                
                 notis.push({
                   id: child.key,
-                  image: data.val().image,
+                  image: updateImage.val()?.Dp
+                  ? updateImage.val()?.Dp
+                  : data.val().image,
                   message: data.val().message,
-                  name: data.val().name,
+                  name: updateImage.val()?.firstName &&
+                  updateImage.val()?.lastName
+                    ? updateImage.val()?.firstName +
+                      " " +
+                      updateImage.val().lastName
+                    : data.val().name,
                   postid: data.key,
                   //time:moment(data?.val()?.createdAt)- new Date().getTime()
                   time:data?.val()?.createdAt
@@ -66,6 +77,7 @@ const Notifications = (props) => {
               }
             });
           });
+        });
         }
       });
     });
@@ -74,14 +86,25 @@ const Notifications = (props) => {
       .database()
       .ref("Likes/" + uid);
       notification.on('value',(child)=>{
-        console.log(child.val())
         child.forEach(item=>{
+          const userImages = firebase
+          .database()
+          .ref("users/" + item.val().userId);
+          userImages.on("value", updateImage => {
           arr.push({
             id: item.key,
-            image: item.val().image,
+            image: updateImage.val()?.Dp
+            ? updateImage.val().Dp
+            : item.val().image,
             message: item.val().message,
-            name: item.val().name,
+            name: updateImage.val()?.firstName &&
+            updateImage.val()?.lastName
+              ? updateImage.val()?.firstName +
+                " " +
+                updateImage.val().lastName
+              : item.val().name,
           });
+        });
         })
       })
     Array.prototype.push.apply(arr,notis);
@@ -111,9 +134,6 @@ const Notifications = (props) => {
         style={{
           flex: 1,
           width: "95%",
-
-            // backgroundColor: "tomato",
-          // elevation: 2,
           borderRadius: 10,
           alignSelf: "center",
           marginTop: 10,
@@ -124,12 +144,10 @@ const Notifications = (props) => {
             flexDirection: "row",
             alignItems: "center",
             padding: 10,
-            // backgroundColor: "#FFF4E3",
             borderRadius: 20,
             width: "100%",
           }}
         >
-          {/* <AntDesign name="checkcircle" size={24} color="#FCB040" /> */}
           <Image
             source={item.image?{uri:item.image}:user}
             style={{width:50,height:50,borderRadius:70}}

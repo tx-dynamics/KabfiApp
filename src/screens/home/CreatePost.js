@@ -191,7 +191,8 @@ const CreatePost = (props) => {
           image:Dp,
           name:userName,
           message: `upload new post. ${postText}`,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          userId:firebase.auth()?.currentUser?.uid
         };
         notification.push(addNoti);
         myRef.set(Details).then(() => {

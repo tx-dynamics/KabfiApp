@@ -600,7 +600,8 @@ const NewsFeed = (props) => {
         image:Dp,
         name:name,
         message: `liked your post. `,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        userId:firebase.auth()?.currentUser?.uid
       };
       console.log(arr,'\n','Name',name);
       notification.push(addNoti);
