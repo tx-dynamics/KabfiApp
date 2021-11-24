@@ -146,7 +146,7 @@ const Notifications = (props) => {
             }}
           >
             <Text style={{color:'black',fontSize:16,fontWeight:'500'}}>@{item.name} </Text>
-            {`${item.message}.`}
+            {`${item.message}`}
             <Text style={{color:'black',fontSize:16,fontWeight:'500'}}>
             {` ${moment(item.time).fromNow()}`}
           </Text> 

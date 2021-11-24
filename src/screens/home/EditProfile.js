@@ -162,7 +162,6 @@ const EditProfile = (props) => {
       format: ImageManipulator.SaveFormat.PNG,
     });
     console.log(manipResult);
-
     if (!result.cancelled) {
       setDp(manipResult.uri);
       setFlag(true);

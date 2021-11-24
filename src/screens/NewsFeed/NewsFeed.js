@@ -599,13 +599,14 @@ const NewsFeed = (props) => {
       let addNoti = {
         image:Dp,
         name:name,
-        message: ` liked your post.`,
+        message: `liked your post. `,
         createdAt: new Date().toISOString()
       };
       console.log(arr,'\n','Name',name);
-      if(uid != post_user && arr!==''){
       notification.push(addNoti);
-      RequestPushMsg(arr, name, 'liked your post.','liked your post.')
+      if(uid != post_user && arr!==''){
+     
+      // RequestPushMsg(arr, name, 'liked your post.','liked your post.')
     }
     }
     const Details = {
@@ -1239,7 +1240,7 @@ const NewsFeed = (props) => {
           // Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',flex:1,backgroundColor:'black',opacity:0.7}}>
+        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',flex:1,backgroundColor:'#000',opacity:1}}>
         <View style={{flexDirection:'row',width:'70%',justifyContent:'flex-end',alignSelf:'center'}}>
         <TouchableOpacity style={{marginRight:10}} onPress={onShare}>
       <Feather name='share' size={30} color={'white'} />
@@ -1261,11 +1262,11 @@ const NewsFeed = (props) => {
     // shadowOpacity: 0.25,
     // shadowRadius: 3.84,
     elevation: 5,
-    width: '70%',borderBottomRightRadius:20,borderBottomLeftRadius:20,alignSelf:'center',
+    width: '70%',borderRadius:20,alignSelf:'center',
     height:responsiveScreenHeight (30),}}>
       
             <Image
-              style={{ width: "100%", height: "50%" }}
+              style={{ width: "100%", height: "50%", }}
               source={{ uri: largImage }}
               // resizeMode=''
             />
@@ -1327,18 +1328,21 @@ const NewsFeed = (props) => {
           // Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',flex:1,backgroundColor:'black',opacity:0.8}}>
+        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',flex:1,backgroundColor:'black',opacity:1}}>
+        <TouchableOpacity
+        style={{
+         
+            alignItems: 'flex-end',
+            width: '77%',borderRadius:30,alignSelf:'center',
+}}
+        onPress={() => {
+                setburstModel(false);
+              }}>
+        <Entypo name='cross' size={30} color={'white'} />
+        </TouchableOpacity>
           <View style={{
                   backgroundColor:'white',
                     alignItems: "center",
-                    shadowColor: "#000",
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    elevation: 5,
                     width: '80%',borderRadius:30,alignSelf:'center',
                     height:responsiveScreenHeight (40),
     }}>
@@ -1350,7 +1354,7 @@ const NewsFeed = (props) => {
         onPress={()=>setburstvalue('10+')}
         style={{marginTop:responsiveScreenHeight(3),
         alignSelf:'center',width:'80%',
-        backgroundColor:'lightgreen',
+        backgroundColor:burstvalue==='10+'?'lightgreen':'lightgrey',
         paddingVertical:10,borderRadius:20
         }}>
         <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>10+</Text>
@@ -1359,7 +1363,7 @@ const NewsFeed = (props) => {
          onPress={()=>setburstvalue('20+')}
         style={{marginTop:responsiveScreenHeight(3),
         alignSelf:'center',width:'80%',
-        backgroundColor:'skyblue',
+        backgroundColor:burstvalue==='20+'?'skyblue':'lightgrey',
         paddingVertical:10,borderRadius:20
         }}>
         <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>20+</Text>
@@ -1368,7 +1372,7 @@ const NewsFeed = (props) => {
         onPress={()=>{setburstvalue('30+'),console.log(burstvalue)}}
         style={{marginTop:responsiveScreenHeight(3),
         alignSelf:'center',width:'80%',
-        backgroundColor:'pink',
+        backgroundColor:burstvalue==='30+'?'pink':'lightgrey',
         paddingVertical:10,borderRadius:20
         }}>
         <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>30+</Text>
@@ -1632,24 +1636,17 @@ const NewsFeed = (props) => {
           </ScrollView>
         </View>
       </RBSheet>
-      {/* <TouchableOpacity
-        onPress={() => props.navigation.navigate("CreatePost")}
-        style={{
-          alignSelf: "flex-end",
-          bottom: 20,
-          position: "absolute",right:20
-        }}
-      >
-        <ImageBackground
-          source={bar}
-          resizeMode={"contain"}
-          style={{
-            height: 50,
-            width: 50,
-          }}
-        ></ImageBackground>
-      </TouchableOpacity> */}
-  <ActionButton buttonColor="orange" position="right"   >
+  <ActionButton buttonColor="transparent" position="right" offsetY={30}
+   renderIcon={active => (
+    <ImageBackground
+    source={bar} resizeMode={"contain"}
+    style={{
+    height: 50,
+    width: 50,
+}}
+></ImageBackground>
+  )}
+  >
               
                 <ActionButton.Item buttonColor="transparent"
                     size={34}
