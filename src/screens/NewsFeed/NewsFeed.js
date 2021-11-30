@@ -97,19 +97,18 @@ const NewsFeed = (props) => {
   const [maxTimeInSeconds, setMaxTimeInSeconds] = useState([]);
   const[nots,setnots]=useState();
   const[modeltxt,setmodeltxt]=useState();
-  const[modelname,setmodelname]=useState();
   const[modeltime,setmodeltime]=useState();
   const[modelUsername,setmodelUsername]=useState();
   const[modeluserImage,setmodeluserImage]=useState();
   const [burstModel, setburstModel] = useState(false);
   const[burstvalue,setburstvalue]=useState('10+');
   const [loading, setloading] = useState(false);
-  const[page,setpage]=useState('10');
+  const[lat,setlat]=useState();
+  const[long,setlong]=useState();
   useEffect(() => {
     var screen = props?.route?.params?.screen
     var created = props?.route?.params?.created
     const id =  firebase.auth().currentUser?.uid;
-    setpage('10');
     setburstvalue('');
         console.log("I ma testing LOC",id)
     if(screen ==='post'){
@@ -315,6 +314,8 @@ const NewsFeed = (props) => {
           longitudeDelta: 0.0121,
          
         };
+        setlat(location?.coords?.latitude);
+        setlong(location?.coords?.longitude);
         if (location) {
           try {
             
@@ -342,35 +343,15 @@ const NewsFeed = (props) => {
     setRefreshing(false);
   }
   async function savePost() {
-    setRefreshing(false);
     try {
-      let { status } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== "granted") {
-        setMessage("location Permission required to add brust");
-        setIsVisible(!isVisible);
-        setModalVisible(false);
-        setloading(false);
-        setburstModel(false);
-        setburstvalue('');
-        setRefreshing(false);
-        // alert("Permission to access location was denied");
-        return;
-      } else {
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        var da = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.0121,
-         
-        };
-        if (location && burstvalue) {
+      
+        if ( lat&&long) {
+          // setRefreshing(true);
           try {
-            
+           
         const id =  firebase.auth().currentUser?.uid;
-        console.log("I ma testing LOC",location);
+        
+        setburstModel(false);
         var myRef = firebase.database().ref("user_posts").push();
         var key = myRef.getKey();
         let Details = {
@@ -380,18 +361,18 @@ const NewsFeed = (props) => {
           user_image: Dp,
           likes_count: 0,
           likes_user: [],
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,burstvalue,
+          latitude: lat,
+          longitude: long,
+          burstvalue,
           createdAt: new Date().toISOString(),
           
         };
-   
         myRef.set(Details);
         setloading(false);
         setburstModel(false);
         setburstvalue('');
-        setRefreshing(false);
-        fetchAllPosts();
+      //   setMessage('Brust Added Succesfully');
+      // setIsVisible(!isVisible);
         return;
           } catch (error) {
             console.log("error.message", error.message);
@@ -400,13 +381,21 @@ const NewsFeed = (props) => {
       setIsVisible(!isVisible);
       setModalVisible(false);
       setburstModel(false);
-      setburstvalue('');
+      setburstvalue('');setRefreshing(false);
           }
+        }else{
+          setloading(false);
+          setMessage('Turn on location to add brust.');
+          setIsVisible(!isVisible);
+          setModalVisible(false);
+          setburstModel(false);
+          setburstvalue('');
+          setRefreshing(false);setRefreshing(false);
         }
-      }
+      
     
     } catch (error) {
-      setloading(false);
+      setloading(false);setRefreshing(false);
       setMessage(error.message);
       setIsVisible(!isVisible);
       setModalVisible(false);
@@ -441,9 +430,7 @@ const NewsFeed = (props) => {
     setUid(uid);
    firebase
       .database()
-      .ref("user_posts")
-      // .orderByChild("createdAt")
-      .limitToLast(Number(page))
+      .ref("user_posts").orderByChild("createdAt")
       .on("value", async function (snapshot) {
         const exists = snapshot.val() !== null;
         if (exists) {
@@ -1388,7 +1375,7 @@ const NewsFeed = (props) => {
         </View>
         <TouchableOpacity
         disabled={burstvalue===''?true:false}
-         onPress={()=>{savePost(),setRefreshing(true),setburstModel(false)}}
+         onPress={()=>{savePost(),setburstModel(false)}}
         style={{marginTop:responsiveScreenHeight(3),
         alignSelf:'center',width:'80%',
         backgroundColor:'lightgrey',
@@ -1496,12 +1483,6 @@ const NewsFeed = (props) => {
         extraData={selectedId}
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
-        onEndReached = {({distanceFromEnd})=>{ // problem
-          setpage(page+'10');
-          console.log('distanceFromEnd',distanceFromEnd);
-          fetchAllPosts(); // 607, 878 
-         
-        }}
       />
   
       <RBSheet
