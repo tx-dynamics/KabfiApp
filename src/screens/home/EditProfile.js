@@ -56,35 +56,36 @@ const EditProfile = (props) => {
     });
     setLoader(false);
   }, []);
-
-  const uploadImage = async (uri) => {
-    try {
-      // setLoader(true);
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      var timestamp = new Date().getTime();
-      var ref = firebase.storage().ref().child(`images/${timestamp}`);
-      const task = ref.put(blob);
-
-      return new Promise((resolve, reject) => {
-        task.on(
-          "state_changed",
-          () => {},
-          (err) => {
-            reject(err);
-          },
-          async () => {
-            const url = await task.snapshot.ref.getDownloadURL();
-            resolve(url);
-            // setLoader(false);
-          }
-        );
+  async function onupload(url){
+    console.log('uri here from upload start',url);
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response); // when BlobModule finishes reading, resolve with the blob
+      };
+      xhr.onerror = function () {
+        reject(new TypeError('Network request failed')); // error occurred, rejecting
+      };
+      xhr.responseType = 'blob'; // use BlobModule's UriHandler
+      xhr.open('GET', url, true); // fetch the blob from uri in async mode
+      xhr.send(null); // no initial data
+    });
+    var timestamp = new Date().getTime();
+    var imageRef =firebase.storage().ref(`UserImages/` + timestamp + '/');
+  
+    return imageRef
+      .put(blob)
+      .then(() => {
+        blob.close();
+        return imageRef.getDownloadURL();
+      })
+      .then(dwnldurl => {
+        console.log('finall uploaded uri',dwnldurl);
+        return dwnldurl;
+        // seturi(dwnldurl);
+        // onload(dwnldurl);
       });
-    } catch (err) {
-      console.log("uploadImage error: " + err.message);
-    }
-  };
-
+  }
   async function editProfileHandler() {
     try {
       setLoader(true);
@@ -166,9 +167,10 @@ const EditProfile = (props) => {
       setDp(manipResult.uri);
       setFlag(true);
       console.log("OKKKK ", manipResult.uri);
-      let profileIamge = await uploadImage(manipResult.uri);
+      // let profileIamge = await uploadImage(manipResult.uri);
+      let profileIamge = await onupload(manipResult.uri);
       setDp(profileIamge);
-      console.log("OKKKK ", Dp);
+      console.log("OKKKK ", profileIamge);
       // alert("Taxi License Selected");
     }
   };
@@ -212,11 +214,11 @@ const EditProfile = (props) => {
     >
       <ScrollView>
         <Header
-          backgroundColor="#F8F8F7"
+          backgroundColor="white"
           containerStyle={{
             // marginTop: 15,
             // paddingHorizontal: 20,
-            backgroundColor: "#F8F8F7",
+            backgroundColor: "white",
             borderBottomWidth:0.5,
             borderBottomColor:'#AEB2B1'
           }}
@@ -226,8 +228,8 @@ const EditProfile = (props) => {
                 style={{
                   left:5,
                   color: "#FCB040",
-                  fontSize: 14,
-                  fontFamily:'Sf-pro-display',
+                  fontSize: 17,
+                  fontFamily:'FontsFree-Net-SFProText-Regular',
                   letterSpacing: 1,
                 }}
               >
@@ -236,7 +238,7 @@ const EditProfile = (props) => {
             </TouchableOpacity>
           }
           centerComponent={
-            <Text style={{ fontSize: 17, color: "#000000",fontFamily:'Sf-pro-display-medium',fontWeight:'600' }}>Edit Profile</Text>
+            <Text style={{ fontSize: 17, color: "#000000",fontFamily:'FontsFree-Net-SFProText-Regular',fontWeight:'600' }}>Edit Profile</Text>
           }
           rightComponent={
             <TouchableOpacity onPress={() => editProfileHandler()}>
@@ -245,10 +247,10 @@ const EditProfile = (props) => {
               ) : (
                 <Text
                   style={{
-                    fontSize: 14,
+                    fontSize: 17,
                     right:5,
-                    color: "#666A6A",
-                    fontFamily:"Sf-pro-display-bold",
+                    color: "#727272",
+                    fontFamily:"FontsFree-Net-SFProText-Regular",
                     // fontWeight: "700",
                     letterSpacing: 1,
                   }}

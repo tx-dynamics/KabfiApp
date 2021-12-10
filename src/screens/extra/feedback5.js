@@ -116,11 +116,10 @@ const feedback5 = (props) => {
             alignSelf: "center",
             height: 200,
             backgroundColor: "#FFFFFF",
-            paddingHorizontal: 15,
             marginTop: 10,
             fontSize: 16,
             fontWeight: "400",
-            paddingVertical: responsiveHeight(2),
+            paddingVertical: 38,paddingHorizontal:17,
             borderWidth: 1.5,
             borderColor: "#CCCDCC",
             borderRadius: 26,
@@ -144,8 +143,7 @@ const feedback5 = (props) => {
             borderWidth: 2,
             borderRadius: 26,
             borderColor: "#CCCDCC",
-            paddingVertical: 7,
-            borderWidth: 1.5,
+            borderWidth: 1.5,height:48
           }}
           onChangeText={(text) => setphone(text)}
           value={phone}
@@ -186,7 +184,7 @@ const feedback5 = (props) => {
               style={[
                 {
                   color: "orange",
-                  textAlign: "center",
+                  textAlign: "center",alignSelf:"center",right:5
                 },
               ]}
             >
@@ -216,7 +214,7 @@ const feedback5 = (props) => {
                   {
                     color: "white",
                     textAlign: "center",
-                    alignSelf: "center",
+                    alignSelf: "center",left:5
                   },
                 ]}
               >

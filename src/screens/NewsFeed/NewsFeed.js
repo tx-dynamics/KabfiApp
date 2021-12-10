@@ -106,6 +106,17 @@ const NewsFeed = (props) => {
   const[lat,setlat]=useState();
   const[long,setlong]=useState();
   useEffect(() => {
+    setRefreshing(true);
+    // loadFonts();
+  (  async function(){
+      const data=  await AsyncStorage.getItem('posts');
+      const dat=JSON.parse(data);
+      console.log('posts===>',dat);
+      if(dat!==null)
+      {
+        setPosts(dat);
+      }
+      });
     var screen = props?.route?.params?.screen
     var created = props?.route?.params?.created
     const id =  firebase.auth().currentUser?.uid;
@@ -118,14 +129,15 @@ const NewsFeed = (props) => {
          props.navigation.setParams({screen: '', created: ''});
       }
     }
+   fetchAllPosts();
     fetchAllNoti();
-    loadFonts();
-    fetchAllPosts();
    fetchLocation();
    ()=>{
     Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
    }
+   setRefreshing(false);
   }, [isFocused]);
+ 
   async function fetchAllNoti() {
     const uid = firebase.auth().currentUser?.uid;
     const userNoti = firebase.database().ref("Notifications/");
@@ -206,9 +218,9 @@ const NewsFeed = (props) => {
   };
 
   async function  loadFonts() {
-    await Font.loadAsync({
+     Font.useFonts({
       // Load a font `Montserrat` from a static resource
-      // Montserrat: require('./assets/fonts/Montserrat.ttf'),
+      // Montserrat: require('./assets/fonts/Montserrat.ttf'),FontsFree-Net-SFProText-Regular
 
       // Any string can be used as the fontFamily name. Here we use an object to provide more control
       'Sf-pro-display': {
@@ -221,6 +233,10 @@ const NewsFeed = (props) => {
       },
       'Sf-pro-display-medium': {
         uri: require('../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Medium.ttf'),
+        display: Font.FontDisplay.FALLBACK,
+      },
+      'FontsFree-Net-SFProText-Regular': {
+        uri: require('../../../assets/sf-pro-display-cufonfonts/FontsFree-Net-SFProText-Regular.ttf'),
         display: Font.FontDisplay.FALLBACK,
       },
     });
@@ -330,9 +346,11 @@ const NewsFeed = (props) => {
             mylocation.set(da);
             }
           } catch (err) {
+            setRefreshing(false);
             
           }
         }
+        setRefreshing(false);
       }
     } catch (err) {
       setRefreshing(false);
@@ -340,7 +358,6 @@ const NewsFeed = (props) => {
       setIsVisible(!isVisible);
       //  alert(err.message);
     }
-    setRefreshing(false);
   }
   async function savePost() {
     try {
@@ -552,7 +569,9 @@ const NewsFeed = (props) => {
           });
         }
       });
+     
     const ik = arr.reverse();
+    AsyncStorage.setItem('posts',JSON.stringify (ik));
     setPosts(ik);
     console.log("posts", arr.length);
     setRefreshing(false);
@@ -861,7 +880,9 @@ const NewsFeed = (props) => {
                   },
                 ]}
               >
-                <Text style={[{fontFamily:'Sf-pro-display-bold', color: "#464646", fontWeight: "700" }]}>
+                <Text style={[{
+                  // fontFamily:'Sf-pro-display-bold', 
+                  color: "#464646", fontWeight: "700" }]}>
                   {item.userName}
                 </Text>
                 <Text
@@ -1405,7 +1426,7 @@ const NewsFeed = (props) => {
             <Image
               source={drawer}
               resizeMode={"contain"}
-              style={{ marginTop: 15, height: 25, width: 25 }}
+              style={{height: 25, width: 25 }}
             />
           </TouchableWithoutFeedback>
         }
@@ -1421,16 +1442,21 @@ const NewsFeed = (props) => {
                 height: 25,
                 width: 25,
                 alignItems: "flex-end",
-                // alignSelf: "center",
-                marginTop: 15,
-                // backgroundColor: 'tomato',
               }}
             >
              {nots>0&& <Text style={{height:10,width:10,borderRadius:5,backgroundColor:'tomato'}}></Text>}
             </ImageBackground>
           </TouchableOpacity>
         }
-        centerComponent={<HeaderCenterComponent name="News Feed" />}
+        // centerComponent={<HeaderCenterComponent name="News Feed" />}
+        centerComponent={<View style={{ alignItems: "center" }}>
+        <Text style={{ fontSize: 17,
+    color: "#000000",
+    fontWeight: "700",
+    alignSelf: "center",
+    // fontFamily:'FontsFree-Net-SFProText-Regular'
+  }}>News Feed</Text>
+      </View>}
       />
       {isVisible ? (
         <View style={{ height: 60 }}>

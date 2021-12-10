@@ -198,7 +198,6 @@ const feedback2 = (props) => {
             width: "40%",
             padding: 10,
             justifyContent: "center",
-            alignItems: "center",
           }}
         >
           <Ionicons
@@ -211,7 +210,7 @@ const feedback2 = (props) => {
             style={[
               {
                 color: "orange",
-                textAlign: "center",
+                textAlign: "center",right:5,alignSelf:'center'
               },
             ]}
           >
@@ -237,7 +236,6 @@ const feedback2 = (props) => {
             width: "40%",
             padding: 10,
             justifyContent: "center",
-            alignItems: "center",
           }}
         >
           <Text
@@ -245,7 +243,7 @@ const feedback2 = (props) => {
               {
                 color: "orange",
                 textAlign: "center",
-                alignSelf: "center",
+                alignSelf: "center",left:5
               },
             ]}
           >

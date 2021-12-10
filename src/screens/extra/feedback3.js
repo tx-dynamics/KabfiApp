@@ -211,7 +211,7 @@ const feedback3 = (props) => {
             style={[
               {
                 color: "orange",
-                textAlign: "center",
+                textAlign: "center",alignSelf:'center',right:5
               },
             ]}
           >
@@ -245,7 +245,7 @@ const feedback3 = (props) => {
               {
                 color: "orange",
                 textAlign: "center",
-                alignSelf: "center",
+                alignSelf: "center",left:5
               },
             ]}
           >

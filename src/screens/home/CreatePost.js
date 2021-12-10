@@ -82,6 +82,7 @@ const CreatePost = (props) => {
   const [isplaying, setisplaying] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [messge, setMessage] = useState("");
+  const[load,setload]=useState(false);
 
   useEffect(() => {
     console.log(props.isLogin);
@@ -145,10 +146,8 @@ const CreatePost = (props) => {
   }
 
   async function savePost() {
-    console.log(Dp,userName);
+    console.log(Dp);
     setloading(true);
-    console.log(time, "here-=>");
-    let post_Image;
     let sound;
     try {
       if (postImage || postText || loc || Sound) {
@@ -195,13 +194,13 @@ const CreatePost = (props) => {
           userId:firebase.auth()?.currentUser?.uid
         };
         notification.push(addNoti);
-        myRef.set(Details).then(() => {
-          tokens.length > 0
-            ? tokens.map((item) => RequestPushMsg(item, userName, postText,'created a new post.'))
-            : console.log("No One");
-        });
+        // myRef.set(Details).then(() => {
+        //   tokens.length > 0
+        //     ? tokens.map((item) => RequestPushMsg(item, userName, postText,'created a new post.'))
+        //     : console.log("No One");
+        // });
         // mylike.set(userId);
-        // myRef.set(Details);
+        myRef.set(Details);
         // setMessage("Post Added Successfully");
         // setIsVisible(!isVisible);
         // alert("Post Added Successfully");
@@ -243,10 +242,38 @@ const CreatePost = (props) => {
     console.log("result", manipResult,'\n',result.uri);
 
    
-      uploadImage(manipResult.uri);
-      setPostImage(manipResult.uri);
+      onupload(manipResult.uri);
+      // setPostImage(manipResult.uri);
   };
-
+  async function onupload(url){
+    setload(true);
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response); // when BlobModule finishes reading, resolve with the blob
+      };
+      xhr.onerror = function () {
+        reject(new TypeError('Network request failed')); // error occurred, rejecting
+      };
+      xhr.responseType = 'blob'; // use BlobModule's UriHandler
+      xhr.open('GET', url, true); // fetch the blob from uri in async mode
+      xhr.send(null); // no initial data
+    });
+    var timestamp = new Date().getTime();
+    var imageRef =firebase.storage().ref(`UserImages/` + timestamp + '/');
+  
+    return imageRef
+      .put(blob)
+      .then(() => {
+        blob.close();
+        return imageRef.getDownloadURL();
+      })
+      .then(dwnldurl => {
+        console.log('finall uploaded uri',dwnldurl);
+        setload(false);
+        setPostImage(dwnldurl);
+      });
+  }
   const uploadImage = async (uri) => {
     try {
       // setLoader(true);
@@ -429,12 +456,9 @@ const CreatePost = (props) => {
     await recor.stopAndUnloadAsync();
     const uri = recor.getURI();
     console.log("Recording stopped and stored at", recor._uri);
-    // let post_Image = await uploadImage(recording._uri);
     setSound(recor._uri);
     settime(JSON.stringify(testData.durationMillis));
     console.log("post_Image", recor._finalDurationMillis / 1000);
-
-    // playSound(recording._uri);
   }
   async function showMethod() {
     Keyboard.dismiss();
@@ -581,8 +605,14 @@ const CreatePost = (props) => {
                   />
                 </TouchableOpacity>
               </ImageBackground>
-            ) : null}
-
+            ) :  
+           null}
+           {load&& <ActivityIndicator
+            animating
+            size="large"
+            color="#FFD700"
+            style={{ alignSelf:'flex-start' }}
+            />}
             <TextInput
               ref={inputRef}
               multiline={true}

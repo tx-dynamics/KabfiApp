@@ -218,7 +218,7 @@ const Signin = (props) => {
               />
             </View>
 
-            <View style={[styles.textFieldContainer, { marginTop: 26 }]}>
+            <View style={[styles.textFieldContainer, { marginTop: 26,justifyContent:'center' }]}>
               {/* <Image
                 source={require("../../../assets/ProjectImages/authentication/password-icon.png")}
                 style={styles.fieldIcon}
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   },
   eyeIconContainer: {
     position: "absolute",
-    top: 19,
+    top: 15,
     right: 17,
     width: 35,
     height: 25,

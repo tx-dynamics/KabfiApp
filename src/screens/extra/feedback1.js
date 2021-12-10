@@ -10,7 +10,7 @@ import {
 import styles from "./styles";
 import { StatusBar } from "expo-status-bar";
 import { Header } from "react-native-elements";
-import { star, sad, ok, smile, smiley } from "../../../assets";
+import { fstar, sad, ok, smile, smiley } from "../../../assets";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 const feedback1 = (props) => {
   const [isSmile, setisSmile] = useState(false);
@@ -34,7 +34,7 @@ const feedback1 = (props) => {
       </Text>
       <Text style={{ flex: 0.05 }}></Text>
       <Image
-        source={star}
+        source={fstar}
         resizeMode="contain"
         style={{ height: 100, width: 100, alignSelf: "center" }}
       />

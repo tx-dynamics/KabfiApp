@@ -10,15 +10,16 @@ import { Provider } from 'react-redux';
 import { store, persistor } from './src/Redux/Store';
 import { PersistGate } from 'redux-persist/integration/react';
 export default function App() {
-  return (
+  return  (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <SafeAreaView style={{ flex: 1 }}>
           <LoginProvider />
         </SafeAreaView>
       </PersistGate>
-    </Provider>
-  );
+    </Provider> 
+  
+);
 }
 
 const styles = StyleSheet.create({
