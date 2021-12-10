@@ -309,7 +309,31 @@ const NewsFeed = (props) => {
     settimerStart(false);
     // alert("custom completion function");
   }
-
+  const openGps = async (lat1, lng1)=>{
+    let ways = '';
+  let currentLocation= ''
+    ways = ways + lat1 + ',' + lng1;
+    currentLocation= currentLocation+lat+ ','+long
+    console.log(ways,currentLocation)
+    let url =
+    'https://www.google.com/maps/dir/?api=1&origin=' +
+    currentLocation +
+    '&destination=' +
+    ways
+  
+    Linking.canOpenURL(url)
+    .then(supported => {
+        if (!supported) {
+            console.warn("Can't handle url: " + url);
+        } else {
+            return Linking.openURL(url);
+        }
+    })
+    .catch(err => console.warn('An error occurred', err));
+     //await setEnd(address)
+    
+     //console.log("OK pakistan",address,end) 
+  }
   async function fetchLocation() {
     setRefreshing(true);
     try {
@@ -421,11 +445,6 @@ const NewsFeed = (props) => {
       setRefreshing(false);
       // alert(error.message);
     }
-  }
- const openGps = (lat, lng) => {
-    var scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
-    var url = scheme + `${lat},${lng}`;
-    Linking.openURL(url);
   }
   async function fetchAllPosts() {
     setRefreshing(true);
