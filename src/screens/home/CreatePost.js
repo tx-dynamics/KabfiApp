@@ -183,9 +183,9 @@ const CreatePost = (props) => {
         };
         let like = { userId };
         console.log("Notification test ", userName);
-        var notification = firebase
-          .database()
-          .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
+        // var notification = firebase
+        //   .database()
+        //   .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
         let addNoti = {
           image:Dp,
           name:userName,
@@ -193,14 +193,13 @@ const CreatePost = (props) => {
           createdAt: new Date().toISOString(),
           userId:firebase.auth()?.currentUser?.uid
         };
-        notification.push(addNoti);
-        // myRef.set(Details).then(() => {
-        //   tokens.length > 0
-        //     ? tokens.map((item) => RequestPushMsg(item, userName, postText,'created a new post.'))
-        //     : console.log("No One");
-        // });
-        // mylike.set(userId);
-        myRef.set(Details);
+        // notification.push(addNoti);
+        myRef.set(Details).then(() => {
+          tokens.length > 0
+            ? tokens.map((item) => RequestPushMsg(item, userName, postText,'created a new post.'))
+            : console.log("No One");
+        });
+        // myRef.set(Details);
         // setMessage("Post Added Successfully");
         // setIsVisible(!isVisible);
         // alert("Post Added Successfully");
@@ -607,12 +606,6 @@ const CreatePost = (props) => {
               </ImageBackground>
             ) :  
            null}
-           {load&& <ActivityIndicator
-            animating
-            size="large"
-            color="#FFD700"
-            style={{ alignSelf:'flex-start' }}
-            />}
             <TextInput
               ref={inputRef}
               multiline={true}

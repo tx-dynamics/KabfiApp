@@ -34,57 +34,57 @@ const Notifications = (props) => {
   async function fetchAllNoti() {
     setRefreshing(true);
     const uid = firebase.auth().currentUser?.uid;
-    const userNoti = firebase.database().ref("Notifications/");
-    let notis = [];
-    userNoti.on("value", (userdata) => {
-      userdata.forEach((child) => {
-        if (child.key !== uid) {
+    // const userNoti = firebase.database().ref("Notifications/");
+    // let notis = [];
+    // userNoti.on("value", (userdata) => {
+    //   userdata.forEach((child) => {
+    //     if (child.key !== uid) {
          
-          child.forEach((data) => {
-            const hideNoti = firebase
-              .database()
-              .ref(
-                "users/" +
-                  firebase.auth().currentUser?.uid +
-                  "/hide/" +
-                  data.key
-              );
-              const userImages = firebase
-              .database()
-              .ref("users/" + data.val()?.userId);
-          userImages.on("value", (updateImage) => {
-            hideNoti.on("value", (hideId) => {
-              // console.log("users=>", hideId.exists());
-              //   console.log(hideId.key);
-              if (!hideId.exists()) {
+    //       child.forEach((data) => {
+    //         const hideNoti = firebase
+    //           .database()
+    //           .ref(
+    //             "users/" +
+    //               firebase.auth().currentUser?.uid +
+    //               "/hide/" +
+    //               data.key
+    //           );
+    //           const userImages = firebase
+    //           .database()
+    //           .ref("users/" + data.val()?.userId);
+    //       userImages.on("value", (updateImage) => {
+    //         hideNoti.on("value", (hideId) => {
+    //           // console.log("users=>", hideId.exists());
+    //           //   console.log(hideId.key);
+    //           if (!hideId.exists()) {
                
-                notis.push({
-                  id: child.key,
-                  image: updateImage.val()?.Dp
-                  ? updateImage.val()?.Dp
-                  : data.val().image,
-                  message: data.val().message,
-                  name: updateImage.val()?.firstName &&
-                  updateImage.val()?.lastName
-                    ? updateImage.val()?.firstName +
-                      " " +
-                      updateImage.val().lastName
-                    : data.val().name,
-                  postid: data.key,
-                  //time:moment(data?.val()?.createdAt)- new Date().getTime()
-                  time:data?.val()?.createdAt
-                });
-              }
-            });
-          });
-        });
-        }
-      });
-    });
+    //             notis.push({
+    //               id: child.key,
+    //               image: updateImage.val()?.Dp
+    //               ? updateImage.val()?.Dp
+    //               : data.val().image,
+    //               message: data.val().message,
+    //               name: updateImage.val()?.firstName &&
+    //               updateImage.val()?.lastName
+    //                 ? updateImage.val()?.firstName +
+    //                   " " +
+    //                   updateImage.val().lastName
+    //                 : data.val().name,
+    //               postid: data.key,
+    //               //time:moment(data?.val()?.createdAt)- new Date().getTime()
+    //               time:data?.val()?.createdAt
+    //             });
+    //           }
+    //         });
+    //       });
+    //     });
+    //     }
+    //   });
+    // });
       let arr=[];
     var notification = firebase
       .database()
-      .ref("Likes/" + uid);
+      .ref("Likes/" + 'Bn8oaO2e1DgjcvuadtOhwrb1qLt1/');
       notification.on('value',(child)=>{
         child.forEach(item=>{
           const userImages = firebase
@@ -103,11 +103,12 @@ const Notifications = (props) => {
                 " " +
                 updateImage.val().lastName
               : item.val().name,
+              time:moment( updateImage?.val()?.createdAt).toDate()
           });
         });
         })
       })
-    Array.prototype.push.apply(arr,notis);
+    // Array.prototype.push.apply(arr,notis);
     AsyncStorage.setItem('num',JSON.stringify( arr.length));
     setnotis(arr);
     console.log("Noti Data==>", arr);

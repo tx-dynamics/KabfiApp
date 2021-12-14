@@ -624,14 +624,13 @@ const NewsFeed = (props) => {
         image:Dp,
         name:name,
         message: `liked your post. `,
-        createdAt: new Date().toISOString(),
+        createdAt:new Date().toLocaleString(),
         userId:firebase.auth()?.currentUser?.uid
       };
       console.log(arr,'\n','Name',name);
-      notification.push(addNoti);
       if(uid != post_user && arr!==''){
-     
-      // RequestPushMsg(arr, name, 'liked your post.','liked your post.')
+      notification.push(addNoti);
+      RequestPushMsg(arr, name, 'liked your post.','liked your post.')
     }
     }
     const Details = {

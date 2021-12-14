@@ -282,7 +282,7 @@ const CommentScreen = ({ route, navigation }) => {
         image:data.val().Dp,
         name:data.val().firstName + " " + data.val().lastName ,
         message: `commented. ${cmnt}`,
-        createdAt: new Date().toISOString(),
+        createdAt: new Date().toLocaleString(),
         userId:firebase.auth()?.currentUser?.uid
       };
       
