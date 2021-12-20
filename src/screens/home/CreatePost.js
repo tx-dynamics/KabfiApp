@@ -239,7 +239,7 @@ const CreatePost = (props) => {
       format: ImageManipulator.SaveFormat.PNG,
     });
     console.log("result", manipResult,'\n',result.uri);
-
+setPostImage(result.uri)
    
       onupload(manipResult.uri);
       // setPostImage(manipResult.uri);

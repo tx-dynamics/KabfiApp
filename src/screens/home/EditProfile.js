@@ -219,7 +219,7 @@ const EditProfile = (props) => {
             // marginTop: 15,
             // paddingHorizontal: 20,
             backgroundColor: "white",
-            borderBottomWidth:0.5,
+            borderBottomWidth:0,
             borderBottomColor:'#AEB2B1'
           }}
           leftComponent={

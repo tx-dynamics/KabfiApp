@@ -166,7 +166,7 @@ const Signin = (props) => {
                     height: "auto",
                   }}
                 >
-                  <AntDesign name="checkcircle" size={24} color="#FCB040" />
+                  {/* <AntDesign name="checkcircle" size={24} color="#FCB040" /> */}
                   <Text
                     style={{
                       color: "black",
@@ -175,7 +175,7 @@ const Signin = (props) => {
                       fontSize: 14,
                       fontWeight: "600",
                       color: "grey",
-                      width: 300,
+                      //width: 300,
                     }}
                   >
                     {messge}

@@ -71,6 +71,7 @@ import {
 import CountDown from "react-native-countdown-component";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ActionButton from 'react-native-action-button';
+import createOpenLink from 'react-native-open-maps';
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -103,8 +104,11 @@ const NewsFeed = (props) => {
   const [burstModel, setburstModel] = useState(false);
   const[burstvalue,setburstvalue]=useState('10+');
   const [loading, setloading] = useState(false);
+  const [mapModal, setmapModal] = useState(false);
   const[lat,setlat]=useState();
   const[long,setlong]=useState();
+  const[Blat,setBlat]=useState();
+  const[Blong,setBlong]=useState();
   useEffect(() => {
     setRefreshing(true);
     // loadFonts();
@@ -309,10 +313,21 @@ const NewsFeed = (props) => {
     settimerStart(false);
     // alert("custom completion function");
   }
-  const openGps = async (lat1, lng1)=>{
+
+  const openLocalMap = () => {
+    setmapModal(false)  
+    createOpenLink({ latitude: Blat, longitude: Blong});
+    // console.log("OKKKKKKKKK",Blat,Blong)
+    // var scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
+    // var url = scheme + `${Blat},${Blong}`;
+    // Linking.openURL(url);
+  }
+
+  const openGoogleMap= ()=>{
+    setmapModal(false)  
     let ways = '';
   let currentLocation= ''
-    ways = ways + lat1 + ',' + lng1;
+    ways = ways + Blat + ',' + Blong;
     currentLocation= currentLocation+lat+ ','+long
     console.log(ways,currentLocation)
     let url =
@@ -330,9 +345,13 @@ const NewsFeed = (props) => {
         }
     })
     .catch(err => console.warn('An error occurred', err));
-     //await setEnd(address)
-    
-     //console.log("OK pakistan",address,end) 
+   
+  }
+  const openGps = async (lat1, lng1)=>{
+    setBlat(lat1)
+    setBlong(lng1)
+    setmapModal(true)
+  
   }
   async function fetchLocation() {
     setRefreshing(true);
@@ -968,7 +987,8 @@ const NewsFeed = (props) => {
           >
             <Image
                   source={gmap}
-                  style={{ width: '100%', height:responsiveScreenHeight(13) }}
+                  style={{ width: '100%', 
+                  height:responsiveScreenHeight(13) }}
                   resizeMode='cover'
                 />
           </TouchableOpacity>:
@@ -1024,9 +1044,9 @@ const NewsFeed = (props) => {
                 numberOfLines={4}
                 style={{ textAlign: "left", color: "#464646", fontSize: 13 }}
               >
-                {item?.post_text?.length > 75 ? item?.post_text?.substring(0, 74) + "..." :
-                 item?.post_text}
-                {/* {item.post_text} */}
+                {/* {item?.post_text?.length > 75 ? item?.post_text?.substring(0, 74) + "..." :
+              item?.post_text} */}
+                {item.post_text}
               </Text>
               {item.rec ? (
                 <View
@@ -1255,7 +1275,42 @@ const NewsFeed = (props) => {
     }
   };
   return (
-    <View style={[styles.main,{opacity:burstModel||modalVisible?0.4:1}]}>
+    <View style={[styles.main,{opacity:burstModel||modalVisible|| mapModal?0.4:1}]}>
+      <Modal
+        style={{ justifyContent: 'flex-end', margin: 0 }}
+        animationType="slide"
+        transparent={true}
+        visible={mapModal}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setmapModal(!mapModal);
+        }}>
+        <View style={styles.centeredViewUp}>
+          <View style={styles.modalViewUp}>
+          <TouchableOpacity
+              style={[styles.buttonUp,{marginBottom:responsiveHeight(0),borderBottomLeftRadius:0,borderBottomRightRadius:0}]}
+              onPress={() => 
+              setmapModal(!mapModal),
+              openLocalMap
+              
+              }>
+              <Text style={styles.textStyleUp}>Maps</Text>
+            </TouchableOpacity>
+          <TouchableOpacity
+              style={[styles.buttonUp,{marginBottom:responsiveHeight(1.5),borderTopLeftRadius:0,borderTopRightRadius:0,}]}
+              onPress={() => setmapModal(!mapModal),openGoogleMap}>
+              <Text style={styles.textStyleUp}>Google Maps</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.buttonUp]}
+              onPress={() => setmapModal(!mapModal)}>
+              <Text style={styles.textStyleUp}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -1291,14 +1346,16 @@ const NewsFeed = (props) => {
     // shadowRadius: 3.84,
     elevation: 5,
     width: '70%',borderRadius:20,alignSelf:'center',
-    height:responsiveScreenHeight (30),}}>
+    height:responsiveScreenHeight (30),
+    
+    }}>
       
             <Image
-              style={{ width: "100%", height: "50%", }}
+              style={{ width:"100%",height:'100%'}}
               source={{ uri: largImage }}
               // resizeMode=''
             />
-             <View style={[{ flexDirection: "row",backgroundColor:'white',width:'100%',height:'50%',
+             <View style={[{ flexDirection: "row",backgroundColor:'white',width:'100%',
              borderBottomRightRadius:20,borderBottomLeftRadius:20}]}>
                 <Image
                   source={modeluserImage ? { uri: modeluserImage } : user}
@@ -1336,8 +1393,9 @@ const NewsFeed = (props) => {
               </Text>
               <Text
                 numberOfLines={2}
-                style={{ textAlign: "left", color: "#464646", fontSize: 13,
-                top:responsiveScreenHeight(1),width:'35%'}}
+                style={{ textAlign: "left", color: "#464646", fontSize: 13,marginTop:responsiveHeight(2),marginBottom:responsiveHeight(2)
+
+              }}
               >
                 {modeltxt}
               </Text>
@@ -1416,9 +1474,11 @@ const NewsFeed = (props) => {
         disabled={burstvalue===''?true:false}
          onPress={()=>{savePost(),setburstModel(false)}}
         style={{marginTop:responsiveScreenHeight(3),
-        alignSelf:'center',width:'80%',
+        alignSelf:'center',
+        width:'80%',
         backgroundColor:'lightgrey',
-        paddingVertical:10,
+        //paddingVertical:10,
+        justifyContent:'center',
         // borderBottomLeftRadius:20
         }}>
           {loading ? (
@@ -1429,6 +1489,7 @@ const NewsFeed = (props) => {
           </View>
         </View>
       </Modal>
+      
       <Header
         backgroundColor="white"
         containerStyle={{ marginTop: 0 }}

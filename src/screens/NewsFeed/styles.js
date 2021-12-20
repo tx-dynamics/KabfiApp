@@ -193,5 +193,53 @@ const styles = StyleSheet.create({
     // marginBottom: 15,
     textAlign: "center",
   },
+
+
+
+
+  centeredViewUp: {
+    flex:1,
+    justifyContent: 'flex-end',
+    //alignItems: 'center',
+    //marginTop: 22,
+  },
+  modalViewUp: {
+    //margin: 20,
+   // backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonUp: {
+   width:'110%',
+   backgroundColor: 'white',
+   padding:20,
+   borderRadius:10,
+  },
+  buttonOpenUp: {
+    backgroundColor: '#F194FF',
+  },
+  buttonCloseUp: {
+    backgroundColor: '#2196F3',
+  },
+  textStyleUp: {
+    color: '#2196F3',
+    fontWeight: '500',
+    textAlign: 'center',
+fontSize:18,
+    //height:100,
+  },
+  modalTextUp: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
 });
 export default styles;
