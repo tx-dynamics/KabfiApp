@@ -150,7 +150,6 @@ const ResetPassword = (props) => {
       setLoader(false);
     }
   }
-
   return (
     <ScrollView style={styles.root} keyboardShouldPersistTaps="handled">
         <Header
