@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  RefreshControl,AsyncStorage
+  RefreshControl,AsyncStorage,ImageBackground
 } from "react-native";
 import styles from "./styles";
 import { Header, Card } from "react-native-elements";
@@ -15,11 +15,12 @@ import HeaderCenterComponent from "../../components/HeaderCenterComponent";
 import { useIsFocused } from "@react-navigation/native";
 require("firebase/database");
 import {
-  user,
+  user,pst,bar
 } from "../../../assets";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import moment from "moment";
 
+import ActionButton from 'react-native-action-button';
 const Notifications = (props) => {
   const [Dp, setDp] = useState("");
   const isFocused = useIsFocused();
@@ -111,7 +112,7 @@ const Notifications = (props) => {
     // Array.prototype.push.apply(arr,notis);
     AsyncStorage.setItem('num',JSON.stringify( arr.length));
     setnotis(arr);
-    console.log("Noti Data==>", arr);
+    console.log("Noti Data==>", arr.length);
     setRefreshing(false);
   }
 
@@ -197,6 +198,31 @@ const Notifications = (props) => {
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
+       <ActionButton buttonColor="transparent" position="right" offsetY={30}
+   renderIcon={active => (
+    <ImageBackground
+    source={bar} resizeMode={"contain"}
+    style={{
+    height: 50,
+    width: 50,
+}}
+></ImageBackground>
+  )}
+  >
+              
+                <ActionButton.Item buttonColor="transparent"
+                    size={34}
+                    // title="Book Resource"
+                    onPress={() => props.navigation.navigate("CreatePost")}>
+                    <ImageBackground
+                    source={pst} resizeMode={"contain"}
+                    style={{
+                    height: 50,
+                    width: 50,top:2
+          }}
+        ></ImageBackground>
+                </ActionButton.Item>
+            </ActionButton>
     </View>
   );
 };

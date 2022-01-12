@@ -193,9 +193,10 @@ const NewsFeed = (props) => {
           });
         })
       })
-    Array.prototype.push.apply(arr,notis);
+    // Array.prototype.push.apply(arr,notis);
     
     const num=await AsyncStorage.getItem('num');
+    console.log(num,'\n',arr.length);
     if(Number (num)>0){
       // alert('here')
       setnots(arr.length-Number(num));
@@ -1489,7 +1490,6 @@ const NewsFeed = (props) => {
           </View>
         </View>
       </Modal>
-      
       <Header
         backgroundColor="white"
         containerStyle={{ marginTop: 0 }}
@@ -1550,7 +1550,7 @@ const NewsFeed = (props) => {
             visible={isVisible}
             // action={{ label: "ok" }}
             onDismiss={() => setIsVisible(!isVisible)}
-            duration={messge.length + 2000}
+            duration={1800}
           >
             <View
               style={{

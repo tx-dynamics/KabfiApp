@@ -762,6 +762,7 @@ setPostImage(result.uri)
           <View style={styles.mediaContainerInner}>
             {/* {!Sound ? ( */}
             <TouchableOpacity
+            disabled={true}
               onPress={showMethod}
               // disabled={recording ? true : false}
             >
@@ -804,7 +805,7 @@ setPostImage(result.uri)
               //   </TouchableOpacity>
               // )} */}
 
-            <TouchableOpacity onPress={pickPostImage}>
+            <TouchableOpacity disabled={true} onPress={pickPostImage}>
               <Image source={smallGallery} style={styles.media} />
             </TouchableOpacity>
 

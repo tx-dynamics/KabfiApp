@@ -23,6 +23,9 @@ import {
   MaterialIcons,
   Entypo,
 } from "@expo/vector-icons";
+import { Header } from "react-native-elements";
+import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
+import HeaderCenterComponent from "../../components/Settings/HeaderCenterComponent";
 const ResetPassword = (props) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -150,16 +153,12 @@ const ResetPassword = (props) => {
 
   return (
     <ScrollView style={styles.root} keyboardShouldPersistTaps="handled">
-      <View style={styles.contentArea}>
-        
-        <TouchableOpacity
-          style={[styles.backContainer, { width: "100%" }]}
-          onPress={() => props.navigation.navigate("Settings")}
-        >
-          <Ionicons name="chevron-back-outline" size={30} />
-          {/* <Text style={{ marginLeft: 10,alignSelf:'center' }}>Back</Text> */}
-        </TouchableOpacity>
-
+        <Header
+        backgroundColor="white"
+        containerStyle={{ marginTop: 15 }}
+        leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
+      />
+<View style={{paddingHorizontal:20,marginTop:Dimensions.get('window').height*8/100}}>
         {isVisible ? (
             <View style={{ height: 60 }}>
               <Snackbar
@@ -281,7 +280,7 @@ const ResetPassword = (props) => {
             )}
           </TouchableOpacity>
         </View>
-      </View>
+        </View>
     </ScrollView>
   );
 };
@@ -295,11 +294,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentArea: {
-    width: "100%",
-    height: "100%",
-    marginTop: "10%",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    // width: "100%",
+    // height: "100%",
+    // marginTop: "10%",
+    // paddingHorizontal: 20,
+    // paddingVertical: 10,
   },
   lockImageContainer: {
     alignItems: "center",

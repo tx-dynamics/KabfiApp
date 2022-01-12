@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Platform, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Platform, ActivityIndicator,ImageBackground } from "react-native";
 import MapView, { Heatmap, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
@@ -8,6 +8,10 @@ import firebase from "firebase";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import { Header } from "react-native-elements";
+import {
+  user,pst,bar
+} from "../../../assets";
+import ActionButton from 'react-native-action-button';
 // export default class HeatMap extends Component {
 //   static navigationOptions = {
 //     title: "New York",
@@ -397,6 +401,31 @@ export default class HeatMap extends Component {
             </MapView>
           )}
         </View>
+        <ActionButton buttonColor="transparent" position="right" offsetY={30}
+   renderIcon={active => (
+    <ImageBackground
+    source={bar} resizeMode={"contain"}
+    style={{
+    height: 50,
+    width: 50,
+}}
+></ImageBackground>
+  )}
+  >
+              
+                <ActionButton.Item buttonColor="transparent"
+                    size={34}
+                    // title="Book Resource"
+                    onPress={() => props.navigation.navigate("CreatePost")}>
+                    <ImageBackground
+                    source={pst} resizeMode={"contain"}
+                    style={{
+                    height: 50,
+                    width: 50,top:2
+          }}
+        ></ImageBackground>
+                </ActionButton.Item>
+            </ActionButton>
       </View>
     );
   }
