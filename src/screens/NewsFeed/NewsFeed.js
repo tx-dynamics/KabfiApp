@@ -24,7 +24,7 @@ import {
   ActivityIndicator,
   Slider,
   ImageBackground,
-  Keyboard,
+  Keyboard,Alert
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
@@ -115,7 +115,6 @@ const NewsFeed = (props) => {
   (  async function(){
       const data=  await AsyncStorage.getItem('posts');
       const dat=JSON.parse(data);
-      console.log('posts===>',dat);
       if(dat!==null)
       {
         setPosts(dat);
@@ -144,9 +143,9 @@ const NewsFeed = (props) => {
  
   async function fetchAllNoti() {
     const uid = firebase.auth().currentUser?.uid;
-    const userNoti = firebase.database().ref("Notifications/");
+    const userNoti =  firebase.database().ref("Notifications/");
     let notis = [];
-    userNoti.on("value", (userdata) => {
+  userNoti.on("value", (userdata) => {
       userdata.forEach((child) => {
         if (child.key !== uid) {
           child.forEach((data) => {
@@ -357,6 +356,11 @@ const NewsFeed = (props) => {
   async function fetchLocation() {
     setRefreshing(true);
     try {
+      const dp=  await AsyncStorage.getItem('dp');
+      console.log('DP===>',dp);
+      if(dp){
+        setDp(JSON.parse(dp))
+      }
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
       if (status !== "granted") {
         setMessage("Permission to access location was denied");
@@ -380,8 +384,6 @@ const NewsFeed = (props) => {
           try {
             
             const id =  firebase.auth().currentUser?.uid;
-            console.log("I ma testing LOC",location)
-
             if(id){
             const mylocation = 
             firebase.database().
@@ -474,6 +476,7 @@ const NewsFeed = (props) => {
     userdataNAme.on("value", (userdata) => {
       if (userdata.val()?.Dp) {
         setDp(userdata.val().Dp);
+        AsyncStorage.setItem('dp',JSON.stringify(userdata.val().Dp))
       }
       if (userdata.val()?.firstName && userdata.val()?.lastName) {
         setName(userdata.val().firstName + " " + userdata.val().lastName);
@@ -678,29 +681,20 @@ const NewsFeed = (props) => {
     fetchAllPosts();
   }
   async function hideHandler(post_id) {
-    // setRefreshing(true);
-    setTimeout(() => {
-      setMessage("This post is no longer available for you");
-      setIsVisible(!isVisible);
-    }, 200);
-
     let filtered = posts.filter((i) => {
       return post_id !== i.id;
     });
-
-    console.log("\n", post_id);
-
-    setPosts(filtered);
-
+    setTimeout(() => {
+      setMessage("This post is no longer available for you");
+      setIsVisible(!isVisible);
+      console.log("\n", post_id);
+      setPosts(filtered);
+    }, 200);
     const hiderPost = firebase
       .database()
       .ref("user_posts/" + post_id + "/Hide/");
     hiderPost.set(uid);
     setShow(false);
-
-    console.log("post_id==>", post_id);
-    // setRefreshing(false);
-    // fetchAllPosts();
   }
   async function reportHandler(post_id) {
     // alert("Reported");
@@ -847,18 +841,14 @@ const NewsFeed = (props) => {
 
   async function delPost(postid) {
     console.log("calling del");
-    setTimeout(() => {
-      setMessage("Post Deleted Successfully");
-      setIsVisible(!isVisible);
-    }, 200);
-
     let filtered = posts.filter((i) => {
       return postid !== i.id;
     });
-    // console.log("post filter", filtered, "\n", postid);
-    setPosts(filtered);
-    // alert("Post Deleted Successfully");
-
+    setTimeout(() => {
+      setPosts(filtered);
+      setMessage("Post Deleted Successfully");
+      setIsVisible(!isVisible);
+    }, 300);
     const del = firebase.database().ref("user_posts").child(postid);
     del.remove().then(() => console.log("Post Deleted Successfully"));
   }
@@ -1045,9 +1035,9 @@ const NewsFeed = (props) => {
                 numberOfLines={4}
                 style={{ textAlign: "left", color: "#464646", fontSize: 13 }}
               >
-                {/* {item?.post_text?.length > 75 ? item?.post_text?.substring(0, 74) + "..." :
-              item?.post_text} */}
-                {item.post_text}
+                {item?.post_text?.length > 140 ? item?.post_text?.substring(0, 139) + "..." :
+              item?.post_text}
+                {/* {item.post_text} */}
               </Text>
               {item.rec ? (
                 <View
@@ -1580,6 +1570,7 @@ const NewsFeed = (props) => {
         <></>
       )}
       <FlatList
+       initialNumToRender={7}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />
         }
