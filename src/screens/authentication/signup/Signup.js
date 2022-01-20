@@ -260,8 +260,6 @@ const Signup = (props) => {
           country: "",
           createdAt: new Date().toISOString(),
         };
-        firebase.auth().signOut();
-
         await firebase
           .database()
           .ref("users/")
@@ -273,7 +271,9 @@ const Signup = (props) => {
             setTimeout(() => {
               props.navigation.navigate("Verify");
             }, 2000);
+            firebase.auth().signOut();
           });
+          firebase.auth().signOut();
       });
   } catch (err) {
     setMessage("error : " + err);

@@ -85,7 +85,7 @@ const Notifications = (props) => {
       let arr=[];
     var notification = firebase
       .database()
-      .ref("Likes/" + 'Bn8oaO2e1DgjcvuadtOhwrb1qLt1/');
+      .ref("Likes/" + uid);
       notification.on('value',(child)=>{
         child.forEach(item=>{
           const userImages = firebase

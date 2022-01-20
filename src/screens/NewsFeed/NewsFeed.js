@@ -685,7 +685,7 @@ const NewsFeed = (props) => {
       return post_id !== i.id;
     });
     setTimeout(() => {
-      setMessage("This post is no longer available for you");
+      setMessage("This post is now hidden");
       setIsVisible(!isVisible);
       console.log("\n", post_id);
       setPosts(filtered);
@@ -1367,7 +1367,7 @@ const NewsFeed = (props) => {
                 ]}
               >
                
-                <Text style={[{fontFamily:'Sf-pro-display-bold', color: "#464646", fontWeight: "700" }]}>
+                <Text style={[{ color: "#464646", fontWeight: "700" }]}>
                   {modelUsername}
                 </Text>
                 <Text
@@ -1540,7 +1540,7 @@ const NewsFeed = (props) => {
             visible={isVisible}
             // action={{ label: "ok" }}
             onDismiss={() => setIsVisible(!isVisible)}
-            duration={1800}
+            duration={1000}
           >
             <View
               style={{
@@ -1624,11 +1624,11 @@ const NewsFeed = (props) => {
                 {/* )} */}
               </View>
               <View style={styles.userInfo2}>
-                <Text style={styles.userName,{fontFamily:'Sf-pro-display-bold',color:'#394143'}}>{name}</Text>
+                <Text style={styles.userName,{color:'#394143'}}>{name}</Text>
               </View>
               <View style={styles.userInfo3}>
                 <Text
-                  style={[styles.info3Text, {fontFamily:'Sf-pro-display', fontWeight: "500" }]}
+                  style={[styles.info3Text, {fontWeight: "500" }]}
                 >{`Member since ${
                   date ? moment(date).format("YYYY") : ""
                 }`}</Text>

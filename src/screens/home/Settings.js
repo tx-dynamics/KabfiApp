@@ -49,25 +49,29 @@ const Settings = (props) => {
     const data = {
       isLogin: false,
     };
+    const uid= firebase.auth().currentUser?.uid
 AsyncStorage.removeItem('num');
     const del =  firebase
       .database()
       .ref("locations")
-      .child(firebase.auth().currentUser?.uid);
-    del.remove();
+      .child(uid);
+    del.remove().then(()=>console.log('dell clear'));
      firebase
       .database()
-      .ref("users/" + firebase.auth().currentUser?.uid)
-      .update(data);
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        setLoader(false),
-        AsyncStorage.removeItem('userId')
-        props.SessionMaintain({ isLogin: false });
-        // setIsLoggedIn(false);
-      });
+      .ref("users/" + uid)
+      .update(data).then(()=>{
+        firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          console.log('dell clear');
+          setLoader(false);
+          AsyncStorage.removeItem('userId');
+          props.SessionMaintain({ isLogin: false });
+          // setIsLoggedIn(false);
+        });
+      })
+   
     setLoader(false);
   }
 

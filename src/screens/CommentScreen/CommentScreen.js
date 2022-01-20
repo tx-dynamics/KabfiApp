@@ -54,7 +54,7 @@ const CommentScreen = ({ route, navigation }) => {
   const [tokens, setTokens] = useState([]);
 
   useEffect(() => {
-    // console.log("posts", posts);
+    console.log("comment screen mae hun abhi mae acha...");
     const id = route.params.id;
     const owner_id = route.params.owner_id;
     setowner_id(owner_id)
@@ -71,7 +71,7 @@ const CommentScreen = ({ route, navigation }) => {
       Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
       Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
     };
-  }, [isFocused]);
+  }, []);
   const _keyboardDidShow = (e) => {
     setKeyBoardHeight(e.endCoordinates.height);
     setValueforBorrom(true);
@@ -234,7 +234,7 @@ const CommentScreen = ({ route, navigation }) => {
       </Swipeout>
     );
   };
-  async function postComments() {
+   function postComments() {
     var user = firebase.auth()?.currentUser;
     var userData = firebase.database().ref("users/" + user?.uid);
 

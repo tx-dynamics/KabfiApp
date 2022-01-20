@@ -416,7 +416,7 @@ export default class HeatMap extends Component {
                 <ActionButton.Item buttonColor="transparent"
                     size={34}
                     // title="Book Resource"
-                    onPress={() => props.navigation.navigate("CreatePost")}>
+                    onPress={() =>this.props.navigation.navigate("CreatePost")}>
                     <ImageBackground
                     source={pst} resizeMode={"contain"}
                     style={{

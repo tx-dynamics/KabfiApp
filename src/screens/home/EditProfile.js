@@ -25,7 +25,6 @@ import * as ImagePicker from "expo-image-picker";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 import { setNotificationChannelGroupAsync } from "expo-notifications";
-
 const EditProfile = (props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -41,9 +40,12 @@ const EditProfile = (props) => {
   const [messge, setMessage] = useState("");
 
   useEffect(() => {
+    lods()
+  }, []);
+  async function lods(){
     setLoader(true);
-    const user = firebase.auth().currentUser?.uid;
-    const data = firebase.database().ref("users/" + user);
+    const user = firebase.auth()?.currentUser?.uid;
+    const data = firebase.database().ref("users/" + firebase.auth()?.currentUser?.uid);
     data.on("value", (userdata) => {
       userdata.val().Dp ? setFlag(true) : setFlag(false);
       setFirstName(userdata.val().firstName);
@@ -55,7 +57,7 @@ const EditProfile = (props) => {
       userdata.val().Dp ? setDp(userdata.val().Dp) : setDp("");
     });
     setLoader(false);
-  }, []);
+  }
   async function onupload(url){
     console.log('uri here from upload start',url);
     const blob = await new Promise((resolve, reject) => {
@@ -298,7 +300,7 @@ const EditProfile = (props) => {
             
             {flag ? (
               <ImageBackground
-                source={{ uri: Dp }}
+                source={Dp?{ uri: Dp }:user}
                 borderRadius={50}
                 style={[styles.image, { alignItems: "flex-end" }]}
               >
@@ -320,7 +322,7 @@ const EditProfile = (props) => {
               </ImageBackground>
             )}
 
-          {!Dp?
+          {Dp===''?
             <ActivityIndicator
               // animating={onimage}
               size="large"

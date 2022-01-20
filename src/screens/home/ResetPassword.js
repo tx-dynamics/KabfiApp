@@ -152,9 +152,9 @@ const ResetPassword = (props) => {
   }
   return (
     <ScrollView style={styles.root} keyboardShouldPersistTaps="handled">
-        <Header
+      <Header
         backgroundColor="white"
-        containerStyle={{ marginTop: 15 }}
+        // containerStyle={{ marginTop: 1 }}
         leftComponent={<HeaderLeftComponent navigation={props.navigation} />}
       />
 <View style={{paddingHorizontal:20,marginTop:Dimensions.get('window').height*8/100}}>
@@ -185,7 +185,7 @@ const ResetPassword = (props) => {
 
         <View style={styles.textContainer}>
           <Text style={styles.textHeading}>Create New Password</Text>
-          <Text style={styles.textsubHeading}>
+          <Text style={[styles.textsubHeading,]}>
             Your new password must be different from previous passwords.
           </Text>
         </View>
@@ -229,7 +229,7 @@ const ResetPassword = (props) => {
               secureTextEntry={newpasswordHidden}
             />
             <Text
-              style={{ paddingHorizontal: 2, fontSize: 13, color: "#464646" }}
+              style={{ paddingHorizontal: 2, fontSize: 13, color: "#464646",marginTop:4}}
             >
               Must be at least 8 Characters
             </Text>
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 17,
     fontSize: 10,
     color: "red",
-    marginBottom: 10,
+    marginBottom: 10,marginTop:4
   },
 });
 
