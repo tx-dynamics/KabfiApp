@@ -234,7 +234,7 @@ const CommentScreen = ({ route, navigation }) => {
       </Swipeout>
     );
   };
-   function postComments() {
+   const sendComments  = () =>{
     var user = firebase.auth()?.currentUser;
     var userData = firebase.database().ref("users/" + user?.uid);
 
@@ -359,7 +359,8 @@ const CommentScreen = ({ route, navigation }) => {
           <TouchableOpacity
             disabled={cmnt === "" ? true : false}
             onPress={() => {
-              postComments(), setisloading(true);
+              sendComments(), 
+              setisloading(true);
             }}
             style={{
               justifyContent: "center",

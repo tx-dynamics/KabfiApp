@@ -50,12 +50,12 @@ const Settings = (props) => {
       isLogin: false,
     };
     const uid= firebase.auth().currentUser?.uid
-AsyncStorage.removeItem('num');
-    const del =  firebase
-      .database()
-      .ref("locations")
-      .child(uid);
-    del.remove().then(()=>console.log('dell clear'));
+// AsyncStorage.removeItem('num');
+//     const del =  firebase
+//       .database()
+//       .ref("locations")
+//       .child(uid);
+//     del.remove().then(()=>console.log('dell clear'));
      firebase
       .database()
       .ref("users/" + uid)
