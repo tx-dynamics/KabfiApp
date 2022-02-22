@@ -770,21 +770,21 @@ setPostImage(result.uri)
               {
                 !index ? (
                   <>
-                    {showrec ? (
+                    {/* {showrec ? (
                       <Image source={waveonn} style={styles.media} />
                     ) : (
                       <>
                         <Image source={waveoff} style={styles.media} />
                       </>
-                    )}
+                    )} */}
                   </>
                 ) : (
                   <>
-                    {Sound != "" ? (
+                    {/* {Sound != "" ? (
                       <Image source={waveoff} style={styles.media} />
                     ) : (
                       <Image source={waveonn} style={styles.media} />
-                    )}
+                    )} */}
                   </>
                 )
                 // <Image source={waveonn}  style={styles.media} />
@@ -805,9 +805,9 @@ setPostImage(result.uri)
               //   </TouchableOpacity>
               // )} */}
 
-            <TouchableOpacity disabled={true} onPress={pickPostImage}>
+            {/* <TouchableOpacity disabled={true} onPress={pickPostImage}>
               <Image source={smallGallery} style={styles.media} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* <TouchableOpacity onPress={() => props.navigation.navigate("Map")}>
             <SimpleLineIcons

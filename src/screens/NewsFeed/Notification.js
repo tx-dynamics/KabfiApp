@@ -85,7 +85,9 @@ const Notifications = (props) => {
       let arr=[];
     var notification = firebase
       .database()
-      .ref("Likes/" + uid);
+      .ref("Likes/" + 'Y6Q177bAMEWsVGtMlNVd2UF1CwZ2')
+      .orderByChild('createdAt'); 
+      //.ref("Likes/" + uid);
       notification.on('value',(child)=>{
         child.forEach(item=>{
           const userImages = firebase
@@ -111,7 +113,7 @@ const Notifications = (props) => {
       })
     // Array.prototype.push.apply(arr,notis);
     AsyncStorage.setItem('num',JSON.stringify( arr.length));
-    setnotis(arr);
+    setnotis(arr.reverse());
     console.log("Noti Data==>", arr.length);
     setRefreshing(false);
   }

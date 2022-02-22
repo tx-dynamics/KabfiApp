@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 13,
     alignItems: "center",
+    borderRadius: 25,
   },
   btn2Text: {
     color: "white",

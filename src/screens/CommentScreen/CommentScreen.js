@@ -322,7 +322,7 @@ const CommentScreen = ({ route, navigation }) => {
          valueforBorrom
            ? keyBoardHeight -
              initialWindowMetrics.insets.bottom +
-             responsiveHeight(1)
+             responsiveHeight(0)
            : 0,
          
           paddingVertical: 8,
@@ -344,7 +344,7 @@ const CommentScreen = ({ route, navigation }) => {
           <TextInput
             ref={inputRef}
             style={styles.input}
-            // placeholder="Comments"
+            //placeholder="Comments"
             autoCapitalize={"none"}
             returnKeyType={"done"}
             keyboardType={"default"}

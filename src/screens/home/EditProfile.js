@@ -160,7 +160,7 @@ const EditProfile = (props) => {
         allowsEditing: true,
       });
     }
-    const manipResult = await ImageManipulator.manipulateAsync(result.uri, [], {
+    const manipResult = await ImageManipulator.manipulateAsync(result.uri,  [{ resize: { width: 50, height: 50 } }], {
       compress: 0,
       format: ImageManipulator.SaveFormat.PNG,
     });

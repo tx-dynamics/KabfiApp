@@ -3,7 +3,7 @@ import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import React, { useState, useEffect, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import {
   View,
   Text,
@@ -52,6 +52,7 @@ const Signin = (props) => {
   const [passwordHidden, setPasswordHidden] = useState(true);
   const [loader, setLoader] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isVerified, setVerified] = useState(false);
   const [messge, setMessage] = useState("");
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -80,7 +81,6 @@ const Signin = (props) => {
     // Notifications.addNotificationReceivedListener((response) => {
     //   console.log(response);
     // });
-
     // return () => {
     //   Notifications.removeNotificationSubscription();
     //   Notifications.removeNotificationSubscription(responseListener.current);
@@ -99,24 +99,33 @@ const Signin = (props) => {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(async user => {
-        registerForPushNotificationsAsync().then((token) =>
-      {  console.log('Token',token);
-          firebase
-            .database()
-            .ref("users/" + firebase.auth().currentUser?.uid + "/")
-            .update({
-              pushToken: token,
-              userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
-              isLogin: true,
-            })}
-        );
-        console.log("me user id hi",user.user.uid)
-         await AsyncStorage.setItem('userId', user.user.uid)
-        props.SessionMaintain({ isLogin: true });
-        
-         //setIsLoggedIn(true);
-        setLoader(false);
+      .then(async (user) => {
+        let verify = await getData(user.user.uid);
+        console.log("HEllo ",verify)
+        if (verify) {
+          registerForPushNotificationsAsync().then((token) => {
+            console.log("Token", token);
+            firebase
+              .database()
+              .ref("users/" + firebase.auth().currentUser?.uid + "/")
+              .update({
+                pushToken: token,
+                userPlatform: Platform.OS == "ios" ? "IOS" : "ANDROID",
+                isLogin: true,
+              });
+          });
+
+          //console.log("me user id hi", user.user.uid);
+         await AsyncStorage.setItem("userId", user.user.uid);
+          props.SessionMaintain({ isLogin: true });
+
+          //setIsLoggedIn(true);
+          setLoader(false);
+        } else {
+          setMessage("This user is not verified yet.");
+          setIsVisible(!isVisible);
+          setLoader(false);
+        }
       })
       .catch((error) => {
         setMessage(error.message);
@@ -218,7 +227,12 @@ const Signin = (props) => {
               />
             </View>
 
-            <View style={[styles.textFieldContainer, { marginTop: 26,justifyContent:'center' }]}>
+            <View
+              style={[
+                styles.textFieldContainer,
+                { marginTop: 26, justifyContent: "center" },
+              ]}
+            >
               {/* <Image
                 source={require("../../../assets/ProjectImages/authentication/password-icon.png")}
                 style={styles.fieldIcon}
@@ -228,8 +242,8 @@ const Signin = (props) => {
                 style={styles.eyeIconContainer}
                 onPress={passwordVisibility}
               >
-                <Feather
-                  name={passwordHidden ? "eye" : "eye-off"}
+                <Ionicons
+                  name={passwordHidden ? "eye-outline" : "eye-off-outline"}
                   style={passwordHidden ? styles.eyeIconOn : styles.eyeIcon}
                 />
               </TouchableOpacity>
@@ -252,7 +266,9 @@ const Signin = (props) => {
                 {loader ? (
                   <ActivityIndicator color={"red"} size={"small"} />
                 ) : (
-                  <Text style={{ color: "white", fontWeight: "700" }}>LOGIN</Text>
+                  <Text style={{ color: "white", fontWeight: "700" }}>
+                    LOGIN
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -269,7 +285,9 @@ const Signin = (props) => {
 
               <TouchableOpacity
                 style={styles.socialIconsContainerSingle}
-                onPress={() => Linking.openURL("https://twitter.com/kabfiglobal")}
+                onPress={() =>
+                  Linking.openURL("https://twitter.com/kabfiglobal")
+                }
               >
                 <Entypo name="twitter" style={styles.socialIcon} />
               </TouchableOpacity>
@@ -295,7 +313,9 @@ const Signin = (props) => {
               style={{ alignItems: "center", marginTop: 10 }}
               onPress={() => props.navigation.navigate("Signup")}
             > */}
-            <Text style={([styles.forgotPasswordText], { alignSelf: "center" })}>
+            <Text
+              style={([styles.forgotPasswordText], { alignSelf: "center" })}
+            >
               Don't have an account?
               <TouchableOpacity
                 style={{ alignItems: "center" }}
@@ -374,7 +394,7 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: 40,
-    height:48,
+    height: 48,
     backgroundColor: "#FAB040",
     alignItems: "center",
     padding: 15,
@@ -474,4 +494,19 @@ async function registerForPushNotificationsAsync() {
   } catch (e) {
     console.log("error", e);
   }
+}
+
+export function getData(user_id) {
+  const data = firebase.database().ref("users/" + user_id);
+  let verify;
+  data.on("value", (userdata) => {
+    if (userdata.val().isVerified) {
+      verify=userdata.val().isVerified;
+    } else {
+      console.log("else")
+     verify= userdata.val().isVerified;
+    }
+  });
+
+  return verify
 }

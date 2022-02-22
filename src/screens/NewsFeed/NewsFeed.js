@@ -839,19 +839,37 @@ const NewsFeed = (props) => {
     setPosts(res);
   }
 
-  async function delPost(postid) {
+  const   delPost = (postid)=> {
     console.log("calling del");
+    setIsVisible(!isVisible);
+    setMessage("Post Deleted Successfully");
+    
+   // alert(index)
     let filtered = posts.filter((i) => {
       return postid !== i.id;
     });
-    setTimeout(() => {
-      setPosts(filtered);
-      setMessage("Post Deleted Successfully");
-      setIsVisible(!isVisible);
-    }, 300);
-    const del = firebase.database().ref("user_posts").child(postid);
-    del.remove().then(() => console.log("Post Deleted Successfully"));
+
+
+  setPosts(filtered)   
+
+
+setTimeout(() => {
+  var updates = {};
+  updates['/user_posts/'+postid] = {};
+  firebase.database().ref().update(updates);
+    }, 50);
+   
+    
+   // let del = firebase.database().ref("user_posts").child(postid);
+     //del.remove().then(() => console.log("Post Deleted Successfully"));
+    
   }
+
+const DeleteFromFirbase = (postid)=>{
+  console.log("Delt", postid) 
+   firebase.database().ref('/user_posts/'+postid).set(null);
+ // firebase.database().ref('user_posts').child('' + postid).update(null)
+}
 
   const renderPosts = ({ item, index }) => {
     return (
@@ -1603,16 +1621,21 @@ const NewsFeed = (props) => {
 
             <View style={styles.userInfoContainer}>
               <View style={styles.userInfo1}>
-               {Dp ? <Image
+               {Dp ? 
+               <Image
                   onLoadStart={() => setonimage(true)}
                   onLoadEnd={() => setonimage(false)}
                   source={Dp ? { uri: Dp } : user}
                   style={styles.smallImage}
-                />: <Image
+                />
+                : 
+                
+                <Image
                 onLoadStart={() => setonimage(true)}
                 onLoadEnd={() => setonimage(false)}
                 source={Dp ? { uri: Dp } : user}
                 style={styles.smallImage}/>
+                
                 }
                 {/* {onimage && ( */}
                 <ActivityIndicator

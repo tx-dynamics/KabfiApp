@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo/vector-icons": "12.0.5",
     "@react-native-async-storage/async-storage": "^1.15.11",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/netinfo": "^6.0.2",
@@ -22,6 +23,7 @@
     "expo-location": "^12.1.2",
     "expo-media-library": "~12.1.2",
     "expo-notifications": "~0.12.3",
+    "expo-permissions": "12.1.1",
     "expo-status-bar": "~1.0.4",
     "firebase": "8.2.3",
     "moment": "^2.29.1",
@@ -38,7 +40,7 @@
     "react-native-open-maps": "^0.3.6",
     "react-native-options-menu": "^2.0.2",
     "react-native-paper": "^4.9.2",
-    "react-native-permissions": "^3.0.5",
+    "react-native-permissions": "^3.0.2",
     "react-native-popup-menu": "^0.15.11",
     "react-native-progress": "^5.0.0",
     "react-native-raw-bottom-sheet": "^2.2.0",

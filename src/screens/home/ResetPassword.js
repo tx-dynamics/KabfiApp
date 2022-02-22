@@ -26,6 +26,7 @@ import {
 import { Header } from "react-native-elements";
 import HeaderLeftComponent from "../../components/Settings/HeaderLeftComponent";
 import HeaderCenterComponent from "../../components/Settings/HeaderCenterComponent";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 const ResetPassword = (props) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -73,13 +74,13 @@ const ResetPassword = (props) => {
     setLoader(true);
 
     if (oldPassword === "" && newPassword === "" && confirmPassword === "") {
-      setOldPasswordError("This Field is required");
-      setNewPasswordError("This Field is required");
-      setConfirmPasswordError("This Field is required");
+      setOldPasswordError("This field is required");
+      setNewPasswordError("This field is required");
+      setConfirmPasswordError("This field is required");
       setLoader(false);
     }
     if (oldPassword === "") {
-      setOldPasswordError("This Field is Required");
+      setOldPasswordError("This field is required");
       setLoader(false);
       return;
     } else {
@@ -87,11 +88,11 @@ const ResetPassword = (props) => {
     }
 
     if (newPassword === "") {
-      setNewPasswordError("This Field is Required");
+      setNewPasswordError("This field is required");
       setLoader(false);
       return;
     } else if (newPassword.length < 8) {
-      setNewPasswordError("Must be atleast 8 Characters");
+      setNewPasswordError("Must be atleast 8 characters");
       setLoader(false);
       return;
     } else {
@@ -99,11 +100,11 @@ const ResetPassword = (props) => {
     }
 
     if (confirmPassword === "") {
-      setConfirmPasswordError("This Field is Required");
+      setConfirmPasswordError("This field is required");
       setLoader(false);
       return;
     } else if (confirmPassword.length < 8) {
-      setConfirmPasswordError("Must be atleast 8 Characters");
+      setConfirmPasswordError("Must be atleast 8 characters");
       setLoader(false);
       return;
     } else if (confirmPassword !== newPassword) {
@@ -122,7 +123,7 @@ const ResetPassword = (props) => {
             .updatePassword(newPassword)
             .then(() => {
               // alert("Password Updated Successfully");
-              setMessage("Password Updated Successfully");
+              setMessage("Password updated successfully");
               setIsVisible(!isVisible);
               setOldPassword("");
               setNewPassword("");
@@ -144,9 +145,9 @@ const ResetPassword = (props) => {
           setLoader(false);
         });
     } else {
-      setOldPasswordError("This Field is required");
-      setNewPasswordError("This Field is required");
-      setConfirmPasswordError("This Field is required");
+      setOldPasswordError("This field is required");
+      setNewPasswordError("This field is required");
+      setConfirmPasswordError("This field is required");
       setLoader(false);
     }
   }
@@ -231,7 +232,7 @@ const ResetPassword = (props) => {
             <Text
               style={{ paddingHorizontal: 2, fontSize: 13, color: "#464646",marginTop:4}}
             >
-              Must be at least 8 Characters
+              Must be at least 8 characters
             </Text>
             <Text style={styles.errorMsg}>{newpasswordError}</Text>
           </View>
@@ -337,6 +338,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: "#E6E6E6",
+    //marginTop:responsiveHeight(5),
   },
 
   btn2: {
@@ -373,6 +375,7 @@ const styles = StyleSheet.create({
   },
   fieldContainer: {
     paddingHorizontal: 10,
+    marginTop:responsiveHeight(1)
   },
   label: {
     // paddingHorizontal: 17,
@@ -384,7 +387,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 17,
     fontSize: 10,
     color: "red",
-    marginBottom: 10,marginTop:4
+    marginBottom: 10,
+    marginTop:responsiveHeight(1)
   },
 });
 
