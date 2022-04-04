@@ -1,8 +1,10 @@
-import { SESSION, POST_DATA } from "../Constants";
+import { SESSION, POST_DATA,USER_INFO } from "../Constants";
 const initialState = {
   isLogin: "",
   postdata: null,
+  userInfo: "",
 };
+
 
 const authReducer = (state = initialState, action) => {
   const { type, payload } = action;
@@ -18,8 +20,15 @@ const authReducer = (state = initialState, action) => {
         ...state,
         postdata: payload,
       };
+      case USER_INFO:
+      return {
+        ...state,
+        userInfo:payload.userInfo,
+      };
     default:
       return state;
   }
 };
 export default authReducer;
+
+

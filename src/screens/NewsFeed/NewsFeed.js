@@ -1,9 +1,11 @@
 import firebase from "firebase";
+
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
 // import Snackbar from 'rn-snackbar-component'
 import NetInfo from "@react-native-community/netinfo";
-import * as Font from 'expo-font';
+import * as Font from "expo-font";
+
 import { RequestPushMsg } from "../../components/RequestPushMsg";
 import {
   View,
@@ -24,14 +26,16 @@ import {
   ActivityIndicator,
   Slider,
   ImageBackground,
-  Keyboard,Alert
+  Keyboard,
+  Alert,
 } from "react-native";
 import OptionsMenu from "react-native-options-menu";
 import styles from "./styles";
 import { Header, Card } from "react-native-elements";
 import RBSheet from "react-native-raw-bottom-sheet";
 import {
-  user,gmap,
+  user,
+  gmap,
   more,
   postImage,
   reload,
@@ -46,8 +50,12 @@ import {
   menu,
   bars,
   noti,
-  bar,b10,b20,b30,brst,pst,
-  
+  bar,
+  b10,
+  b20,
+  b30,
+  brst,
+  pst,
 } from "../../../assets";
 import { Audio } from "expo-av";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
@@ -70,8 +78,11 @@ import {
 } from "react-native-responsive-dimensions";
 import CountDown from "react-native-countdown-component";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ActionButton from 'react-native-action-button';
-import createOpenLink from 'react-native-open-maps';
+import ActionButton from "react-native-action-button";
+import createOpenLink from "react-native-open-maps";
+import { Asset } from "expo-asset";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { connect } from "react-redux";
 const NewsFeed = (props) => {
   const [Dp, setDp] = useState("");
   const [name, setName] = useState("");
@@ -96,155 +107,221 @@ const NewsFeed = (props) => {
   const [timerReset, settimerReset] = useState(false);
   const [onimage, setonimage] = useState(false);
   const [maxTimeInSeconds, setMaxTimeInSeconds] = useState([]);
-  const[nots,setnots]=useState();
-  const[modeltxt,setmodeltxt]=useState();
-  const[modeltime,setmodeltime]=useState();
-  const[modelUsername,setmodelUsername]=useState();
-  const[modeluserImage,setmodeluserImage]=useState();
+  const [nots, setnots] = useState();
+  const [modeltxt, setmodeltxt] = useState();
+  const [modeltime, setmodeltime] = useState();
+  const [modelUsername, setmodelUsername] = useState();
+  const [modeluserImage, setmodeluserImage] = useState();
   const [burstModel, setburstModel] = useState(false);
-  const[burstvalue,setburstvalue]=useState('10+');
+  const [burstvalue, setburstvalue] = useState("10+");
   const [loading, setloading] = useState(false);
   const [mapModal, setmapModal] = useState(false);
-  const[lat,setlat]=useState();
-  const[long,setlong]=useState();
-  const[Blat,setBlat]=useState();
-  const[Blong,setBlong]=useState();
-  useEffect(() => {
+  const [lat, setlat] = useState();
+  const [long, setlong] = useState();
+  const [Blat, setBlat] = useState();
+  const [Blong, setBlong] = useState();
+  const [tokens, setTokens] = useState([]);
+  const [NotiVal, setNotiVal] = useState(false);
+  useEffect(async () => {
     setRefreshing(true);
     // loadFonts();
-  (  async function(){
-      const data=  await AsyncStorage.getItem('posts');
-      const dat=JSON.parse(data);
-      if(dat!==null)
-      {
-        setPosts(dat);
-      }
-      });
-    var screen = props?.route?.params?.screen
-    var created = props?.route?.params?.created
-    const id =  firebase.auth().currentUser?.uid;
-    setburstvalue('');
-        console.log("I ma testing LOC",id)
-    if(screen ==='post'){
-      if(created != undefined){
-          setMessage(created);
-          setIsVisible(!isVisible);
-         props.navigation.setParams({screen: '', created: ''});
+    var screen = props?.route?.params?.screen;
+    var created = props?.route?.params?.created;
+    // const id = await firebase.auth().currentUser?.uid;
+    let id;
+    let data= JSON.parse(props.userInfo)
+    console.log("ARAY",data.firstName);  
+           
+          setUid(data.id); 
+          userData(data);
+          await fetchAllPosts();
+          await fetchAllNoti(data.id);
+          await fetchLocation(data.id);
+          
+      getLocation(data)       
+      setburstvalue("");
+  
+    if (screen === "post") {
+      if (created != undefined) {
+        setMessage(created);
+        setIsVisible(!isVisible);
+        props.navigation.setParams({ screen: "", created: "" });
       }
     }
-   fetchAllPosts();
-    fetchAllNoti();
-   fetchLocation();
-   ()=>{
-    Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
-   }
-   setRefreshing(false);
+console.log(NotiVal);
+  
+    () => {
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
+    setRefreshing(false);
   }, [isFocused]);
- 
-  async function fetchAllNoti() {
-    const uid = firebase.auth().currentUser?.uid;
-    const userNoti =  firebase.database().ref("Notifications/");
-    let notis = [];
-  userNoti.on("value", (userdata) => {
-      userdata.forEach((child) => {
-        if (child.key !== uid) {
-          child.forEach((data) => {
-            const hideNoti = firebase
-              .database()
-              .ref(
-                "users/" +
-                  firebase.auth().currentUser?.uid +
-                  "/hide/" +
-                  data.key
-              );
 
-            hideNoti.on("value", (hideId) => {
-              // console.log("users=>", hideId.exists());
-              //   console.log(hideId.key);
-              if (!hideId.exists()) {
-               
-                notis.push({
-                  id: child.key,
-                  image: data.val().image,
-                  message: data.val().message,
-                  name: data.val().name,
-                  postid: data.key,
-                  //time:moment(data?.val()?.createdAt)- new Date().getTime()
-                  time:data?.val()?.createdAt
-                });
-              }
-            });
-          });
-        }
-      });
+  async function getLocation(dataOfUser) {
+    const data = firebase.database().ref("users");
+    const arr = [];
+    data.on("value", (userdata) => {
+      {
+        userdata.forEach((child) => {
+          if (
+            child.val()?.isEnabled === true &&
+            child.key !== dataOfUser.id &&
+            child?.val()?.isLogin
+          ) {
+            arr.push(child.val()?.pushToken);
+          }
+        });
+      }
     });
-      let arr=[];
-    var notification = firebase
-      .database()
-      .ref("Likes/" + uid);
-      notification.on('value',(child)=>{
-        child.forEach(item=>{
-          arr.push({
-            id: item.key,
-            image: item.val().image,
-            message: item.val().message,
-            name: item.val().name,
-          });
-        })
-      })
-    // Array.prototype.push.apply(arr,notis);
+    setTokens(arr);
+  }
+
+  async function userData(userdata) {
+   
+  if(userdata){
     
-    const num=await AsyncStorage.getItem('num');
-    console.log(num,'\n',arr.length);
-    if(Number (num)>0){
-      // alert('here')
-      setnots(arr.length-Number(num));
-    }
+    // userdataNAme.on("value", async (userdata) => {
+      if (userdata.Dp) {
+        setDp(userdata.Dp);
+        try {
+          const imageAssets = await Asset.fromModule(
+            userdata.Dp
+          ).downloadAsync();
+          //AsyncStorage.setItem('dp',JSON.stringify(userdata.val().Dp))
+          if (imageAssets) {
+            await AsyncStorage.setItem("dp", imageAssets.localUri);
+            setDp(imageAssets.localUri);
+          }
+        } catch (err) {
+          console.log("error image ", err);
+        }
+      }
+      else{
+        setDp("");
+        await AsyncStorage.removeItem("dp");
+      }
+     
+        if (userdata.firstName && userdata.lastName) {
+          setName(userdata.firstName + " " + userdata.lastName);
+          setDate(userdata.createdAt);
+        }
+      } 
+      //  });
+  }
+
+  async function fetchAllNoti(uid) {
+    //let noti=''
+    let userName = firebase.database().ref("users/" + uid);
+    userName.on("value", (userdata) => {
+      //noti = userdata.val()?.notiNot;
+      setNotiVal(userdata.val()?.notiNot)
+    });
+ 
+
+    //const uid = firebase.auth().currentUser?.uid;
+    //console.log("NOTIFication",uid)
+    // const userNoti = firebase.database().ref("Notifications/");
+    // let notis = [];
+    // userNoti.on("value", (userdata) => {
+    //   userdata.forEach((child) => {
+    //     if (child.key !== uid) {
+    //       child.forEach((data) => {
+    //         const hideNoti = firebase
+    //           .database()
+    //           .ref(
+    //             "users/" +
+    //               firebase.auth().currentUser?.uid +
+    //               "/hide/" +
+    //               data.key
+    //           );
+
+    //         hideNoti.on("value", (hideId) => {
+    //           // console.log("users=>", hideId.exists());
+    //           //   console.log(hideId.key);
+    //           if (!hideId.exists()) {
+    //             notis.push({
+    //               id: child.key,
+    //               image: data.val().image,
+    //               message: data.val().message,
+    //               name: data.val().name,
+    //               postid: data.key,
+    //               //time:moment(data?.val()?.createdAt)- new Date().getTime()
+    //               time: data?.val()?.createdAt,
+    //             });
+    //           }
+    //         });
+    //       });
+    //     }
+    //   });
+    // });
+    // let arr = [];
+    // var notification = firebase.database().ref("Likes/" + uid);
+    // notification.on("value", (child) => {
+    //   child.forEach((item) => {
+    //     arr.push({
+    //       id: item.key,
+    //       image: item.val().image,
+    //       message: item.val().message,
+    //       name: item.val().name,
+    //     });
+    //   });
+    // });
+    // // Array.prototype.push.apply(arr,notis);
+
+    // const num = await AsyncStorage.getItem("num");
+    // console.log(num, "\n", arr.length);
+    // if (Number(num) > 0) {
+    //   // alert('here')
+    //   setnots(arr.length - Number(num));
+    // }
+
+
   }
   const _keyboardDidHide = () => {
     console.log("Keyboard Hidden");
   };
-  function CheckConnectivity  ()  {
+  function CheckConnectivity() {
     // For Android devices
     NetInfo.fetch().then((state) => {
       console.log("Connection type", state.type);
-      console.log("Is connected?", state.isConnected,state.isInternetReachable);
+      console.log(
+        "Is connected?",
+        state.isConnected,
+        state.isInternetReachable
+      );
       //if (Platform.OS === "android") {
-        if (state.isConnected) {
-        } else {
-          setRefreshing(false);
-          setMessage('Network error has occurred');
-          setIsVisible(!isVisible)
-
-        }
-      
+      if (state.isConnected) {
+      } else {
+        setRefreshing(false);
+        setMessage("Network error has occurred");
+        setIsVisible(!isVisible);
+      }
     });
-  };
+  }
 
-  async function  loadFonts() {
-     Font.useFonts({
+  async function loadFonts() {
+    Font.useFonts({
       // Load a font `Montserrat` from a static resource
       // Montserrat: require('./assets/fonts/Montserrat.ttf'),FontsFree-Net-SFProText-Regular
 
       // Any string can be used as the fontFamily name. Here we use an object to provide more control
-      'Sf-pro-display': {
-        uri: require('../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Light.ttf'),
+      "Sf-pro-display": {
+        uri: require("../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Light.ttf"),
         display: Font.FontDisplay.FALLBACK,
       },
-      'Sf-pro-display-bold': {
-        uri: require('../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Bold.ttf'),
+      "Sf-pro-display-bold": {
+        uri: require("../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Bold.ttf"),
         display: Font.FontDisplay.FALLBACK,
       },
-      'Sf-pro-display-medium': {
-        uri: require('../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Medium.ttf'),
+      "Sf-pro-display-medium": {
+        uri: require("../../../assets/sf-pro-display-cufonfonts/SF-Pro-Display-Medium.ttf"),
         display: Font.FontDisplay.FALLBACK,
       },
-      'FontsFree-Net-SFProText-Regular': {
-        uri: require('../../../assets/sf-pro-display-cufonfonts/FontsFree-Net-SFProText-Regular.ttf'),
+      "FontsFree-Net-SFProText-Regular": {
+        uri: require("../../../assets/sf-pro-display-cufonfonts/FontsFree-Net-SFProText-Regular.ttf"),
         display: Font.FontDisplay.FALLBACK,
       },
     });
-    setfontsLoaded(true)
+    setfontsLoaded(true);
   }
 
   async function imageloaderStart(id) {
@@ -283,7 +360,6 @@ const NewsFeed = (props) => {
         };
       }
     });
-
     setPosts(res);
   }
 
@@ -315,51 +391,50 @@ const NewsFeed = (props) => {
   }
 
   const openLocalMap = () => {
-    setmapModal(false)  
-    createOpenLink({ latitude: Blat, longitude: Blong});
+    setmapModal(false);
+    createOpenLink({ latitude: Blat, longitude: Blong });
     // console.log("OKKKKKKKKK",Blat,Blong)
     // var scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
     // var url = scheme + `${Blat},${Blong}`;
     // Linking.openURL(url);
-  }
+  };
 
-  const openGoogleMap= ()=>{
-    setmapModal(false)  
-    let ways = '';
-  let currentLocation= ''
-    ways = ways + Blat + ',' + Blong;
-    currentLocation= currentLocation+lat+ ','+long
-    console.log(ways,currentLocation)
+  const openGoogleMap = () => {
+    setmapModal(false);
+    let ways = "";
+    let currentLocation = "";
+    ways = ways + Blat + "," + Blong;
+    currentLocation = currentLocation + lat + "," + long;
+    console.log(ways, currentLocation);
     let url =
-    'https://www.google.com/maps/dir/?api=1&origin=' +
-    currentLocation +
-    '&destination=' +
-    ways
-  
+      "https://www.google.com/maps/dir/?api=1&origin=" +
+      currentLocation +
+      "&destination=" +
+      ways;
+
     Linking.canOpenURL(url)
-    .then(supported => {
+      .then((supported) => {
         if (!supported) {
-            console.warn("Can't handle url: " + url);
+          console.warn("Can't handle url: " + url);
         } else {
-            return Linking.openURL(url);
+          return Linking.openURL(url);
         }
-    })
-    .catch(err => console.warn('An error occurred', err));
-   
-  }
-  const openGps = async (lat1, lng1)=>{
-    setBlat(lat1)
-    setBlong(lng1)
-    setmapModal(true)
-  
-  }
-  async function fetchLocation() {
+      })
+      .catch((err) => console.warn("An error occurred", err));
+  };
+  const openGps = async (lat1, lng1) => {
+    setBlat(lat1);
+    setBlong(lng1);
+    setmapModal(true);
+  };
+  async function fetchLocation(id) {
     setRefreshing(true);
     try {
-      const dp=  await AsyncStorage.getItem('dp');
-      console.log('DP===>',dp);
-      if(dp){
-        setDp(JSON.parse(dp))
+      const dp = await AsyncStorage.getItem("dp");
+
+      //console.log("DP===>", dp);
+      if (dp) {
+        setDp(dp);
       }
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
       if (status !== "granted") {
@@ -376,24 +451,18 @@ const NewsFeed = (props) => {
           longitude: location.coords.longitude,
           latitudeDelta: 0.015,
           longitudeDelta: 0.0121,
-         
         };
         setlat(location?.coords?.latitude);
         setlong(location?.coords?.longitude);
         if (location) {
           try {
-            
-            const id =  firebase.auth().currentUser?.uid;
-            if(id){
-            const mylocation = 
-            firebase.database().
-            ref("locations/" + 
-            id);
-            mylocation.set(da);
+            //const id = firebase.auth().currentUser?.uid;
+            if (id) {
+              const mylocation = firebase.database().ref("locations/" + id);
+              mylocation.set(da);
             }
           } catch (err) {
             setRefreshing(false);
-            
           }
         }
         setRefreshing(false);
@@ -407,63 +476,76 @@ const NewsFeed = (props) => {
   }
   async function savePost() {
     try {
-      
-        if ( lat&&long) {
-          // setRefreshing(true);
-          try {
-           
-        const id =  firebase.auth().currentUser?.uid;
-        
-        setburstModel(false);
-        var myRef = firebase.database().ref("user_posts").push();
-        var key = myRef.getKey();
-        let Details = {
-          post_id: key,
-          user: firebase.auth().currentUser.uid,
-          userName: name,
-          user_image: Dp,
-          likes_count: 0,
-          likes_user: [],
-          latitude: lat,
-          longitude: long,
-          burstvalue,
-          createdAt: new Date().toISOString(),
-          
-        };
-        myRef.set(Details);
-        setloading(false);
-        setburstModel(false);
-        setburstvalue('');
-      //   setMessage('Brust Added Succesfully');
-      // setIsVisible(!isVisible);
-        return;
-          } catch (error) {
-            console.log("error.message", error.message);
-            setloading(false);
-      setMessage(error.message);
-      setIsVisible(!isVisible);
-      setModalVisible(false);
-      setburstModel(false);
-      setburstvalue('');setRefreshing(false);
-          }
-        }else{
+      if (lat && long) {
+        // setRefreshing(true);
+        try {
+        //  const id = firebase.auth().currentUser?.uid;
+          let data = JSON.parse(props.userInfo)
+          setburstModel(false);
+          var myRef = firebase.database().ref("user_posts").push();
+          var key = myRef.getKey();
+          let Details = {
+            post_id: key,
+            user: data.id,
+            userName: name,
+            user_image: Dp,
+            likes_count: 0,
+            likes_user: [],
+            latitude: lat,
+            longitude: long,
+            burstvalue,
+            createdAt: new Date().toISOString(),
+          };
+       
+          myRef.set(Details); 
+         
           setloading(false);
-          setMessage('Turn on location to add brust.');
+          setburstModel(false);
+          setburstvalue("");
+          fetchAllPosts(); 
+          setMessage('Burst Added Succesfully');
+          setIsVisible(!isVisible);
+          
+          tokens.length > 0
+            ? tokens.map((item) =>
+                RequestPushMsg(item, name, burstvalue, "just posted a BURST")
+              )
+            : console.log("No One");
+        
+         
+          setTimeout(() => {
+           fetchAllPosts() 
+          },1000)
+         
+          return;
+        } catch (error) {
+          console.log("error.message", error.message);
+          setloading(false);
+          setMessage(error.message);
           setIsVisible(!isVisible);
           setModalVisible(false);
           setburstModel(false);
-          setburstvalue('');
-          setRefreshing(false);setRefreshing(false);
+          setburstvalue("");
+          setRefreshing(false);
         }
-      
-    
+      } else {
+        setloading(false);
+        setMessage("Turn on location to add brust.");
+        setIsVisible(!isVisible);
+        setModalVisible(false);
+        setburstModel(false);
+        setburstvalue("");
+        setRefreshing(false);
+        setRefreshing(false);
+      }
     } catch (error) {
-      setloading(false);setRefreshing(false);
+      setloading(false);
+      setRefreshing(false);
       setMessage(error.message);
       setIsVisible(!isVisible);
       setModalVisible(false);
       setburstModel(false);
-      setburstvalue('');
+      setburstvalue("");
       setRefreshing(false);
       // alert(error.message);
     }
@@ -471,38 +553,23 @@ const NewsFeed = (props) => {
   async function fetchAllPosts() {
     setRefreshing(true);
     CheckConnectivity();
-    const uid = firebase.auth().currentUser?.uid;
-    const userdataNAme = firebase.database().ref("users/" + uid);
-    userdataNAme.on("value", (userdata) => {
-      if (userdata.val()?.Dp) {
-        setDp(userdata.val().Dp);
-        AsyncStorage.setItem('dp',JSON.stringify(userdata.val().Dp))
-      }
-      if (userdata.val()?.firstName && userdata.val()?.lastName) {
-        setName(userdata.val().firstName + " " + userdata.val().lastName);
-        setDate(userdata.val().createdAt);
-      }
-    });
-
+   let data = JSON.parse(props.userInfo)
+    console.log("I am state valuee ",data.id)
+   
     let arr = [];
-    //.orderByChild("createdAt")
-    setUid(uid);
-   firebase
+  
+     await firebase
       .database()
-      .ref("user_posts").orderByChild("createdAt")
-      .on("value", async function (snapshot) {
+      .ref("user_posts")
+      .orderByChild("createdAt")
+      .on("value",  async (snapshot) => {
         const exists = snapshot.val() !== null;
         if (exists) {
-          snapshot.forEach((child) => {
+          snapshot.forEach( (child) => {
             //it will fetch user like
-            const userlike = firebase
+            const userlike =  firebase
               .database()
-              .ref(
-                "user_posts/" +
-                  child.key +
-                  "/Like/" +
-                  firebase.auth().currentUser?.uid
-              );
+              .ref("user_posts/" + child.key + "/Like/" + data.id);
             //it will check user hide the post or not
             const hideuser = firebase
               .database()
@@ -516,12 +583,10 @@ const NewsFeed = (props) => {
                 .ref("comments/" + child.key)
                 .on("value", function (snapshot) {
                   userImages.on("value", (updateImage) => {
-                   
                     if (chil.exists()) {
                       //it will check if user exist in current post or not to change heart color
                       hideuser.on("value", (ishide) => {
-
-                        if (ishide.val() !== firebase.auth().currentUser.uid) {
+                        if (ishide.val() !== data.id) {
                           setData({ ...data });
                           arr.push({
                             id: child.key,
@@ -556,7 +621,7 @@ const NewsFeed = (props) => {
                             loadpostimage: false,
                             latitude: child.val()?.latitude,
                             longitude: child.val()?.longitude,
-                            burstvalue:child.val()?.burstvalue,
+                            burstvalue: child.val()?.burstvalue,
                           });
                         } else {
                           return;
@@ -564,8 +629,7 @@ const NewsFeed = (props) => {
                       });
                     } else {
                       hideuser.on("value", (ishide) => {
-
-                        if (ishide.val() !== firebase.auth().currentUser.uid) {
+                        if (ishide.val() !== data.id) {
                           setData({ ...data });
                           arr.push({
                             id: child.key,
@@ -598,9 +662,10 @@ const NewsFeed = (props) => {
                                 : null,
                             isShow: false,
                             loadimage: false,
-                            loadpostimage: false, latitude: child.val()?.latitude,
+                            loadpostimage: false,
+                            latitude: child.val()?.latitude,
                             longitude: child.val()?.longitude,
-                            burstvalue:child.val()?.burstvalue,
+                            burstvalue: child.val()?.burstvalue,
                           });
                         }
                       });
@@ -610,51 +675,67 @@ const NewsFeed = (props) => {
             });
           });
         }
+        
+       // console.log("Firstore values",arr.length)
       });
-     
+   
+   // setUid(uid);
     const ik = arr.reverse();
-    AsyncStorage.setItem('posts',JSON.stringify (ik));
+    // if(ik.length>0){
+    // await AsyncStorage.setItem("posts", JSON.stringify(ik));
+    // }
+   
+  //setTimeout(()=>{
     setPosts(ik);
-    console.log("posts", arr.length);
     setRefreshing(false);
+  //},1500)
+     
+  
+     console.log("posts", ik.length);
+  
     // imageloader()
   }
 
-  async function likeHandler(post_id,post_user, likes_count, islike, index) {
-    console.log('Notifications check',islike)
+  async function likeHandler(post_id, post_user, likes_count, islike, index) {
+    console.log("Notifications check", islike);
     let userName = firebase.database().ref("users/" + post_user);
-    let arr = '';
+      
+
+
+    let arr = "";
+  
     //getting user push notification token
     userName.on("value", (userdata) => {
       if (
-            userdata.val()?.isEnabled === true &&
-            userdata.key !== user &&
-            userdata?.val()?.isLogin
-          ) {
-           arr=userdata.val()?.pushToken;
-           console.log(arr);
-          }
-          else{
-            console.log('Notifications else',userdata.val()?.isEnabled,userdata?.val()?.isLogin)
-            console.log(arr)
-          }
+        userdata.val()?.isEnabled === true &&
+        userdata.key !== user &&
+        userdata?.val()?.isLogin
+      ) {
+        arr = userdata.val()?.pushToken;
+        //console.log(arr);
+      } else {
+        console.log(
+          "Notifications else",
+          userdata.val()?.isEnabled,
+          userdata?.val()?.isLogin
+        );
+        //console.log(arr);
+      }
     });
-    if(!islike){
-      var notification = firebase
-      .database()
-      .ref("Likes/" + post_user);
+    if (!islike) {
+      var notification = firebase.database().ref("Likes/" + post_user);
       let addNoti = {
-        image:Dp,
-        name:name,
+        image: Dp,
+        name: name,
         message: `liked your post. `,
-        createdAt:new Date().toLocaleString(),
-        userId:firebase.auth()?.currentUser?.uid
+        createdAt: moment().format(),
+        userId: firebase.auth()?.currentUser?.uid,
       };
-      console.log(arr,'\n','Name',name);
-      if(uid != post_user && arr!==''){
-      notification.push(addNoti);
-      RequestPushMsg(arr, name, 'liked your post.','liked your post.')
-    }
+      //console.log(arr, "\n", "Name", name);
+      if (uid != post_user && arr !== "") {
+        notification.push(addNoti);
+        RequestPushMsg(arr, name, "liked your post.", "liked your post.");
+      }
     }
     const Details = {
       likes_count: islike ? likes_count - 1 : likes_count + 1,
@@ -678,6 +759,7 @@ const NewsFeed = (props) => {
     }
     const data = firebase.database().ref("user_posts/" + post_id);
     data.update(Details);
+    userName.update({notiNot:true})
     fetchAllPosts();
   }
   async function hideHandler(post_id) {
@@ -744,7 +826,7 @@ const NewsFeed = (props) => {
       try {
         // console.log("isplaying", isplaying);
         await Audio.setAudioModeAsync({
-          allowsRecordingIOS:false,
+          allowsRecordingIOS: false,
           playsInSilentModeIOS: true,
           staysActiveInBackground: false,
           playThroughEarpieceAndroid: false,
@@ -839,37 +921,36 @@ const NewsFeed = (props) => {
     setPosts(res);
   }
 
-  const   delPost = (postid)=> {
+  const delPost = (postid) => {
     console.log("calling del");
     setIsVisible(!isVisible);
     setMessage("Post Deleted Successfully");
-    
-   // alert(index)
+
+    // alert(index)
     let filtered = posts.filter((i) => {
       return postid !== i.id;
     });
 
+    setPosts(filtered);
 
-  setPosts(filtered)   
-
-
-setTimeout(() => {
-  var updates = {};
-  updates['/user_posts/'+postid] = {};
-  firebase.database().ref().update(updates);
+    setTimeout(() => {
+      var updates = {};
+      updates["/user_posts/" + postid] = {};
+      firebase.database().ref().update(updates);
     }, 50);
-   
-    
-   // let del = firebase.database().ref("user_posts").child(postid);
-     //del.remove().then(() => console.log("Post Deleted Successfully"));
-    
-  }
 
-const DeleteFromFirbase = (postid)=>{
-  console.log("Delt", postid) 
-   firebase.database().ref('/user_posts/'+postid).set(null);
- // firebase.database().ref('user_posts').child('' + postid).update(null)
-}
+    // let del = firebase.database().ref("user_posts").child(postid);
+    //del.remove().then(() => console.log("Post Deleted Successfully"));
+  };
+
+  const DeleteFromFirbase = (postid) => {
+    console.log("Delt", postid);
+    firebase
+      .database()
+      .ref("/user_posts/" + postid)
+      .set(null);
+    // firebase.database().ref('user_posts').child('' + postid).update(null)
+  };
 
   const renderPosts = ({ item, index }) => {
     return (
@@ -879,7 +960,7 @@ const DeleteFromFirbase = (postid)=>{
             {
               // backgroundColor: "orange",
               backgroundColor: "#FBFBFB",
-              height:186,
+              height: 186,
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
             },
@@ -897,7 +978,7 @@ const DeleteFromFirbase = (postid)=>{
               },
             ]}
           >
-            <View style={[{ flexDirection: "row", }]}>
+            <View style={[{ flexDirection: "row" }]}>
               <View>
                 <Image
                   onLoadStart={() => imageloaderStart(item.id)}
@@ -920,15 +1001,20 @@ const DeleteFromFirbase = (postid)=>{
                 style={[
                   styles.largeText,
                   {
-                    
                     marginTop: responsiveHeight(1.2),
                     paddingLeft: 5,
                   },
                 ]}
               >
-                <Text style={[{
-                  // fontFamily:'Sf-pro-display-bold', 
-                  color: "#464646", fontWeight: "700" }]}>
+                <Text
+                  style={[
+                    {
+                      // fontFamily:'Sf-pro-display-bold',
+                      color: "#464646",
+                      fontWeight: "700",
+                    },
+                  ]}
+                >
                   {item.userName}
                 </Text>
                 <Text
@@ -943,13 +1029,21 @@ const DeleteFromFirbase = (postid)=>{
                   item.createdAt
                 ).format("ddd, HH:mm")}`}</Text>
               </Text>
-            { item?.burstvalue&& <View>
-              <Image
-                  source={item?.burstvalue==='30+'?b30:item?.burstvalue==='20+'?b20:b10}
-                  style={[ {height:30,width:30,top:10,left:5}]}
-                  resizeMode='contain'
-                />
-              </View>}
+              {item?.burstvalue && (
+                <View>
+                  <Image
+                    source={
+                      item?.burstvalue === "30+"
+                        ? b30
+                        : item?.burstvalue === "20+"
+                        ? b20
+                        : b10
+                    }
+                    style={[{ height: 30, width: 30, top: 10, left: 5 }]}
+                    resizeMode="contain"
+                  />
+                </View>
+              )}
             </View>
             <OptionsMenu
               button={more}
@@ -987,190 +1081,194 @@ const DeleteFromFirbase = (postid)=>{
             />
           </View>
 
-        {item?.burstvalue?
-        <TouchableOpacity
-        onPress={()=>openGps(item?.latitude,item?.longitude)}
-            style={{
-            
-            }}
-          >
-            <Image
-                  source={gmap}
-                  style={{ width: '100%', 
-                  height:responsiveScreenHeight(13) }}
-                  resizeMode='cover'
-                />
-          </TouchableOpacity>:
-          <View
-            style={{
-              flexDirection: "row",
-              paddingLeft: 10,
-              // right:5,
-              paddingVertical: 10,
-            }}
-          >
-            {item.post_image ? (
-              <TouchableOpacity
-                onPress={() => {
-                  setmodelUsername(item?.userName);
-                  setmodeltime( item.createdAt);
-                  setLargeImage(item.post_image);
-                  setmodeltxt(item?.post_text);
-                  setModalVisible(true);
-                  setRefreshingModal(true);
-                  setmodeluserImage(item?.user_image);
-                }}
-                style={{ flex: 1.2,marginLeft:responsiveWidth(1) }}
-              >
-                <Image
-                  onLoadStart={() => postimageloader(item.id)}
-                  onLoadEnd={() => postimageloader(item.id)}
-                  source={{ uri: item.post_image }}
-                  style={{ width: 65, height:65 }}
-                />
-                {/* {item.loadpostimage ? */}
-                <ActivityIndicator
-                  animating={item.loadpostimage}
-                  size="large"
-                  color="orange"
-                  style={{ bottom: responsiveHeight(6) }}
-                />
-                {/* :null}  */}
-              </TouchableOpacity>
-            ) : null}
-            <View
-              style={
-                item.post_image
-                  ? {
-                      flex: 5,
-                      paddingLeft: responsiveHeight(1.5),
-                      // marginTop: responsiveHeight(0.2),
-                    }
-                  : { flex: 20, marginTop: responsiveHeight(0.2) }
-              }
+          {item?.burstvalue ? (
+            <TouchableOpacity
+              onPress={() => openGps(item?.latitude, item?.longitude)}
+              style={{}}
             >
-              <Text
-                numberOfLines={4}
-                style={{ textAlign: "left", color: "#464646", fontSize: 13 }}
-              >
-                {item?.post_text?.length > 140 ? item?.post_text?.substring(0, 139) + "..." :
-              item?.post_text}
-                {/* {item.post_text} */}
-              </Text>
-              {item.rec ? (
-                <View
-                  style={{
-                    // backgroundColor: "#FCB040",
-                    width: responsiveWidth(50),
-                    flexDirection: "row",
-                    alignItems: "center",
-                    padding: 5,
-                    marginTop: 3,
-                    borderRadius: 100,
-                    borderWidth:1,
-                    borderColor:'#EFEFEF'
+              <Image
+                source={gmap}
+                style={{ width: "100%", height: responsiveScreenHeight(13) }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          ) : (
+            <View
+              style={{
+                flexDirection: "row",
+                paddingLeft: 10,
+                // right:5,
+                paddingVertical: 10,
+              }}
+            >
+              {item.post_image ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setmodelUsername(item?.userName);
+                    setmodeltime(item.createdAt);
+                    setLargeImage(item.post_image);
+                    setmodeltxt(item?.post_text);
+                    setModalVisible(true);
+                    setRefreshingModal(true);
+                    setmodeluserImage(item?.user_image);
                   }}
+                  style={{ flex: 1.2, marginLeft: responsiveWidth(1) }}
                 >
-                  <TouchableOpacity
-                    onPress={() => {
-                      playSound(item.id, item.rec, item.time);
-                    }}
+                  <Image
+                    onLoadStart={() => postimageloader(item.id)}
+                    onLoadEnd={() => postimageloader(item.id)}
+                    source={{ uri: item.post_image }}
+                    style={{ width: 65, height: 65 }}
+                  />
+                  {/* {item.loadpostimage ? */}
+                  <ActivityIndicator
+                    animating={item.loadpostimage}
+                    size="large"
+                    color="orange"
+                    style={{ bottom: responsiveHeight(6) }}
+                  />
+                  {/* :null}  */}
+                </TouchableOpacity>
+              ) : null}
+              <View
+                style={
+                  item.post_image
+                    ? {
+                        flex: 5,
+                        paddingLeft: responsiveHeight(1.5),
+                        // marginTop: responsiveHeight(0.2),
+                      }
+                    : { flex: 20, marginTop: responsiveHeight(0.2) }
+                }
+              >
+                <Text
+                  numberOfLines={4}
+                  style={{ textAlign: "left", color: "#464646", fontSize: 13 }}
+                >
+                  {item?.post_text?.length > 140
+                    ? item?.post_text?.substring(0, 139) + "..."
+                    : item?.post_text}
+                  {/* {item.post_text} */}
+                </Text>
+                {item.rec ? (
+                  <View
                     style={{
-                      marginTop: 5,
-                      marginBottom: 5,
+                      // backgroundColor: "#FCB040",
+                      width: responsiveWidth(50),
+                      flexDirection: "row",
+                      alignItems: "center",
+                      padding: 5,
+                      marginTop: 3,
+                      borderRadius: 100,
+                      borderWidth: 1,
+                      borderColor: "#EFEFEF",
                     }}
                   >
-                    {item.isShow ? (
-                      <Ionicons name="pause" color="#979797" size={24} />
-                    ) : (
-                      <Ionicons name="play" color="#979797" size={24} />
-                    )}
-                  </TouchableOpacity>
-                  <>
-                    {item.isShow ? (
-                      <>
-                        {isplaying ? (
-                          <CountDown
-                            until={(parseInt(item.time) / 1000).toFixed(0)}
-                            onChange={(e) => {
-                              console.log(e);
-                            }}
-                            size={14}
-                            onFinish={() => handleTimerComplete}
-                            digitStyle={{
-                              backgroundColor: "transparent",
-                              width: responsiveWidth(5),
-                            }}
-                            digitTxtStyle={{ color: "#979797" }}
-                            timeToShow={["M", "S"]}
-                            timeLabels={{ m: "", s: "" }}
-                            showSeparator
-                            separatorStyle={{ color: "#979797" }}
-                            // style={{ marginLeft: responsiveWidth(-2) }}
-                          />
-                        ) : (
-                          <>
-                            <ActivityIndicator size={"small"} color={"#979797"} />
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <View style={{ flexDirection: "row" }}>
-                        <Text
-                          style={{
-                            color: "#979797",
-                            fontSize: 14,
-                            // fontWeight: "bold",
-                          }}
-                        >
-                          {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
-                            <>01:</>
+                    <TouchableOpacity
+                      onPress={() => {
+                        playSound(item.id, item.rec, item.time);
+                      }}
+                      style={{
+                        marginTop: 5,
+                        marginBottom: 5,
+                      }}
+                    >
+                      {item.isShow ? (
+                        <Ionicons name="pause" color="#979797" size={24} />
+                      ) : (
+                        <Ionicons name="play" color="#979797" size={24} />
+                      )}
+                    </TouchableOpacity>
+                    <>
+                      {item.isShow ? (
+                        <>
+                          {isplaying ? (
+                            <CountDown
+                              until={(parseInt(item.time) / 1000).toFixed(0)}
+                              onChange={(e) => {
+                                console.log(e);
+                              }}
+                              size={14}
+                              onFinish={() => handleTimerComplete}
+                              digitStyle={{
+                                backgroundColor: "transparent",
+                                width: responsiveWidth(5),
+                              }}
+                              digitTxtStyle={{ color: "#979797" }}
+                              timeToShow={["M", "S"]}
+                              timeLabels={{ m: "", s: "" }}
+                              showSeparator
+                              separatorStyle={{ color: "#979797" }}
+                              // style={{ marginLeft: responsiveWidth(-2) }}
+                            />
                           ) : (
-                            <Text>00:</Text>
-                          )}
-                        </Text>
-                        <Text
-                          style={{
-                            color: "#979797",
-                            fontSize: 14,
-                            // fontWeight: "bold",
-                          }}
-                        >
-                          {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
                             <>
-                              {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
-                                <Text>00</Text>
-                              ) : (
-                                <>{(parseInt(item.time) / 1000).toFixed(0)}</>
-                              )}
+                              <ActivityIndicator
+                                size={"small"}
+                                color={"#979797"}
+                              />
                             </>
-                          ) : (
-                            <>0{(parseInt(item.time) / 1000).toFixed(0)}</>
                           )}
-                        </Text>
-                      </View>
-                    )}
-                  </>
-                  <Image
-                    source={bars}
-                    style={{
-                      tintColor:'#979797',
-                      height: 30,
-                      width: responsiveWidth(30),
-                    }}
-                    resizeMode="contain"
-                  />
-                </View>
-              ) : null}
+                        </>
+                      ) : (
+                        <View style={{ flexDirection: "row" }}>
+                          <Text
+                            style={{
+                              color: "#979797",
+                              fontSize: 14,
+                              // fontWeight: "bold",
+                            }}
+                          >
+                            {(parseInt(item.time) / 1000).toFixed(0) >= 59 ? (
+                              <>01:</>
+                            ) : (
+                              <Text>00:</Text>
+                            )}
+                          </Text>
+                          <Text
+                            style={{
+                              color: "#979797",
+                              fontSize: 14,
+                              // fontWeight: "bold",
+                            }}
+                          >
+                            {(parseInt(item.time) / 1000).toFixed(0) > 9 ? (
+                              <>
+                                {(parseInt(item.time) / 1000).toFixed(0) >=
+                                59 ? (
+                                  <Text>00</Text>
+                                ) : (
+                                  <>{(parseInt(item.time) / 1000).toFixed(0)}</>
+                                )}
+                              </>
+                            ) : (
+                              <>0{(parseInt(item.time) / 1000).toFixed(0)}</>
+                            )}
+                          </Text>
+                        </View>
+                      )}
+                    </>
+                    <Image
+                      source={bars}
+                      style={{
+                        tintColor: "#979797",
+                        height: 30,
+                        width: responsiveWidth(30),
+                      }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                ) : null}
+              </View>
             </View>
-          </View>}
+          )}
         </View>
         <View
           style={[
             {
               flexDirection: "row",
               width: "100%",
-              height:52,
+              height: 52,
               justifyContent: "space-between",
               // marginTop: responsiveHeight(1),
               backgroundColor: "#F1F1F1",
@@ -1191,31 +1289,42 @@ const DeleteFromFirbase = (postid)=>{
               },
             ]}
           >
-            <View style={[styles.bottomContainer,{left:responsiveWidth(2.5)}]}>
+            <View
+              style={[styles.bottomContainer, { left: responsiveWidth(2.5) }]}
+            >
               <TouchableOpacity
                 style={{ flexDirection: "row" }}
                 onPress={() =>
-                  likeHandler(item.id,item.user, item?.likes_count, item.like, index)
+                  likeHandler(
+                    item.id,
+                    item.user,
+                    item?.likes_count,
+                    item.like,
+                    index
+                  )
                 }
               >
-                {item.like?
+                {item.like ? (
                   <Image
                     source={heartf}
-                    style={{width:18,height:16,alignSelf:'center'}}
+                    style={{ width: 18, height: 16, alignSelf: "center" }}
                   />
-                  :
+                ) : (
                   <Image
                     source={hearth}
-                    style={{width:18,height:16,alignSelf:'center'}}
+                    style={{ width: 18, height: 16, alignSelf: "center" }}
                   />
-                }
+                )}
                 <Text style={styles.smallText}>{` ${item?.likes_count} `}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
               style={[styles.bottomContainer, { right: 10 }]}
               onPress={() =>
-                props.navigation.navigate("CommentScreen", { id: item.id,owner_id:item.user })
+                props.navigation.navigate("CommentScreen", {
+                  id: item.id,
+                  owner_id: item.user,
+                })
               }
             >
               <Image
@@ -1263,12 +1372,11 @@ const DeleteFromFirbase = (postid)=>{
     );
   };
   const onShare = async () => {
-   
     try {
       const result = await Share.share({
         message: modeltxt,
-        url:largImage,
-        title:modeltxt
+        url: largImage,
+        title: modeltxt,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -1284,41 +1392,59 @@ const DeleteFromFirbase = (postid)=>{
     }
   };
   return (
-    <View style={[styles.main,{opacity:burstModel||modalVisible|| mapModal?0.4:1}]}>
+    <View
+      style={[
+        styles.main,
+        { opacity: burstModel || modalVisible || mapModal ? 0.4 : 1 },
+      ]}
+    >
       <Modal
-        style={{ justifyContent: 'flex-end', margin: 0 }}
+        style={{ justifyContent: "flex-end", margin: 0 }}
         animationType="slide"
         transparent={true}
         visible={mapModal}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
+          Alert.alert("Modal has been closed.");
           setmapModal(!mapModal);
-        }}>
+        }}
+      >
         <View style={styles.centeredViewUp}>
           <View style={styles.modalViewUp}>
-          <TouchableOpacity
-              style={[styles.buttonUp,{marginBottom:responsiveHeight(0),borderBottomLeftRadius:0,borderBottomRightRadius:0}]}
-              onPress={() => 
-              setmapModal(!mapModal),
-              openLocalMap
-              
-              }>
+            <TouchableOpacity
+              style={[
+                styles.buttonUp,
+                {
+                  marginBottom: responsiveHeight(0),
+                  borderBottomLeftRadius: 0,
+                  borderBottomRightRadius: 0,
+                },
+              ]}
+              onPress={(() => setmapModal(!mapModal), openLocalMap)}
+            >
               <Text style={styles.textStyleUp}>Maps</Text>
             </TouchableOpacity>
-          <TouchableOpacity
-              style={[styles.buttonUp,{marginBottom:responsiveHeight(1.5),borderTopLeftRadius:0,borderTopRightRadius:0,}]}
-              onPress={() => setmapModal(!mapModal),openGoogleMap}>
+            <TouchableOpacity
+              style={[
+                styles.buttonUp,
+                {
+                  marginBottom: responsiveHeight(1.5),
+                  borderTopLeftRadius: 0,
+                  borderTopRightRadius: 0,
+                },
+              ]}
+              onPress={(() => setmapModal(!mapModal), openGoogleMap)}
+            >
               <Text style={styles.textStyleUp}>Google Maps</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.buttonUp]}
-              onPress={() => setmapModal(!mapModal)}>
+              onPress={() => setmapModal(!mapModal)}
+            >
               <Text style={styles.textStyleUp}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-
 
       <Modal
         animationType="slide"
@@ -1330,84 +1456,112 @@ const DeleteFromFirbase = (postid)=>{
           // Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={{width:'100%',alignSelf:'center',justifyContent:'center',
-        flex:1}}>
-        <View style={{flexDirection:'row',width:'70%',
-        justifyContent:'flex-end',alignSelf:'center'}}>
-        <TouchableOpacity style={{marginRight:10}} onPress={onShare}>
-      <Feather name='share' size={30} color={'black'} />
-      </TouchableOpacity>
-      <TouchableOpacity  onPress={() => {
+        <View
+          style={{
+            width: "100%",
+            alignSelf: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              width: "70%",
+              justifyContent: "flex-end",
+              alignSelf: "center",
+            }}
+          >
+            <TouchableOpacity style={{ marginRight: 10 }} onPress={onShare}>
+              <Feather name="share" size={30} color={"black"} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
                 setModalVisible(!modalVisible);
-              }}>
-        <Entypo name='cross' size={30} color={'black'} />
-        </TouchableOpacity>
-        </View>
-          <View style={{
-                  backgroundColor:'white',
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-    elevation: 5,
-    width: '70%',borderRadius:20,alignSelf:'center',
-    height:responsiveScreenHeight (30),
-    
-    }}>
-      
+              }}
+            >
+              <Entypo name="cross" size={30} color={"black"} />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              backgroundColor: "white",
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              // shadowOpacity: 0.25,
+              // shadowRadius: 3.84,
+              elevation: 5,
+              width: "70%",
+              borderRadius: 20,
+              alignSelf: "center",
+              height: responsiveScreenHeight(30),
+            }}
+          >
             <Image
-              style={{ width:"100%",height:'100%'}}
+              style={{ width: "100%", height: "100%" }}
               source={{ uri: largImage }}
               // resizeMode=''
             />
-             <View style={[{ flexDirection: "row",backgroundColor:'white',width:'100%',
-             borderBottomRightRadius:20,borderBottomLeftRadius:20}]}>
-                <Image
-                  source={modeluserImage ? { uri: modeluserImage } : user}
-                  style={ {
-                    height: 50,
-                    width: 50,
-                    borderRadius: 25,
-                    margin: 5,
+            <View
+              style={[
+                {
+                  flexDirection: "row",
+                  backgroundColor: "white",
+                  width: "100%",
+                  borderBottomRightRadius: 20,
+                  borderBottomLeftRadius: 20,
+                },
+              ]}
+            >
+              <Image
+                source={modeluserImage ? { uri: modeluserImage } : user}
+                style={{
+                  height: 50,
+                  width: 50,
+                  borderRadius: 25,
+                  margin: 5,
                   //  bottom:10
-                  }}
-                />
+                }}
+              />
               <View>
-              <Text
-                style={[
-                  {
-                    marginTop: responsiveHeight(1.2),
-                  },
-                ]}
-              >
-               
-                <Text style={[{ color: "#464646", fontWeight: "700" }]}>
-                  {modelUsername}
-                </Text>
                 <Text
                   style={[
-                    styles.mediumText,
                     {
-                      color: "#464646",
-                      fontSize: 11,
+                      marginTop: responsiveHeight(1.2),
                     },
                   ]}
-                >{`\n@${modelUsername}. ${moment(
-                  modeltime
-                ).format("ddd, HH:mm")}`}</Text>
-              </Text>
-              <Text
-                numberOfLines={2}
-                style={{ textAlign: "left", color: "#464646", fontSize: 13,marginTop:responsiveHeight(2),marginBottom:responsiveHeight(2)
-
-              }}
-              >
-                {modeltxt}
-              </Text>
+                >
+                  <Text style={[{ color: "#464646", fontWeight: "700" }]}>
+                    {modelUsername}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.mediumText,
+                      {
+                        color: "#464646",
+                        fontSize: 11,
+                      },
+                    ]}
+                  >{`\n@${modelUsername}. ${moment(modeltime).format(
+                    "ddd, HH:mm"
+                  )}`}</Text>
+                </Text>
+                <Text
+                  numberOfLines={2}
+                  style={{
+                    textAlign: "left",
+                    color: "#464646",
+                    fontSize: 13,
+                    marginTop: responsiveHeight(2),
+                    marginBottom: responsiveHeight(2),
+                  }}
+                >
+                  {modeltxt}
+                </Text>
               </View>
             </View>
           </View>
@@ -1423,78 +1577,160 @@ const DeleteFromFirbase = (postid)=>{
           // Alert.alert("Modal has been closed.");
         }}
       >
-        <View style={{width:'100%',
-        alignSelf:'center',
-        justifyContent:'center',
-        flex:1,
-        // backgroundColor:'lightgrey',
-        opacity:1
-        }}>
-        <TouchableOpacity
-        style={{
-         
-            alignItems: 'flex-end',
-            width: '77%',borderRadius:30,alignSelf:'center',
-}}
-        onPress={() => {
-                setburstModel(false);
-              }}>
-        <Entypo name='cross' size={30} color={'black'} />
-        </TouchableOpacity>
-          <View style={{
-                  backgroundColor:'lightgrey',
-                    alignItems: "center",
-                    width: '80%',borderRadius:30,alignSelf:'center',
-                    height:responsiveScreenHeight (40),
-    }}>
-      <View style={{backgroundColor:'white',height:'80%',width:'100%',borderTopLeftRadius:30,borderTopRightRadius:30}}>
-        <View style={{marginTop:responsiveScreenHeight(3),alignSelf:'center'}}>
-        <Text style={{fontSize:18,fontWeight:'bold'}}>Demand indicator</Text>
-        </View>
-        <TouchableOpacity
-        onPress={()=>setburstvalue('10+')}
-        style={{marginTop:responsiveScreenHeight(3),
-        alignSelf:'center',width:'80%',
-        backgroundColor:burstvalue==='10+'?'lightgreen':'lightgrey',
-        paddingVertical:10,borderRadius:20
-        }}>
-        <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>10+</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-         onPress={()=>setburstvalue('20+')}
-        style={{marginTop:responsiveScreenHeight(3),
-        alignSelf:'center',width:'80%',
-        backgroundColor:burstvalue==='20+'?'skyblue':'lightgrey',
-        paddingVertical:10,borderRadius:20
-        }}>
-        <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>20+</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-        onPress={()=>{setburstvalue('30+'),console.log(burstvalue)}}
-        style={{marginTop:responsiveScreenHeight(3),
-        alignSelf:'center',width:'80%',
-        backgroundColor:burstvalue==='30+'?'pink':'lightgrey',
-        paddingVertical:10,borderRadius:20
-        }}>
-        <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>30+</Text>
-        </TouchableOpacity>
-        </View>
-        <TouchableOpacity
-        disabled={burstvalue===''?true:false}
-         onPress={()=>{savePost(),setburstModel(false)}}
-        style={{marginTop:responsiveScreenHeight(3),
-        alignSelf:'center',
-        width:'80%',
-        backgroundColor:'lightgrey',
-        //paddingVertical:10,
-        justifyContent:'center',
-        // borderBottomLeftRadius:20
-        }}>
-          {loading ? (
-                <ActivityIndicator animating color={"red"} size={'large'} style={{bottom:10}}/>
+        <View
+          style={{
+            width: "100%",
+            alignSelf: "center",
+            justifyContent: "center",
+            flex: 1,
+            // backgroundColor:'lightgrey',
+            opacity: 1,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              alignItems: "flex-end",
+              width: "77%",
+              borderRadius: 30,
+              alignSelf: "center",
+            }}
+            onPress={() => {
+              setburstModel(false);
+            }}
+          >
+            <Entypo name="cross" size={30} color={"black"} />
+          </TouchableOpacity>
+          <View
+            style={{
+              backgroundColor: "lightgrey",
+              alignItems: "center",
+              width: "80%",
+              borderRadius: 30,
+              alignSelf: "center",
+              height: responsiveScreenHeight(40),
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "white",
+                height: "80%",
+                width: "100%",
+                borderTopLeftRadius: 30,
+                borderTopRightRadius: 30,
+              }}
+            >
+              <View
+                style={{
+                  marginTop: responsiveScreenHeight(3),
+                  alignSelf: "center",
+                }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  Demand indicator
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setburstvalue("10+")}
+                style={{
+                  marginTop: responsiveScreenHeight(3),
+                  alignSelf: "center",
+                  width: "80%",
+                  backgroundColor:
+                    burstvalue === "10+" ? "lightgreen" : "lightgrey",
+                  paddingVertical: 10,
+                  borderRadius: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  10+
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setburstvalue("20+")}
+                style={{
+                  marginTop: responsiveScreenHeight(3),
+                  alignSelf: "center",
+                  width: "80%",
+                  backgroundColor:
+                    burstvalue === "20+" ? "skyblue" : "lightgrey",
+                  paddingVertical: 10,
+                  borderRadius: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  20+
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setburstvalue("30+"), console.log(burstvalue);
+                }}
+                style={{
+                  marginTop: responsiveScreenHeight(3),
+                  alignSelf: "center",
+                  width: "80%",
+                  backgroundColor: burstvalue === "30+" ? "pink" : "lightgrey",
+                  paddingVertical: 10,
+                  borderRadius: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  30+
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              disabled={burstvalue === "" ? true : false}
+              onPress={() => {
+                savePost(), setburstModel(false);
+              }}
+              style={{
+                marginTop: responsiveScreenHeight(3),
+                alignSelf: "center",
+                width: "80%",
+                backgroundColor: "lightgrey",
+                //paddingVertical:10,
+                justifyContent: "center",
+                // borderBottomLeftRadius:20
+              }}
+            >
+              {loading ? (
+                <ActivityIndicator
+                  animating
+                  color={"red"}
+                  size={"large"}
+                  style={{ bottom: 10 }}
+                />
               ) : (
-        <Text style={{fontSize:18,fontWeight:'bold',textAlign:'center'}}>BURST IT</Text>)}
-        </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  BURST IT
+                </Text>
+              )}
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -1513,7 +1749,7 @@ const DeleteFromFirbase = (postid)=>{
             <Image
               source={drawer}
               resizeMode={"contain"}
-              style={{height: 25, width: 25 }}
+              style={{ height: 25, width: 25 }}
             />
           </TouchableWithoutFeedback>
         }
@@ -1531,19 +1767,35 @@ const DeleteFromFirbase = (postid)=>{
                 alignItems: "flex-end",
               }}
             >
-             {nots>0&& <Text style={{height:10,width:10,borderRadius:5,backgroundColor:'tomato'}}></Text>}
+              {NotiVal && (
+                <Text
+                  style={{
+                    height: 10,
+                    width: 10,
+                    borderRadius: 5,
+                    backgroundColor: "tomato",
+                  }}
+                ></Text>
+              )}
             </ImageBackground>
           </TouchableOpacity>
         }
         // centerComponent={<HeaderCenterComponent name="News Feed" />}
-        centerComponent={<View style={{ alignItems: "center" }}>
-        <Text style={{ fontSize: 17,
-    color: "#000000",
-    fontWeight: "700",
-    alignSelf: "center",
-    // fontFamily:'FontsFree-Net-SFProText-Regular'
-  }}>News Feed</Text>
-      </View>}
+        centerComponent={
+          <View style={{ alignItems: "center" }}>
+            <Text
+              style={{
+                fontSize: 17,
+                color: "#000000",
+                fontWeight: "700",
+                alignSelf: "center",
+                // fontFamily:'FontsFree-Net-SFProText-Regular'
+              }}
+            >
+              News Feed
+            </Text>
+          </View>
+        }
       />
       {isVisible ? (
         <View style={{ height: 60 }}>
@@ -1588,7 +1840,7 @@ const DeleteFromFirbase = (postid)=>{
         <></>
       )}
       <FlatList
-       initialNumToRender={7}
+        initialNumToRender={7}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchAllPosts} />
         }
@@ -1598,18 +1850,17 @@ const DeleteFromFirbase = (postid)=>{
         keyExtractor={(item, index) => item + index.toString()}
         showsVerticalScrollIndicator={false}
       />
-  
+
       <RBSheet
         ref={refRBSheet}
         closeOnDragDown={true}
         closeOnPressMask={true}
         height={Dimensions.get("window").height / 1.3}
         customStyles={{
-          draggableIcon:{
+          draggableIcon: {
             // width:'100%'
           },
           container: {
-            
             alignItems: "center",
             backgroundColor: "transparent",
           },
@@ -1621,22 +1872,13 @@ const DeleteFromFirbase = (postid)=>{
 
             <View style={styles.userInfoContainer}>
               <View style={styles.userInfo1}>
-               {Dp ? 
-               <Image
-                  onLoadStart={() => setonimage(true)}
-                  onLoadEnd={() => setonimage(false)}
+                <Image
+                  //onLoadStart={() => setonimage(true)}
+                  //onLoadEnd={() => setonimage(false)}
                   source={Dp ? { uri: Dp } : user}
                   style={styles.smallImage}
                 />
-                : 
-                
-                <Image
-                onLoadStart={() => setonimage(true)}
-                onLoadEnd={() => setonimage(false)}
-                source={Dp ? { uri: Dp } : user}
-                style={styles.smallImage}/>
-                
-                }
+
                 {/* {onimage && ( */}
                 <ActivityIndicator
                   animating={onimage}
@@ -1647,11 +1889,13 @@ const DeleteFromFirbase = (postid)=>{
                 {/* )} */}
               </View>
               <View style={styles.userInfo2}>
-                <Text style={styles.userName,{color:'#394143'}}>{name}</Text>
+                <Text style={(styles.userName, { color: "#394143" })}>
+                  {name}
+                </Text>
               </View>
               <View style={styles.userInfo3}>
                 <Text
-                  style={[styles.info3Text, {fontWeight: "500" }]}
+                  style={[styles.info3Text, { fontWeight: "500" }]}
                 >{`Member since ${
                   date ? moment(date).format("YYYY") : ""
                 }`}</Text>
@@ -1751,47 +1995,65 @@ const DeleteFromFirbase = (postid)=>{
           </ScrollView>
         </View>
       </RBSheet>
-  <ActionButton buttonColor="transparent" position="right" offsetY={30}
-   renderIcon={active => (
-    <ImageBackground
-    source={bar} resizeMode={"contain"}
-    style={{
-    height: 50,
-    width: 50,
-}}
-></ImageBackground>
-  )}
-  >
-              
-                <ActionButton.Item buttonColor="transparent"
-                    size={34}
-                    // title="Book Resource"
-                    onPress={() => props.navigation.navigate("CreatePost")}>
-                    <ImageBackground
-                    source={pst} resizeMode={"contain"}
-                    style={{
-                    height: 50,
-                    width: 50,top:2
+      <ActionButton
+        buttonColor="transparent"
+        position="right"
+        offsetY={30}
+        renderIcon={(active) => (
+          <ImageBackground
+            source={bar}
+            resizeMode={"contain"}
+            style={{
+              height: 50,
+              width: 50,
+            }}
+          ></ImageBackground>
+        )}
+      >
+        <ActionButton.Item
+          buttonColor="transparent"
+          size={34}
+          // title="Book Resource"
+          onPress={() => props.navigation.navigate("CreatePost")}
+        >
+          <ImageBackground
+            source={pst}
+            resizeMode={"contain"}
+            style={{
+              height: 50,
+              width: 50,
+              top: 2,
+            }}
+          ></ImageBackground>
+        </ActionButton.Item>
+        <ActionButton.Item
+          buttonColor="transparent"
+          size={34}
+          // title="Book Resource"
+          onPress={() => {
+            setburstModel(true), setburstvalue("10+");
           }}
-        ></ImageBackground>
-                </ActionButton.Item>
-                <ActionButton.Item buttonColor="transparent"
-                    size={34}
-                    // title="Book Resource"
-                    onPress={() => {setburstModel(true)
-                    ,
-                    setburstvalue('10+')
-                    }}>
-                    <ImageBackground
-                    source={brst} resizeMode={"contain"}
-                    style={{
-                    height: 50,
-                    width: 50,top:2
-          }}
-        ></ImageBackground>
-                </ActionButton.Item>
-            </ActionButton>
+        >
+          <ImageBackground
+            source={brst}
+            resizeMode={"contain"}
+            style={{
+              height: 50,
+              width: 50,
+              top: 2,
+            }}
+          ></ImageBackground>
+        </ActionButton.Item>
+      </ActionButton>
     </View>
   );
 };
-export default NewsFeed;
+
+const mapStateToProps = (state) => {
+  const { userInfo } = state.AuthReducer;
+  //console.log("OK REDUX TESTING")
+  return { userInfo };
+};
+ export default connect(mapStateToProps)(NewsFeed)
+
+//export default NewsFeed;

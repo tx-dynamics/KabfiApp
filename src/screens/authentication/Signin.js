@@ -33,7 +33,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import * as Permissions from "expo-permissions";
 import { connect } from "react-redux";
-import { SetSession } from "../../Redux/Actions/Actions";
+import { SetSession, setUserInfo } from "../../Redux/Actions/Actions";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -100,8 +100,25 @@ const Signin = (props) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(async (user) => {
-        let verify = await getData(user.user.uid);
-        console.log("HEllo ",verify)
+        
+          let verify;
+   
+         await firebase.database().ref('users/'+ user.user.uid).once('value', async function (userdata) {
+            //console.log("OYYYYYR R",userdata)
+             if (userdata.val().isVerified) {
+               verify=await userdata.val().isVerified;
+             } else {
+               verify=await userdata.val().isVerified;
+             }
+             console.log("USER DTATA",userdata)
+             //await AsyncStorage.setItem('userData',JSON.stringify(userdata))
+             props.setUserInfo({ userInfo: JSON.stringify( userdata) });
+           });
+        
+        
+        
+        
+         console.log("USER verify ",verify) 
         if (verify) {
           registerForPushNotificationsAsync().then((token) => {
             console.log("Token", token);
@@ -451,6 +468,7 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = (dispatch) => {
   return {
     SessionMaintain: (data) => dispatch(SetSession(data)),
+    setUserInfo: (data) => dispatch(setUserInfo(data)),
   };
 };
 
@@ -496,17 +514,23 @@ async function registerForPushNotificationsAsync() {
   }
 }
 
-export function getData(user_id) {
-  const data = firebase.database().ref("users/" + user_id);
+export async function getData(user_id) {
   let verify;
-  data.on("value", (userdata) => {
-    if (userdata.val().isVerified) {
-      verify=userdata.val().isVerified;
-    } else {
-      console.log("else")
-     verify= userdata.val().isVerified;
-    }
-  });
+   
+  await firebase.database().ref('users/'+ user_id).once('value', async function (userdata) {
+     //console.log("OYYYYYR R",userdata)
+      if (userdata.val().isVerified) {
+        verify=await userdata.val().isVerified;
+      } else {
+        verify=await userdata.val().isVerified;
+      }
+      console.log(userdata)
+      //await AsyncStorage.setItem('userData',JSON.stringify(userdata))
+      props.setUserInfo({ userInfo: userdata });
+    });
+    return verify
+   // console.log(userdata.val())
+  
+  
 
-  return verify
 }

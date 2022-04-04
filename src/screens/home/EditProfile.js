@@ -8,7 +8,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
-  AsyncStorage,
+  
   KeyboardAvoidingView,
   Alert,
   ActivityIndicator,
@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import * as ImageManipulator from "expo-image-manipulator";
 import { ProgressBar, Colors, Snackbar } from "react-native-paper";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { kabfiApp, firebase } from '../../database/config';
 import firebase from "firebase";
 import { Header } from "react-native-elements";
@@ -25,8 +25,12 @@ import * as ImagePicker from "expo-image-picker";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 import { setNotificationChannelGroupAsync } from "expo-notifications";
+import { connect } from "react-redux";
+import { setUserInfo } from "../../Redux/Actions/Actions";
+import { Asset } from "expo-asset";
 const EditProfile = (props) => {
   const [firstName, setFirstName] = useState("");
+  const [id, setID] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [email, setEmail] = useState("");
@@ -38,24 +42,32 @@ const EditProfile = (props) => {
   const [ErroMessage, setErroMessage] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [messge, setMessage] = useState("");
-
+  const [savetoSet, setSavetoSet] = useState(true);
   useEffect(() => {
     lods()
   }, []);
   async function lods(){
     setLoader(true);
     const user = firebase.auth()?.currentUser?.uid;
-    const data = firebase.database().ref("users/" + firebase.auth()?.currentUser?.uid);
-    data.on("value", (userdata) => {
-      userdata.val().Dp ? setFlag(true) : setFlag(false);
-      setFirstName(userdata.val().firstName);
-      setLastName(userdata.val().lastName);
-      setMobileNo(userdata.val().mobileNo);
-      setCity(userdata.val().city);
-      setCountry(userdata.val().country);
-      setEmail(userdata.val().email);
-      userdata.val().Dp ? setDp(userdata.val().Dp) : setDp("");
-    });
+    
+
+
+    //const data = firebase.database().ref("users/" + firebase.auth()?.currentUser?.uid);
+    let userdata = JSON.parse(props.userInfo)
+
+    setID(userdata.id)
+    //data.on("value", (userdata) => {
+      userdata.Dp ? setFlag(true) : setFlag(false);
+      setFirstName(userdata.firstName);
+      setLastName(userdata.lastName);
+      setMobileNo(userdata.mobileNo);
+      setCity(userdata.city);
+      setCountry(userdata.country);
+      setEmail(userdata.email);
+      userdata.Dp ? setDp(userdata.Dp) : setDp("");
+    //});
+
+   
     setLoader(false);
   }
   async function onupload(url){
@@ -107,16 +119,38 @@ const EditProfile = (props) => {
                 city: city,
                 Dp: Dp,
               };
-
-              const user = firebase.auth().currentUser.uid;
-              firebase
+              try {
+                const imageAssets = await Asset.fromModule(
+                  Dp
+                ).downloadAsync();
+                //AsyncStorage.setItem('dp',JSON.stringify(userdata.val().Dp))
+                if (imageAssets) {
+                  await AsyncStorage.setItem("dp", imageAssets.localUri);
+                 // setDp(imageAssets.localUri);
+                }
+              } catch (err) {
+                console.log("error image ", err);
+              }
+            
+              console.log("USER ID HO me",id)
+              //const user = firebase.auth().currentUser.uid;
+             await firebase
                 .database()
-                .ref("users/" + user)
+                .ref("users/" + id)
                 .update(Details);
                   setMessage("Profile Updated Successfully");
                   setIsVisible(!isVisible);  
                 setErroMessage('');
               // alert("Profile Updated Successfully");
+              
+              await firebase.database().ref('users/'+ id).once('value', async function (userdata) {
+                //console.log("OYYYYYR R",userdata)
+                
+                 //await AsyncStorage.setItem('userData',JSON.stringify(userdata))
+                 props.setUserInfo({ userInfo: JSON.stringify( userdata) });
+               });
+
+
               setTimeout(() => {
                 props.navigation.push("NewsFeed");
             }, 2000);
@@ -144,6 +178,7 @@ const EditProfile = (props) => {
     }
   }
   const pickTaxiLicenseImage = async (val) => {
+    setSavetoSet(false)
     let result = "";
     if (val === 1) {
       result = await ImagePicker.launchCameraAsync({
@@ -168,10 +203,11 @@ const EditProfile = (props) => {
     if (!result.cancelled) {
       setDp(manipResult.uri);
       setFlag(true);
-      console.log("OKKKK ", manipResult.uri);
+      //console.log("OKKKK ", manipResult.uri);
       // let profileIamge = await uploadImage(manipResult.uri);
       let profileIamge = await onupload(manipResult.uri);
       setDp(profileIamge);
+      setSavetoSet(true);
       console.log("OKKKK ", profileIamge);
       // alert("Taxi License Selected");
     }
@@ -243,7 +279,9 @@ const EditProfile = (props) => {
             <Text style={{ fontSize: 17, color: "#000000",fontFamily:'FontsFree-Net-SFProText-Regular',fontWeight:'600' }}>Edit Profile</Text>
           }
           rightComponent={
-            <TouchableOpacity onPress={() => editProfileHandler()}>
+            <TouchableOpacity  
+            disabled={savetoSet?false:true}
+            onPress={() => editProfileHandler()}>
               {loader ? (
                 <ActivityIndicator color={"blue"} size={"small"} />
               ) : (
@@ -513,4 +551,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditProfile;
+const mapStateToProps = (state) => {
+  const { userInfo } = state.AuthReducer;
+  //console.log("OK REDUX TESTING")
+  return { userInfo };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      setUserInfo: (data) => dispatch(setUserInfo(data)),
+  };
+};
+
+ export default connect(mapStateToProps,mapDispatchToProps)(EditProfile)
+//export default EditProfile;

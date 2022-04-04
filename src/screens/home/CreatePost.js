@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Dimensions,
-  AsyncStorage,
   ToastAndroid,
   ScrollView,
   ImageBackground,
@@ -49,11 +48,14 @@ import { Audio } from "expo-av";
 import Entypo from "react-native-vector-icons/Entypo";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useIsFocused } from "@react-navigation/native";
+import { RequestPushMsg } from "../../components/RequestPushMsg";
 import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
+import { SetSession } from "../../Redux/Actions/Actions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const CreatePost = (props) => {
   const inputRef = React.createRef();
   const [Sound, setSound] = useState("");
@@ -82,22 +84,28 @@ const CreatePost = (props) => {
   const [isplaying, setisplaying] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [messge, setMessage] = useState("");
-  const[load,setload]=useState(false);
+  const [load, setload] = useState(false);
 
   useEffect(() => {
-    console.log(props.isLogin);
+    let data = JSON.parse(props.userInfo);
+    console.log("ARAY", data.firstName);
+
+    props.SessionMaintain({ isLogin: true });
+
+    getLocation(data);
     Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
     setRecording(null);
-    getLocation();
+
     setshow(false);
     inputRef.current.focus();
+
     return sound
       ? () => {
           Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
           Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
-          console.log("Unloading Sound");
-          sound.unloadAsync();
+          //console.log("Unloading Sound");
+          //sound.unloadAsync();
         }
       : undefined;
   }, [isFocused, sound]);
@@ -109,26 +117,34 @@ const CreatePost = (props) => {
   const _keyboardDidHide = () => {
     console.log("Keyboard Hidden");
   };
-  async function getLocation() {
+  async function getLocation(dataOfUser) {
     const user = firebase.auth().currentUser?.uid;
     const data = firebase.database().ref("users");
-    const userName = firebase.database().ref("users/" + user);
+    // const userName = firebase.database().ref("users/" + user);
+    // await firebase.auth().onAuthStateChanged(async (user) => {
+    //   if (user) {
+    setUserId(dataOfUser.id);
+    //console.log("Create post ",user)
 
-    userName.on("value", (chil) => {
-      {
-        setUserId(user);
-        setUserName(chil.val()?.firstName + " " + chil.val()?.lastName);
-        chil.val()?.Dp ? setDp(chil.val().Dp) : null;
+    // } else {
+    //   // User not logged in or has just logged out.
+    // }
+    //});
+    //console.log("USER Data ",JSON.parse( username))
+    console.log("OKKK", dataOfUser);
+    if (dataOfUser) {
+      // userdataNAme.on("value", async (userdata) => {
+      if (dataOfUser.firstName && dataOfUser.lastName) {
+        setUserName(dataOfUser.firstName + " " + dataOfUser.lastName);
       }
-    });
+    }
     const arr = [];
-
     data.on("value", (userdata) => {
       {
         userdata.forEach((child) => {
           if (
             child.val()?.isEnabled === true &&
-            child.key !== user &&
+            child.key !== dataOfUser.id &&
             child?.val()?.isLogin
           ) {
             arr.push(child.val()?.pushToken);
@@ -138,6 +154,7 @@ const CreatePost = (props) => {
     });
 
     setTokens(arr);
+    //console.log("Push notification ",arr.length)
     const location = await AsyncStorage.getItem("location");
     if (location !== null) {
       setLoc(JSON.parse(location));
@@ -181,22 +198,24 @@ const CreatePost = (props) => {
           createdAt: new Date().toISOString(),
           time: time,
         };
-        let like = { userId };
-        console.log("Notification test ", userName);
+        // let like = { userId };
+        // console.log("Notification test ", userName);
         // var notification = firebase
         //   .database()
-        //   .ref("Notifications/" + firebase?.auth()?.currentUser?.uid);
-        let addNoti = {
-          image:Dp,
-          name:userName,
-          message: `upload new post. ${postText}`,
-          createdAt: new Date().toISOString(),
-          userId:firebase.auth()?.currentUser?.uid
-        };
-        // notification.push(addNoti);
+        //   .ref("Notifications/" + userId);
+        // let addNoti = {
+        //   image:Dp,
+        //   name:userName,
+        //   message: `upload new post. ${postText}`,
+        //   createdAt: new Date().toISOString(),
+        //   userId:userId
+        // };
+        //  notification.push(addNoti);
         myRef.set(Details).then(() => {
           tokens.length > 0
-            ? tokens.map((item) => RequestPushMsg(item, userName, postText,'created a new post.'))
+            ? tokens.map((item) =>
+                RequestPushMsg(item, userName, postText, "created a new post.")
+              )
             : console.log("No One");
         });
         // myRef.set(Details);
@@ -211,7 +230,7 @@ const CreatePost = (props) => {
         setDp("");
         setTimeout(() => {
           props.navigation.navigate("NewsFeed", {
-            screen:'post',
+            screen: "post",
             created: "Post Added Successfully",
           });
         }, 1000);
@@ -238,13 +257,13 @@ const CreatePost = (props) => {
       compress: 0,
       format: ImageManipulator.SaveFormat.PNG,
     });
-    console.log("result", manipResult,'\n',result.uri);
-setPostImage(result.uri)
-   
-      onupload(manipResult.uri);
-      // setPostImage(manipResult.uri);
+    console.log("result", manipResult, "\n", result.uri);
+    setPostImage(result.uri);
+
+    onupload(manipResult.uri);
+    // setPostImage(manipResult.uri);
   };
-  async function onupload(url){
+  async function onupload(url) {
     setload(true);
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -252,23 +271,23 @@ setPostImage(result.uri)
         resolve(xhr.response); // when BlobModule finishes reading, resolve with the blob
       };
       xhr.onerror = function () {
-        reject(new TypeError('Network request failed')); // error occurred, rejecting
+        reject(new TypeError("Network request failed")); // error occurred, rejecting
       };
-      xhr.responseType = 'blob'; // use BlobModule's UriHandler
-      xhr.open('GET', url, true); // fetch the blob from uri in async mode
+      xhr.responseType = "blob"; // use BlobModule's UriHandler
+      xhr.open("GET", url, true); // fetch the blob from uri in async mode
       xhr.send(null); // no initial data
     });
     var timestamp = new Date().getTime();
-    var imageRef =firebase.storage().ref(`UserImages/` + timestamp + '/');
-  
+    var imageRef = firebase.storage().ref(`UserImages/` + timestamp + "/");
+
     return imageRef
       .put(blob)
       .then(() => {
         blob.close();
         return imageRef.getDownloadURL();
       })
-      .then(dwnldurl => {
-        console.log('finall uploaded uri',dwnldurl);
+      .then((dwnldurl) => {
+        console.log("finall uploaded uri", dwnldurl);
         setload(false);
         setPostImage(dwnldurl);
       });
@@ -293,7 +312,7 @@ setPostImage(result.uri)
             const url = await task.snapshot.ref.getDownloadURL();
             resolve(url);
             setPostImage(url);
-            console.log('firebase',url);
+            console.log("firebase", url);
             // setLoader(false);
           }
         );
@@ -404,7 +423,7 @@ setPostImage(result.uri)
     console.log("Loading Sound");
     // setisplay(true);
     await Audio.setAudioModeAsync({
-      allowsRecordingIOS:false,
+      allowsRecordingIOS: false,
       playsInSilentModeIOS: true,
       staysActiveInBackground: false,
       playThroughEarpieceAndroid: false,
@@ -604,8 +623,7 @@ setPostImage(result.uri)
                   />
                 </TouchableOpacity>
               </ImageBackground>
-            ) :  
-           null}
+            ) : null}
             <TextInput
               ref={inputRef}
               multiline={true}
@@ -762,7 +780,7 @@ setPostImage(result.uri)
           <View style={styles.mediaContainerInner}>
             {/* {!Sound ? ( */}
             <TouchableOpacity
-            disabled={true}
+              disabled={true}
               onPress={showMethod}
               // disabled={recording ? true : false}
             >
@@ -1031,8 +1049,8 @@ const styles = StyleSheet.create({
     //height: "100%",
     fontSize: 17,
     color: "#464646",
-    height: '100%',
-    width:'100%',
+    height: "100%",
+    width: "100%",
     //padding: responsiveHeight(2),
     marginTop: responsiveHeight(1),
   },
@@ -1063,7 +1081,22 @@ const styles = StyleSheet.create({
   },
 });
 const mapStateToProps = (state) => {
-  const { isLogin } = state.AuthReducer;
-  return { isLogin };
+  const { isLogin, userInfo } = state.AuthReducer;
+  //console.log("OK REDUX TESTING")
+  return { isLogin, userInfo };
 };
-export default connect(mapStateToProps)(CreatePost);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    SessionMaintain: (data) => dispatch(SetSession(data)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreatePost);
+
+// import { connect } from "react-redux";
+
+// const mapStateToProps = (state) => {
+//   const {userInfo } = state.AuthReducer;
+//   return { userInfo };
+// };
+// export default connect(mapStateToProps,null)(filename);

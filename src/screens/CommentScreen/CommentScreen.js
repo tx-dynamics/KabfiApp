@@ -31,6 +31,7 @@ import firebase from "firebase";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { Audio } from "expo-av";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { connect } from "react-redux";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -235,9 +236,13 @@ const CommentScreen = ({ route, navigation }) => {
     );
   };
    const sendComments  = () =>{
+    if(cmnt != "" ){
+     // console.log("OKK i m in ",cmnt)
+    setisloading(false)
+    inputRef.current.clear()
+    //let userdata = JSON.parse(props.userInfo)
     var user = firebase.auth()?.currentUser;
     var userData = firebase.database().ref("users/" + user?.uid);
-
     userData.on("value", async (data) => {
       console.log("Data==>", data.val().firstName + " " + data.val().lastName);
       setImg(data.val().Dp);
@@ -250,8 +255,9 @@ const CommentScreen = ({ route, navigation }) => {
         createdAt: new Date().toISOString(),
         user: user?.uid,
       };
-      myRef.push(data).then(() => setisloading(false));
-
+      myRef.push(data).then(() => setisloading(false),
+      setCmnt(""),
+      );
       setPosts(null);
     });
     setCmnt("");
@@ -282,7 +288,7 @@ const CommentScreen = ({ route, navigation }) => {
         image:data.val().Dp,
         name:data.val().firstName + " " + data.val().lastName ,
         message: `commented. ${cmnt}`,
-        createdAt: new Date().toLocaleString(),
+        createdAt: moment().format(),
         userId:firebase.auth()?.currentUser?.uid
       };
       
@@ -291,7 +297,14 @@ const CommentScreen = ({ route, navigation }) => {
         RequestPushMsg(arr, data.val().firstName + " " + data.val().lastName, `commented ${cmnt},`,`commented ${cmnt}`);
       }
     })
+  }
+  else{
+    console.log("else me arhaa ho me")
     setisloading(false);
+  }
+  userName.update({notiNot:true})
+    setisloading(false);
+  
   }
 
   return (
@@ -342,12 +355,14 @@ const CommentScreen = ({ route, navigation }) => {
           ]}
         >
           <TextInput
+            //ref={input => { this.textInput = input }}
             ref={inputRef}
             style={styles.input}
             //placeholder="Comments"
-            autoCapitalize={"none"}
-            returnKeyType={"done"}
-            keyboardType={"default"}
+           // autoCapitalize={"none"}
+           blurOnSubmit={true}
+           returnKeyType={"send"}
+           // keyboardType={"default"}
             placeholderTextColor="gray"
             value={cmnt}
             multiline={true}
@@ -355,6 +370,12 @@ const CommentScreen = ({ route, navigation }) => {
             onChangeText={(text) => {
               setCmnt(text);
             }}
+           onSubmitEditing={()=>{
+             sendComments()
+             //setisloading(true);
+            }
+            
+            } 
           />
           <TouchableOpacity
             disabled={cmnt === "" ? true : false}
@@ -385,4 +406,11 @@ const CommentScreen = ({ route, navigation }) => {
     </>
   );
 };
-export default CommentScreen;
+
+const mapStateToProps = (state) => {
+  const { userInfo } = state.AuthReducer;
+  //console.log("OK REDUX TESTING")
+  return { userInfo };
+};
+export default connect(mapStateToProps)(CommentScreen)
+//export default CommentScreen;

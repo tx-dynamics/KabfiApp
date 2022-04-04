@@ -19,7 +19,7 @@ import {
 } from "../../../assets";
 import HeaderLeftComponent from "../../components/HeaderLeftComponent";
 import moment from "moment";
-
+import { connect } from "react-redux";
 import ActionButton from 'react-native-action-button';
 const Notifications = (props) => {
   const [Dp, setDp] = useState("");
@@ -28,13 +28,20 @@ const Notifications = (props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   useEffect(() => {
+    let data= JSON.parse(props.userInfo)
+   
     fetchAllNoti();
+    
+    
     // fetchLocation();
   }, [isFocused]);
 
   async function fetchAllNoti() {
     setRefreshing(true);
-    const uid = firebase.auth().currentUser?.uid;
+    let data= JSON.parse(props.userInfo)
+    let userName = firebase.database().ref("users/" + data.id);
+    userName.update({notiNot:false})   
+    // const uid = firebase.auth().currentUser?.uid;
     // const userNoti = firebase.database().ref("Notifications/");
     // let notis = [];
     // userNoti.on("value", (userdata) => {
@@ -85,10 +92,12 @@ const Notifications = (props) => {
       let arr=[];
     var notification = firebase
       .database()
-      .ref("Likes/" + 'Y6Q177bAMEWsVGtMlNVd2UF1CwZ2')
+      .ref("Likes/" + data.id)
       .orderByChild('createdAt'); 
       //.ref("Likes/" + uid);
+      console.log(notification)
       notification.on('value',(child)=>{
+        //console.log(child)
         child.forEach(item=>{
           const userImages = firebase
           .database()
@@ -106,15 +115,15 @@ const Notifications = (props) => {
                 " " +
                 updateImage.val().lastName
               : item.val().name,
-              time:moment( updateImage?.val()?.createdAt).toDate()
+              time:item?.val()?.createdAt
           });
         });
         })
       })
     // Array.prototype.push.apply(arr,notis);
-    AsyncStorage.setItem('num',JSON.stringify( arr.length));
+   // AsyncStorage.setItem('num',JSON.stringify( arr[0].time));
     setnotis(arr.reverse());
-    console.log("Noti Data==>", arr.length);
+    //console.log("Noti Data==>", arr[0]);
     setRefreshing(false);
   }
 
@@ -130,6 +139,7 @@ const Notifications = (props) => {
   }
 
   const renderPosts = ({ item, index }) => {
+    //console.log(item.time)
     return (
       <TouchableOpacity
       disabled={item?.postid?false:true}
@@ -137,7 +147,7 @@ const Notifications = (props) => {
         key={index}
         style={{
           flex: 1,
-          width: "95%",
+          width: "90%",
           borderRadius: 10,
           alignSelf: "center",
           marginTop: 10,
@@ -159,18 +169,19 @@ const Notifications = (props) => {
           <Text
             style={{
               color: "black",
+              //textAlign:'center',
               alignSelf: "center",
               left: 11,
               fontSize: 16,
               fontWeight: "600",
               color: "grey",
-              width: 300,
+              width: '80%',
             }}
           >
             <Text style={{color:'black',fontSize:16,fontWeight:'500'}}>@{item.name} </Text>
             {`${item.message}`}
             <Text style={{color:'black',fontSize:16,fontWeight:'500'}}>
-            {` ${moment(item.time).fromNow()}`}
+            {` ${moment(item.time).fromNow() }`}
           </Text> 
           </Text>
          
@@ -228,4 +239,10 @@ const Notifications = (props) => {
     </View>
   );
 };
-export default Notifications;
+const mapStateToProps = (state) => {
+  const { userInfo } = state.AuthReducer;
+  //console.log("OK REDUX TESTING")
+  return { userInfo };
+};
+ export default connect(mapStateToProps)(Notifications)
+

@@ -94,7 +94,7 @@ const Settings = (props) => {
               style={styles.listIconImage}
               resizeMode="contain"
             />
-            <Text style={styles.listText}>Change Password</Text>
+            <Text style={styles.listText}>{'Change Password'}</Text>
           </TouchableOpacity>
           <View style={{ flexDirection: "row", marginTop: 15 }}>
             <TouchableOpacity style={styles.listItem}>
